@@ -1,0 +1,18 @@
+{
+  "name": "microbit-micropython",
+  "version": "0.0.1",
+  "license": "MIT",
+  "description": "MicroPython component for the BBC micro:bit",
+  "keywords": ["mbed-classic", "microbit", "runtime", "library", "micropython"],
+  "author": "Damien P George <damien.p.george@gmail.com>",
+  "homepage": "http://micropython.org",
+  "dependencies":{
+    "mbed-classic": "~0.0.4",
+    "ble": "jamesadevine/BLE_API#master",
+    "ble-nrf51822": "jamesadevine/nrf51822#master",
+    "microbit-dal":"jamesadevine/microbit-dal#experimental"
+  },
+  "extraIncludes":[
+    "inc"
+  ]
+}
