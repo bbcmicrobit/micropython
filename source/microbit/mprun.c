@@ -10,9 +10,8 @@
 #include "pyexec.h"
 #include MICROPY_HAL_H
 
-/*
-void do_str(const char *src) {
-    mp_lexer_t *lex = mp_lexer_new_from_str_len(MP_QSTR__lt_stdin_gt_, src, strlen(src), 0);
+void do_strn(const char *src, size_t len) {
+    mp_lexer_t *lex = mp_lexer_new_from_str_len(MP_QSTR___main__, src, len, 0);
     if (lex == NULL) {
         printf("MemoryError: lexer could not allocate memory\n");
         return;
@@ -21,8 +20,8 @@ void do_str(const char *src) {
     nlr_buf_t nlr;
     if (nlr_push(&nlr) == 0) {
         qstr source_name = lex->source_name;
-        mp_parse_node_t pn = mp_parse(lex, MP_PARSE_SINGLE_INPUT);
-        mp_obj_t module_fun = mp_compile(pn, source_name, MP_EMIT_OPT_NONE, true);
+        mp_parse_node_t pn = mp_parse(lex, MP_PARSE_FILE_INPUT);
+        mp_obj_t module_fun = mp_compile(pn, source_name, MP_EMIT_OPT_NONE, false);
         mp_call_function_0(module_fun);
         nlr_pop();
     } else {
@@ -30,9 +29,16 @@ void do_str(const char *src) {
         mp_obj_print_exception(&mp_plat_print, (mp_obj_t)nlr.ret_val);
     }
 }
-*/
 
 static char *stack_top;
+
+typedef struct _appended_script_t {
+    byte header[2]; // should be "MP"
+    uint16_t len; // length of script stored little endian
+    char str[]; // data of script
+} appended_script_t;
+
+#define APPENDED_SCRIPT ((const appended_script_t*)0x3e000)
 
 void mp_run(void) {
     int stack_dummy;
@@ -55,7 +61,10 @@ void mp_run(void) {
     mp_init();
     mp_hal_init();
 
-    //do_str("print('hello world!', list(x+1 for x in range(10)), end='eol\\n')");
+    // run appended script if it exists
+    if (APPENDED_SCRIPT->header[0] == 'M' && APPENDED_SCRIPT->header[1] == 'P') {
+        do_strn(APPENDED_SCRIPT->str, APPENDED_SCRIPT->len);
+    }
 
     for (;;) {
         if (pyexec_mode_kind == PYEXEC_MODE_RAW_REPL) {
