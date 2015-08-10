@@ -8,6 +8,34 @@ Use yotta to build.
 
 Notes to get working:
 
+- You need to disable the BLE:
+
+```
+--- old/MicroBit.cpp
++++ new/MicroBit.cpp
+@@ -88,6 +88,12 @@
+     // Seed our random number generator
+     seedRandom();
+ 
++    #if 1
++    ble = NULL;
++    ble_firmware_update_service = NULL;
++    ble_device_information_service = NULL;
++    ble_event_service = NULL;
++    #else
+     // Start the BLE stack.        
+     ble = new BLEDevice();
+     
+@@ -108,6 +114,7 @@
+     ble->setAdvertisingType(GapAdvertisingParams::ADV_CONNECTABLE_UNDIRECTED);
+     ble->setAdvertisingInterval(Gap::MSEC_TO_ADVERTISEMENT_DURATION_UNITS(1000));
+     ble->startAdvertising();  
++    #endif
+ 
+     // Start refreshing the Matrix Display
+     systemTicker.attach(this, &MicroBit::systemTick, MICROBIT_DISPLAY_REFRESH_PERIOD);     
+```
+
 - You need to manually adjust the allocation policy of microbit-dal's
   MicroBitFiber scheduler:
 
