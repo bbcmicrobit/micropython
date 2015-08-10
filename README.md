@@ -11,6 +11,7 @@ Notes to get working:
 - You need to manually adjust the allocation policy of microbit-dal's
   MicroBitFiber scheduler:
 
+```
 --- old/MicroBitFiber.cpp
 +++ new/MicroBitFiber.cpp
 @@ -445,11 +445,10 @@
@@ -27,7 +28,7 @@ Notes to get working:
                      
              free((void *)oldFiber->stack_bottom);
              oldFiber->stack_bottom = (uint32_t) malloc(bufferSize);
-
+```
 
 How to use
 ==========
@@ -37,8 +38,8 @@ Then you will have a REPL on the USB CDC serial port, with baudrate 115200.
 
 Then try:
 
->>> import microbit
->>> microbit.display.scroll_string('hello!')
->>> microbit.random(100)
+    >>> import microbit
+    >>> microbit.display.scroll_string('hello!')
+    >>> microbit.random(100)
 
 Tab completion works and is very useful!
