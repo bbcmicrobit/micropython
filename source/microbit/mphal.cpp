@@ -1,0 +1,100 @@
+/*
+ * This file is part of the Micro Python project, http://micropython.org/
+ *
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2015 Damien P. George
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+#include "MicroBit.h"
+
+extern "C" {
+
+#include "mphal.h"
+#include "py/mpstate.h"
+
+#define UART_RX_BUF_SIZE (64) // it's large so we can paste example code
+
+static int interrupt_char;
+static uint8_t uart_rx_buf[UART_RX_BUF_SIZE];
+static volatile uint16_t uart_rx_buf_head, uart_rx_buf_tail;
+
+void uart_rx_irq(void) {
+    if (!uBit.serial.readable()) {
+        return;
+    }
+    int c = uBit.serial.getc();
+    if (c == interrupt_char) {
+        MP_STATE_VM(mp_pending_exception) = MP_STATE_PORT(keyboard_interrupt_obj);
+    } else {
+        uint16_t next_head = (uart_rx_buf_head + 1) % UART_RX_BUF_SIZE;
+        if (next_head != uart_rx_buf_tail) {
+            // only store data if room in buf
+            uart_rx_buf[uart_rx_buf_head] = c;
+            uart_rx_buf_head = next_head;
+        }
+    }
+}
+
+void mp_hal_init(void) {
+    uart_rx_buf_head = 0;
+    uart_rx_buf_tail = 0;
+    uBit.serial.attach(uart_rx_irq);
+    interrupt_char = -1;
+    MP_STATE_PORT(keyboard_interrupt_obj) = mp_obj_new_exception(&mp_type_KeyboardInterrupt);
+}
+
+void mp_hal_set_interrupt_char(int c) {
+    if (c != -1) {
+        mp_obj_exception_clear_traceback(MP_STATE_PORT(keyboard_interrupt_obj));
+    }
+    interrupt_char = c;
+}
+
+int mp_hal_stdin_rx_chr(void) {
+    while (uart_rx_buf_tail == uart_rx_buf_head) {
+        schedule();
+    }
+    int c = uart_rx_buf[uart_rx_buf_tail];
+    uart_rx_buf_tail = (uart_rx_buf_tail + 1) % UART_RX_BUF_SIZE;
+    return c;
+}
+
+void mp_hal_stdout_tx_str(const char *str) {
+    mp_hal_stdout_tx_strn(str, strlen(str));
+}
+
+void mp_hal_stdout_tx_strn(const char *str, unsigned int len) {
+    for (; len > 0; --len) {
+        uBit.serial.putc(*str++);
+    }
+}
+
+void mp_hal_stdout_tx_strn_cooked(const char *str, unsigned int len) {
+    for (; len > 0; --len) {
+        if (*str == '\n') {
+            uBit.serial.putc('\r');
+        }
+        uBit.serial.putc(*str++);
+    }
+}
+
+}
