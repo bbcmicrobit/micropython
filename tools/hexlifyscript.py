@@ -22,7 +22,7 @@ addr = 0x3e000 # magic start address in flash
 for i in range(0, len(data), 16):
     chunk = data[i:min(i + 16, len(data))]
     chunk = struct.pack('>BHB', len(chunk), addr & 0xffff, 0) + chunk
-    checksum = (-(sum(data))) & 0xff
+    checksum = (-(sum(chunk))) & 0xff
     hexline = ':%s%02X' % (str(binascii.hexlify(chunk), 'utf8').upper(), checksum)
     print(hexline)
     addr += 16
