@@ -22,10 +22,13 @@ void do_strn(const char *src, size_t len) {
         qstr source_name = lex->source_name;
         mp_parse_node_t pn = mp_parse(lex, MP_PARSE_FILE_INPUT);
         mp_obj_t module_fun = mp_compile(pn, source_name, MP_EMIT_OPT_NONE, false);
+        mp_hal_set_interrupt_char(3); // allow ctrl-C to interrupt us
         mp_call_function_0(module_fun);
+        mp_hal_set_interrupt_char(-1); // disable interrupt
         nlr_pop();
     } else {
         // uncaught exception
+        mp_hal_set_interrupt_char(-1); // disable interrupt
         mp_obj_print_exception(&mp_plat_print, (mp_obj_t)nlr.ret_val);
     }
 }
