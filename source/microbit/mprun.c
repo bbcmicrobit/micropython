@@ -83,6 +83,8 @@ void mp_run(void) {
         }
     }
 
+    mp_hal_stdout_tx_str("soft reboot\r\n");
+
     mp_deinit();
 }
 
