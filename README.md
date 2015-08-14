@@ -12,6 +12,12 @@ Use target bbc-microbit-classic-gcc-nosd:
 yt target bbc-microbit-classic-gcc-nosd
 ```
 
+Run yotta update to fetch remote assets:
+
+```
+yt up
+```
+
 Notes to get working:
 
 - If you're using gcc to compile then you need to use the gcc version of
@@ -31,7 +37,7 @@ $ cp yotta_modules/microbit-dal/source/CortexContextSwitch.s.gcc yotta_modules/m
 @@ -445,11 +445,10 @@
          stackDepth = CORTEX_M0_STACK_BASE - ((uint32_t) __get_MSP());
          bufferSize = oldFiber->stack_top - oldFiber->stack_bottom;
-         
+
 -        // If we're too small, increase our buffer exponentially.
 +        // If we're too small, increase our buffer conservatively.
          if (bufferSize < stackDepth)
@@ -39,10 +45,20 @@ $ cp yotta_modules/microbit-dal/source/CortexContextSwitch.s.gcc yotta_modules/m
 -            while (bufferSize < stackDepth)
 -                bufferSize = bufferSize << 1;
 +            bufferSize = stackDepth + 8;
-                     
+
              free((void *)oldFiber->stack_bottom);
              oldFiber->stack_bottom = (uint32_t) malloc(bufferSize);
 ```
+
+Start the build:
+
+```
+yt build
+```
+
+The resulting microbit-micropython.hex file to flash onto the device can be
+found in the build/bbc-microbit-classic-gcc-nosd/source from the root of the
+repository.
 
 How to use
 ==========
