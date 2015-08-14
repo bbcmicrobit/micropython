@@ -47,19 +47,21 @@ void mp_run(void) {
     int stack_dummy;
     stack_top = (char*)&stack_dummy;
 
-    /*
-    static char heap[800];
+    // allocate the heap statically in the bss
+    static char heap[9500];
     gc_init(heap, heap + sizeof(heap));
-    */
 
     /*
+    // allocate the heap using system malloc
     extern void *malloc(int);
     void *mheap = malloc(2000);
     gc_init(mheap, (byte*)mheap + 2000);
     */
 
-    // seems to work (will clash with BLE)
+    /*
+    // allocate the heap statically (will clash with BLE)
     gc_init((void*)0x20000100, (void*)0x20002000);
+    */
 
     mp_init();
     mp_hal_init();

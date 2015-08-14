@@ -8,9 +8,9 @@
   "homepage": "http://micropython.org",
   "dependencies":{
     "mbed-classic": "~0.0.4",
-    "ble": "jamesadevine/BLE_API#master",
-    "ble-nrf51822": "jamesadevine/nrf51822#master",
-    "microbit-dal":"jamesadevine/microbit-dal#master"
+    "ble": "lancaster-university/BLE_API#master",
+    "ble-nrf51822": "lancaster-university/nRF51822#master",
+    "microbit-dal":"lancaster-university/microbit-dal#master"
   },
   "extraIncludes":[
     "inc",

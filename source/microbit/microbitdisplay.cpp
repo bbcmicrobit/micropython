@@ -88,23 +88,23 @@ mp_obj_t microbit_display_print(mp_uint_t n_args, const mp_obj_t *args) {
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_display_print_obj, 2, 3, microbit_display_print);
 
-mp_obj_t microbit_display_scroll_string(mp_uint_t n_args, const mp_obj_t *args) {
+mp_obj_t microbit_display_scroll(mp_uint_t n_args, const mp_obj_t *args) {
     microbit_display_obj_t *self = (microbit_display_obj_t*)args[0];
     ManagedString s(mp_obj_str_get_str(args[1]));
     if (n_args == 2) {
-        self->display->scrollString(s);
+        self->display->scroll(s);
     } else {
-        self->display->scrollString(s, mp_obj_get_int(args[2]));
+        self->display->scroll(s, mp_obj_get_int(args[2]));
     }
     return mp_const_none;
 }
-STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_display_scroll_string_obj, 2, 3, microbit_display_scroll_string);
+STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_display_scroll_obj, 2, 3, microbit_display_scroll);
 
 STATIC const mp_map_elem_t microbit_display_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_image), (mp_obj_t)&microbit_image_obj },
 
     { MP_OBJ_NEW_QSTR(MP_QSTR_print), (mp_obj_t)&microbit_display_print_obj },
-    { MP_OBJ_NEW_QSTR(MP_QSTR_scroll_string), (mp_obj_t)&microbit_display_scroll_string_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_scroll), (mp_obj_t)&microbit_display_scroll_obj },
 };
 
 STATIC MP_DEFINE_CONST_DICT(microbit_display_locals_dict, microbit_display_locals_dict_table);

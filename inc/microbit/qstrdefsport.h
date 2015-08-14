@@ -15,7 +15,7 @@ Q(set_pixel_value)
 Q(MicroBitDisplay)
 Q(display)
 Q(print)
-Q(scroll_string)
+Q(scroll)
 
 Q(MicroBitButton)
 Q(button_a)
