@@ -37,6 +37,7 @@ typedef struct _microbit_image_obj_t {
 } microbit_image_obj_t;
 
 mp_obj_t microbit_image_set_pixel_value(mp_uint_t n_args, const mp_obj_t *args) {
+    (void)n_args;
     microbit_image_obj_t *self = (microbit_image_obj_t*)args[0];
     self->image->setPixelValue(mp_obj_get_int(args[1]), mp_obj_get_int(args[2]), mp_obj_get_int(args[3]));
     return mp_const_none;
