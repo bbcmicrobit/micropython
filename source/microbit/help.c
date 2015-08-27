@@ -35,7 +35,7 @@ STATIC const char *help_text =
 "Be brave! Break things! Learn and have fun! :-)\n"
 "\n"
 "Type 'import microbit', press return and try these commands:\n"
-"  microbit.display.scroll_string('Hello')\n"
+"  microbit.display.scroll('Hello')\n"
 "  microbit.system_time()\n"
 "  microbit.sleep(1000)\n"
 "  microbit.button_a.is_pressed()\n"
