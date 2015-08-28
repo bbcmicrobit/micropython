@@ -8,6 +8,9 @@ Q(random)
 Q(system_time)
 Q(panic)
 
+Q(this)
+Q(authors)
+
 Q(MicroBitPin)
 Q(set_digital_value)
 Q(get_digital_value)
