@@ -48,7 +48,7 @@ void mp_run(void) {
     stack_top = (char*)&stack_dummy;
 
     // allocate the heap statically in the bss
-    static char heap[9500];
+    static char heap[9728];
     gc_init(heap, heap + sizeof(heap));
 
     /*
