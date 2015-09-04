@@ -62,7 +62,7 @@ STATIC const mp_map_elem_t microbit_accelerometer_locals_dict_table[] = {
 
 STATIC MP_DEFINE_CONST_DICT(microbit_accelerometer_locals_dict, microbit_accelerometer_locals_dict_table);
 
-STATIC const mp_obj_type_t microbit_accelerometer_type = {
+const mp_obj_type_t microbit_accelerometer_type = {
     { &mp_type_type },
     .name = MP_QSTR_MicroBitAccelerometer,
     .print = NULL,

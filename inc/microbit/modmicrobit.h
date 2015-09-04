@@ -28,11 +28,19 @@
 
 #include "py/objtuple.h"
 
+extern const mp_obj_type_t microbit_accelerometer_type;
+extern const struct _microbit_accelerometer_obj_t microbit_accelerometer_obj;
+
 extern const struct _microbit_display_obj_t microbit_display_obj;
 extern const struct _microbit_button_obj_t microbit_button_a_obj;
 extern const struct _microbit_button_obj_t microbit_button_b_obj;
-extern const struct _microbit_accelerometer_obj_t microbit_accelerometer_obj;
 extern const struct _microbit_compass_obj_t microbit_compass_obj;
+
+MP_DECLARE_CONST_FUN_OBJ(microbit_sleep_obj);
+MP_DECLARE_CONST_FUN_OBJ(microbit_random_obj);
+MP_DECLARE_CONST_FUN_OBJ(microbit_system_time_obj);
+MP_DECLARE_CONST_FUN_OBJ(microbit_panic_obj);
+
 extern const mp_obj_module_t microbit_module;
 
 #endif // __MICROPY_INCLUDED_MICROBIT_MODMICROBIT_H__

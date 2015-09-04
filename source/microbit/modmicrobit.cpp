@@ -35,17 +35,17 @@ STATIC mp_obj_t microbit_sleep(mp_obj_t ms_in) {
     uBit.sleep(mp_obj_get_int(ms_in));
     return mp_const_none;
 }
-STATIC MP_DEFINE_CONST_FUN_OBJ_1(microbit_sleep_obj, microbit_sleep);
+MP_DEFINE_CONST_FUN_OBJ_1(microbit_sleep_obj, microbit_sleep);
 
 STATIC mp_obj_t microbit_random(mp_obj_t max_in) {
     return mp_obj_new_int(uBit.random(mp_obj_get_int(max_in)));
 }
-STATIC MP_DEFINE_CONST_FUN_OBJ_1(microbit_random_obj, microbit_random);
+MP_DEFINE_CONST_FUN_OBJ_1(microbit_random_obj, microbit_random);
 
 STATIC mp_obj_t microbit_system_time(void) {
     return MP_OBJ_NEW_SMALL_INT(uBit.systemTime());
 }
-STATIC MP_DEFINE_CONST_FUN_OBJ_0(microbit_system_time_obj, microbit_system_time);
+MP_DEFINE_CONST_FUN_OBJ_0(microbit_system_time_obj, microbit_system_time);
 
 STATIC mp_obj_t microbit_panic(mp_uint_t n_args, const mp_obj_t *args) {
     if (n_args == 0) {
@@ -55,7 +55,7 @@ STATIC mp_obj_t microbit_panic(mp_uint_t n_args, const mp_obj_t *args) {
     }
     return mp_const_none;
 }
-STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_panic_obj, 0, 1, microbit_panic);
+MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_panic_obj, 0, 1, microbit_panic);
 
 STATIC const mp_map_elem_t microbit_module_globals_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR___name__), MP_OBJ_NEW_QSTR(MP_QSTR_microbit) },
