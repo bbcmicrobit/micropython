@@ -94,11 +94,18 @@ STATIC mp_obj_t pyb_help(uint n_args, const mp_obj_t *args) {
         mp_printf(&mp_plat_print, "%s", help_text);
 
     } else {
+        mp_obj_t args0 = args[0];
+        mp_obj_type_t *args0_type = mp_obj_get_type(args0);
+        if (args0_type->name == MP_QSTR_bound_method) {
+            args0 = ((mp_obj_t*)args0)[1]; // extract method
+            args0_type = mp_obj_get_type(args0);
+        }
+
         // see if we have specific help info for this instance
         for (size_t i = 0; i < MP_ARRAY_SIZE(help_table_instances); i++) {
-            if (args[0] == help_table_instances[i].obj) {
+            if (args0 == help_table_instances[i].obj) {
                 mp_print_str(&mp_plat_print, help_table_instances[i].doc);
-                //if (mp_obj_get_type(args[0]) == &mp_type_module) {
+                //if (args0_type == &mp_type_module) {
                 //TODO here we can list the things inside the module
                 //}
                 return mp_const_none;
@@ -107,7 +114,7 @@ STATIC mp_obj_t pyb_help(uint n_args, const mp_obj_t *args) {
 
         // see if we have specific help info for this type
         for (size_t i = 0; i < MP_ARRAY_SIZE(help_table_types); i++) {
-            if (args[0] == help_table_types[i].obj) {
+            if (args0 == help_table_types[i].obj || args0_type == help_table_types[i].obj) {
                 mp_print_str(&mp_plat_print, help_table_types[i].doc);
                 return mp_const_none;
             }
@@ -116,18 +123,18 @@ STATIC mp_obj_t pyb_help(uint n_args, const mp_obj_t *args) {
         // don't have specific help info, try instead to print something sensible
 
         mp_printf(&mp_plat_print, "object ");
-        mp_obj_print(args[0], PRINT_STR);
-        mp_printf(&mp_plat_print, " is of type %s\n", mp_obj_get_type_str(args[0]));
+        mp_obj_print(args0, PRINT_STR);
+        mp_printf(&mp_plat_print, " is of type %q\n", args0_type->name);
 
         mp_map_t *map = NULL;
-        if (MP_OBJ_IS_TYPE(args[0], &mp_type_module)) {
-            map = mp_obj_dict_get_map(mp_obj_module_get_globals(args[0]));
+        if (args0_type == &mp_type_module) {
+            map = mp_obj_dict_get_map(mp_obj_module_get_globals(args0));
         } else {
             mp_obj_type_t *type;
-            if (MP_OBJ_IS_TYPE(args[0], &mp_type_type)) {
-                type = args[0];
+            if (args0_type == &mp_type_type) {
+                type = args0;
             } else {
-                type = mp_obj_get_type(args[0]);
+                type = args0_type;
             }
             if (type->locals_dict != MP_OBJ_NULL && MP_OBJ_IS_TYPE(type->locals_dict, &mp_type_dict)) {
                 map = mp_obj_dict_get_map(type->locals_dict);
