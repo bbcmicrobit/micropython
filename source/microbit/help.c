@@ -83,6 +83,7 @@ STATIC const mp_doc_t help_table_instances[] = {
     {&microbit_sleep_obj, "sleep(n) -- wait for n milliseconds (1 second = 1000)\n"},
     {&microbit_system_time_obj, "system_time() -- get the number of milliseconds since reset\n"},
     {&microbit_accelerometer_obj, "A toolbox of code to detect the device's position (orientation)\n"},
+    {&microbit_accelerometer_get_x_obj, "Foo!\n"},
 };
 
 STATIC void pyb_help_print_info_about_object(mp_obj_t name_o, mp_obj_t value) {
