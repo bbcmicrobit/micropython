@@ -18,38 +18,6 @@ Run yotta update to fetch remote assets:
 yt up
 ```
 
-Notes to get working:
-
-- If you're using gcc to compile then you need to use the gcc version of
-  CortexContextSwitch.s:
-
-```
-$ mv yotta_modules/microbit-dal/source/CortexContextSwitch.s yotta_modules/microbit-dal/source/CortexContextSwitch.s.armcc
-$ cp yotta_modules/microbit-dal/source/CortexContextSwitch.s.gcc yotta_modules/microbit-dal/source/CortexContextSwitch.s
-```
-
-- You need to manually adjust the allocation policy of microbit-dal's
-  MicroBitFiber scheduler:
-
-```
---- old/MicroBitFiber.cpp
-+++ new/MicroBitFiber.cpp
-@@ -445,11 +445,10 @@
-         stackDepth = CORTEX_M0_STACK_BASE - ((uint32_t) __get_MSP());
-         bufferSize = oldFiber->stack_top - oldFiber->stack_bottom;
-
--        // If we're too small, increase our buffer exponentially.
-+        // If we're too small, increase our buffer conservatively.
-         if (bufferSize < stackDepth)
-         {
--            while (bufferSize < stackDepth)
--                bufferSize = bufferSize << 1;
-+            bufferSize = stackDepth + 8;
-
-             free((void *)oldFiber->stack_bottom);
-             oldFiber->stack_bottom = (uint32_t) malloc(bufferSize);
-```
-
 Start the build:
 
 ```
@@ -59,6 +27,10 @@ yt build
 The resulting microbit-micropython.hex file to flash onto the device can be
 found in the build/bbc-microbit-classic-gcc-nosd/source from the root of the
 repository.
+
+There is a Makefile provided that does some extra preprocessing of the source,
+which is needed only if you add new interned strings to qstrdefsport.h.  The
+Makefile also includes some convenience targets.
 
 How to use
 ==========

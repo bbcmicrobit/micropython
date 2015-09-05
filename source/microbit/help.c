@@ -28,6 +28,7 @@
 
 #include "py/nlr.h"
 #include "py/obj.h"
+#include "microbit/modmicrobit.h"
 
 STATIC const char *help_text =
 "Welcome to MicroPython on the micro:bit!\n"
@@ -62,6 +63,23 @@ STATIC const char *help_text =
 "  CTRL-D        -- on a blank line, do a soft reset of the micro:bit\n"
 ;
 
+typedef struct _mp_doc_t {
+    mp_const_obj_t obj;
+    const char *doc;
+} mp_doc_t;
+
+STATIC const mp_doc_t help_table_types[] = {
+    {&microbit_accelerometer_type, "MicroBitAccelerometer type\n"},
+};
+
+STATIC const mp_doc_t help_table_instances[] = {
+    {&microbit_module, "microbit module\n"},
+    {&microbit_sleep_obj, "sleep(ms) -- sleep for the given number of milliseconds\n"},
+    {&microbit_random_obj, "random(max) -- return a random integer between 0 and max-1\n"},
+    {&microbit_system_time_obj, "system_time() -- return an integer represeting the milliseconds since reset\n"},
+    {&microbit_panic_obj, "panic([code]) -- enter panic mode!\n"},
+};
+
 STATIC void pyb_help_print_info_about_object(mp_obj_t name_o, mp_obj_t value) {
     mp_printf(&mp_plat_print, "  ");
     mp_obj_print(name_o, PRINT_STR);
@@ -76,7 +94,26 @@ STATIC mp_obj_t pyb_help(uint n_args, const mp_obj_t *args) {
         mp_printf(&mp_plat_print, "%s", help_text);
 
     } else {
-        // try to print something sensible about the given object
+        // see if we have specific help info for this instance
+        for (size_t i = 0; i < MP_ARRAY_SIZE(help_table_instances); i++) {
+            if (args[0] == help_table_instances[i].obj) {
+                mp_print_str(&mp_plat_print, help_table_instances[i].doc);
+                //if (mp_obj_get_type(args[0]) == &mp_type_module) {
+                //TODO here we can list the things inside the module
+                //}
+                return mp_const_none;
+            }
+        }
+
+        // see if we have specific help info for this type
+        for (size_t i = 0; i < MP_ARRAY_SIZE(help_table_types); i++) {
+            if (args[0] == help_table_types[i].obj) {
+                mp_print_str(&mp_plat_print, help_table_types[i].doc);
+                return mp_const_none;
+            }
+        }
+
+        // don't have specific help info, try instead to print something sensible
 
         mp_printf(&mp_plat_print, "object ");
         mp_obj_print(args[0], PRINT_STR);
