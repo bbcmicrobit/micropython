@@ -27,14 +27,45 @@
 #include <stdio.h>
 #include "MicroBit.h"
 
-STATIC const char *this_text = "THIS!\n";
-
 extern "C" {
 
 #include "py/obj.h"
-#include "modmicrobit.h"
+
+STATIC mp_obj_t this__init__(void) {
+    STATIC const char *this_text =
+"The Zen of MicroPython, by Nicholas H.Tollervey\n"
+"\n"
+"Code,\n"
+"Hack it,\n"
+"Less is more,\n"
+"Keep it simple,\n"
+"Small is beautiful,\n"
+"\n"
+"Be brave! Break things! Learn and have fun!\n"
+"Express yourself with MicroPython.\n"
+"\n"
+"Happy hacking! :-)\n";
+    mp_printf(&mp_plat_print, "%s", this_text);
+    return mp_const_none;
+}
+MP_DEFINE_CONST_FUN_OBJ_0(this___init___obj, this__init__);
+
+STATIC mp_obj_t this_authors(void) {
+    /*
+    If you contribute code to this project, add your name here.
+    */
+    STATIC const char *authors_text =
+"MicroPython on the micro:bit is brought to you by:\n"
+"Damien P.George and Nicholas H.Tollervey\n";
+    mp_printf(&mp_plat_print, "%s", authors_text);
+    return mp_const_none;
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_0(this_authors_obj, this_authors);
 
 STATIC const mp_map_elem_t this_module_globals_table[] = {
+    { MP_OBJ_NEW_QSTR(MP_QSTR___name__), MP_OBJ_NEW_QSTR(MP_QSTR_this) },
+    { MP_OBJ_NEW_QSTR(MP_QSTR___init__), (mp_obj_t)&this___init___obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_authors), (mp_obj_t)&this_authors_obj },
 };
 
 STATIC MP_DEFINE_CONST_DICT(this_module_globals, this_module_globals_table);

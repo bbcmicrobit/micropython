@@ -33,19 +33,19 @@
 STATIC const char *help_text =
 "Welcome to MicroPython on the micro:bit!\n"
 "\n"
-"Be brave! Break things! Learn and have fun! :-)\n"
-"\n"
 "Type 'import microbit', press return and try these commands:\n"
 "  microbit.display.scroll('Hello')\n"
 "  microbit.system_time()\n"
 "  microbit.sleep(1000)\n"
 "  microbit.button_a.is_pressed()\n"
 "What do these commands do? Can you improve them? HINT: use the up and down\n"
-"arrow keys to get your command history (saves you typing).\n"
+"arrow keys to get your command history. Press the TAB key to auto-complete\n"
+"unfinished words (so 'mi' becomes 'microbit' after you press TAB). These\n"
+"tricks save a lot of typing and look cool!\n"
 "\n"
 "Explore:\n"
 "Type 'help(something)' to find out about it. Type 'dir(something)' to see what\n"
-"it can do.\n"
+"it can do. For goodness sake, don't type 'import this'.\n"
 "\n"
 "Stuff to explore:\n"
 "  microbit.accelerometer         -- detect the device's position (orientation)\n"
@@ -53,14 +53,18 @@ STATIC const char *help_text =
 "  microbit.button_b.is_pressed() -- is button B pressed? (True or False)\n"
 "  microbit.compass               -- detect the device's heading\n"
 "  microbit.display               -- display things (pixels, characters, words)\n"
-"  microbit.panic()               -- go into panic mode (requires a restart)\n"
-"  microbit.random(n)             -- get a random number between 0 and n\n"
+"  microbit.io                    -- control the gold input/output (IO) pins\n"
+"  microbit.panic()               -- enter panic mode (requires a restart)\n"
+"  microbit.random(n)             -- get a random number between 0 and n-1\n"
 "  microbit.sleep(n)              -- wait for n milliseconds (1 second = 1000)\n"
 "  microbit.system_time()         -- get the number of milliseconds since reset\n"
 "\n"
 "Control commands:\n"
 "  CTRL-C        -- stop a running program\n"
 "  CTRL-D        -- on a blank line, do a soft reset of the micro:bit\n"
+"\n"
+"For more information about Python, visit: http://python.org/\n"
+"To find out about MicroPython, visit: http://micropython.org/\n"
 ;
 
 typedef struct _mp_doc_t {
@@ -73,11 +77,12 @@ STATIC const mp_doc_t help_table_types[] = {
 };
 
 STATIC const mp_doc_t help_table_instances[] = {
-    {&microbit_module, "microbit module\n"},
-    {&microbit_sleep_obj, "sleep(ms) -- sleep for the given number of milliseconds\n"},
-    {&microbit_random_obj, "random(max) -- return a random integer between 0 and max-1\n"},
-    {&microbit_system_time_obj, "system_time() -- return an integer represeting the milliseconds since reset\n"},
-    {&microbit_panic_obj, "panic([code]) -- enter panic mode!\n"},
+    {&microbit_module, "A toolbox of code to control the micro:bit hardware\n"},
+    {&microbit_panic_obj, "panic() -- enter panic mode (requires a restart)\n"},
+    {&microbit_random_obj, "random(n) -- return a random number between 0 and n-1\n"},
+    {&microbit_sleep_obj, "sleep(n) -- wait for n milliseconds (1 second = 1000)\n"},
+    {&microbit_system_time_obj, "system_time() -- get the number of milliseconds since reset\n"},
+    {&microbit_accelerometer_obj, "A toolbox of code to detect the device's position (orientation)\n"},
 };
 
 STATIC void pyb_help_print_info_about_object(mp_obj_t name_o, mp_obj_t value) {
