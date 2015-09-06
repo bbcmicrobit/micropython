@@ -77,13 +77,27 @@ STATIC const mp_doc_t help_table_types[] = {
 };
 
 STATIC const mp_doc_t help_table_instances[] = {
-    {&microbit_module, "A toolbox of code to control the micro:bit hardware\n"},
-    {&microbit_panic_obj, "panic() -- enter panic mode (requires a restart)\n"},
-    {&microbit_random_obj, "random(n) -- return a random number between 0 and n-1\n"},
-    {&microbit_sleep_obj, "sleep(n) -- wait for n milliseconds (1 second = 1000)\n"},
-    {&microbit_system_time_obj, "system_time() -- get the number of milliseconds since reset\n"},
-    {&microbit_accelerometer_obj, "A toolbox of code to detect the device's position (orientation)\n"},
-    {&microbit_accelerometer_get_x_obj, "Foo!\n"},
+    {&microbit_module, "A toolbox of code to control the micro:bit hardware.\n"},
+    {&microbit_panic_obj, "panic() -- enter panic mode (requires a restart).\n"},
+    {&microbit_random_obj, "random(n) -- return a random number between 0 and n-1.\n"},
+    {&microbit_sleep_obj, "sleep(n) -- wait for n milliseconds (1 second = 1000).\n"},
+    {&microbit_system_time_obj, "system_time() -- get the number of milliseconds since reset.\n"},
+    {&microbit_accelerometer_obj, "A toolbox of code to detect the device's position (orientation).\n"},
+    {&microbit_accelerometer_get_x_obj, "get_x() -- get the device's X axis reading.\n"},
+    {&microbit_accelerometer_get_y_obj, "get_y() -- get the device's Y axis reading.\n"},
+    {&microbit_accelerometer_get_z_obj, "get_z() -- get the device's Z axis reading.\n"},
+    {&microbit_button_a_obj, "Represents button A. Use its is_pressed() method to discover its status.\n"},
+    {&microbit_button_b_obj, "Represents button B. Use its is_pressed() method to discover its status.\n"},
+    {&microbit_button_is_pressed_obj, "is_pressed() -- True if the button is pressed, else False.\n"},
+    {&microbit_compass_obj, "A toolbox of code to detect the device's heading.\n"},
+    {&microbit_compass_is_calibrated_obj, "is_calibrated() -- True if the compass is adjusted for accuracy, else False.\n"},
+    {&microbit_compass_calibrate_obj, "calibrate() -- adjusts the compass for accuracy. Ensures reliable results.\n"},
+    {&microbit_compass_is_calibrating_obj, "is_calibrating() -- True if the compass is adjusting itself for accuracy.\n"},
+    {&microbit_compass_clear_calibration_obj, "clear_calibration() - re-sets the compass to an un-calibrated state.\n"},
+    {&microbit_compass_get_x_obj, "get_x() -- get the device's X axis reading.\n"},
+    {&microbit_compass_get_y_obj, "get_y() -- get the device's Y axis reading.\n"},
+    {&microbit_compass_get_z_obj, "get_z() -- get the device's Z axis reading.\n"},
+    {&microbit_display_obj, "A toolbox of code to work with the device's 5x5 display.\n"},
 };
 
 STATIC void pyb_help_print_info_about_object(mp_obj_t name_o, mp_obj_t value) {
