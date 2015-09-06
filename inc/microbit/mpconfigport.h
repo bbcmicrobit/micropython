@@ -75,8 +75,10 @@ extern const struct _mp_obj_fun_builtin_t mp_builtin_open_obj;
 
 // extra builtin modules to add to the list of known ones
 extern const struct _mp_obj_module_t microbit_module;
+extern const struct _mp_obj_module_t this_module;
 #define MICROPY_PORT_BUILTIN_MODULES \
     { MP_OBJ_NEW_QSTR(MP_QSTR_microbit), (mp_obj_t)&microbit_module }, \
+    { MP_OBJ_NEW_QSTR(MP_QSTR_this), (mp_obj_t)&this_module }, \
 
 #define MP_STATE_PORT MP_STATE_VM
 
