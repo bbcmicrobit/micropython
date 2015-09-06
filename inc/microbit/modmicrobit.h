@@ -64,6 +64,17 @@ MP_DECLARE_CONST_FUN_OBJ(microbit_sleep_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_random_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_system_time_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_panic_obj);
+MP_DECLARE_CONST_FUN_OBJ(microbit_accelerometer_get_x_obj);
+MP_DECLARE_CONST_FUN_OBJ(microbit_accelerometer_get_y_obj);
+MP_DECLARE_CONST_FUN_OBJ(microbit_accelerometer_get_z_obj);
+MP_DECLARE_CONST_FUN_OBJ(microbit_button_is_pressed_obj);
+MP_DECLARE_CONST_FUN_OBJ(microbit_compass_is_calibrated_obj);
+MP_DECLARE_CONST_FUN_OBJ(microbit_compass_calibrate_obj);
+MP_DECLARE_CONST_FUN_OBJ(microbit_compass_is_calibrating_obj);
+MP_DECLARE_CONST_FUN_OBJ(microbit_compass_clear_calibration_obj);
+MP_DECLARE_CONST_FUN_OBJ(microbit_compass_get_x_obj);
+MP_DECLARE_CONST_FUN_OBJ(microbit_compass_get_y_obj);
+MP_DECLARE_CONST_FUN_OBJ(microbit_compass_get_z_obj);
 
 extern const mp_obj_module_t microbit_module;
 
