@@ -75,6 +75,9 @@ MP_DECLARE_CONST_FUN_OBJ(microbit_compass_clear_calibration_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_compass_get_x_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_compass_get_y_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_compass_get_z_obj);
+MP_DECLARE_CONST_FUN_OBJ(microbit_display_print_obj);
+MP_DECLARE_CONST_FUN_OBJ(microbit_display_scroll_obj);
+MP_DECLARE_CONST_FUN_OBJ(microbit_display_clear_obj);
 
 extern const mp_obj_module_t microbit_module;
 
