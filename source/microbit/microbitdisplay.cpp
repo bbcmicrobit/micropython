@@ -42,7 +42,7 @@ mp_obj_t microbit_image_set_pixel_value(mp_uint_t n_args, const mp_obj_t *args) 
     self->image->setPixelValue(mp_obj_get_int(args[1]), mp_obj_get_int(args[2]), mp_obj_get_int(args[3]));
     return mp_const_none;
 }
-STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_image_set_pixel_value_obj, 4, 4, microbit_image_set_pixel_value);
+MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_image_set_pixel_value_obj, 4, 4, microbit_image_set_pixel_value);
 
 STATIC const mp_map_elem_t microbit_image_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_set_pixel_value), (mp_obj_t)&microbit_image_set_pixel_value_obj },
@@ -50,7 +50,7 @@ STATIC const mp_map_elem_t microbit_image_locals_dict_table[] = {
 
 STATIC MP_DEFINE_CONST_DICT(microbit_image_locals_dict, microbit_image_locals_dict_table);
 
-STATIC const mp_obj_type_t microbit_image_type = {
+const mp_obj_type_t microbit_image_type = {
     { &mp_type_type },
     .name = MP_QSTR_MicroBitImage,
     .print = NULL,
