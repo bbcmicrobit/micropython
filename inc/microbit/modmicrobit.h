@@ -80,6 +80,11 @@ MP_DECLARE_CONST_FUN_OBJ(microbit_display_print_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_display_scroll_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_display_clear_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_image_set_pixel_value_obj);
+MP_DECLARE_CONST_FUN_OBJ(microbit_pin_set_digital_value_obj);
+MP_DECLARE_CONST_FUN_OBJ(microbit_pin_get_digital_value_obj);
+MP_DECLARE_CONST_FUN_OBJ(microbit_pin_set_analog_value_obj);
+MP_DECLARE_CONST_FUN_OBJ(microbit_pin_get_analog_value_obj);
+MP_DECLARE_CONST_FUN_OBJ(microbit_pin_is_touched_obj);
 
 extern const mp_obj_module_t microbit_module;
 
