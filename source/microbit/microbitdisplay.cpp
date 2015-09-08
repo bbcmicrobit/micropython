@@ -42,7 +42,7 @@ mp_obj_t microbit_image_set_pixel_value(mp_uint_t n_args, const mp_obj_t *args) 
     self->image->setPixelValue(mp_obj_get_int(args[1]), mp_obj_get_int(args[2]), mp_obj_get_int(args[3]));
     return mp_const_none;
 }
-STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_image_set_pixel_value_obj, 4, 4, microbit_image_set_pixel_value);
+MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_image_set_pixel_value_obj, 4, 4, microbit_image_set_pixel_value);
 
 STATIC const mp_map_elem_t microbit_image_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_set_pixel_value), (mp_obj_t)&microbit_image_set_pixel_value_obj },
@@ -83,11 +83,12 @@ mp_obj_t microbit_display_print(mp_uint_t n_args, const mp_obj_t *args) {
     if (n_args == 2) {
         self->display->print(mp_obj_get_int(args[1]));
     } else {
-        self->display->print(mp_obj_get_int(args[1]), mp_obj_get_int(args[2]));
+        ManagedString s(mp_obj_str_get_str(args[1]));
+        self->display->print(s, mp_obj_get_int(args[2]));
     }
     return mp_const_none;
 }
-STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_display_print_obj, 2, 3, microbit_display_print);
+MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_display_print_obj, 2, 3, microbit_display_print);
 
 mp_obj_t microbit_display_scroll(mp_uint_t n_args, const mp_obj_t *args) {
     microbit_display_obj_t *self = (microbit_display_obj_t*)args[0];
@@ -99,13 +100,13 @@ mp_obj_t microbit_display_scroll(mp_uint_t n_args, const mp_obj_t *args) {
     }
     return mp_const_none;
 }
-STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_display_scroll_obj, 2, 3, microbit_display_scroll);
+MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_display_scroll_obj, 2, 3, microbit_display_scroll);
 
 mp_obj_t microbit_display_clear(void) {
     uBit.display.clear();
     return mp_const_none;
 }
-STATIC MP_DEFINE_CONST_FUN_OBJ_1(microbit_display_clear_obj, microbit_display_clear);
+MP_DEFINE_CONST_FUN_OBJ_1(microbit_display_clear_obj, microbit_display_clear);
 
 STATIC const mp_map_elem_t microbit_display_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_image), (mp_obj_t)&microbit_image_obj },
