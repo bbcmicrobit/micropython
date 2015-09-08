@@ -101,6 +101,8 @@ STATIC const mp_doc_t help_table_instances[] = {
     {&microbit_display_print_obj, "print(char) -- prints the character char to the display. E.g. print('a').\nprint(s, i) -- prints string s, one character at a time with a delay of i.\n"},
     {&microbit_display_scroll_obj, "scroll(s) -- scrolls the string s from left to right on the display.\nscroll(s, i) -- scrolls string s with delay i between characters.\n"},
     {&microbit_display_clear_obj, "clear() -- clears the display.\n"},
+    {&microbit_image_obj, "A toolbox of code to work with the image shown on the device's 5x5 display.\n"},
+    {&microbit_image_set_pixel_value_obj, "set_pixel_value(x, y, i) -- set the pixel at position x, y to brightness i.\n"},
 };
 
 STATIC void pyb_help_print_info_about_object(mp_obj_t name_o, mp_obj_t value) {

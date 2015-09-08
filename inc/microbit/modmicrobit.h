@@ -59,6 +59,7 @@ extern const struct _microbit_display_obj_t microbit_display_obj;
 extern const struct _microbit_button_obj_t microbit_button_a_obj;
 extern const struct _microbit_button_obj_t microbit_button_b_obj;
 extern const struct _microbit_compass_obj_t microbit_compass_obj;
+extern const struct _microbit_image_obj_t microbit_image_obj;
 
 MP_DECLARE_CONST_FUN_OBJ(microbit_sleep_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_random_obj);
@@ -78,6 +79,7 @@ MP_DECLARE_CONST_FUN_OBJ(microbit_compass_get_z_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_display_print_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_display_scroll_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_display_clear_obj);
+MP_DECLARE_CONST_FUN_OBJ(microbit_image_set_pixel_value_obj);
 
 extern const mp_obj_module_t microbit_module;
 
