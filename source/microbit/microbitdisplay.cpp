@@ -80,11 +80,26 @@ typedef struct _microbit_display_obj_t {
 
 mp_obj_t microbit_display_print(mp_uint_t n_args, const mp_obj_t *args) {
     microbit_display_obj_t *self = (microbit_display_obj_t*)args[0];
-    if (n_args == 2) {
-        self->display->print(mp_obj_get_int(args[1]));
+    mp_uint_t len;
+    const char *str = mp_obj_str_get_data(args[1], &len);
+    if (len == 0) {
+        // no chars, do nothing
+    } else if (len == 1) {
+        // single char
+        char c = str[0];
+        if (n_args == 2) {
+            self->display->print(c);
+        } else {
+            self->display->print(c, mp_obj_get_int(args[2]));
+        }
     } else {
-        ManagedString s(mp_obj_str_get_str(args[1]));
-        self->display->print(s, mp_obj_get_int(args[2]));
+        // a string
+        ManagedString s(str, len);
+        if (n_args == 2) {
+            self->display->print(s);
+        } else {
+            self->display->print(s, mp_obj_get_int(args[2]));
+        }
     }
     return mp_const_none;
 }

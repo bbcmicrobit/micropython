@@ -98,7 +98,7 @@ STATIC const mp_doc_t help_table_instances[] = {
     {&microbit_compass_get_y_obj, "get_y() -- get the device's Y axis reading.\n"},
     {&microbit_compass_get_z_obj, "get_z() -- get the device's Z axis reading.\n"},
     {&microbit_display_obj, "A toolbox of code to work with the device's 5x5 display.\n"},
-    {&microbit_display_print_obj, "print(char) -- print the character char to the display. E.g. print('a').\nprint(s, i) -- print string s, one character at a time with a delay of i.\n"},
+    {&microbit_display_print_obj, "print(s) -- print the string s to the display. E.g. print('bit').\nprint(s, i) -- print string s, one character at a time with a delay of i.\n"},
     {&microbit_display_scroll_obj, "scroll(s) -- scroll the string s from left to right on the display.\nscroll(s, i) -- scroll string s with delay i between characters.\n"},
     {&microbit_display_clear_obj, "clear() -- clear the display.\n"},
     {&microbit_image_obj, "A toolbox of code to work with the image shown on the device's 5x5 display.\n"},
