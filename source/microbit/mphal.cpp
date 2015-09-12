@@ -97,4 +97,9 @@ void mp_hal_stdout_tx_strn_cooked(const char *str, unsigned int len) {
     }
 }
 
+void mp_hal_display_string(const char *str) {
+    ManagedString s(str);
+    uBit.display.scrollAsync(s);
+}
+
 }

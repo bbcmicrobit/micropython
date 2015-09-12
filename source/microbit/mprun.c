@@ -10,6 +10,28 @@
 #include "pyexec.h"
 #include MICROPY_HAL_H
 
+void microbit_display_exception(mp_obj_t exc_in) {
+    mp_uint_t n, *values;
+    mp_obj_exception_get_traceback(exc_in, &n, &values);
+    if (n >= 3) {
+        vstr_t vstr;
+        mp_print_t print;
+        vstr_init_print(&vstr, 50, &print);
+        #if MICROPY_ENABLE_SOURCE_LINE
+        mp_printf(&print, "line %u ", values[1]);
+        #endif
+        if (mp_obj_is_native_exception_instance(exc_in)) {
+            mp_obj_exception_t *exc = exc_in;
+            mp_printf(&print, "%q ", exc->base.type->name);
+            if (exc->args != NULL && exc->args->len != 0) {
+                mp_obj_print_helper(&print, exc->args->items[0], PRINT_STR);
+            }
+        }
+        mp_hal_display_string(vstr_null_terminated_str(&vstr));
+        vstr_clear(&vstr);
+    }
+}
+
 void do_strn(const char *src, size_t len) {
     mp_lexer_t *lex = mp_lexer_new_from_str_len(MP_QSTR___main__, src, len, 0);
     if (lex == NULL) {
@@ -30,6 +52,7 @@ void do_strn(const char *src, size_t len) {
         // uncaught exception
         mp_hal_set_interrupt_char(-1); // disable interrupt
         mp_obj_print_exception(&mp_plat_print, (mp_obj_t)nlr.ret_val);
+        microbit_display_exception(nlr.ret_val);
     }
 }
 

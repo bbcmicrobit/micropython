@@ -43,6 +43,8 @@ void mp_hal_stdout_tx_str(const char *str);
 void mp_hal_stdout_tx_strn(const char *str, unsigned int len);
 void mp_hal_stdout_tx_strn_cooked(const char *str, unsigned int len);
 
+void mp_hal_display_string(const char*);
+
 #ifdef __cplusplus
 }
 #endif
