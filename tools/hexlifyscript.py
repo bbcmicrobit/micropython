@@ -19,6 +19,7 @@ assert len(data) <= 0x2000
 
 # convert to .hex format
 addr = 0x3e000 # magic start address in flash
+print(':020000040003F7') # extended linear address, 0x0003
 for i in range(0, len(data), 16):
     chunk = data[i:min(i + 16, len(data))]
     chunk = struct.pack('>BHB', len(chunk), addr & 0xffff, 0) + chunk

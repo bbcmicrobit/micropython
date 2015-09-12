@@ -36,6 +36,7 @@ function hexlifyScript(script) {
     var addr = 0x3e000; // magic start address in flash
     var chunk = new Uint8Array(5 + 16);
     var output = [];
+    output.push(':020000040003F7') // extended linear address, 0x0003
     for (var i = 0; i < data.length; i += 16, addr += 16) {
         chunk[0] = 16; // length of data section
         chunk[1] = (addr >> 8) & 0xff; // high byte of 16-bit addr
