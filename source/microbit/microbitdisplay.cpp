@@ -76,33 +76,58 @@ mp_obj_t microbit_display_scroll(mp_uint_t n_args, const mp_obj_t *args) {
 }
 MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_display_scroll_obj, 2, 3, microbit_display_scroll);
 
-mp_obj_t microbit_display_animate(mp_uint_t n_args, const mp_obj_t *args) {
-    microbit_display_obj_t *self = (microbit_display_obj_t*)args[0];
-    MicroBitImage img(*microbit_obj_get_image(args[1]));
-    mp_int_t delay = mp_obj_get_int(args[2]);
-    mp_int_t stride = mp_obj_get_int(args[3]);
-    if (n_args == 4) {
-        self->display->animate(img, delay, stride);
-    } else {
-        self->display->animate(img, delay, stride, mp_obj_get_int(args[4]));
-    }
-    return mp_const_none;
-}
-MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_display_animate_obj, 4, 5, microbit_display_animate);
+static int async_delay;
+static int async_stride;
+static int async_start;
 
-mp_obj_t microbit_display_animate_async(mp_uint_t n_args, const mp_obj_t *args) {
-    microbit_display_obj_t *self = (microbit_display_obj_t*)args[0];
-    MicroBitImage img(*microbit_obj_get_image(args[1]));
-    mp_int_t delay = mp_obj_get_int(args[2]);
-    mp_int_t stride = mp_obj_get_int(args[3]);
-    if (n_args == 4) {
-        self->display->animateAsync(img, delay, stride);
-    } else {
-        self->display->animateAsync(img, delay, stride, mp_obj_get_int(args[4]));
+void microbit_display_event(void) {
+    if (MP_STATE_PORT(async_data)[0] != NULL && MP_STATE_PORT(async_data)[1] != NULL) {
+        microbit_display_obj_t *display = (microbit_display_obj_t*)MP_STATE_PORT(async_data)[0];
+        MicroBitImage *image = (MicroBitImage*)MP_STATE_PORT(async_data)[1];
+        MicroBitImage img(*image);
+        display->display->animateAsync(img, async_delay, async_stride, async_start);
     }
+}
+
+STATIC mp_obj_t microbit_display_animate(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
+    static const mp_arg_t allowed_args[] = {
+        { MP_QSTR_image,    MP_ARG_REQUIRED | MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
+        { MP_QSTR_delay,    MP_ARG_REQUIRED | MP_ARG_INT, {.u_int = 0} },
+        { MP_QSTR_stride,   MP_ARG_REQUIRED | MP_ARG_INT, {.u_int = 0} },
+        { MP_QSTR_start,    MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = MICROBIT_DISPLAY_ANIMATE_DEFAULT_POS} },
+        { MP_QSTR_async,    MP_ARG_KW_ONLY | MP_ARG_BOOL, {.u_bool = false} },
+        { MP_QSTR_repeat,   MP_ARG_KW_ONLY | MP_ARG_BOOL, {.u_bool = false} },
+    };
+
+    // parse args
+    microbit_display_obj_t *self = (microbit_display_obj_t*)pos_args[0];
+    mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
+    mp_arg_parse_all(n_args - 1, pos_args + 1, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
+    MicroBitImage *image = microbit_obj_get_image(args[0].u_obj);
+
+    // reset repeat state
+    MP_STATE_PORT(async_data)[0] = NULL;
+    MP_STATE_PORT(async_data)[1] = NULL;
+
+    MicroBitImage img(*image);
+    if (!args[4].u_bool) {
+        self->display->animate(img, args[1].u_int, args[2].u_int, args[3].u_int);
+    } else {
+        self->display->animateAsync(img, args[1].u_int, args[2].u_int, args[3].u_int);
+    }
+
+    if (args[5].u_bool) {
+        // enable repeat
+        MP_STATE_PORT(async_data)[0] = self;
+        MP_STATE_PORT(async_data)[1] = image;
+        async_delay = args[1].u_int;
+        async_stride = args[2].u_int;
+        async_start = args[3].u_int;
+    }
+
     return mp_const_none;
 }
-MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_display_animate_async_obj, 4, 5, microbit_display_animate_async);
+MP_DEFINE_CONST_FUN_OBJ_KW(microbit_display_animate_obj, 1, microbit_display_animate);
 
 mp_obj_t microbit_display_clear(void) {
     uBit.display.clear();
@@ -132,7 +157,6 @@ STATIC const mp_map_elem_t microbit_display_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_print), (mp_obj_t)&microbit_display_print_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_scroll), (mp_obj_t)&microbit_display_scroll_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_animate), (mp_obj_t)&microbit_display_animate_obj },
-    { MP_OBJ_NEW_QSTR(MP_QSTR_animate_async), (mp_obj_t)&microbit_display_animate_async_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_clear), (mp_obj_t)&microbit_display_clear_obj },
 };
 
