@@ -1,6 +1,8 @@
 // qstrs specific to this port
 
 Q(help)
+Q(collections)
+Q(struct)
 
 Q(microbit)
 Q(sleep)

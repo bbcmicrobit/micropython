@@ -36,11 +36,12 @@
 #define MICROPY_PY_GC               (1)
 #define MICROPY_PY_ARRAY            (1)
 #define MICROPY_PY_ATTRTUPLE        (0)
-#define MICROPY_PY_COLLECTIONS      (0)
+#define MICROPY_PY_COLLECTIONS      (1)
+#define MICROPY_PY_COLLECTIONS_ORDEREDDICT (1)
 #define MICROPY_PY_MATH             (0)
 #define MICROPY_PY_CMATH            (0)
 #define MICROPY_PY_IO               (0)
-#define MICROPY_PY_STRUCT           (0)
+#define MICROPY_PY_STRUCT           (1)
 #define MICROPY_PY_SYS              (1)
 #define MICROPY_MODULE_FROZEN       (0)
 #define MICROPY_CPYTHON_COMPAT      (0)
@@ -80,6 +81,10 @@ extern const struct _mp_obj_module_t this_module;
 #define MICROPY_PORT_BUILTIN_MODULES \
     { MP_OBJ_NEW_QSTR(MP_QSTR_microbit), (mp_obj_t)&microbit_module }, \
     { MP_OBJ_NEW_QSTR(MP_QSTR_this), (mp_obj_t)&this_module }, \
+    \
+    /* the following provide aliases for existing modules */ \
+    { MP_OBJ_NEW_QSTR(MP_QSTR_collections), (mp_obj_t)&mp_module_collections }, \
+    { MP_OBJ_NEW_QSTR(MP_QSTR_struct), (mp_obj_t)&mp_module_ustruct }, \
 
 #define MP_STATE_PORT MP_STATE_VM
 
