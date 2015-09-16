@@ -2,7 +2,6 @@
 
 // options to control how Micro Python is built
 
-#define MICROPY_NLR_SETJMP          (1)
 #define MICROPY_ALLOC_GC_STACK_SIZE (32)
 #define MICROPY_ALLOC_PATH_MAX      (64)
 #define MICROPY_QSTR_BYTES_IN_HASH  (1)
