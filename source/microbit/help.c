@@ -63,6 +63,9 @@ STATIC const char *help_text =
 "  CTRL-C        -- stop a running program\n"
 "  CTRL-D        -- on a blank line, do a soft reset of the micro:bit\n"
 "\n"
+"Available modules: array, collections, microbit, micropython, gc, struct, sys,\n"
+"this\n"
+"\n"
 "For more information about Python, visit: http://python.org/\n"
 "To find out about MicroPython, visit: http://micropython.org/\n"
 ;
