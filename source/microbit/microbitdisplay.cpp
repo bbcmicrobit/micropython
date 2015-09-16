@@ -25,53 +25,12 @@
  */
 
 #include "MicroBit.h"
+#include "microbitobj.h"
 
 extern "C" {
 
 #include "py/runtime.h"
 #include "modmicrobit.h"
-
-typedef struct _microbit_image_obj_t {
-    mp_obj_base_t base;
-    MicroBitImage *image;
-} microbit_image_obj_t;
-
-mp_obj_t microbit_image_set_pixel_value(mp_uint_t n_args, const mp_obj_t *args) {
-    (void)n_args;
-    microbit_image_obj_t *self = (microbit_image_obj_t*)args[0];
-    self->image->setPixelValue(mp_obj_get_int(args[1]), mp_obj_get_int(args[2]), mp_obj_get_int(args[3]));
-    return mp_const_none;
-}
-MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_image_set_pixel_value_obj, 4, 4, microbit_image_set_pixel_value);
-
-STATIC const mp_map_elem_t microbit_image_locals_dict_table[] = {
-    { MP_OBJ_NEW_QSTR(MP_QSTR_set_pixel_value), (mp_obj_t)&microbit_image_set_pixel_value_obj },
-};
-
-STATIC MP_DEFINE_CONST_DICT(microbit_image_locals_dict, microbit_image_locals_dict_table);
-
-STATIC const mp_obj_type_t microbit_image_type = {
-    { &mp_type_type },
-    .name = MP_QSTR_MicroBitImage,
-    .print = NULL,
-    .make_new = NULL,
-    .call = NULL,
-    .unary_op = NULL,
-    .binary_op = NULL,
-    .attr = NULL,
-    .subscr = NULL,
-    .getiter = NULL,
-    .iternext = NULL,
-    .buffer_p = {NULL},
-    .stream_p = NULL,
-    .bases_tuple = MP_OBJ_NULL,
-    /* .locals_dict = */ (mp_obj_t)&microbit_image_locals_dict,
-};
-
-const microbit_image_obj_t microbit_image_obj = {
-    {&microbit_image_type},
-    .image = &uBit.display.image,
-};
 
 typedef struct _microbit_display_obj_t {
     mp_obj_base_t base;
@@ -117,6 +76,34 @@ mp_obj_t microbit_display_scroll(mp_uint_t n_args, const mp_obj_t *args) {
 }
 MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_display_scroll_obj, 2, 3, microbit_display_scroll);
 
+mp_obj_t microbit_display_animate(mp_uint_t n_args, const mp_obj_t *args) {
+    microbit_display_obj_t *self = (microbit_display_obj_t*)args[0];
+    MicroBitImage img(*microbit_obj_get_image(args[1]));
+    mp_int_t delay = mp_obj_get_int(args[2]);
+    mp_int_t stride = mp_obj_get_int(args[3]);
+    if (n_args == 4) {
+        self->display->animate(img, delay, stride);
+    } else {
+        self->display->animate(img, delay, stride, mp_obj_get_int(args[4]));
+    }
+    return mp_const_none;
+}
+MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_display_animate_obj, 4, 5, microbit_display_animate);
+
+mp_obj_t microbit_display_animate_async(mp_uint_t n_args, const mp_obj_t *args) {
+    microbit_display_obj_t *self = (microbit_display_obj_t*)args[0];
+    MicroBitImage img(*microbit_obj_get_image(args[1]));
+    mp_int_t delay = mp_obj_get_int(args[2]);
+    mp_int_t stride = mp_obj_get_int(args[3]);
+    if (n_args == 4) {
+        self->display->animateAsync(img, delay, stride);
+    } else {
+        self->display->animateAsync(img, delay, stride, mp_obj_get_int(args[4]));
+    }
+    return mp_const_none;
+}
+MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_display_animate_async_obj, 4, 5, microbit_display_animate_async);
+
 mp_obj_t microbit_display_clear(void) {
     uBit.display.clear();
     return mp_const_none;
@@ -144,6 +131,8 @@ STATIC const mp_map_elem_t microbit_display_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_set_display_mode), (mp_obj_t)&microbit_display_set_display_mode_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_print), (mp_obj_t)&microbit_display_print_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_scroll), (mp_obj_t)&microbit_display_scroll_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_animate), (mp_obj_t)&microbit_display_animate_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_animate_async), (mp_obj_t)&microbit_display_animate_async_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_clear), (mp_obj_t)&microbit_display_clear_obj },
 };
 
