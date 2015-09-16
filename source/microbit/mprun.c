@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "py/nlr.h"
+#include "py/stackctrl.h"
 #include "py/compile.h"
 #include "py/runtime.h"
 #include "py/repl.h"
@@ -69,10 +70,11 @@ typedef struct _appended_script_t {
 void mp_run(void) {
     int stack_dummy;
     stack_top = (char*)&stack_dummy;
+    mp_stack_set_limit(1800); // stack is 2k
 
     // allocate the heap statically in the bss
-    static char heap[9728];
-    gc_init(heap, heap + sizeof(heap));
+    static uint32_t heap[9728 / 4];
+    gc_init(heap, (uint8_t*)heap + sizeof(heap));
 
     /*
     // allocate the heap using system malloc
@@ -108,8 +110,7 @@ void mp_run(void) {
 
     mp_hal_stdout_tx_str("soft reboot\r\n");
 
-    memset(&MP_STATE_PORT(async_data)[0], 0,
-        MP_ARRAY_SIZE(MP_STATE_PORT(async_data)) * sizeof(void*));
+    memset(&MP_STATE_PORT(async_data)[0], 0, sizeof(MP_STATE_PORT(async_data)));
 
     mp_deinit();
 }
