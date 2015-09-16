@@ -145,8 +145,6 @@ MP_DEFINE_CONST_FUN_OBJ_0(mp_sys_exc_info_obj, mp_sys_exc_info);
 STATIC const mp_map_elem_t mp_module_sys_globals_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR___name__), MP_OBJ_NEW_QSTR(MP_QSTR_sys) },
 
-    { MP_OBJ_NEW_QSTR(MP_QSTR_path), (mp_obj_t)&MP_STATE_VM(mp_sys_path_obj) },
-    { MP_OBJ_NEW_QSTR(MP_QSTR_argv), (mp_obj_t)&MP_STATE_VM(mp_sys_argv_obj) },
     { MP_OBJ_NEW_QSTR(MP_QSTR_version), (mp_obj_t)&version_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_version_info), (mp_obj_t)&mp_sys_version_info_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_implementation), (mp_obj_t)&mp_sys_implementation_obj },

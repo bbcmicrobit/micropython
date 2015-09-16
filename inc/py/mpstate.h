@@ -115,10 +115,6 @@ typedef struct _mp_state_vm_t {
     // dictionary for the __main__ module
     mp_obj_dict_t dict_main;
 
-    // these two lists must be initialised per port, after the call to mp_init
-    mp_obj_list_t mp_sys_path_obj;
-    mp_obj_list_t mp_sys_argv_obj;
-
     // dictionary for overridden builtins
     #if MICROPY_CAN_OVERRIDE_BUILTINS
     mp_obj_dict_t *mp_module_builtins_override_dict;
