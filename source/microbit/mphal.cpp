@@ -97,6 +97,26 @@ void mp_hal_stdout_tx_strn_cooked(const char *str, unsigned int len) {
     }
 }
 
+STATIC void mp_hal_print_many(const char chrs[8], uint total) {
+    while (total > 0) {
+        uint n = total;
+        if (n > 8) {
+            n = 8;
+        }
+        total -= n;
+        mp_hal_stdout_tx_strn(chrs, n);
+    }
+}
+
+void mp_hal_move_cursor_back(uint pos) {
+    mp_hal_print_many("\b\b\b\b\b\b\b\b", pos);
+}
+
+void mp_hal_erase_line_from_cursor(uint n_chars) {
+    mp_hal_print_many("        ", n_chars);
+    mp_hal_move_cursor_back(n_chars);
+}
+
 void mp_hal_display_string(const char *str) {
     ManagedString s(str);
     uBit.display.scrollAsync(s);

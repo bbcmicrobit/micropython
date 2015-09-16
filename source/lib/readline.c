@@ -82,7 +82,7 @@ STATIC void mp_hal_move_cursor_back(uint pos) {
     }
 }
 
-STATIC void mp_hal_erase_line_from_cursor(void) {
+STATIC void mp_hal_erase_line_from_cursor(uint n_chars) {
     mp_hal_stdout_tx_strn("\x1b[K", 3);
 }
 #endif
@@ -336,7 +336,7 @@ delete_key:
         if (rl.line->len < last_line_len) {
             // erase old chars
             // (number of chars to erase: last_line_len - rl.cursor_pos)
-            mp_hal_erase_line_from_cursor();
+            mp_hal_erase_line_from_cursor(last_line_len - rl.cursor_pos);
         }
         // draw new chars
         mp_hal_stdout_tx_strn(rl.line->buf + rl.cursor_pos, rl.line->len - rl.cursor_pos);

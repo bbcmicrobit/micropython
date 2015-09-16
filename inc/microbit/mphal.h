@@ -43,6 +43,10 @@ void mp_hal_stdout_tx_str(const char *str);
 void mp_hal_stdout_tx_strn(const char *str, unsigned int len);
 void mp_hal_stdout_tx_strn_cooked(const char *str, unsigned int len);
 
+// provide these since we don't assume VT100 support
+void mp_hal_move_cursor_back(uint pos);
+void mp_hal_erase_line_from_cursor(uint n_chars);
+
 void mp_hal_display_string(const char*);
 
 #ifdef __cplusplus
