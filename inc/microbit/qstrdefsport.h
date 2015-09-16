@@ -46,6 +46,8 @@ Q(image)
 Q(set_pixel_value)
 
 Q(MicroBitDisplay)
+Q(set_brightness)
+Q(set_display_mode)
 Q(display)
 Q(print)
 Q(scroll)

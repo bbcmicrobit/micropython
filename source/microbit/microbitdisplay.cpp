@@ -123,9 +123,25 @@ mp_obj_t microbit_display_clear(void) {
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_display_clear_obj, microbit_display_clear);
 
+mp_obj_t microbit_display_set_brightness(mp_obj_t self_in, mp_obj_t br_in) {
+    microbit_display_obj_t *self = (microbit_display_obj_t*)self_in;
+    self->display->setBrightness(mp_obj_get_int(br_in));
+    return mp_const_none;
+}
+MP_DEFINE_CONST_FUN_OBJ_2(microbit_display_set_brightness_obj, microbit_display_set_brightness);
+
+mp_obj_t microbit_display_set_display_mode(mp_obj_t self_in, mp_obj_t mode_in) {
+    microbit_display_obj_t *self = (microbit_display_obj_t*)self_in;
+    self->display->setDisplayMode((DisplayMode)mp_obj_get_int(mode_in));
+    return mp_const_none;
+}
+MP_DEFINE_CONST_FUN_OBJ_2(microbit_display_set_display_mode_obj, microbit_display_set_display_mode);
+
 STATIC const mp_map_elem_t microbit_display_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_image), (mp_obj_t)&microbit_image_obj },
 
+    { MP_OBJ_NEW_QSTR(MP_QSTR_set_brightness), (mp_obj_t)&microbit_display_set_brightness_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_set_display_mode), (mp_obj_t)&microbit_display_set_display_mode_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_print), (mp_obj_t)&microbit_display_print_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_scroll), (mp_obj_t)&microbit_display_scroll_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_clear), (mp_obj_t)&microbit_display_clear_obj },
