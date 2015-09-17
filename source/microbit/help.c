@@ -53,6 +53,7 @@ STATIC const char *help_text =
 "  microbit.button_b.is_pressed() -- is button B pressed? (True or False)\n"
 "  microbit.compass               -- detect the device's heading\n"
 "  microbit.display               -- display things (pixels, characters, words)\n"
+"  microbit.Image                 -- make pictures for the display\n"
 "  microbit.io                    -- control the gold input/output (IO) pins\n"
 "  microbit.panic()               -- enter panic mode (requires a restart)\n"
 "  microbit.random(n)             -- get a random number between 0 and n-1\n"
@@ -82,8 +83,8 @@ STATIC const mp_doc_t help_table_types[] = {
 STATIC const mp_doc_t help_table_instances[] = {
     {&microbit_module, "A toolbox of code to control the micro:bit hardware.\n"},
     {&microbit_panic_obj, "panic() -- enter panic mode (requires a restart).\n"},
-    {&microbit_random_obj, "random(n) -- return a random number between 0 and n-1.\n"},
-    {&microbit_sleep_obj, "sleep(n) -- wait for n milliseconds (1 second = 1000).\n"},
+    {&microbit_random_obj, "random(n) -- return a random number between 0 and 'n'-1.\n"},
+    {&microbit_sleep_obj, "sleep(n) -- wait for 'n' milliseconds (1 second = 1000).\n"},
     {&microbit_system_time_obj, "system_time() -- get the number of milliseconds since reset.\n"},
     {&microbit_accelerometer_obj, "A toolbox of code to detect the device's position (orientation).\n"},
     {&microbit_accelerometer_get_x_obj, "get_x() -- get the device's X axis reading.\n"},
@@ -101,9 +102,12 @@ STATIC const mp_doc_t help_table_instances[] = {
     {&microbit_compass_get_y_obj, "get_y() -- get the device's Y axis reading.\n"},
     {&microbit_compass_get_z_obj, "get_z() -- get the device's Z axis reading.\n"},
     {&microbit_display_obj, "A toolbox of code to work with the device's 5x5 display.\n"},
-    {&microbit_display_print_obj, "print(s) -- print the string s to the display. E.g. print('bit').\nprint(s, i) -- print string s, one character at a time with a delay of i.\n"},
-    {&microbit_display_scroll_obj, "scroll(s) -- scroll the string s from left to right on the display.\nscroll(s, i) -- scroll string s with delay i between characters.\n"},
+    {&microbit_display_print_obj, "print(s) -- print the string 's' to the display. E.g. print('bit').\nprint(s, i) -- print string 's', one character at a time with a delay of i.\n"},
+    {&microbit_display_scroll_obj, "scroll(s) -- scroll the string 's' from left to right on the display.\nscroll(s, i) -- scroll string 's' with delay i between characters.\n"},
     {&microbit_display_clear_obj, "clear() -- clear the display.\n"},
+    {&microbit_display_animate_obj, "animate(img, delay, stride, start=0, async=False, repeat=False) -- animate\n    image 'img' with 'delay' milliseconds and 'stride' pixels offset between\n    frames. Optional: 'start' offset from left hand side, 'async' to run in the\n    background, 'repeat' to loop the animation.\n"},
+    {&microbit_display_set_brightness_obj, "set_brightness(b) -- set the brightness 'b' of the display between 0..255.\n    See also set_display_mode(n).\n"},
+    {&microbit_display_set_display_mode_obj, "set_display_mode(i) -- set pixel display mode to: 0 (on/off) or 1 (levels of\n    brightness between 0..255). See also set_brightness(b) and\n    set_pixel_value(x, y, i).\n"},
     {&microbit_image_obj, "A toolbox of code to work with the image shown on the device's 5x5 display.\n"},
     {&microbit_image_set_pixel_value_obj, "set_pixel_value(x, y, i) -- set the pixel at position x, y to brightness i.\n"},
     {&microbit_io_obj, "A toolbox of code to work with the Input/Output (IO) gold pin edge connectors.\n"},
