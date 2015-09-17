@@ -138,6 +138,230 @@ STATIC const MP_DEFINE_STR_OBJ(microbit_image_heart_obj,
     "0,0,1,0,0, 0,0,0,0,0\n"
 );
 
+STATIC const MP_DEFINE_STR_OBJ(microbit_image_happy_obj,
+    "0,0,0,0,0\n"
+    "0,1,0,1,0\n"
+    "0,0,0,0,0\n"
+    "1,0,0,0,1\n"
+    "0,1,1,1,0\n"
+);
+
+STATIC const MP_DEFINE_STR_OBJ(microbit_image_sad_obj,
+    "0,0,0,0,0\n"
+    "0,1,0,1,0\n"
+    "0,0,0,0,0\n"
+    "0,1,1,1,0\n"
+    "1,0,0,0,1\n"
+);
+
+STATIC const MP_DEFINE_STR_OBJ(microbit_image_confused_obj,
+    "0,0,0,0,0\n"
+    "0,1,0,1,0\n"
+    "0,0,0,0,0\n"
+    "0,1,0,1,0\n"
+    "1,0,1,0,1\n"
+);
+
+STATIC const MP_DEFINE_STR_OBJ(microbit_image_angry_obj,
+    "1,0,0,0,1\n"
+    "0,1,0,1,0\n"
+    "0,0,0,0,0\n"
+    "1,1,1,1,1\n"
+    "1,0,1,0,1\n"
+);
+
+STATIC const MP_DEFINE_STR_OBJ(microbit_image_asleep_obj,
+    "0,0,0,0,0\n"
+    "1,1,0,1,1\n"
+    "0,0,0,0,0\n"
+    "0,1,1,1,0\n"
+    "0,0,0,0,0\n"
+);
+
+STATIC const MP_DEFINE_STR_OBJ(microbit_image_surprised_obj,
+    "0,0,0,0,0\n"
+    "0,1,0,1,0\n"
+    "0,0,0,0,0\n"
+    "0,0,1,0,0\n"
+    "0,0,0,0,0\n"
+);
+
+STATIC const MP_DEFINE_STR_OBJ(microbit_image_yes_obj,
+    "0,0,0,0,0\n"
+    "0,0,0,0,1\n"
+    "0,0,0,1,0\n"
+    "1,0,1,0,0\n"
+    "0,1,0,0,0\n"
+);
+
+STATIC const MP_DEFINE_STR_OBJ(microbit_image_no_obj,
+    "1,0,0,0,1\n"
+    "0,1,0,1,0\n"
+    "0,0,1,0,0\n"
+    "0,1,0,1,0\n"
+    "1,0,0,0,1\n"
+);
+
+STATIC const MP_DEFINE_STR_OBJ(microbit_image_clock12_obj,
+    "0,0,1,0,0\n"
+    "0,0,1,0,0\n"
+    "0,0,1,0,0\n"
+    "0,0,0,0,0\n"
+    "0,0,0,0,0\n"
+);
+
+STATIC const MP_DEFINE_STR_OBJ(microbit_image_clock1_obj,
+    "0,0,0,1,0\n"
+    "0,0,0,1,0\n"
+    "0,0,1,0,0\n"
+    "0,0,0,0,0\n"
+    "0,0,0,0,0\n"
+);
+
+STATIC const MP_DEFINE_STR_OBJ(microbit_image_clock2_obj,
+    "0,0,0,0,0\n"
+    "0,0,0,1,1\n"
+    "0,0,1,0,0\n"
+    "0,0,0,0,0\n"
+    "0,0,0,0,0\n"
+);
+
+STATIC const MP_DEFINE_STR_OBJ(microbit_image_clock3_obj,
+    "0,0,0,0,0\n"
+    "0,0,0,0,0\n"
+    "0,0,1,1,1\n"
+    "0,0,0,0,0\n"
+    "0,0,0,0,0\n"
+);
+
+STATIC const MP_DEFINE_STR_OBJ(microbit_image_clock4_obj,
+    "0,0,0,0,0\n"
+    "0,0,0,0,0\n"
+    "0,0,1,0,0\n"
+    "0,0,0,1,1\n"
+    "0,0,0,0,0\n"
+);
+
+STATIC const MP_DEFINE_STR_OBJ(microbit_image_clock5_obj,
+    "0,0,0,0,0\n"
+    "0,0,0,0,0\n"
+    "0,0,1,0,0\n"
+    "0,0,0,1,0\n"
+    "0,0,0,1,0\n"
+);
+
+STATIC const MP_DEFINE_STR_OBJ(microbit_image_clock6_obj,
+    "0,0,0,0,0\n"
+    "0,0,0,0,0\n"
+    "0,0,1,0,0\n"
+    "0,0,1,0,0\n"
+    "0,0,1,0,0\n"
+);
+
+STATIC const MP_DEFINE_STR_OBJ(microbit_image_clock7_obj,
+    "0,0,0,0,0\n"
+    "0,0,0,0,0\n"
+    "0,0,1,0,0\n"
+    "0,1,0,0,0\n"
+    "0,1,0,0,0\n"
+);
+
+STATIC const MP_DEFINE_STR_OBJ(microbit_image_clock8_obj,
+    "0,0,0,0,0\n"
+    "0,0,0,0,0\n"
+    "0,0,1,0,0\n"
+    "1,1,0,0,0\n"
+    "0,0,0,0,0\n"
+);
+
+STATIC const MP_DEFINE_STR_OBJ(microbit_image_clock9_obj,
+    "0,0,0,0,0\n"
+    "0,0,0,0,0\n"
+    "1,1,1,0,0\n"
+    "0,0,0,0,0\n"
+    "0,0,0,0,0\n"
+);
+
+STATIC const MP_DEFINE_STR_OBJ(microbit_image_clock10_obj,
+    "0,0,0,0,0\n"
+    "1,1,0,0,0\n"
+    "0,0,1,0,0\n"
+    "0,0,0,0,0\n"
+    "0,0,0,0,0\n"
+);
+
+STATIC const MP_DEFINE_STR_OBJ(microbit_image_clock11_obj,
+    "0,1,0,0,0\n"
+    "0,1,0,0,0\n"
+    "0,0,1,0,0\n"
+    "0,0,0,0,0\n"
+    "0,0,0,0,0\n"
+);
+
+STATIC const MP_DEFINE_STR_OBJ(microbit_image_arrow_n_obj,
+    "0,0,1,0,0\n"
+    "0,1,1,1,0\n"
+    "1,0,1,0,1\n"
+    "0,0,1,0,0\n"
+    "0,0,1,0,0\n"
+);
+
+STATIC const MP_DEFINE_STR_OBJ(microbit_image_arrow_ne_obj,
+    "0,0,1,1,1\n"
+    "0,0,0,1,1\n"
+    "0,0,1,0,1\n"
+    "0,1,0,0,0\n"
+    "1,0,0,0,0\n"
+);
+
+STATIC const MP_DEFINE_STR_OBJ(microbit_image_arrow_e_obj,
+    "0,0,1,0,0\n"
+    "0,0,0,1,0\n"
+    "1,1,1,1,1\n"
+    "0,0,0,1,0\n"
+    "0,0,1,0,0\n"
+);
+
+STATIC const MP_DEFINE_STR_OBJ(microbit_image_arrow_se_obj,
+    "1,0,0,0,0\n"
+    "0,1,0,0,0\n"
+    "0,0,1,0,1\n"
+    "0,0,0,1,1\n"
+    "0,0,1,1,1\n"
+);
+
+STATIC const MP_DEFINE_STR_OBJ(microbit_image_arrow_s_obj,
+    "0,0,1,0,0\n"
+    "0,0,1,0,0\n"
+    "1,0,1,0,1\n"
+    "0,1,1,1,0\n"
+    "0,0,1,0,0\n"
+);
+
+STATIC const MP_DEFINE_STR_OBJ(microbit_image_arrow_sw_obj,
+    "0,0,0,0,1\n"
+    "0,0,0,1,0\n"
+    "1,0,1,0,0\n"
+    "1,1,0,0,0\n"
+    "1,1,1,0,0\n"
+);
+
+STATIC const MP_DEFINE_STR_OBJ(microbit_image_arrow_w_obj,
+    "0,0,1,0,0\n"
+    "0,1,0,0,0\n"
+    "1,1,1,1,1\n"
+    "0,1,0,0,0\n"
+    "0,0,1,0,0\n"
+);
+
+STATIC const MP_DEFINE_STR_OBJ(microbit_image_arrow_nw_obj,
+    "1,1,1,0,0\n"
+    "1,1,0,0,0\n"
+    "1,0,1,0,0\n"
+    "0,0,0,1,0\n"
+    "0,0,0,0,1\n"
+);
+
 STATIC const mp_map_elem_t microbit_image_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_set_pixel_value), (mp_obj_t)&microbit_image_set_pixel_value_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_get_pixel_value), (mp_obj_t)&microbit_image_get_pixel_value_obj },
@@ -147,6 +371,34 @@ STATIC const mp_map_elem_t microbit_image_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_shift_down), (mp_obj_t)&microbit_image_shift_down_obj },
 
     { MP_OBJ_NEW_QSTR(MP_QSTR_HEART), (mp_obj_t)&microbit_image_heart_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_HAPPY), (mp_obj_t)&microbit_image_happy_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_SAD), (mp_obj_t)&microbit_image_sad_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_CONFUSED), (mp_obj_t)&microbit_image_confused_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_ANGRY), (mp_obj_t)&microbit_image_angry_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_ASLEEP), (mp_obj_t)&microbit_image_asleep_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_SURPRISED), (mp_obj_t)&microbit_image_surprised_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_YES), (mp_obj_t)&microbit_image_yes_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_NO), (mp_obj_t)&microbit_image_no_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_CLOCK12), (mp_obj_t)&microbit_image_clock12_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_CLOCK1), (mp_obj_t)&microbit_image_clock1_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_CLOCK2), (mp_obj_t)&microbit_image_clock2_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_CLOCK3), (mp_obj_t)&microbit_image_clock3_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_CLOCK4), (mp_obj_t)&microbit_image_clock4_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_CLOCK5), (mp_obj_t)&microbit_image_clock5_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_CLOCK6), (mp_obj_t)&microbit_image_clock6_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_CLOCK7), (mp_obj_t)&microbit_image_clock7_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_CLOCK8), (mp_obj_t)&microbit_image_clock8_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_CLOCK9), (mp_obj_t)&microbit_image_clock9_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_CLOCK10), (mp_obj_t)&microbit_image_clock10_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_CLOCK11), (mp_obj_t)&microbit_image_clock11_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_ARROW_N), (mp_obj_t)&microbit_image_arrow_n_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_ARROW_NE), (mp_obj_t)&microbit_image_arrow_ne_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_ARROW_E), (mp_obj_t)&microbit_image_arrow_e_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_ARROW_SE), (mp_obj_t)&microbit_image_arrow_se_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_ARROW_S), (mp_obj_t)&microbit_image_arrow_s_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_ARROW_SW), (mp_obj_t)&microbit_image_arrow_sw_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_ARROW_W), (mp_obj_t)&microbit_image_arrow_w_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_ARROW_NW), (mp_obj_t)&microbit_image_arrow_nw_obj },
 };
 
 STATIC MP_DEFINE_CONST_DICT(microbit_image_locals_dict, microbit_image_locals_dict_table);
