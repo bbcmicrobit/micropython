@@ -13,6 +13,20 @@ static void event_listener(MicroBitEvent evt) {
 }
 
 void app_main() {
+    /*
+    // debugging: print memory layout
+    extern uint32_t __data_start__, __data_end__;
+    extern uint32_t __bss_start__, __bss_end__;
+    extern uint32_t __HeapLimit, __StackLimit, __StackTop;
+    printf("__data_start__ = %p\r\n", &__data_start__);
+    printf("__data_end__   = %p\r\n", &__data_end__);
+    printf("__bss_start_ _ = %p\r\n", &__bss_start__);
+    printf("__bss_end__    = %p\r\n", &__bss_end__);
+    printf("__HeapLimit    = %p\r\n", &__HeapLimit);
+    printf("__StackLimit   = %p\r\n", &__StackLimit);
+    printf("__StackTop     = %p\r\n", &__StackTop);
+    */
+
     uBit.MessageBus.listen(MICROBIT_ID_DISPLAY,
         MICROBIT_DISPLAY_EVT_ANIMATION_COMPLETE, event_listener);
     while (1) {
