@@ -38,34 +38,57 @@ typedef struct _microbit_display_obj_t {
 } microbit_display_obj_t;
 
 mp_obj_t microbit_display_print(mp_uint_t n_args, const mp_obj_t *args) {
+    // TODO support async mode
+
     microbit_display_obj_t *self = (microbit_display_obj_t*)args[0];
-    mp_uint_t len;
-    const char *str = mp_obj_str_get_data(args[1], &len);
-    if (len == 0) {
-        // no chars, do nothing
-    } else if (len == 1) {
-        // single char
-        char c = str[0];
-        if (n_args == 2) {
-            self->display->print(c);
+
+    // cancel any animations
+    MP_STATE_PORT(async_data)[0] = NULL;
+    MP_STATE_PORT(async_data)[1] = NULL;
+
+    if (MP_OBJ_IS_STR(args[1])) {
+        // arg is a string object
+        mp_uint_t len;
+        const char *str = mp_obj_str_get_data(args[1], &len);
+        if (len == 0) {
+            // no chars, do nothing
+        } else if (len == 1) {
+            // single char
+            char c = str[0];
+            if (n_args == 2) {
+                self->display->print(c);
+            } else {
+                self->display->print(c, mp_obj_get_int(args[2]));
+            }
         } else {
-            self->display->print(c, mp_obj_get_int(args[2]));
+            // a long string
+            ManagedString s(str, len);
+            if (n_args == 2) {
+                self->display->print(s);
+            } else {
+                self->display->print(s, mp_obj_get_int(args[2]));
+            }
         }
     } else {
-        // a string
-        ManagedString s(str, len);
-        if (n_args == 2) {
-            self->display->print(s);
-        } else {
-            self->display->print(s, mp_obj_get_int(args[2]));
-        }
+        // arg should be an image
+        MicroBitImage *image = microbit_obj_get_image(args[1]);
+        MicroBitImage img(*image);
+        self->display->print(img, 0, 0, 0, 0);
     }
     return mp_const_none;
 }
 MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_display_print_obj, 2, 3, microbit_display_print);
 
 mp_obj_t microbit_display_scroll(mp_uint_t n_args, const mp_obj_t *args) {
+    // TODO support async mode
+    // TODO support images
+
     microbit_display_obj_t *self = (microbit_display_obj_t*)args[0];
+
+    // cancel any animations
+    MP_STATE_PORT(async_data)[0] = NULL;
+    MP_STATE_PORT(async_data)[1] = NULL;
+
     ManagedString s(mp_obj_str_get_str(args[1]));
     if (n_args == 2) {
         self->display->scroll(s);
