@@ -63,6 +63,7 @@ extern const struct _microbit_button_obj_t microbit_button_a_obj;
 extern const struct _microbit_button_obj_t microbit_button_b_obj;
 extern const struct _microbit_compass_obj_t microbit_compass_obj;
 
+MP_DECLARE_CONST_FUN_OBJ(microbit_reset_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_sleep_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_random_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_system_time_obj);

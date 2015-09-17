@@ -31,6 +31,12 @@ extern "C" {
 #include "py/obj.h"
 #include "modmicrobit.h"
 
+STATIC mp_obj_t microbit_reset(void) {
+    uBit.reset();
+    return mp_const_none;
+}
+MP_DEFINE_CONST_FUN_OBJ_0(microbit_reset_obj, microbit_reset);
+
 STATIC mp_obj_t microbit_sleep(mp_obj_t ms_in) {
     uBit.sleep(mp_obj_get_int(ms_in));
     return mp_const_none;
@@ -69,6 +75,7 @@ STATIC const mp_map_elem_t microbit_module_globals_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_accelerometer), (mp_obj_t)&microbit_accelerometer_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_compass), (mp_obj_t)&microbit_compass_obj },
 
+    { MP_OBJ_NEW_QSTR(MP_QSTR_reset), (mp_obj_t)&microbit_reset_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_sleep), (mp_obj_t)&microbit_sleep_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_random), (mp_obj_t)&microbit_random_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_system_time), (mp_obj_t)&microbit_system_time_obj },

@@ -57,6 +57,7 @@ STATIC const char *help_text =
 "  microbit.io                    -- control the gold input/output (IO) pins\n"
 "  microbit.panic()               -- enter panic mode (requires a restart)\n"
 "  microbit.random(n)             -- get a random number between 0 and n-1\n"
+"  microbit.reset()               -- reset the device\n"
 "  microbit.sleep(n)              -- wait for n milliseconds (1 second = 1000)\n"
 "  microbit.system_time()         -- get the number of milliseconds since reset\n"
 "\n"

@@ -5,6 +5,7 @@ Q(collections)
 Q(struct)
 
 Q(microbit)
+Q(reset)
 Q(sleep)
 Q(random)
 Q(system_time)
