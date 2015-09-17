@@ -159,7 +159,7 @@ STATIC const MP_DEFINE_STR_OBJ(microbit_image_confused_obj,
     "0,1,0,1,0\n"
     "0,0,0,0,0\n"
     "0,1,0,1,0\n"
-    "1,0,1,0,0\n"
+    "1,0,1,0,1\n"
 );
 
 STATIC const MP_DEFINE_STR_OBJ(microbit_image_angry_obj,
@@ -172,7 +172,7 @@ STATIC const MP_DEFINE_STR_OBJ(microbit_image_angry_obj,
 
 STATIC const MP_DEFINE_STR_OBJ(microbit_image_asleep_obj,
     "0,0,0,0,0\n"
-    "0,1,0,1,0\n"
+    "1,1,0,1,1\n"
     "0,0,0,0,0\n"
     "0,1,1,1,0\n"
     "0,0,0,0,0\n"
