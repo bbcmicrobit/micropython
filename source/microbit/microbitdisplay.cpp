@@ -130,7 +130,10 @@ STATIC mp_obj_t microbit_display_animate(mp_uint_t n_args, const mp_obj_t *pos_a
 MP_DEFINE_CONST_FUN_OBJ_KW(microbit_display_animate_obj, 1, microbit_display_animate);
 
 mp_obj_t microbit_display_clear(void) {
-    uBit.display.clear();
+    // reset repeat state, cancel animation and clear screen
+    MP_STATE_PORT(async_data)[0] = NULL;
+    MP_STATE_PORT(async_data)[1] = NULL;
+    uBit.display.resetAnimation(0);
     return mp_const_none;
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_display_clear_obj, microbit_display_clear);
