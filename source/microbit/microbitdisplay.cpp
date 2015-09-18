@@ -99,16 +99,44 @@ mp_obj_t microbit_display_scroll(mp_uint_t n_args, const mp_obj_t *args) {
 }
 MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_display_scroll_obj, 2, 3, microbit_display_scroll);
 
+static int async_mode;
+static mp_uint_t async_cur;
+static mp_uint_t async_len;
+static mp_obj_t *async_items;
 static int async_delay;
 static int async_stride;
 static int async_start;
+static bool async_loop;
 
 void microbit_display_event(void) {
     if (MP_STATE_PORT(async_data)[0] != NULL && MP_STATE_PORT(async_data)[1] != NULL) {
         microbit_display_obj_t *display = (microbit_display_obj_t*)MP_STATE_PORT(async_data)[0];
-        MicroBitImage *image = (MicroBitImage*)MP_STATE_PORT(async_data)[1];
-        MicroBitImage img(*image);
-        display->display->animateAsync(img, async_delay, async_stride, async_start);
+        switch (async_mode) {
+            case 1: {
+                MicroBitImage *image = (MicroBitImage*)MP_STATE_PORT(async_data)[1];
+                display->display->animateAsync(*image, async_delay, async_stride, async_start);
+                break;
+            }
+
+            case 2: {
+                // animate a list
+                if (++async_cur >= async_len) {
+                    // end of list
+                    if (async_loop) {
+                        // loop back to start
+                        async_cur = 0;
+                    } else {
+                        // finish
+                        MP_STATE_PORT(async_data)[0] = NULL;
+                        MP_STATE_PORT(async_data)[1] = NULL;
+                        return;
+                    }
+                }
+                MicroBitImage *image = microbit_obj_get_image(async_items[async_cur]);
+                display->display->animateAsync(*image, async_delay, async_stride, async_start);
+                break;
+            }
+        }
     }
 }
 
@@ -116,7 +144,7 @@ STATIC mp_obj_t microbit_display_animate(mp_uint_t n_args, const mp_obj_t *pos_a
     static const mp_arg_t allowed_args[] = {
         { MP_QSTR_image,    MP_ARG_REQUIRED | MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
         { MP_QSTR_delay,    MP_ARG_REQUIRED | MP_ARG_INT, {.u_int = 0} },
-        { MP_QSTR_stride,   MP_ARG_REQUIRED | MP_ARG_INT, {.u_int = 0} },
+        { MP_QSTR_stride,   MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = 5} },
         { MP_QSTR_start,    MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = MICROBIT_DISPLAY_ANIMATE_DEFAULT_POS} },
         { MP_QSTR_async,    MP_ARG_KW_ONLY | MP_ARG_BOOL, {.u_bool = false} },
         { MP_QSTR_repeat,   MP_ARG_KW_ONLY | MP_ARG_BOOL, {.u_bool = false} },
@@ -126,26 +154,55 @@ STATIC mp_obj_t microbit_display_animate(mp_uint_t n_args, const mp_obj_t *pos_a
     microbit_display_obj_t *self = (microbit_display_obj_t*)pos_args[0];
     mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
     mp_arg_parse_all(n_args - 1, pos_args + 1, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
-    MicroBitImage *image = microbit_obj_get_image(args[0].u_obj);
 
     // reset repeat state
     MP_STATE_PORT(async_data)[0] = NULL;
     MP_STATE_PORT(async_data)[1] = NULL;
 
-    MicroBitImage img(*image);
-    if (!args[4].u_bool) {
-        self->display->animate(img, args[1].u_int, args[2].u_int, args[3].u_int);
-    } else {
-        self->display->animateAsync(img, args[1].u_int, args[2].u_int, args[3].u_int);
-    }
+    mp_obj_type_t *arg0_type = mp_obj_get_type(args[0].u_obj);
+    if (arg0_type == &mp_type_tuple || arg0_type == &mp_type_list) {
+        mp_uint_t len;
+        mp_obj_t *items;
+        mp_obj_get_array(args[0].u_obj, &len, &items);
 
-    if (args[5].u_bool) {
-        // enable repeat
-        MP_STATE_PORT(async_data)[0] = self;
-        MP_STATE_PORT(async_data)[1] = image;
-        async_delay = args[1].u_int;
-        async_stride = args[2].u_int;
-        async_start = args[3].u_int;
+        if (!args[4].u_bool) {
+            for (mp_uint_t i = 0; i < len; ++i) {
+                MicroBitImage *image = microbit_obj_get_image(items[i]);
+                self->display->animate(*image, args[1].u_int, args[2].u_int, args[3].u_int);
+            }
+        } else if (len > 0) {
+            // in background
+            MicroBitImage *image = microbit_obj_get_image(items[0]);
+            self->display->animateAsync(*image, args[1].u_int, args[2].u_int, args[3].u_int);
+            MP_STATE_PORT(async_data)[0] = self;
+            MP_STATE_PORT(async_data)[1] = args[0].u_obj; // so it doesn't get GC'd
+            async_mode = 2;
+            async_cur = 0;
+            async_len = len;
+            async_items = items;
+            async_delay = args[1].u_int;
+            async_stride = args[2].u_int;
+            async_start = args[3].u_int;
+            async_loop = args[5].u_bool;
+        }
+    } else {
+        MicroBitImage *image = microbit_obj_get_image(args[0].u_obj);
+
+        if (!args[4].u_bool) {
+            self->display->animate(*image, args[1].u_int, args[2].u_int, args[3].u_int);
+        } else {
+            self->display->animateAsync(*image, args[1].u_int, args[2].u_int, args[3].u_int);
+        }
+
+        if (args[5].u_bool) {
+            // enable repeat
+            MP_STATE_PORT(async_data)[0] = self;
+            MP_STATE_PORT(async_data)[1] = image;
+            async_mode = 1;
+            async_delay = args[1].u_int;
+            async_stride = args[2].u_int;
+            async_start = args[3].u_int;
+        }
     }
 
     return mp_const_none;
