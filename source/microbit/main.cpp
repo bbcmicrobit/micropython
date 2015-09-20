@@ -27,8 +27,12 @@ void app_main() {
     printf("__StackTop     = %p\r\n", &__StackTop);
     */
 
+    currentFiber->flags |= MICROBIT_FIBER_FLAG_DO_NOT_PAGE;
+
     uBit.MessageBus.listen(MICROBIT_ID_DISPLAY,
-        MICROBIT_DISPLAY_EVT_ANIMATION_COMPLETE, event_listener);
+        MICROBIT_DISPLAY_EVT_ANIMATION_COMPLETE, event_listener,
+        MESSAGE_BUS_LISTENER_REENTRANT | MESSAGE_BUS_LISTENER_NONBLOCKING);
+
     while (1) {
         mp_run();
     }
