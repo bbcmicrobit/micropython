@@ -31,11 +31,11 @@ extern "C" {
 #include "py/obj.h"
 #include "modmicrobit.h"
 
-STATIC mp_obj_t microbit_reset(void) {
+STATIC mp_obj_t microbit_reset_(void) {
     uBit.reset();
     return mp_const_none;
 }
-MP_DEFINE_CONST_FUN_OBJ_0(microbit_reset_obj, microbit_reset);
+MP_DEFINE_CONST_FUN_OBJ_0(microbit_reset_obj, microbit_reset_);
 
 STATIC mp_obj_t microbit_sleep(mp_obj_t ms_in) {
     uBit.sleep(mp_obj_get_int(ms_in));
