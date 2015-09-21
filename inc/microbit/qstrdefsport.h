@@ -14,6 +14,8 @@ Q(panic)
 Q(this)
 Q(authors)
 
+Q(antigravity)
+
 Q(MicroBitPin)
 Q(set_digital_value)
 Q(get_digital_value)
