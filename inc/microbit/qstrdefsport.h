@@ -20,6 +20,7 @@ Q(get_digital_value)
 Q(set_analog_value)
 Q(get_analog_value)
 Q(set_analog_period)
+Q(set_analog_period_us)
 Q(is_touched)
 
 Q(MicroBitIO)
