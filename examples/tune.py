@@ -50,6 +50,10 @@ class Tune:
         self.pin.set_analog_value(0)
 
     def add_note(self, note, length, octave = 0):
+        if note in Tune.ALIASES:
+            # this allows us to treat flats as sharps
+            note = Tune.ALIASES[note]
+
         self.notes.append((Tune.NOTES[note] // (2 ** octave), length))
 
 
