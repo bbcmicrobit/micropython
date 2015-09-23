@@ -43,8 +43,9 @@ void do_strn(const char *src, size_t len) {
     nlr_buf_t nlr;
     if (nlr_push(&nlr) == 0) {
         qstr source_name = lex->source_name;
-        mp_parse_node_t pn = mp_parse(lex, MP_PARSE_FILE_INPUT);
-        mp_obj_t module_fun = mp_compile(pn, source_name, MP_EMIT_OPT_NONE, false);
+        mp_parse_state_t parse_state;
+        mp_parse(lex, MP_PARSE_FILE_INPUT, &parse_state);
+        mp_obj_t module_fun = mp_compile(&parse_state, source_name, MP_EMIT_OPT_NONE, false);
         mp_hal_set_interrupt_char(3); // allow ctrl-C to interrupt us
         mp_call_function_0(module_fun);
         mp_hal_set_interrupt_char(-1); // disable interrupt

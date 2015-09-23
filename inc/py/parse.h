@@ -51,8 +51,8 @@ struct _mp_lexer_t;
 typedef mp_uint_t mp_parse_node_t; // must be pointer size
 
 typedef struct _mp_parse_node_struct_t {
-    uint32_t source_line;       // line number in source file
-    uint32_t kind_num_nodes;    // parse node kind, and number of nodes
+    uint32_t source_line:14;       // line number in source file
+    uint32_t kind_num_nodes:18;    // parse node kind, and number of nodes
     mp_parse_node_t nodes[];    // nodes
 } mp_parse_node_struct_t;
 
@@ -76,7 +76,6 @@ typedef struct _mp_parse_node_struct_t {
 #define MP_PARSE_NODE_STRUCT_NUM_NODES(pns) ((pns)->kind_num_nodes >> 8)
 
 mp_parse_node_t mp_parse_node_new_leaf(mp_int_t kind, mp_int_t arg);
-void mp_parse_node_free(mp_parse_node_t pn);
 int mp_parse_node_extract_list(mp_parse_node_t *pn, mp_uint_t pn_kind, mp_parse_node_t **nodes);
 void mp_parse_node_print(mp_parse_node_t pn, mp_uint_t indent);
 
@@ -86,8 +85,14 @@ typedef enum {
     MP_PARSE_EVAL_INPUT,
 } mp_parse_input_kind_t;
 
+typedef struct _mp_parse_state_t {
+    mp_parse_node_t root;
+    struct _mp_parse_chunk_t *chunk;
+} mp_parse_state_t;
+
 // the parser will raise an exception if an error occurred
 // the parser will free the lexer before it returns
-mp_parse_node_t mp_parse(struct _mp_lexer_t *lex, mp_parse_input_kind_t input_kind);
+void mp_parse(struct _mp_lexer_t *lex, mp_parse_input_kind_t input_kind, mp_parse_state_t *state);
+void mp_parse_state_clear(mp_parse_state_t *state);
 
 #endif // __MICROPY_INCLUDED_PY_PARSE_H__
