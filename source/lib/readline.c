@@ -160,8 +160,8 @@ int readline_process_char(int c) {
         } else if (c == 8 || c == 127) {
             // backspace/delete
             if (rl.cursor_pos > rl.orig_line_len) {
-
-                // dedent back 4 spaces if line starts with just spaces
+                // work out how many chars to backspace
+                #if MICROPY_REPL_AUTO_INDENT
                 int nspace = 0;
                 for (size_t i = rl.orig_line_len; i < rl.cursor_pos; i++) {
                     if (rl.line->buf[i] != ' ') {
@@ -175,9 +175,12 @@ int readline_process_char(int c) {
                 } else {
                     nspace = 4;
                 }
+                #else
+                int nspace = 1;
+                #endif
 
+                // do the backspace
                 vstr_cut_out_bytes(rl.line, rl.cursor_pos - nspace, nspace);
-
                 // set redraw parameters
                 redraw_step_back = nspace;
                 redraw_from_cursor = true;
@@ -352,28 +355,9 @@ delete_key:
     return -1;
 }
 
-void readline_note_newline(const char *prompt) {
-    rl.orig_line_len = rl.line->len;
-    rl.cursor_pos = rl.orig_line_len;
-    rl.prompt = prompt;
-    mp_hal_stdout_tx_str(prompt);
-}
-
-void readline_init(vstr_t *line, const char *prompt) {
-    rl.line = line;
-    rl.orig_line_len = line->len;
-    rl.escape_seq = ESEQ_NONE;
-    rl.escape_seq_buf[0] = 0;
-    rl.hist_cur = -1;
-    rl.cursor_pos = rl.orig_line_len;
-    rl.prompt = prompt;
-    mp_hal_stdout_tx_str(prompt);
-}
-
-int readline(vstr_t *line, const char *prompt) {
-    readline_init(line, prompt);
-
-    // apply auto indent
+#if MICROPY_REPL_AUTO_INDENT
+STATIC void readline_auto_indent(void) {
+    vstr_t *line = rl.line;
     if (line->len > 1 && line->buf[line->len - 1] == '\n') {
         int i;
         for (i = line->len - 1; i > 0; i--) {
@@ -398,7 +382,35 @@ int readline(vstr_t *line, const char *prompt) {
             rl.cursor_pos += 4;
         }
     }
+}
+#endif
 
+void readline_note_newline(const char *prompt) {
+    rl.orig_line_len = rl.line->len;
+    rl.cursor_pos = rl.orig_line_len;
+    rl.prompt = prompt;
+    mp_hal_stdout_tx_str(prompt);
+    #if MICROPY_REPL_AUTO_INDENT
+    readline_auto_indent();
+    #endif
+}
+
+void readline_init(vstr_t *line, const char *prompt) {
+    rl.line = line;
+    rl.orig_line_len = line->len;
+    rl.escape_seq = ESEQ_NONE;
+    rl.escape_seq_buf[0] = 0;
+    rl.hist_cur = -1;
+    rl.cursor_pos = rl.orig_line_len;
+    rl.prompt = prompt;
+    mp_hal_stdout_tx_str(prompt);
+    #if MICROPY_REPL_AUTO_INDENT
+    readline_auto_indent();
+    #endif
+}
+
+int readline(vstr_t *line, const char *prompt) {
+    readline_init(line, prompt);
     for (;;) {
         int c = mp_hal_stdin_rx_chr();
         int r = readline_process_char(c);

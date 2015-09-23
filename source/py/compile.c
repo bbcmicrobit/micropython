@@ -1355,9 +1355,8 @@ STATIC void compile_import_from(compiler_t *comp, mp_parse_node_struct_t *pns) {
 STATIC void compile_declare_global(compiler_t *comp, mp_parse_node_t pn, qstr qst) {
     bool added;
     id_info_t *id_info = scope_find_or_add_id(comp->scope_cur, qst, &added);
-    if (!added) {
-        // TODO this is not compliant with CPython
-        compile_syntax_error(comp, pn, "identifier already used");
+    if (!added && id_info->kind != ID_INFO_KIND_GLOBAL_EXPLICIT) {
+        compile_syntax_error(comp, pn, "identifier redefined as global");
         return;
     }
     id_info->kind = ID_INFO_KIND_GLOBAL_EXPLICIT;
@@ -1382,9 +1381,8 @@ STATIC void compile_global_stmt(compiler_t *comp, mp_parse_node_struct_t *pns) {
 STATIC void compile_declare_nonlocal(compiler_t *comp, mp_parse_node_t pn, qstr qst) {
     bool added;
     id_info_t *id_info = scope_find_or_add_id(comp->scope_cur, qst, &added);
-    if (!added) {
-        // TODO this is not compliant with CPython
-        compile_syntax_error(comp, pn, "identifier already used");
+    if (!added && id_info->kind != ID_INFO_KIND_FREE) {
+        compile_syntax_error(comp, pn, "identifier redefined as nonlocal");
         return;
     }
     id_info_t *id_info2 = scope_find_local_in_parent(comp->scope_cur, qst);
@@ -2205,6 +2203,7 @@ STATIC void compile_trailer_paren_helper(compiler_t *comp, mp_parse_node_t pn_ar
     int n_positional = n_positional_extra;
     uint n_keyword = 0;
     uint star_flags = 0;
+    mp_parse_node_struct_t *star_args_node = NULL, *dblstar_args_node = NULL;
     for (int i = 0; i < n_args; i++) {
         if (MP_PARSE_NODE_IS_STRUCT(args[i])) {
             mp_parse_node_struct_t *pns_arg = (mp_parse_node_struct_t*)args[i];
@@ -2214,14 +2213,14 @@ STATIC void compile_trailer_paren_helper(compiler_t *comp, mp_parse_node_t pn_ar
                     return;
                 }
                 star_flags |= MP_EMIT_STAR_FLAG_SINGLE;
-                compile_node(comp, pns_arg->nodes[0]);
+                star_args_node = pns_arg;
             } else if (MP_PARSE_NODE_STRUCT_KIND(pns_arg) == PN_arglist_dbl_star) {
                 if (star_flags & MP_EMIT_STAR_FLAG_DOUBLE) {
                     compile_syntax_error(comp, (mp_parse_node_t)pns_arg, "can't have multiple **x");
                     return;
                 }
                 star_flags |= MP_EMIT_STAR_FLAG_DOUBLE;
-                compile_node(comp, pns_arg->nodes[0]);
+                dblstar_args_node = pns_arg;
             } else if (MP_PARSE_NODE_STRUCT_KIND(pns_arg) == PN_argument) {
                 assert(MP_PARSE_NODE_IS_STRUCT(pns_arg->nodes[1])); // should always be
                 mp_parse_node_struct_t *pns2 = (mp_parse_node_struct_t*)pns_arg->nodes[1];
@@ -2249,6 +2248,21 @@ STATIC void compile_trailer_paren_helper(compiler_t *comp, mp_parse_node_t pn_ar
             }
             compile_node(comp, args[i]);
             n_positional++;
+        }
+    }
+
+    // compile the star/double-star arguments if we had them
+    // if we had one but not the other then we load "null" as a place holder
+    if (star_flags != 0) {
+        if (star_args_node == NULL) {
+            EMIT(load_null);
+        } else {
+            compile_node(comp, star_args_node->nodes[0]);
+        }
+        if (dblstar_args_node == NULL) {
+            EMIT(load_null);
+        } else {
+            compile_node(comp, dblstar_args_node->nodes[0]);
         }
     }
 
