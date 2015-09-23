@@ -8,9 +8,15 @@ HEX_FINAL = build/firmware.hex
 
 all: yotta
 
-yotta: inc/genhdr/qstrdefs.generated.h
+yotta: inc/genhdr/qstrdefs.generated.h frozen
 	@yt build
 	@/bin/cp $(HEX_SRC) $(HEX_FINAL)
+
+frozen:
+	@tools/make-frozen.py pylibs > source/microbit/frozenlibs.c
+
+clean:
+	@yt clean
 
 # Note: we need to protect the qstr names from the preprocessor, so we wrap
 # the lines in "" and then unwrap after the preprocessor is finished.
