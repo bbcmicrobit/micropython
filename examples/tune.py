@@ -23,6 +23,7 @@ class Tune:
         'A':  2273,
         'A#': 2145,
         'B':  2025,
+        None: 0
     }
 
     ALIASES = {
@@ -41,10 +42,16 @@ class Tune:
 
     def play(self):
         self.pin.set_analog_value(100)
+
         for note in self.notes:
             period, length = note
             self.pin.set_analog_period_us(period)
-            microbit.sleep(length * (60000//self.bpm))
+
+            microbit.sleep(int(length * (60000//self.bpm)))
+
+        self.stop()
+
+    def stop(self):
         self.pin.set_analog_value(0)
 
     def play_note(self, note, octave=0, length=None):
@@ -67,8 +74,8 @@ class Tune:
         note = note.upper()
         if note in Tune.ALIASES:
             note = Tune.ALIASES[note]
+            
         self.notes.append((Tune.NOTES[note] // (2 ** octave), length))
-
 
 # play Bach Prelude in C.
 notes = [
