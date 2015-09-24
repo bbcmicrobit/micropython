@@ -18,7 +18,7 @@ if __name__ == "__main__":
     parser.add_argument('-a', '--address', type=int, help='Start address for the python script', default=0x3e000)
 
     # this is only useful if you're merging.
-    parser.add_argument('-m', '--merge', nargs='?', type=argparse.FileType('rb'), help='micropython hex file to merge with', default=os.devnull)
+    parser.add_argument('-m', '--merge', nargs='?', type=argparse.FileType('rt'), help='micropython hex file to merge with', default=os.devnull)
 
     args = parser.parse_args()
 
@@ -31,4 +31,5 @@ if __name__ == "__main__":
 
     base_hex.merge(python_hex, overlap='error')
 
-    base_hex.write_hex_file(args.output)
+    base_hex.tobinfile(args.output)
+
