@@ -1,8 +1,14 @@
-# this demo requires a speaker connected to P0 and GND
-
+"""
+This demo requires a speaker connected to P0 and GND
+"""
 import microbit
 
+
 class Tune:
+    """
+    An instance of this class represents a melody that can be played.
+    """
+
     # 1,000,000/frequncy
     NOTES = {
         'C':  3822,
@@ -27,48 +33,62 @@ class Tune:
         'Bb': 'A#'
     }
 
-    def __init__(self, pin, bpm=180):
+    def __init__(self, pin, bpm=480):
         self.pin = pin
         self.bpm = bpm
-
         self.notes = []
-        # (1/frequency (in us), time)
+        self.default_length = 1
 
     def play(self):
         self.pin.set_analog_value(100)
-
-        for i, note in enumerate(self.notes):
-            print("playing note %i of %i" % (i, len(self.notes)))
-
+        for note in self.notes:
             period, length = note
-
             self.pin.set_analog_period_us(period)
-
             microbit.sleep(length * (60000//self.bpm))
-
-    def stop(self):
         self.pin.set_analog_value(0)
 
-    def add_note(self, note, length, octave = 0):
+    def play_note(self, note, octave=0, length=None):
+        if length == None:
+            length = self.default_length
+        else:
+            self.default_length = length
+        note = note.upper()
         if note in Tune.ALIASES:
-            # this allows us to treat flats as sharps
             note = Tune.ALIASES[note]
+        period = Tune.NOTES[note] // (2 ** octave)
+        self.pin.set_analog_period_us(period)
+        microbit.sleep(length * (60000//self.bpm))
 
+    def add_note(self, note, octave=0, length=None):
+        if length == None:
+            length = self.default_length
+        else:
+            self.default_length = length
+        note = note.upper()
+        if note in Tune.ALIASES:
+            note = Tune.ALIASES[note]
         self.notes.append((Tune.NOTES[note] // (2 ** octave), length))
 
 
-# play a C Major scale
+# play Bach Prelude in C.
+notes = [
+    'c1', 'e1', 'g1', 'c2', 'e2', 'g1', 'c2', 'e2', 'c1', 'e1', 'g1', 'c2', 'e2', 'g1', 'c2', 'e2', 
+    'c1', 'd1', 'g1', 'd2', 'f2', 'g1', 'd2', 'f2', 'c1', 'd1', 'g1', 'd2', 'f2', 'g1', 'd2', 'f2',
+    'b0', 'd1', 'g1', 'd2', 'f2', 'g1', 'd2', 'f2', 'b0', 'd1', 'g1', 'd2', 'f2', 'g1', 'd2', 'f2',
+    'c1', 'e1', 'g1', 'c2', 'e2', 'g1', 'c2', 'e2', 'c1', 'e1', 'g1', 'c2', 'e2', 'g1', 'c2', 'e2',
+    'c1', 'e1', 'a1', 'e2', 'a2', 'a1', 'e2', 'a1', 'c1', 'e1', 'a1', 'e2', 'a2', 'a1', 'e2', 'a1',
+    'c1', 'd1', 'f#1', 'a1', 'd2', 'f#1', 'a1', 'd2', 'c1', 'd1', 'f#1', 'a1', 'd2', 'f#1', 'a1', 'd2',
+    'b0', 'd1', 'g1', 'd2', 'g2', 'g1', 'd2', 'g2', 'b0', 'd1', 'g1', 'd2', 'g2', 'g1', 'd2', 'g2',
+    'b0', 'c1', 'e1', 'g1', 'c2', 'e1', 'g1', 'c2', 'b0', 'c1', 'e1', 'g1', 'c2', 'e1', 'g1', 'c2',
+    'b0', 'c1', 'e1', 'g1', 'c2', 'e1', 'g1', 'c2', 'b0', 'c1', 'e1', 'g1', 'c2', 'e1', 'g1', 'c2',
+    'a0', 'c1', 'e1', 'g1', 'c2', 'e1', 'g1', 'c2', 'a0', 'c1', 'e1', 'g1', 'c2', 'e1', 'g1', 'c2',
+    'd0', 'a0', 'd1', 'f#1', 'c2', 'd1', 'f#1', 'c2', 'd0', 'a0', 'd1', 'f#1', 'c2', 'd1', 'f#1', 'c2',
+    'g0', 'b0', 'd1', 'g1', 'b1', 'd1', 'g1', 'b1', 'g0', 'b0', 'd1', 'g1', 'b1', 'd1', 'g1', 'b1'
+]
+
+duration = 1
 tune = Tune(microbit.io.P0)
-
-notes = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
-
+tune.pin.set_analog_value(100)
 for note in notes:
-    tune.add_note(note, 1)
-
-tune.add_note('C', 1, 1)
-
-for note in reversed(notes):
-    tune.add_note(note, 1)
-
-tune.play()
-tune.stop()
+    tune.play_note(note[:-1], int(note[-1]), duration)
+tune.pin.set_analog_value(0)
