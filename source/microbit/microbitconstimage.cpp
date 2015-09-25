@@ -40,6 +40,20 @@ typedef struct _microbit_const_image_obj_t {
     const uint8_t *data;
 } microbit_const_image_obj_t;
 
+STATIC void microbit_const_image_print(const mp_print_t *print, mp_obj_t self_in, mp_print_kind_t kind) {
+    (void)kind;
+    microbit_const_image_obj_t *self = (microbit_const_image_obj_t*)self_in;
+    for (int y = 0; y < self->height; ++y) {
+        for (int x = 0; x < self->width; ++x) {
+            if (x > 0) {
+                mp_printf(print, ",");
+            }
+            mp_printf(print, "%u", self->data[y * self->width + x]);
+        }
+        mp_printf(print, "\n");
+    }
+}
+
 mp_obj_t microbit_const_image_get_width(mp_obj_t self_in) {
     microbit_const_image_obj_t *self = (microbit_const_image_obj_t*)self_in;
     return MP_OBJ_NEW_SMALL_INT(self->width);
@@ -376,7 +390,7 @@ STATIC MP_DEFINE_CONST_DICT(microbit_const_image_locals_dict, microbit_const_ima
 const mp_obj_type_t microbit_const_image_type = {
     { &mp_type_type },
     .name = MP_QSTR_MicroBitImage, // MicroBitConstImage?
-    .print = NULL,
+    .print = microbit_const_image_print,
     .make_new = NULL,
     .call = NULL,
     .unary_op = NULL,
