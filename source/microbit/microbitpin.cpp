@@ -36,31 +36,31 @@ typedef struct _microbit_pin_obj_t {
     MicroBitPin *pin;
 } microbit_pin_obj_t;
 
-mp_obj_t microbit_pin_set_digital_value(mp_obj_t self_in, mp_obj_t value_in) {
+mp_obj_t microbit_pin_write_digital(mp_obj_t self_in, mp_obj_t value_in) {
     microbit_pin_obj_t *self = (microbit_pin_obj_t*)self_in;
     self->pin->setDigitalValue(mp_obj_get_int(value_in));
     return mp_const_none;
 }
-MP_DEFINE_CONST_FUN_OBJ_2(microbit_pin_set_digital_value_obj, microbit_pin_set_digital_value);
+MP_DEFINE_CONST_FUN_OBJ_2(microbit_pin_write_digital_obj, microbit_pin_write_digital);
 
-mp_obj_t microbit_pin_get_digital_value(mp_obj_t self_in) {
+mp_obj_t microbit_pin_read_digital(mp_obj_t self_in) {
     microbit_pin_obj_t *self = (microbit_pin_obj_t*)self_in;
     return mp_obj_new_int(self->pin->getDigitalValue());
 }
-MP_DEFINE_CONST_FUN_OBJ_1(microbit_pin_get_digital_value_obj, microbit_pin_get_digital_value);
+MP_DEFINE_CONST_FUN_OBJ_1(microbit_pin_read_digital_obj, microbit_pin_read_digital);
 
-mp_obj_t microbit_pin_set_analog_value(mp_obj_t self_in, mp_obj_t value_in) {
+mp_obj_t microbit_pin_write_analog(mp_obj_t self_in, mp_obj_t value_in) {
     microbit_pin_obj_t *self = (microbit_pin_obj_t*)self_in;
     self->pin->setAnalogValue(mp_obj_get_int(value_in));
     return mp_const_none;
 }
-MP_DEFINE_CONST_FUN_OBJ_2(microbit_pin_set_analog_value_obj, microbit_pin_set_analog_value);
+MP_DEFINE_CONST_FUN_OBJ_2(microbit_pin_write_analog_obj, microbit_pin_write_analog);
 
-mp_obj_t microbit_pin_get_analog_value(mp_obj_t self_in) {
+mp_obj_t microbit_pin_read_analog(mp_obj_t self_in) {
     microbit_pin_obj_t *self = (microbit_pin_obj_t*)self_in;
     return mp_obj_new_int(self->pin->getAnalogValue());
 }
-MP_DEFINE_CONST_FUN_OBJ_1(microbit_pin_get_analog_value_obj, microbit_pin_get_analog_value);
+MP_DEFINE_CONST_FUN_OBJ_1(microbit_pin_read_analog_obj, microbit_pin_read_analog);
 
 mp_obj_t microbit_pin_set_analog_period(mp_obj_t self_in, mp_obj_t period_in) {
     microbit_pin_obj_t *self = (microbit_pin_obj_t*)self_in;
@@ -83,10 +83,10 @@ mp_obj_t microbit_pin_is_touched(mp_obj_t self_in) {
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_pin_is_touched_obj, microbit_pin_is_touched);
 
 STATIC const mp_map_elem_t microbit_pin_locals_dict_table[] = {
-    { MP_OBJ_NEW_QSTR(MP_QSTR_set_digital_value), (mp_obj_t)&microbit_pin_set_digital_value_obj },
-    { MP_OBJ_NEW_QSTR(MP_QSTR_get_digital_value), (mp_obj_t)&microbit_pin_get_digital_value_obj },
-    { MP_OBJ_NEW_QSTR(MP_QSTR_set_analog_value), (mp_obj_t)&microbit_pin_set_analog_value_obj },
-    { MP_OBJ_NEW_QSTR(MP_QSTR_get_analog_value), (mp_obj_t)&microbit_pin_get_analog_value_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_write_digital), (mp_obj_t)&microbit_pin_write_digital_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_read_digital), (mp_obj_t)&microbit_pin_read_digital_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_write_analog), (mp_obj_t)&microbit_pin_write_analog_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_read_analog), (mp_obj_t)&microbit_pin_read_analog_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_set_analog_period), (mp_obj_t)&microbit_pin_set_analog_period_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_set_analog_period_us), (mp_obj_t)&microbit_pin_set_analog_period_us_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_is_touched), (mp_obj_t)&microbit_pin_is_touched_obj },
