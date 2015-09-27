@@ -69,12 +69,12 @@ mp_obj_t microbit_pin_set_analog_period(mp_obj_t self_in, mp_obj_t period_in) {
 }
 MP_DEFINE_CONST_FUN_OBJ_2(microbit_pin_set_analog_period_obj, microbit_pin_set_analog_period);
 
-mp_obj_t microbit_pin_set_analog_period_us(mp_obj_t self_in, mp_obj_t period_in) {
+mp_obj_t microbit_pin_set_analog_period_microseconds(mp_obj_t self_in, mp_obj_t period_in) {
     microbit_pin_obj_t *self = (microbit_pin_obj_t*)self_in;
     self->pin->setAnalogPeriodUs(mp_obj_get_int(period_in));
     return mp_const_none;
 }
-MP_DEFINE_CONST_FUN_OBJ_2(microbit_pin_set_analog_period_us_obj, microbit_pin_set_analog_period_us);
+MP_DEFINE_CONST_FUN_OBJ_2(microbit_pin_set_analog_period_microseconds_obj, microbit_pin_set_analog_period_microseconds);
 
 mp_obj_t microbit_pin_is_touched(mp_obj_t self_in) {
     microbit_pin_obj_t *self = (microbit_pin_obj_t*)self_in;
@@ -88,7 +88,7 @@ STATIC const mp_map_elem_t microbit_pin_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_write_analog), (mp_obj_t)&microbit_pin_write_analog_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_read_analog), (mp_obj_t)&microbit_pin_read_analog_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_set_analog_period), (mp_obj_t)&microbit_pin_set_analog_period_obj },
-    { MP_OBJ_NEW_QSTR(MP_QSTR_set_analog_period_us), (mp_obj_t)&microbit_pin_set_analog_period_us_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_set_analog_period_microseconds), (mp_obj_t)&microbit_pin_set_analog_period_microseconds_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_is_touched), (mp_obj_t)&microbit_pin_is_touched_obj },
 };
 

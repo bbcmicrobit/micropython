@@ -25,7 +25,7 @@ Q(write_digital)
 Q(read_analog)
 Q(write_analog)
 Q(set_analog_period)
-Q(set_analog_period_us)
+Q(set_analog_period_microseconds)
 Q(is_touched)
 
 Q(MicroBitIO)
