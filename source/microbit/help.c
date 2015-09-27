@@ -111,7 +111,6 @@ STATIC const mp_doc_t help_table_instances[] = {
     {&microbit_display_set_display_mode_obj, "set_display_mode(i) -- set pixel display mode to: 0 (on/off) or 1 (levels of\n    brightness between 0..255). See also set_brightness(b) and\n    set_pixel_value(x, y, i).\n"},
     {&microbit_image_obj, "A toolbox of code to work with the image shown on the device's 5x5 display.\n"},
     {&microbit_image_set_pixel_value_obj, "set_pixel_value(x, y, i) -- set the pixel at position x, y to brightness i.\n"},
-    {&microbit_io_obj, "A toolbox of code to work with the Input/Output (IO) gold pin edge connectors.\n"},
     {&microbit_p0_obj, "Represents pin 0 on the gold edge connector.\n"},
     {&microbit_p1_obj, "Represents pin 1 on the gold edge connector.\n"},
     {&microbit_p2_obj, "Represents pin 2 on the gold edge connector.\n"},
@@ -131,10 +130,10 @@ STATIC const mp_doc_t help_table_instances[] = {
     {&microbit_p16_obj, "Represents pin 16 on the gold edge connector.\n"},
     {&microbit_p19_obj, "Represents pin 19 on the gold edge connector.\n"},
     {&microbit_p20_obj, "Represents pin 20 on the gold edge connector.\n"},
-    {&microbit_pin_set_digital_value_obj, "set_digital_value(v) -- set a digital value v. Use 0 (lo) or 1 (hi).\n"},
-    {&microbit_pin_get_digital_value_obj, "get_digital_value() -- get the pin's current digital value: 0 (lo) or 1 (hi).\n"},
-    {&microbit_pin_set_analog_value_obj, "set_analog_value(v) -- set an analog output value v between 0..255.\n"},
-    {&microbit_pin_get_analog_value_obj, "get_analog_value() -- get the pin's current analog value: 0 - 65535.\n"},
+    {&microbit_pin_write_digital_obj, "write_digital(v) -- write a digital value v to the pin. Use 0 (lo) or 1 (hi).\n"},
+    {&microbit_pin_read_digital_obj, "read_digital() -- read the current digital value from the pin: 0 (lo) or 1 (hi).\n"},
+    {&microbit_pin_write_analog_obj, "write_analog(v) -- write an analog value v between 0..255 to the pin.\n"},
+    {&microbit_pin_read_analog_obj, "read_analog() -- read the current analog value from the pin: 0 - 65535.\n"},
     {&microbit_pin_is_touched_obj, "is_touched() -- True if the pin is touched, otherwise False.\n"},
 };
 
