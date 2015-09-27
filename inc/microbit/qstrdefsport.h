@@ -16,6 +16,9 @@ Q(authors)
 
 Q(antigravity)
 
+Q(love)
+Q(badaboom)
+
 Q(MicroBitPin)
 Q(set_digital_value)
 Q(get_digital_value)
