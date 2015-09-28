@@ -115,7 +115,7 @@ MP_DECLARE_CONST_FUN_OBJ(microbit_display_clear_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_display_animate_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_display_set_brightness_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_display_set_display_mode_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_image_set_pixel_value_obj);
+MP_DECLARE_CONST_FUN_OBJ(microbit_image_set_pixel_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_pin_read_digital_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_pin_write_digital_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_pin_read_analog_obj);

@@ -101,32 +101,32 @@ STATIC mp_obj_t microbit_image_make_new(mp_obj_t type_in, mp_uint_t n_args, mp_u
     }
 }
 
-mp_obj_t microbit_image_get_width(mp_obj_t self_in) {
+mp_obj_t microbit_image_width(mp_obj_t self_in) {
     microbit_image_obj_t *self = (microbit_image_obj_t*)self_in;
     return MP_OBJ_NEW_SMALL_INT(self->image->getWidth());
 }
-MP_DEFINE_CONST_FUN_OBJ_1(microbit_image_get_width_obj, microbit_image_get_width);
+MP_DEFINE_CONST_FUN_OBJ_1(microbit_image_width_obj, microbit_image_width);
 
-mp_obj_t microbit_image_get_height(mp_obj_t self_in) {
+mp_obj_t microbit_image_height(mp_obj_t self_in) {
     microbit_image_obj_t *self = (microbit_image_obj_t*)self_in;
     return MP_OBJ_NEW_SMALL_INT(self->image->getHeight());
 }
-MP_DEFINE_CONST_FUN_OBJ_1(microbit_image_get_height_obj, microbit_image_get_height);
+MP_DEFINE_CONST_FUN_OBJ_1(microbit_image_height_obj, microbit_image_height);
 
-mp_obj_t microbit_image_set_pixel_value(mp_uint_t n_args, const mp_obj_t *args) {
+mp_obj_t microbit_image_set_pixel(mp_uint_t n_args, const mp_obj_t *args) {
     (void)n_args;
     microbit_image_obj_t *self = (microbit_image_obj_t*)args[0];
     self->image->setPixelValue(mp_obj_get_int(args[1]), mp_obj_get_int(args[2]), mp_obj_get_int(args[3]));
     return mp_const_none;
 }
-MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_image_set_pixel_value_obj, 4, 4, microbit_image_set_pixel_value);
+MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_image_set_pixel_obj, 4, 4, microbit_image_set_pixel);
 
-mp_obj_t microbit_image_get_pixel_value(mp_obj_t self_in, mp_obj_t x_in, mp_obj_t y_in) {
+mp_obj_t microbit_image_get_pixel(mp_obj_t self_in, mp_obj_t x_in, mp_obj_t y_in) {
     microbit_image_obj_t *self = (microbit_image_obj_t*)self_in;
     int value = self->image->getPixelValue(mp_obj_get_int(x_in), mp_obj_get_int(y_in));
     return MP_OBJ_NEW_SMALL_INT(value);
 }
-MP_DEFINE_CONST_FUN_OBJ_3(microbit_image_get_pixel_value_obj, microbit_image_get_pixel_value);
+MP_DEFINE_CONST_FUN_OBJ_3(microbit_image_get_pixel_obj, microbit_image_get_pixel);
 
 mp_obj_t microbit_image_shift_left(mp_obj_t self_in, mp_obj_t n_in) {
     microbit_image_obj_t *self = (microbit_image_obj_t*)self_in;
@@ -157,10 +157,10 @@ mp_obj_t microbit_image_shift_down(mp_obj_t self_in, mp_obj_t n_in) {
 MP_DEFINE_CONST_FUN_OBJ_2(microbit_image_shift_down_obj, microbit_image_shift_down);
 
 STATIC const mp_map_elem_t microbit_image_locals_dict_table[] = {
-    { MP_OBJ_NEW_QSTR(MP_QSTR_get_width), (mp_obj_t)&microbit_image_get_width_obj },
-    { MP_OBJ_NEW_QSTR(MP_QSTR_get_height), (mp_obj_t)&microbit_image_get_height_obj },
-    { MP_OBJ_NEW_QSTR(MP_QSTR_set_pixel_value), (mp_obj_t)&microbit_image_set_pixel_value_obj },
-    { MP_OBJ_NEW_QSTR(MP_QSTR_get_pixel_value), (mp_obj_t)&microbit_image_get_pixel_value_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_width), (mp_obj_t)&microbit_image_width_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_height), (mp_obj_t)&microbit_image_height_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_set_pixel), (mp_obj_t)&microbit_image_set_pixel_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_get_pixel), (mp_obj_t)&microbit_image_get_pixel_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_shift_left), (mp_obj_t)&microbit_image_shift_left_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_shift_right), (mp_obj_t)&microbit_image_shift_right_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_shift_up), (mp_obj_t)&microbit_image_shift_up_obj },
