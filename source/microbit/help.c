@@ -35,7 +35,7 @@ STATIC const char *help_text =
 "\n"
 "Type 'import microbit', press return and try these commands:\n"
 "  microbit.display.scroll('Hello')\n"
-"  microbit.system_time()\n"
+"  microbit.running_time()\n"
 "  microbit.sleep(1000)\n"
 "  microbit.button_a.is_pressed()\n"
 "What do these commands do? Can you improve them? HINT: use the up and down\n"
@@ -59,7 +59,7 @@ STATIC const char *help_text =
 "  microbit.random(n)             -- get a random number between 0 and n-1\n"
 "  microbit.reset()               -- reset the device\n"
 "  microbit.sleep(n)              -- wait for n milliseconds (1 second = 1000)\n"
-"  microbit.system_time()         -- get the number of milliseconds since reset\n"
+"  microbit.running_time()        -- get the number of milliseconds since reset\n"
 "\n"
 "Control commands:\n"
 "  CTRL-C        -- stop a running program\n"
@@ -86,7 +86,7 @@ STATIC const mp_doc_t help_table_instances[] = {
     {&microbit_panic_obj, "panic() -- enter panic mode (requires a restart).\n"},
     {&microbit_random_obj, "random(n) -- return a random number between 0 and 'n'-1.\n"},
     {&microbit_sleep_obj, "sleep(n) -- wait for 'n' milliseconds (1 second = 1000).\n"},
-    {&microbit_system_time_obj, "system_time() -- get the number of milliseconds since reset.\n"},
+    {&microbit_running_time_obj, "running_time() -- get the number of milliseconds since reset.\n"},
     {&microbit_accelerometer_obj, "A toolbox of code to detect the device's position (orientation).\n"},
     {&microbit_accelerometer_get_x_obj, "get_x() -- get the device's X axis reading.\n"},
     {&microbit_accelerometer_get_y_obj, "get_y() -- get the device's Y axis reading.\n"},

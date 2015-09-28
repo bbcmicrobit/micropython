@@ -8,7 +8,7 @@ Q(microbit)
 Q(reset)
 Q(sleep)
 Q(random)
-Q(system_time)
+Q(running_time)
 Q(panic)
 
 Q(this)
