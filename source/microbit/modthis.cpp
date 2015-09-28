@@ -56,7 +56,7 @@ STATIC mp_obj_t this_authors(void) {
     */
     STATIC const char *authors_text =
 "MicroPython on the micro:bit is brought to you by:\n"
-"Damien P.George, Matthew Else and Nicholas H.Tollervey.\n";
+"Damien P. George, Matthew Else and Nicholas H. Tollervey.\n";
     mp_printf(&mp_plat_print, "%s", authors_text);
     return mp_const_none;
 }
