@@ -1,28 +1,44 @@
-MicroPython component for the micro:bit
-=======================================
+MicroPython for the micro:bit
+=============================
 
-MicroPython for the micro:bit.  This currently acts as an application, but
-should in the future be a component/library.
+This is the source code for MicroPython running on the BBC's micro:bit!
 
-Use yotta to build.
+Various things are in this repository, including:
+- Source code in source/ and inc/ directories.
+- Example Python programs in the examples/ directory.
+- Tools in the tools/ directory.
 
-Use target bbc-microbit-classic-gcc-nosd:
+The source code is a yotta application and needs yotta to build, along
+with an ARM compiler toolchain (eg arm-none-eabi-gcc and friends).
 
+Ubuntu users can install the needed packages using:
 ```
-yt target bbc-microbit-classic-gcc-nosd
+sudo add-apt-repository -y ppa:terry.guo/gcc-arm-embedded 
+sudo add-apt-repository -y ppa:pmiller-opensource/ppa
+sudo apt-get update
+sudo apt-get install cmake ninja-build gcc-arm-none-eabi srecord
+pip3 install yotta
 ```
 
-Run yotta update to fetch remote assets:
+Once all packages are installed, use yotta to build.
 
-```
-yt up
-```
+- Use target bbc-microbit-classic-gcc-nosd:
 
-Start the build:
+  ```
+  yt target bbc-microbit-classic-gcc-nosd
+  ```
 
-```
-yt build
-```
+- Run yotta update to fetch remote assets:
+
+  ```
+  yt up
+  ```
+
+- Start the build:
+
+  ```
+  yt build
+  ```
 
 The resulting microbit-micropython.hex file to flash onto the device can be
 found in the build/bbc-microbit-classic-gcc-nosd/source from the root of the
@@ -30,13 +46,14 @@ repository.
 
 There is a Makefile provided that does some extra preprocessing of the source,
 which is needed only if you add new interned strings to qstrdefsport.h.  The
-Makefile also includes some convenience targets.
+Makefile also puts the resulting firmare at build/firmware.hex, and includes
+some convenience targets.
 
 How to use
 ==========
 
-Upon reset the display should briefly flash a "P" to indicate Python mode.
-Then you will have a REPL on the USB CDC serial port, with baudrate 115200.
+Upon reset you will have a REPL on the USB CDC serial port, with baudrate
+115200 (eg picocom /dev/ttyACM0 -b 115200).
 
 Then try:
 
@@ -45,3 +62,10 @@ Then try:
     >>> microbit.random(100)
 
 Tab completion works and is very useful!
+
+You can also use the tools/pyboard.py script to run Python scripts directly
+from your PC, eg:
+
+    $ ./tools/pyboard.py /dev/ttyACM0 examples/conway.py
+
+Be brave! Break things! Learn and have fun!
