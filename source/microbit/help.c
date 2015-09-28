@@ -54,7 +54,7 @@ STATIC const char *help_text =
 "  microbit.compass               -- detect the device's heading\n"
 "  microbit.display               -- display things (pixels, characters, words)\n"
 "  microbit.Image                 -- make pictures for the display\n"
-"  microbit.io                    -- control the gold input/output (IO) pins\n"
+"  microbit.pin0                  -- control the gold input/output (IO) pin0\n"
 "  microbit.panic()               -- enter panic mode (requires a restart)\n"
 "  microbit.random(n)             -- get a random number between 0 and n-1\n"
 "  microbit.reset()               -- reset the device\n"
