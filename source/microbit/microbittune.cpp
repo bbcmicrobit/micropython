@@ -227,12 +227,44 @@ STATIC mp_obj_t music_pitch(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t
     static const mp_arg_t allowed_args[] = {
         { MP_QSTR_pin,    MP_ARG_REQUIRED | MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
         { MP_QSTR_frequency,   MP_ARG_REQUIRED | MP_ARG_INT, {.u_int = 0} },
+        { MP_QSTR_length, MP_ARG_REQUIRED | MP_ARG_INT, {.u_int = -1} },
         { MP_QSTR_async,  MP_ARG_KW_ONLY | MP_ARG_BOOL, {.u_bool = false} },
     };
 
+    // extract self.
+    music_tune_obj_t *self = (music_tune_obj_t *)pos_args[0];
+
     // parse args
     mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
-    mp_arg_parse_all(n_args, pos_args, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
+    mp_arg_parse_all(n_args - 1, pos_args + 1, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
+
+    MicroBitPin *pin = microbit_obj_get_pin(args[0].u_obj);
+
+    mp_uint_t frequency = args[1].u_int;
+    mp_uint_t length = args[2].u_int;
+    bool async = args[3].u_bool;
+
+    pin->setAnalogValue(128);
+    pin->setAnalogPeriodUs(1000000/frequency);
+
+    if (length >= 0) {
+        if (!async) {
+            uBit.sleep(length * (60000/self->bpm)/self->ticks);
+            pin->setAnalogValue(0);
+        } else {
+            // FIXME: schedule a callback to stop
+        }
+    } else {
+        if (async) {
+            // that's ok, just return
+        } else {
+            while (1) {
+                // let the CPU go to sleep.
+                uBit.sleep(1);
+                pin->setAnalogValue(0);
+            }
+        }
+    }
 
     return mp_const_none;
 }
