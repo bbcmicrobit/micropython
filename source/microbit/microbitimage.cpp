@@ -30,7 +30,6 @@
 extern "C" {
 
 #include "py/runtime.h"
-#include "py/objstr.h"
 #include "modmicrobit.h"
 
 typedef struct _microbit_image_obj_t {
