@@ -33,25 +33,16 @@ extern "C" {
 #include "py/objstr.h"
 #include "modmicrobit.h"
 
-extern const mp_obj_type_t microbit_pin_type;
-
-// TODO: move this definition to a header file :)
-typedef struct _microbit_pin_obj_t {
-    mp_obj_base_t base;
-    MicroBitPin *pin;
-} microbit_pin_obj_t;
-
 typedef struct _music_tune_obj_t {
-    mp_obj_base_t bases;
+    mp_obj_base_t base;
 
     uint16_t bpm;
     uint16_t ticks;
-
 } music_tune_obj_t;
 
 
-STATIC void play_note(music_tune_obj_t *self, const byte *note_str, size_t note_len, microbit_pin_obj_t *pin, bool async) {
-    pin->pin->setAnalogValue(128);
+STATIC void play_note(music_tune_obj_t *self, const char *note_str, size_t note_len, MicroBitPin *pin, bool async) {
+    pin->setAnalogValue(128);
 
     // [NOTE](#|b)(octave)(:length)
     // technically, c4 is middle c, so we'll go with that...
@@ -142,35 +133,35 @@ STATIC void play_note(music_tune_obj_t *self, const byte *note_str, size_t note_
             // printf("period: %d\n", periods_sharps_us[note_index] >> octave);
             if (octave >= 0) {
                 // printf("period: %d\n", periods_sharps_us[note_index] >> octave);
-                pin->pin->setAnalogPeriodUs(periods_sharps_us[note_index] >> octave);
+                pin->setAnalogPeriodUs(periods_sharps_us[note_index] >> octave);
             }
             else {
                 // printf("period: %d\n", periods_sharps_us[note_index] << -octave);
-                pin->pin->setAnalogPeriodUs(periods_sharps_us[note_index] << -octave);
+                pin->setAnalogPeriodUs(periods_sharps_us[note_index] << -octave);
             }
         } else {
             // printf("period: %d\n", periods_sharps_us[note_index] >> octave);
             if (octave >= 0) {
                 // printf("period: %d\n", periods_us[note_index] >> octave);
-                pin->pin->setAnalogPeriodUs(periods_us[note_index] >> octave);
+                pin->setAnalogPeriodUs(periods_us[note_index] >> octave);
             }
             else {
                 // printf("period: %d\n", periods_us[note_index] >> -octave);
-                pin->pin->setAnalogPeriodUs(periods_us[note_index] << -octave);
+                pin->setAnalogPeriodUs(periods_us[note_index] << -octave);
             }
         }
     } else {
         // printf("rest!\r\n");
-        pin->pin->setAnalogValue(0);
+        pin->setAnalogValue(0);
     }
 
     uBit.sleep(ms_per_tick * duration);
 
     if (note_index >= 10) {
-        pin->pin->setAnalogValue(128);
+        pin->setAnalogValue(128);
     }
 
-    pin->pin->setAnalogValue(0);
+    pin->setAnalogValue(0);
 }
 
 STATIC mp_obj_t music_note(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
@@ -187,17 +178,12 @@ STATIC mp_obj_t music_note(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t 
     mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
     mp_arg_parse_all(n_args - 1, pos_args + 1, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
 
-    mp_obj_type_t *arg0_type = mp_obj_get_type(args[0].u_obj);
+    MicroBitPin *pin = microbit_obj_get_pin(args[0].u_obj);
 
-    if (arg0_type == &microbit_pin_type) {
-        microbit_pin_obj_t *pin = (microbit_pin_obj_t *)args[0].u_obj;
+    mp_uint_t note_len;
+    const char * note_str = mp_obj_str_get_data(args[1].u_obj, &note_len);
 
-        GET_STR_DATA_LEN(args[1].u_obj, note_str, note_len);
-
-        play_note(self, note_str, note_len, pin, args[2].u_bool);
-    } else {
-        // invalid arguments.
-    }
+    play_note(self, note_str, note_len, pin, args[2].u_bool);
 
     return mp_const_none;
 }
@@ -217,30 +203,20 @@ STATIC mp_obj_t music_tune(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t 
     mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
     mp_arg_parse_all(n_args - 1, pos_args + 1, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
 
-    mp_obj_type_t *arg0_type = mp_obj_get_type(args[0].u_obj);
+    MicroBitPin *pin = microbit_obj_get_pin(args[0].u_obj);
 
-    if (arg0_type == &microbit_pin_type) {
-        microbit_pin_obj_t *pin = (microbit_pin_obj_t *)args[0].u_obj;
+    mp_uint_t len;
+    mp_obj_t *items;
+    mp_obj_get_array(args[1].u_obj, &len, &items);
 
-        // check that argument 1 is a list
-        mp_obj_type_t *args1_type = mp_obj_get_type(args[1].u_obj);
-
-        if (args1_type == &mp_type_list || args1_type == &mp_type_tuple) {
-            mp_uint_t len;
-            mp_obj_t *items;
-            mp_obj_get_array(args[1].u_obj, &len, &items);
-
-            for (mp_uint_t i = 0; i < len; i++) {
-                if (items[i] != mp_const_none) {
-                    GET_STR_DATA_LEN(items[i], note_str, note_len);
-                    play_note(self, note_str, note_len, pin, args[2].u_bool);
-                } else {
-                    uBit.sleep((60000/self->bpm));
-                }
-            }
+    for (mp_uint_t i = 0; i < len; i++) {
+        if (items[i] != mp_const_none) {
+            mp_uint_t note_len;
+            const char * note_str = mp_obj_str_get_data(items[i], &note_len);
+            play_note(self, note_str, note_len, pin, args[2].u_bool);
+        } else {
+            uBit.sleep((60000/self->bpm));
         }
-    } else {
-        // invalid arguments.
     }
 
     return mp_const_none;
@@ -334,7 +310,7 @@ STATIC const mp_obj_type_t music_tune_type = {
     /* .locals_dict = */ (mp_obj_t)&music_tune_locals_dict,
 };
 
-const music_tune_obj_t music_tune_singleton_obj {
+music_tune_obj_t music_tune_singleton_obj {
     {&music_tune_type},
     120,
     4

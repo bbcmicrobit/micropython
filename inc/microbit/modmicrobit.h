@@ -92,7 +92,7 @@ extern const struct _microbit_button_obj_t microbit_button_a_obj;
 extern const struct _microbit_button_obj_t microbit_button_b_obj;
 extern const struct _microbit_compass_obj_t microbit_compass_obj;
 extern const struct _microbit_i2c_obj_t microbit_i2c_obj;
-extern const struct _music_tune_obj_t music_tune_singleton_obj;
+extern struct _music_tune_obj_t music_tune_singleton_obj;
 
 MP_DECLARE_CONST_FUN_OBJ(microbit_reset_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_sleep_obj);
