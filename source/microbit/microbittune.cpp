@@ -33,15 +33,24 @@ extern "C" {
 #include "py/objstr.h"
 #include "modmicrobit.h"
 
+#define DEFAULT_BPM      120
+#define DEFAULT_TICKS    4 // i.e. 4 ticks per beat
+#define DEFAULT_OCTAVE   4 // C4 is middle C
+#define DEFAULT_DURATION 4 // Crotchet
+
 typedef struct _music_tune_obj_t {
     mp_obj_base_t base;
 
     uint16_t bpm;
     uint16_t ticks;
+
+    // store these to simplify the writing process
+    uint8_t last_octave;
+    uint8_t last_duration;
 } music_tune_obj_t;
 
 
-STATIC void play_note(music_tune_obj_t *self, const char *note_str, size_t note_len, MicroBitPin *pin, bool async) {
+STATIC void play_note(music_tune_obj_t *self, const char *note_str, size_t note_len, MicroBitPin *pin, bool wait) {
     pin->setAnalogValue(128);
 
     // [NOTE](#|b)(octave)(:length)
@@ -59,10 +68,6 @@ STATIC void play_note(music_tune_obj_t *self, const char *note_str, size_t note_
     uint8_t note_index = (note_str[0] & 0x1f) - 1;
 
     // TODO: the duration and bpm should be persistent between notes
-    uint8_t duration = 4;
-    // uint8_t bpm = 120;
-    // uint8_t ticks = 4; // that means that 4 ticks is one beat.
-
     uint8_t ms_per_tick = (60000/self->bpm)/self->ticks;
 
     int8_t octave = 4;
@@ -94,9 +99,11 @@ STATIC void play_note(music_tune_obj_t *self, const char *note_str, size_t note_
     if (current_position < note_len && note_str[current_position] != ':') {
         // currently this will only work with a one digit number
         // use +=, since the sharp/flat code changes octave to compensate.
-        octave += (note_str[current_position] & 0xf) - 4;
+        self->last_octave = (note_str[current_position] & 0xf) - 4;
         current_position++;
     }
+
+    octave += self->last_octave;
 
     // parse the duration
     if (current_position < note_len && note_str[current_position] == ':') {
@@ -104,12 +111,12 @@ STATIC void play_note(music_tune_obj_t *self, const char *note_str, size_t note_
         current_position++;
 
         if (current_position < note_len) {
-            duration += note_str[current_position] & 0xf;
+            self->last_duration = note_str[current_position] & 0xf;
 
             current_position++;
             if (current_position < note_len) {
-                duration *= 10;
-                duration += note_str[current_position] & 0xf;
+                self->last_duration *= 10;
+                self->last_duration += note_str[current_position] & 0xf;
             }
         } else {
             // technically, this should be a syntax error, since this means
@@ -155,7 +162,7 @@ STATIC void play_note(music_tune_obj_t *self, const char *note_str, size_t note_
         pin->setAnalogValue(0);
     }
 
-    uBit.sleep(ms_per_tick * duration);
+    uBit.sleep(ms_per_tick * self->last_duration);
 
     if (note_index >= 10) {
         pin->setAnalogValue(128);
@@ -168,7 +175,7 @@ STATIC mp_obj_t music_note(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t 
     static const mp_arg_t allowed_args[] = {
         { MP_QSTR_pin,    MP_ARG_REQUIRED | MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
         { MP_QSTR_note,   MP_ARG_REQUIRED | MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
-        { MP_QSTR_async,  MP_ARG_KW_ONLY | MP_ARG_BOOL, {.u_bool = false} },
+        { MP_QSTR_wait,  MP_ARG_KW_ONLY | MP_ARG_BOOL, {.u_bool = false} },
     };
 
     // extract self.
@@ -193,7 +200,7 @@ STATIC mp_obj_t music_tune(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t 
     static const mp_arg_t allowed_args[] = {
         { MP_QSTR_pin,    MP_ARG_REQUIRED | MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
         { MP_QSTR_notes,   MP_ARG_REQUIRED | MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
-        { MP_QSTR_async,  MP_ARG_KW_ONLY | MP_ARG_BOOL, {.u_bool = false} },
+        { MP_QSTR_wait,  MP_ARG_KW_ONLY | MP_ARG_BOOL, {.u_bool = false} },
     };
 
     // extract self.
@@ -228,7 +235,7 @@ STATIC mp_obj_t music_pitch(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t
         { MP_QSTR_pin,    MP_ARG_REQUIRED | MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
         { MP_QSTR_frequency,   MP_ARG_REQUIRED | MP_ARG_INT, {.u_int = 0} },
         { MP_QSTR_length, MP_ARG_REQUIRED | MP_ARG_INT, {.u_int = -1} },
-        { MP_QSTR_async,  MP_ARG_KW_ONLY | MP_ARG_BOOL, {.u_bool = false} },
+        { MP_QSTR_wait,  MP_ARG_KW_ONLY | MP_ARG_BOOL, {.u_bool = false} },
     };
 
     // extract self.
@@ -299,11 +306,28 @@ STATIC mp_obj_t music_get_tempo(mp_obj_t self_in) {
 }
 MP_DEFINE_CONST_FUN_OBJ_1(music_get_tempo_obj, music_get_tempo);
 
-STATIC mp_obj_t music_stop(mp_obj_t self_in) {
-    // TODO: implement me!
+STATIC mp_obj_t music_stop(mp_obj_t self_in, mp_obj_t pin_in) {
+    MicroBitPin *pin = microbit_obj_get_pin(pin_in);
+
+    pin->setAnalogValue(0);
+
+    // TODO: stop any async operations, as necessary
+
     return mp_const_none;
 }
-MP_DEFINE_CONST_FUN_OBJ_1(music_stop_obj, music_stop);
+MP_DEFINE_CONST_FUN_OBJ_2(music_stop_obj, music_stop);
+
+STATIC mp_obj_t music_reset(mp_obj_t self_in) {
+    music_tune_obj_t *self = (music_tune_obj_t *)self_in;
+
+    self->bpm = DEFAULT_BPM;
+    self->ticks = DEFAULT_TICKS;
+    self->last_octave = DEFAULT_OCTAVE;
+    self->last_duration = DEFAULT_DURATION;
+
+    return mp_const_none;
+}
+MP_DEFINE_CONST_FUN_OBJ_1(music_reset_obj, music_reset);
 
 STATIC const mp_map_elem_t music_tune_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_note), (mp_obj_t)&music_note_obj },
@@ -312,6 +336,7 @@ STATIC const mp_map_elem_t music_tune_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_stop), (mp_obj_t)&music_stop_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_set_tempo), (mp_obj_t)&music_set_tempo_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_get_tempo), (mp_obj_t)&music_get_tempo_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_reset), (mp_obj_t)&music_reset_obj },
 };
 
 STATIC MP_DEFINE_CONST_DICT(music_tune_locals_dict, music_tune_locals_dict_table);
@@ -336,8 +361,10 @@ STATIC const mp_obj_type_t music_tune_type = {
 
 music_tune_obj_t music_tune_singleton_obj {
     {&music_tune_type},
-    120,
-    4
+    .bpm = DEFAULT_BPM,
+    .ticks = DEFAULT_TICKS,
+    .last_octave = DEFAULT_OCTAVE,
+    .last_duration = DEFAULT_DURATION,
 };
 
 }
