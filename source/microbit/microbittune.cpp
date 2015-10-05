@@ -241,29 +241,21 @@ STATIC mp_obj_t music_pitch(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t
     MicroBitPin *pin = microbit_obj_get_pin(args[0].u_obj);
 
     mp_uint_t frequency = args[1].u_int;
-    mp_uint_t length = args[2].u_int;
-    bool async = args[3].u_bool;
+    mp_int_t length = args[2].u_int;
+    bool wait = args[3].u_bool;
 
     pin->setAnalogValue(128);
     pin->setAnalogPeriodUs(1000000/frequency);
 
     if (length >= 0) {
-        if (!async) {
-            uBit.sleep(length * (60000/self->bpm)/self->ticks);
+        if (wait) {
+            uBit.sleep(length);
             pin->setAnalogValue(0);
         } else {
             // FIXME: schedule a callback to stop
         }
     } else {
-        if (async) {
-            // that's ok, just return
-        } else {
-            while (1) {
-                // let the CPU go to sleep.
-                uBit.sleep(1);
-                pin->setAnalogValue(0);
-            }
-        }
+        // don't block here, since there's no reason to leave a pitch forever in a blocking C function
     }
 
     return mp_const_none;
