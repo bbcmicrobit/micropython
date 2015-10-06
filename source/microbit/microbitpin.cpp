@@ -51,8 +51,7 @@ MP_DEFINE_CONST_FUN_OBJ_2(microbit_pin_write_digital_obj, microbit_pin_write_dig
 mp_obj_t microbit_pin_read_digital(mp_obj_t self_in) {
     microbit_pin_obj_t *self = (microbit_pin_obj_t*)self_in;
     int val = self->pin->getDigitalValue();
-    if (val == MICROBIT_IO_OP_NA)
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "Cannot read digital values from this pin"));
+    assert(val != MICROBIT_IO_OP_NA);
     return mp_obj_new_int(val);
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_pin_read_digital_obj, microbit_pin_read_digital);
@@ -78,8 +77,7 @@ MP_DEFINE_CONST_FUN_OBJ_2(microbit_pin_write_analog_obj, microbit_pin_write_anal
 mp_obj_t microbit_pin_read_analog(mp_obj_t self_in) {
     microbit_pin_obj_t *self = (microbit_pin_obj_t*)self_in;
     int val = self->pin->getAnalogValue();
-    if (val == MICROBIT_IO_OP_NA)
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "Cannot read analog values from this pin"));
+    assert(val != MICROBIT_IO_OP_NA);
     return mp_obj_new_int(val);
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_pin_read_analog_obj, microbit_pin_read_analog);
