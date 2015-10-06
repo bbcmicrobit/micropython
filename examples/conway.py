@@ -12,7 +12,7 @@ arena2 = bytearray(7 * 7)
 def show():
     for y in range(5):
         for x in range(5):
-            microbit.display.image.set_pixel_value(x, y, arena1[8 + y * 7 + x])
+            microbit.display.image.set_pixel(x, y, arena1[8 + y * 7 + x])
 
 # do 1 iteration of Conway's Game of Life
 def conway_step():

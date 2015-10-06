@@ -25,6 +25,7 @@
  */
 
 #include "MicroBit.h"
+#include "microbitobj.h"
 
 extern "C" {
 
@@ -205,5 +206,14 @@ const microbit_pin_obj_t microbit_p15_obj = {{&microbit_dig_pin_type}, &uBit.io.
 const microbit_pin_obj_t microbit_p16_obj = {{&microbit_dig_pin_type}, &uBit.io.P16};
 const microbit_pin_obj_t microbit_p19_obj = {{&microbit_dig_pin_type}, &uBit.io.P19};
 const microbit_pin_obj_t microbit_p20_obj = {{&microbit_dig_pin_type}, &uBit.io.P20};
+
+MicroBitPin *microbit_obj_get_pin(mp_obj_t o) {
+    if (mp_obj_get_type(o) == &microbit_pin_type) {
+        microbit_pin_obj_t *pin = (microbit_pin_obj_t*)o;
+        return pin->pin;
+    } else {
+        nlr_raise(mp_obj_new_exception_msg(&mp_type_TypeError, "expecting a pin"));
+    }
+}
 
 }

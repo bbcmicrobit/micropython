@@ -30,7 +30,6 @@
 extern "C" {
 
 #include "py/runtime.h"
-#include "py/objstr.h"
 #include "modmicrobit.h"
 
 typedef struct _microbit_const_image_obj_t {
@@ -54,19 +53,19 @@ STATIC void microbit_const_image_print(const mp_print_t *print, mp_obj_t self_in
     }
 }
 
-mp_obj_t microbit_const_image_get_width(mp_obj_t self_in) {
+mp_obj_t microbit_const_image_width(mp_obj_t self_in) {
     microbit_const_image_obj_t *self = (microbit_const_image_obj_t*)self_in;
     return MP_OBJ_NEW_SMALL_INT(self->width);
 }
-MP_DEFINE_CONST_FUN_OBJ_1(microbit_const_image_get_width_obj, microbit_const_image_get_width);
+MP_DEFINE_CONST_FUN_OBJ_1(microbit_const_image_width_obj, microbit_const_image_width);
 
-mp_obj_t microbit_const_image_get_height(mp_obj_t self_in) {
+mp_obj_t microbit_const_image_height(mp_obj_t self_in) {
     microbit_const_image_obj_t *self = (microbit_const_image_obj_t*)self_in;
     return MP_OBJ_NEW_SMALL_INT(self->height);
 }
-MP_DEFINE_CONST_FUN_OBJ_1(microbit_const_image_get_height_obj, microbit_const_image_get_height);
+MP_DEFINE_CONST_FUN_OBJ_1(microbit_const_image_height_obj, microbit_const_image_height);
 
-mp_obj_t microbit_const_image_get_pixel_value(mp_obj_t self_in, mp_obj_t x_in, mp_obj_t y_in) {
+mp_obj_t microbit_const_image_get_pixel(mp_obj_t self_in, mp_obj_t x_in, mp_obj_t y_in) {
     microbit_const_image_obj_t *self = (microbit_const_image_obj_t*)self_in;
     mp_int_t x = mp_obj_get_int(x_in);
     mp_int_t y = mp_obj_get_int(y_in);
@@ -76,7 +75,7 @@ mp_obj_t microbit_const_image_get_pixel_value(mp_obj_t self_in, mp_obj_t x_in, m
         return MP_OBJ_NEW_SMALL_INT(MICROBIT_INVALID_VALUE);
     }
 }
-MP_DEFINE_CONST_FUN_OBJ_3(microbit_const_image_get_pixel_value_obj, microbit_const_image_get_pixel_value);
+MP_DEFINE_CONST_FUN_OBJ_3(microbit_const_image_get_pixel_obj, microbit_const_image_get_pixel);
 
 STATIC const uint8_t heart_data[] = {
     0,1,0,1,0,
@@ -379,10 +378,9 @@ const microbit_const_image_obj_t microbit_const_image_arrow_nw_obj =
     {{&microbit_const_image_type}, 5, 5, arrow_nw_data};
 
 STATIC const mp_map_elem_t microbit_const_image_locals_dict_table[] = {
-    { MP_OBJ_NEW_QSTR(MP_QSTR_get_width), (mp_obj_t)&microbit_const_image_get_width_obj },
-    { MP_OBJ_NEW_QSTR(MP_QSTR_get_height), (mp_obj_t)&microbit_const_image_get_height_obj },
-    { MP_OBJ_NEW_QSTR(MP_QSTR_get_pixel_value), (mp_obj_t)&microbit_const_image_get_pixel_value_obj },
-    //{ MP_OBJ_NEW_QSTR(MP_QSTR_to_string), (mp_obj_t)&microbit_const_image_to_string_obj }, TODO probably should be __str__
+    { MP_OBJ_NEW_QSTR(MP_QSTR_width), (mp_obj_t)&microbit_const_image_width_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_height), (mp_obj_t)&microbit_const_image_height_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_get_pixel), (mp_obj_t)&microbit_const_image_get_pixel_obj },
 };
 
 STATIC MP_DEFINE_CONST_DICT(microbit_const_image_locals_dict, microbit_const_image_locals_dict_table);

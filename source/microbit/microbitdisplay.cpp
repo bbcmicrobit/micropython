@@ -146,8 +146,8 @@ STATIC mp_obj_t microbit_display_animate(mp_uint_t n_args, const mp_obj_t *pos_a
         { MP_QSTR_delay,    MP_ARG_REQUIRED | MP_ARG_INT, {.u_int = 0} },
         { MP_QSTR_stride,   MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = 5} },
         { MP_QSTR_start,    MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = MICROBIT_DISPLAY_ANIMATE_DEFAULT_POS} },
-        { MP_QSTR_async,    MP_ARG_KW_ONLY | MP_ARG_BOOL, {.u_bool = false} },
-        { MP_QSTR_repeat,   MP_ARG_KW_ONLY | MP_ARG_BOOL, {.u_bool = false} },
+        { MP_QSTR_wait,     MP_ARG_KW_ONLY | MP_ARG_BOOL, {.u_bool = true} },
+        { MP_QSTR_loop,     MP_ARG_KW_ONLY | MP_ARG_BOOL, {.u_bool = false} },
     };
 
     // parse args
@@ -165,13 +165,14 @@ STATIC mp_obj_t microbit_display_animate(mp_uint_t n_args, const mp_obj_t *pos_a
         mp_obj_t *items;
         mp_obj_get_array(args[0].u_obj, &len, &items);
 
-        if (!args[4].u_bool) {
+        if (args[4].u_bool) {
+            // wait for animation to finish
             for (mp_uint_t i = 0; i < len; ++i) {
                 MicroBitImage *image = microbit_obj_get_image(items[i]);
                 self->display->animate(*image, args[1].u_int, args[2].u_int, args[3].u_int);
             }
         } else if (len > 0) {
-            // in background
+            // run animation in background
             MicroBitImage *image = microbit_obj_get_image(items[0]);
             self->display->animateAsync(*image, args[1].u_int, args[2].u_int, args[3].u_int);
             MP_STATE_PORT(async_data)[0] = self;
@@ -188,14 +189,16 @@ STATIC mp_obj_t microbit_display_animate(mp_uint_t n_args, const mp_obj_t *pos_a
     } else {
         MicroBitImage *image = microbit_obj_get_image(args[0].u_obj);
 
-        if (!args[4].u_bool) {
+        if (args[4].u_bool) {
+            // wait
             self->display->animate(*image, args[1].u_int, args[2].u_int, args[3].u_int);
         } else {
+            // don't wait
             self->display->animateAsync(*image, args[1].u_int, args[2].u_int, args[3].u_int);
         }
 
         if (args[5].u_bool) {
-            // enable repeat
+            // enable looping
             MP_STATE_PORT(async_data)[0] = self;
             MP_STATE_PORT(async_data)[1] = image;
             async_mode = 1;

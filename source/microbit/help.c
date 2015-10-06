@@ -35,7 +35,7 @@ STATIC const char *help_text =
 "\n"
 "Type 'import microbit', press return and try these commands:\n"
 "  microbit.display.scroll('Hello')\n"
-"  microbit.system_time()\n"
+"  microbit.running_time()\n"
 "  microbit.sleep(1000)\n"
 "  microbit.button_a.is_pressed()\n"
 "What do these commands do? Can you improve them? HINT: use the up and down\n"
@@ -54,12 +54,12 @@ STATIC const char *help_text =
 "  microbit.compass               -- detect the device's heading\n"
 "  microbit.display               -- display things (pixels, characters, words)\n"
 "  microbit.Image                 -- make pictures for the display\n"
-"  microbit.io                    -- control the gold input/output (IO) pins\n"
+"  microbit.pin0                  -- control the gold input/output (IO) pin0\n"
 "  microbit.panic()               -- enter panic mode (requires a restart)\n"
 "  microbit.random(n)             -- get a random number between 0 and n-1\n"
 "  microbit.reset()               -- reset the device\n"
 "  microbit.sleep(n)              -- wait for n milliseconds (1 second = 1000)\n"
-"  microbit.system_time()         -- get the number of milliseconds since reset\n"
+"  microbit.running_time()        -- get the number of milliseconds since reset\n"
 "\n"
 "Control commands:\n"
 "  CTRL-C        -- stop a running program\n"
@@ -86,7 +86,7 @@ STATIC const mp_doc_t help_table_instances[] = {
     {&microbit_panic_obj, "panic() -- enter panic mode (requires a restart).\n"},
     {&microbit_random_obj, "random(n) -- return a random number between 0 and 'n'-1.\n"},
     {&microbit_sleep_obj, "sleep(n) -- wait for 'n' milliseconds (1 second = 1000).\n"},
-    {&microbit_system_time_obj, "system_time() -- get the number of milliseconds since reset.\n"},
+    {&microbit_running_time_obj, "running_time() -- get the number of milliseconds since reset.\n"},
     {&microbit_accelerometer_obj, "A toolbox of code to detect the device's position (orientation).\n"},
     {&microbit_accelerometer_get_x_obj, "get_x() -- get the device's X axis reading.\n"},
     {&microbit_accelerometer_get_y_obj, "get_y() -- get the device's Y axis reading.\n"},
@@ -108,9 +108,9 @@ STATIC const mp_doc_t help_table_instances[] = {
     {&microbit_display_clear_obj, "clear() -- clear the display.\n"},
     {&microbit_display_animate_obj, "animate(img, delay, stride, start=0, async=False, repeat=False) -- animate\n    image 'img' with 'delay' milliseconds and 'stride' pixels offset between\n    frames. Optional: 'start' offset from left hand side, 'async' to run in the\n    background, 'repeat' to loop the animation.\n"},
     {&microbit_display_set_brightness_obj, "set_brightness(b) -- set the brightness 'b' of the display between 0..255.\n    See also set_display_mode(n).\n"},
-    {&microbit_display_set_display_mode_obj, "set_display_mode(i) -- set pixel display mode to: 0 (on/off) or 1 (levels of\n    brightness between 0..255). See also set_brightness(b) and\n    set_pixel_value(x, y, i).\n"},
+    {&microbit_display_set_display_mode_obj, "set_display_mode(i) -- set pixel display mode to: 0 (on/off) or 1 (levels of\n    brightness between 0..255). See also set_brightness(b) and\n    set_pixel(x, y, i).\n"},
     {&microbit_image_obj, "A toolbox of code to work with the image shown on the device's 5x5 display.\n"},
-    {&microbit_image_set_pixel_value_obj, "set_pixel_value(x, y, i) -- set the pixel at position x, y to brightness i.\n"},
+    {&microbit_image_set_pixel_obj, "set_pixel(x, y, i) -- set the pixel at position x, y to brightness i.\n"},
     {&microbit_p0_obj, "Represents pin 0 on the gold edge connector.\n"},
     {&microbit_p1_obj, "Represents pin 1 on the gold edge connector.\n"},
     {&microbit_p2_obj, "Represents pin 2 on the gold edge connector.\n"},

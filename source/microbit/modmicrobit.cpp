@@ -48,10 +48,10 @@ STATIC mp_obj_t microbit_random(mp_obj_t max_in) {
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_random_obj, microbit_random);
 
-STATIC mp_obj_t microbit_system_time(void) {
+STATIC mp_obj_t microbit_running_time(void) {
     return MP_OBJ_NEW_SMALL_INT(uBit.systemTime());
 }
-MP_DEFINE_CONST_FUN_OBJ_0(microbit_system_time_obj, microbit_system_time);
+MP_DEFINE_CONST_FUN_OBJ_0(microbit_running_time_obj, microbit_running_time);
 
 STATIC mp_obj_t microbit_panic(mp_uint_t n_args, const mp_obj_t *args) {
     if (n_args == 0) {
@@ -74,11 +74,12 @@ STATIC const mp_map_elem_t microbit_module_globals_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_accelerometer), (mp_obj_t)&microbit_accelerometer_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_compass), (mp_obj_t)&microbit_compass_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_i2c), (mp_obj_t)&microbit_i2c_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_music), (mp_obj_t)&microbit_music_obj },
 
     { MP_OBJ_NEW_QSTR(MP_QSTR_reset), (mp_obj_t)&microbit_reset_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_sleep), (mp_obj_t)&microbit_sleep_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_random), (mp_obj_t)&microbit_random_obj },
-    { MP_OBJ_NEW_QSTR(MP_QSTR_system_time), (mp_obj_t)&microbit_system_time_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_running_time), (mp_obj_t)&microbit_running_time_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_panic), (mp_obj_t)&microbit_panic_obj },
     
     { MP_OBJ_NEW_QSTR(MP_QSTR_pin0), (mp_obj_t)&microbit_p0_obj },
