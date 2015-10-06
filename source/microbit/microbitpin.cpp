@@ -62,14 +62,14 @@ mp_obj_t microbit_pin_write_analog(mp_obj_t self_in, mp_obj_t value_in) {
     int set_value;
     if (MP_OBJ_IS_TYPE(value_in, &mp_type_float)) {
         mp_float_t val = mp_obj_get_float(value_in);
-        set_value = val / 100.0 * MICROBIT_PIN_MAX_OUTPUT;
+        set_value = val+0.5;
     }
     else {
-        set_value = mp_obj_get_int(value_in) * MICROBIT_PIN_MAX_OUTPUT / 100;
+        set_value = mp_obj_get_int(value_in);
     }
     /* We would like to check that this pin is analog capable, but the DAL does not offer this capability. */
     if (set_value < 0 || set_value > MICROBIT_PIN_MAX_OUTPUT)
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "value must be between 0 and 100"));
+        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "value must be between 0 and 1023"));
     self->pin->setAnalogValue(set_value);
     return mp_const_none;
 }
@@ -80,7 +80,7 @@ mp_obj_t microbit_pin_read_analog(mp_obj_t self_in) {
     int val = self->pin->getAnalogValue();
     if (val == MICROBIT_IO_OP_NA)
         nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "Cannot read analog values from this pin"));
-    return mp_obj_new_int((val*100+MICROBIT_PIN_MAX_OUTPUT/2)/MICROBIT_PIN_MAX_OUTPUT);
+    return mp_obj_new_int(val);
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_pin_read_analog_obj, microbit_pin_read_analog);
 
@@ -208,7 +208,8 @@ const microbit_pin_obj_t microbit_p19_obj = {{&microbit_dig_pin_type}, &uBit.io.
 const microbit_pin_obj_t microbit_p20_obj = {{&microbit_dig_pin_type}, &uBit.io.P20};
 
 MicroBitPin *microbit_obj_get_pin(mp_obj_t o) {
-    if (mp_obj_get_type(o) == &microbit_pin_type) {
+    mp_obj_type_t *type = mp_obj_get_type(o);
+    if (type == &microbit_touch_pin_type || type == &microbit_ad_pin_type || type == &microbit_dig_pin_type) {
         microbit_pin_obj_t *pin = (microbit_pin_obj_t*)o;
         return pin->pin;
     } else {
