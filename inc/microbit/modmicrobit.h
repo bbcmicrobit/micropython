@@ -28,7 +28,10 @@
 
 #include "py/objtuple.h"
 
-extern const mp_obj_type_t microbit_pin_type;
+extern const mp_obj_type_t microbit_ad_pin_type;
+extern const mp_obj_type_t microbit_dig_pin_type;
+extern const mp_obj_type_t microbit_touch_pin_type;
+
 extern const struct _microbit_pin_obj_t microbit_p0_obj;
 extern const struct _microbit_pin_obj_t microbit_p1_obj;
 extern const struct _microbit_pin_obj_t microbit_p2_obj;
@@ -121,6 +124,8 @@ MP_DECLARE_CONST_FUN_OBJ(microbit_pin_write_digital_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_pin_read_analog_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_pin_write_analog_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_pin_is_touched_obj);
+MP_DECLARE_CONST_FUN_OBJ(microbit_pin_set_analog_period_obj);
+MP_DECLARE_CONST_FUN_OBJ(microbit_pin_set_analog_period_microseconds_obj);
 
 extern const mp_obj_module_t microbit_module;
 
