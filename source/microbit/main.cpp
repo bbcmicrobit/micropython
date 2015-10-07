@@ -3,13 +3,14 @@
 extern "C" {
     void mp_run(void);
 
-    void microbit_display_event(void);
+    void microbit_display_tick(void);
 }
 
-static void event_listener(MicroBitEvent evt) {
-    if (evt.value == MICROBIT_DISPLAY_EVT_ANIMATION_COMPLETE) {
-        microbit_display_event();
-    }
+static void ticker(void) {
+    /* Make sure we call the DAL ticker function */
+    uBit.systemTick();
+    /* Then update Python display */
+    microbit_display_tick();
 }
 
 void app_main() {
@@ -28,10 +29,10 @@ void app_main() {
     */
 
     currentFiber->flags |= MICROBIT_FIBER_FLAG_DO_NOT_PAGE;
+    
+    /* Hijack the DAL system ticker */
+    uBit.systemTicker.attach(ticker, MICROBIT_DISPLAY_REFRESH_PERIOD);
 
-    uBit.MessageBus.listen(MICROBIT_ID_DISPLAY,
-        MICROBIT_DISPLAY_EVT_ANIMATION_COMPLETE, event_listener,
-        MESSAGE_BUS_LISTENER_REENTRANT | MESSAGE_BUS_LISTENER_NONBLOCKING);
 
     while (1) {
         mp_run();
