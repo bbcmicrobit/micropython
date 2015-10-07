@@ -90,6 +90,7 @@ void mp_run(void) {
 
     mp_init();
     mp_hal_init();
+    microbit_display_init();
 
     if (APPENDED_SCRIPT->header[0] == 'M' && APPENDED_SCRIPT->header[1] == 'P') {
         // run appended script
