@@ -31,6 +31,7 @@ extern "C" {
 
 #include "py/runtime.h"
 #include "modmicrobit.h"
+#include "microbitimage.h"
 
 typedef struct _microbit_display_obj_t {
     mp_obj_base_t base;
@@ -69,11 +70,29 @@ mp_obj_t microbit_display_print(mp_uint_t n_args, const mp_obj_t *args) {
                 self->display->print(s, mp_obj_get_int(args[2]));
             }
         }
-    } else {
+    } else if (mp_obj_get_type(args[1]) == &microbit_image_type) {
         // arg should be an image
-        MicroBitImage *image = microbit_obj_get_image(args[1]);
-        MicroBitImage img(*image);
-        self->display->print(img, 0, 0, 0, 0);
+        MicroBitImage *display_image = &self->display->image;
+        microbit_image_obj_t *image = (microbit_image_obj_t *)args[1];
+        mp_int_t w = max(image->width(), 5);
+        mp_int_t h = max(image->height(), 5);
+        mp_int_t x = 0;
+        for (; x < w; ++x) {
+            mp_int_t y = 0;
+            for (; y < h; ++y) {
+                 display_image->setPixelValue(x, y, SCALE_BRIGHTNESS[image->getPixelValue(x, y)]);
+            }
+            for (; y < 5; ++y) {
+                display_image->setPixelValue(x, y, 0);
+            }
+        }
+        for (; x < 5; ++x) {
+            for (mp_int_t y = 0; y < 5; ++y) {
+                display_image->setPixelValue(x, y, 0);
+            }
+        }
+    } else {
+        nlr_raise(mp_obj_new_exception_msg(&mp_type_TypeError, "expecting an image"));
     }
     return mp_const_none;
 }
@@ -236,7 +255,6 @@ mp_obj_t microbit_display_set_display_mode(mp_obj_t self_in, mp_obj_t mode_in) {
 MP_DEFINE_CONST_FUN_OBJ_2(microbit_display_set_display_mode_obj, microbit_display_set_display_mode);
 
 STATIC const mp_map_elem_t microbit_display_locals_dict_table[] = {
-    { MP_OBJ_NEW_QSTR(MP_QSTR_image), (mp_obj_t)&microbit_image_obj },
 
     { MP_OBJ_NEW_QSTR(MP_QSTR_set_brightness), (mp_obj_t)&microbit_display_set_brightness_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_set_display_mode), (mp_obj_t)&microbit_display_set_display_mode_obj },
@@ -270,5 +288,10 @@ const microbit_display_obj_t microbit_display_obj = {
     {&microbit_display_type},
     .display = &uBit.display
 };
+
+void microbit_display_init(void) {
+    microbit_display_obj.display->setBrightness(255);
+    microbit_display_obj.display->setDisplayMode(DISPLAY_MODE_GREYSCALE);
+}
 
 }
