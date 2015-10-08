@@ -183,6 +183,18 @@ microbit_image_obj_t *microbit_image_obj_t::copy() {
     return (microbit_image_obj_t *)result;
 }
 
+microbit_image_obj_t *microbit_image_obj_t::invert() {
+    mp_int_t w = this->width();
+    mp_int_t h = this->height();
+    greyscale_t *result = greyscale_new(w, h);
+    for (mp_int_t y = 0; y < h; y++) {
+        for (mp_int_t x = 0; x < w; ++x) {
+            result->setPixelValue(x,y, MAX_BRIGHTNESS - this->getPixelValue(x,y));
+        }
+    }
+    return (microbit_image_obj_t *)result;
+}
+
 microbit_image_obj_t *microbit_image_obj_t::shiftLeft(mp_int_t n) {
     mp_int_t w = this->width();
     mp_int_t h = this->height();
@@ -431,6 +443,12 @@ mp_obj_t microbit_image_copy(mp_obj_t self_in) {
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_image_copy_obj, microbit_image_copy);
 
+mp_obj_t microbit_image_invert(mp_obj_t self_in) {
+    microbit_image_obj_t *self = (microbit_image_obj_t*)self_in;
+    return self->invert();
+}
+MP_DEFINE_CONST_FUN_OBJ_1(microbit_image_invert_obj, microbit_image_invert);
+
 STATIC const mp_map_elem_t microbit_image_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_width), (mp_obj_t)&microbit_image_width_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_height), (mp_obj_t)&microbit_image_height_obj },
@@ -441,6 +459,7 @@ STATIC const mp_map_elem_t microbit_image_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_shift_up), (mp_obj_t)&microbit_image_shift_up_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_shift_down), (mp_obj_t)&microbit_image_shift_down_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_copy), (mp_obj_t)&microbit_image_copy_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_invert), (mp_obj_t)&microbit_image_invert_obj },
 
     { MP_OBJ_NEW_QSTR(MP_QSTR_HEART), (mp_obj_t)&microbit_const_image_heart_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_HEART_SMALL), (mp_obj_t)&microbit_const_image_heart_small_obj },
