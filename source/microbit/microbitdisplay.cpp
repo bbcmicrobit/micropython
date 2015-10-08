@@ -80,7 +80,7 @@ mp_obj_t microbit_display_print(mp_uint_t n_args, const mp_obj_t *args) {
         for (; x < w; ++x) {
             mp_int_t y = 0;
             for (; y < h; ++y) {
-                 display_image->setPixelValue(x, y, SCALE_BRIGHTNESS[image->getPixelValue(x, y)]);
+                 display_image->setPixelValue(x, y, BRIGHTNESS_SCALE[image->getPixelValue(x, y)]);
             }
             for (; y < 5; ++y) {
                 display_image->setPixelValue(x, y, 0);
@@ -240,25 +240,82 @@ mp_obj_t microbit_display_clear(void) {
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_display_clear_obj, microbit_display_clear);
 
-mp_obj_t microbit_display_set_brightness(mp_obj_t self_in, mp_obj_t br_in) {
-    microbit_display_obj_t *self = (microbit_display_obj_t*)self_in;
-    self->display->setBrightness(mp_obj_get_int(br_in));
+mp_obj_t microbit_display_set_pixel_raw(mp_uint_t n_args, const mp_obj_t *args) {
+    (void)n_args;
+    microbit_display_obj_t *self = (microbit_display_obj_t*)args[0];
+    self->display->image.setPixelValue(mp_obj_get_int(args[1]), mp_obj_get_int(args[2]), mp_obj_get_int(args[3]));
     return mp_const_none;
 }
-MP_DEFINE_CONST_FUN_OBJ_2(microbit_display_set_brightness_obj, microbit_display_set_brightness);
+MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_display_set_pixel_raw_obj, 4, 4, microbit_display_set_pixel_raw);
 
-mp_obj_t microbit_display_set_display_mode(mp_obj_t self_in, mp_obj_t mode_in) {
-    microbit_display_obj_t *self = (microbit_display_obj_t*)self_in;
-    self->display->setDisplayMode((DisplayMode)mp_obj_get_int(mode_in));
+mp_obj_t microbit_display_set_pixel(mp_uint_t n_args, const mp_obj_t *args) {
+    (void)n_args;
+    microbit_display_obj_t *self = (microbit_display_obj_t*)args[0];
+    mp_int_t bright = mp_obj_get_int(args[3]);
+    if (bright < 0 || bright > MAX_BRIGHTNESS) 
+        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "brightness out of bounds."));
+    self->display->image.setPixelValue(mp_obj_get_int(args[1]), mp_obj_get_int(args[2]), BRIGHTNESS_SCALE[bright]);
     return mp_const_none;
 }
-MP_DEFINE_CONST_FUN_OBJ_2(microbit_display_set_display_mode_obj, microbit_display_set_display_mode);
+MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_display_set_pixel_obj, 4, 4, microbit_display_set_pixel);
+
+mp_obj_t microbit_display_get_pixel_raw(mp_obj_t self_in, mp_obj_t x_in, mp_obj_t y_in) {
+    microbit_display_obj_t *self = (microbit_display_obj_t*)self_in;
+    mp_int_t raw = self->display->image.getPixelValue(mp_obj_get_int(x_in), mp_obj_get_int(y_in));
+    return MP_OBJ_NEW_SMALL_INT(raw);
+}
+MP_DEFINE_CONST_FUN_OBJ_3(microbit_display_get_pixel_raw_obj, microbit_display_get_pixel_raw);
+
+mp_obj_t microbit_display_get_pixel(mp_obj_t self_in, mp_obj_t x_in, mp_obj_t y_in) {
+    microbit_display_obj_t *self = (microbit_display_obj_t*)self_in;
+    mp_int_t raw = self->display->image.getPixelValue(mp_obj_get_int(x_in), mp_obj_get_int(y_in));
+    for (int i = 0; i < MAX_BRIGHTNESS; ++i) {
+        mp_int_t bright = BRIGHTNESS_SCALE[i];
+        mp_int_t next = BRIGHTNESS_SCALE[i+1];
+        if (raw < (bright + next)/2)
+            return MP_OBJ_NEW_SMALL_INT(i);
+    }
+    return MP_OBJ_NEW_SMALL_INT(MAX_BRIGHTNESS);
+}
+MP_DEFINE_CONST_FUN_OBJ_3(microbit_display_get_pixel_obj, microbit_display_get_pixel);
+
+mp_obj_t microbit_display_print_buffer(mp_uint_t n_args, const mp_obj_t *args) {
+    (void)n_args;
+    microbit_display_obj_t *self = (microbit_display_obj_t*)args[0];
+    mp_obj_t buffer_in = args[1];
+    mp_int_t offset = mp_obj_get_int(args[2]);
+    mp_int_t stride = mp_obj_get_int(args[3]);
+    if (offset < 0 || stride < 0) {
+        nlr_raise(mp_obj_new_exception_msg(&mp_type_IndexError, "offset and stride must not be negative."));
+    }
+    mp_buffer_info_t buffer;
+    mp_get_buffer_raise(buffer_in, &buffer, MP_BUFFER_READ);
+    const char *ptr = ((const char *)buffer.buf) + offset;
+    MicroBitImage *display_image = &self->display->image;
+    if (stride*4+5 > buffer.len) {
+        nlr_raise(mp_obj_new_exception_msg(&mp_type_IndexError, "buffer read out of range"));
+    }
+    for (int y = 0; y < 5; y++) {
+        for (int x = 0; x < 5; ++x) {
+            mp_int_t bright = ptr[x];
+            bright = max(0, bright);
+            bright = min(bright, MAX_BRIGHTNESS);
+            display_image->setPixelValue(x, y, BRIGHTNESS_SCALE[bright]);
+        }
+        ptr += stride;
+    }
+    return mp_const_none;
+}
+MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_display_print_buffer_obj, 4, 4, microbit_display_print_buffer);
 
 STATIC const mp_map_elem_t microbit_display_locals_dict_table[] = {
-
-    { MP_OBJ_NEW_QSTR(MP_QSTR_set_brightness), (mp_obj_t)&microbit_display_set_brightness_obj },
-    { MP_OBJ_NEW_QSTR(MP_QSTR_set_display_mode), (mp_obj_t)&microbit_display_set_display_mode_obj },
+    
+    { MP_OBJ_NEW_QSTR(MP_QSTR_get_pixel),  (mp_obj_t)&microbit_display_get_pixel_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_get_pixel_raw),  (mp_obj_t)&microbit_display_get_pixel_raw_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_set_pixel),  (mp_obj_t)&microbit_display_set_pixel_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_set_pixel_raw),  (mp_obj_t)&microbit_display_set_pixel_raw_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_print), (mp_obj_t)&microbit_display_print_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_print_buffer), (mp_obj_t)&microbit_display_print_buffer_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_scroll), (mp_obj_t)&microbit_display_scroll_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_animate), (mp_obj_t)&microbit_display_animate_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_clear), (mp_obj_t)&microbit_display_clear_obj },

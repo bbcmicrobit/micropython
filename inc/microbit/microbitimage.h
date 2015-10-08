@@ -1,12 +1,12 @@
    
-#define MAX_BRIGHTNESS 10
+#define MAX_BRIGHTNESS 9
 
 #define TYPE_AND_FLAGS \
     mp_obj_base_t base; \
     uint8_t five:1; \
     uint8_t monochrome:1; \
     uint8_t greyscale: 1; \
-    uint8_t reserved_mutable:1
+    uint8_t reserved:1
 
 typedef struct _image_base_t {
     TYPE_AND_FLAGS;
@@ -84,4 +84,4 @@ typedef union _microbit_image_obj_t {
     } \
 }
 
-extern int SCALE_BRIGHTNESS[];
+extern int BRIGHTNESS_SCALE[];

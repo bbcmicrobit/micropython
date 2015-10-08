@@ -5,7 +5,7 @@ hands = (Image.CLOCK12, Image.CLOCK1, Image.CLOCK2, Image.CLOCK3,
          Image.CLOCK8, Image.CLOCK9, Image.CLOCK10, Image.CLOCK11,
          )
 
-centre_dot = Image("\n\n  X  \n\n\n")
+centre_dot = Image("\n\n  2  \n\n\n")
 
 def fiveticks():
     fivemins = 0

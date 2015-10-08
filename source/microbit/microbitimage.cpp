@@ -34,6 +34,23 @@ extern "C" {
 #include "microbitimage.h"
 #include "py/runtime0.h"
 
+/* This scale has been determined experimentally (and subjectively) 
+   It is not as even as I (Mark Shannon) would like.
+ */
+int BRIGHTNESS_SCALE[] = { 
+   /* 0 */ 0, 
+   /* 1 */ 2, 
+   /* 2 */ 5, 
+   /* 3 */ 10,
+   /* 4 */ 14,
+   /* 5 */ 24,
+   /* 6 */ 43,
+   /* 7 */ 78,
+   /* 8 */ 141,
+   /* 9 */ 255
+};
+
+
 monochrome_5by5_t BLANK_IMAGE = {
     { &microbit_image_type },
     1, 0, 0, 0, 0,
@@ -88,7 +105,7 @@ void monochrome_t::printPixel(mp_int_t x, mp_int_t y, const mp_print_t *print) {
 }
 
 void greyscale_t::printPixel(mp_int_t x, mp_int_t y, const mp_print_t *print) {
-    mp_printf(print, "%c", " 123456789X"[this->getPixelValue(x, y)]);
+    mp_printf(print, "%c", " 123456789"[this->getPixelValue(x, y)]);
 }
 
 int monochrome_5by5_t::getPixelValue(mp_int_t x, mp_int_t y) {
@@ -608,20 +625,6 @@ const mp_obj_type_t microbit_image_type = {
     .stream_p = NULL,
     .bases_tuple = MP_OBJ_NULL,
     /* .locals_dict = */ (mp_obj_t)&microbit_image_locals_dict,
-};
-
-int SCALE_BRIGHTNESS[] = { 
-   /* 0 */ 0, 
-   /* 1 */ 1, 
-   /* 2 */ 2, 
-   /* 3 */ 4,
-   /* 4 */ 7,
-   /* 5 */ 13,
-   /* 6 */ 24,
-   /* 7 */ 43,
-   /* 8 */ 78,
-   /* 9 */ 141,
-   /* 10 */ 255
 };
 
 // this is a very big hack: the class layout should match MicroBitImage
