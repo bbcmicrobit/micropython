@@ -29,55 +29,89 @@
 #include <stdint.h>
 
 #include "py/mpconfig.h"
+#include "py/misc.h"
+#include "py/qstr.h"
 
 struct _mp_lexer_t;
 
-// a mp_parse_node_t is:
-//  - 0000...0000: no node
-//  - xxxx...xxx1: a small integer; bits 1 and above are the signed value, 2's complement
-//  - xxxx...xx00: pointer to mp_parse_node_struct_t
-//  - xx...xx0010: an identifier; bits 4 and above are the qstr
-//  - xx...xx0110: a string; bits 4 and above are the qstr holding the value
-//  - xx...xx1010: a string of bytes; bits 4 and above are the qstr holding the value
-//  - xx...xx1110: a token; bits 4 and above are mp_token_kind_t
+#define MP_PT_NULL (0)
+#define MP_PT_TOKEN (1)
+#define MP_PT_SMALL_INT (3)
+#define MP_PT_STRING (4)
+#define MP_PT_BYTES (5)
+#define MP_PT_CONST_OBJECT (8)
+#define MP_PT_ID_BASE (10) // +16
+#define MP_PT_RULE_BASE (26) // +173-ish
 
-#define MP_PARSE_NODE_NULL      (0)
-#define MP_PARSE_NODE_SMALL_INT (0x1)
-#define MP_PARSE_NODE_ID        (0x02)
-#define MP_PARSE_NODE_STRING    (0x06)
-#define MP_PARSE_NODE_BYTES     (0x0a)
-#define MP_PARSE_NODE_TOKEN     (0x0e)
+extern const byte pt_const_int0[];
 
-typedef mp_uint_t mp_parse_node_t; // must be pointer size
+static inline const byte *pt_tok_extract(const byte *p, byte *tok) {
+    //assert(*p == MP_PT_TOKEN);
+    p += 1;
+    *tok = *p++;
+    return p;
+}
 
-typedef struct _mp_parse_node_struct_t {
-    uint32_t source_line:14;       // line number in source file
-    uint32_t kind_num_nodes:18;    // parse node kind, and number of nodes
-    mp_parse_node_t nodes[];    // nodes
-} mp_parse_node_struct_t;
+static inline bool pt_is_null(const byte *p) {
+    return *p == MP_PT_NULL;
+}
 
-// macros for mp_parse_node_t usage
-// some of these evaluate their argument more than once
+static inline bool pt_is_null_with_top(const byte *p, const byte *ptop) {
+    return p == ptop || *p == MP_PT_NULL;
+}
 
-#define MP_PARSE_NODE_IS_NULL(pn) ((pn) == MP_PARSE_NODE_NULL)
-#define MP_PARSE_NODE_IS_LEAF(pn) ((pn) & 3)
-#define MP_PARSE_NODE_IS_STRUCT(pn) ((pn) != MP_PARSE_NODE_NULL && ((pn) & 3) == 0)
-#define MP_PARSE_NODE_IS_STRUCT_KIND(pn, k) ((pn) != MP_PARSE_NODE_NULL && ((pn) & 3) == 0 && MP_PARSE_NODE_STRUCT_KIND((mp_parse_node_struct_t*)(pn)) == (k))
+static inline bool pt_is_small_int(const byte *p) {
+    return *p == MP_PT_SMALL_INT;
+}
 
-#define MP_PARSE_NODE_IS_SMALL_INT(pn) (((pn) & 0x1) == MP_PARSE_NODE_SMALL_INT)
-#define MP_PARSE_NODE_IS_ID(pn) (((pn) & 0x0f) == MP_PARSE_NODE_ID)
-#define MP_PARSE_NODE_IS_TOKEN(pn) (((pn) & 0x0f) == MP_PARSE_NODE_TOKEN)
-#define MP_PARSE_NODE_IS_TOKEN_KIND(pn, k) ((pn) == (MP_PARSE_NODE_TOKEN | ((k) << 4)))
+static inline bool pt_is_any_rule(const byte *p) {
+    return *p >= MP_PT_RULE_BASE;
+}
 
-#define MP_PARSE_NODE_LEAF_KIND(pn) ((pn) & 0x0f)
-#define MP_PARSE_NODE_LEAF_ARG(pn) (((mp_uint_t)(pn)) >> 4)
-#define MP_PARSE_NODE_LEAF_SMALL_INT(pn) (((mp_int_t)(pn)) >> 1)
-#define MP_PARSE_NODE_STRUCT_KIND(pns) ((pns)->kind_num_nodes & 0xff)
-#define MP_PARSE_NODE_STRUCT_NUM_NODES(pns) ((pns)->kind_num_nodes >> 8)
+static inline mp_uint_t pt_rule_extract_rule_id(const byte *p) {
+    return *p - MP_PT_RULE_BASE;
+}
 
-mp_parse_node_t mp_parse_node_new_leaf(mp_int_t kind, mp_int_t arg);
-int mp_parse_node_extract_list(mp_parse_node_t *pn, mp_uint_t pn_kind, mp_parse_node_t **nodes);
-void mp_parse_node_print(mp_parse_node_t pn, mp_uint_t indent);
+static inline bool pt_is_any_id(const byte *p) {
+    return *p >= MP_PT_ID_BASE && *p < MP_PT_RULE_BASE;
+}
+
+static inline bool pt_is_id(const byte *p, qstr qst) {
+    //assert(*p == MP_PT_ID_BASE);
+    return qst == (p[1] | ((p[0] - MP_PT_ID_BASE) << 8));
+}
+
+static inline bool pt_is_any_tok(const byte *p) {
+    return p[0] == MP_PT_TOKEN;
+}
+
+static inline bool pt_is_tok(const byte *p, int tok) {
+    return p[0] == MP_PT_TOKEN && p[1] == tok;
+}
+
+static inline bool pt_is_rule(const byte *p, int rule) {
+    return *p == MP_PT_RULE_BASE + rule;
+}
+
+int pt_num_nodes(const byte *p, const byte *ptop);
+const byte *pt_next(const byte *p);
+
+//const byte *pt_extract_id(const byte *p, qstr *qst);
+static inline const byte *pt_extract_id(const byte *p, qstr *qst) {
+    //assert(*p == MP_PT_ID_BASE);
+    *qst = p[1] | ((p[0] - MP_PT_ID_BASE) << 8);
+    return p + 2;
+}
+
+const byte *pt_extract_const_obj(const byte *p, mp_uint_t *idx);
+mp_int_t pt_small_int_value(const byte *p);
+const byte *pt_get_small_int(const byte *p, mp_int_t *val);
+const byte *pt_rule_first(const byte *p);
+const byte *pt_rule_extract_top(const byte *p, const byte **ptop);
+const byte *pt_rule_extract(const byte *p, mp_uint_t *rule_id, mp_uint_t *src_line, const byte **ptop);
+bool pt_is_rule_empty(const byte *p);
+
+const byte *mp_parse_node_extract_list(const byte **p, mp_uint_t pn_kind);
 
 typedef enum {
     MP_PARSE_SINGLE_INPUT,
@@ -86,7 +120,8 @@ typedef enum {
 } mp_parse_input_kind_t;
 
 typedef struct _mp_parse_t {
-    mp_parse_node_t root;
+    const byte *root;
+    mp_uint_t *co_data;
     struct _mp_parse_chunk_t *chunk;
 } mp_parse_tree_t;
 
