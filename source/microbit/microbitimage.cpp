@@ -130,7 +130,7 @@ void greyscale_t::setPixelValue(mp_int_t x, mp_int_t y, mp_int_t val) {
     unsigned int index = y*this->width+x;
     unsigned int shift = ((index<<2)&4);
     uint8_t mask = 240 >> shift;
-    this->byte_data[index] = (this->byte_data[index] & mask) | (val << shift);
+    this->byte_data[index>>1] = (this->byte_data[index>>1] & mask) | (val << shift);
 }
 
 mp_int_t microbit_image_obj_t::getPixelValue(mp_int_t x, mp_int_t y) {
@@ -481,7 +481,7 @@ STATIC mp_obj_t microbit_image_dim(mp_obj_t lhs_in, mp_obj_t rhs_in) {
     if (mp_obj_get_type(lhs_in) != &microbit_image_type)
         nlr_raise(mp_obj_new_exception_msg(&mp_type_TypeError, "Must be an image"));
     microbit_image_obj_t *lhs = (microbit_image_obj_t *)lhs_in;
-    mp_float_t fval = mp_obj_float_get(rhs_in);
+    mp_float_t fval = mp_obj_get_float(rhs_in);
     if (fval < 0) 
         nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "Brightness multiplier must not be negative."));
     greyscale_t *result = greyscale_new(lhs->width(), lhs->height());
