@@ -33,10 +33,11 @@ extern "C" {
 #include "py/objstr.h"
 #include "modmicrobit.h"
 
-#define DEFAULT_BPM      120
-#define DEFAULT_TICKS    4 // i.e. 4 ticks per beat
-#define DEFAULT_OCTAVE   4 // C4 is middle C
-#define DEFAULT_DURATION 4 // Crotchet
+#define DEFAULT_BPM         120
+#define DEFAULT_TICKS       4 // i.e. 4 ticks per beat
+#define DEFAULT_OCTAVE_REAL 4 // C4 is middle C
+#define DEFAULT_OCTAVE      DEFAULT_OCTAVE_REAL - 4
+#define DEFAULT_DURATION    4 // Crotchet
 
 typedef struct _microbit_music_obj_t {
     mp_obj_base_t base;
