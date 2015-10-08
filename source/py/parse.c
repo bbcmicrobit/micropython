@@ -118,7 +118,7 @@ typedef struct _mp_parse_chunk_t {
         mp_uint_t used;
         struct _mp_parse_chunk_t *next;
     } union_;
-    byte chunk[];
+    byte data[];
 } mp_parse_chunk_t;
 
 typedef struct _parser_t {
@@ -133,7 +133,9 @@ typedef struct _parser_t {
     mp_parse_node_t *result_stack;
 
     mp_lexer_t *lexer;
-    mp_parse_state_t *state;
+
+    mp_parse_tree_t tree;
+    mp_parse_chunk_t *cur_chunk;
 } parser_t;
 
 STATIC inline void memory_error(parser_t *parser) {
@@ -141,15 +143,22 @@ STATIC inline void memory_error(parser_t *parser) {
 }
 
 STATIC void *parser_alloc(parser_t *parser, size_t num_bytes) {
-    mp_parse_chunk_t *chunk = parser->state->chunk;
+    // use a custom memory allocator to store parse nodes sequentially in large chunks
+
+    mp_parse_chunk_t *chunk = parser->cur_chunk;
 
     if (chunk != NULL && chunk->union_.used + num_bytes > chunk->alloc) {
         // not enough room at end of previously allocated chunk so try to grow
-        mp_parse_chunk_t *new_data = (mp_parse_chunk_t*)m_renew_maybe(byte, chunk, sizeof(mp_parse_chunk_t) + chunk->alloc, sizeof(mp_parse_chunk_t) + chunk->alloc + num_bytes, false);
+        mp_parse_chunk_t *new_data = (mp_parse_chunk_t*)m_renew_maybe(byte, chunk,
+            sizeof(mp_parse_chunk_t) + chunk->alloc,
+            sizeof(mp_parse_chunk_t) + chunk->alloc + num_bytes, false);
         if (new_data == NULL) {
             // could not grow existing memory; shrink it to fit previous
-            (void)m_renew(byte, chunk, sizeof(mp_parse_chunk_t) + chunk->alloc, sizeof(mp_parse_chunk_t) + chunk->union_.used);
-            chunk->union_.next = NULL;
+            (void)m_renew(byte, chunk, sizeof(mp_parse_chunk_t) + chunk->alloc,
+                sizeof(mp_parse_chunk_t) + chunk->union_.used);
+            chunk->alloc = chunk->union_.used;
+            chunk->union_.next = parser->tree.chunk;
+            parser->tree.chunk = chunk;
             chunk = NULL;
         } else {
             // could grow existing memory
@@ -158,22 +167,18 @@ STATIC void *parser_alloc(parser_t *parser, size_t num_bytes) {
     }
 
     if (chunk == NULL) {
-        size_t alloc = 128;
+        // no previous chunk, allocate a new chunk
+        size_t alloc = MICROPY_ALLOC_PARSE_CHUNK_INIT;
         if (alloc < num_bytes) {
             alloc = num_bytes;
         }
         chunk = (mp_parse_chunk_t*)m_new(byte, sizeof(mp_parse_chunk_t) + alloc);
         chunk->alloc = alloc;
         chunk->union_.used = 0;
-        // link new chunk to end of list
-        mp_parse_chunk_t **node = &parser->state->chunk;
-        while (*node != NULL) {
-            *node = (*node)->union_.next;
-        }
-        *node = chunk;
+        parser->cur_chunk = chunk;
     }
 
-    byte *ret = chunk->chunk + chunk->union_.used;
+    byte *ret = chunk->data + chunk->union_.used;
     chunk->union_.used += num_bytes;
     return ret;
 }
@@ -407,7 +412,7 @@ STATIC void push_result_rule(parser_t *parser, mp_uint_t src_line, const rule_t 
     push_result_node(parser, (mp_parse_node_t)pn);
 }
 
-void mp_parse(mp_lexer_t *lex, mp_parse_input_kind_t input_kind, mp_parse_state_t *state) {
+mp_parse_tree_t mp_parse(mp_lexer_t *lex, mp_parse_input_kind_t input_kind) {
 
     // initialise parser and allocate memory for its stacks
 
@@ -424,9 +429,9 @@ void mp_parse(mp_lexer_t *lex, mp_parse_input_kind_t input_kind, mp_parse_state_
     parser.result_stack = m_new_maybe(mp_parse_node_t, parser.result_stack_alloc);
 
     parser.lexer = lex;
-    parser.state = state;
 
-    state->chunk = NULL;
+    parser.tree.chunk = NULL;
+    parser.cur_chunk = NULL;
 
     // check if we could allocate the stacks
     if (parser.rule_stack == NULL || parser.result_stack == NULL) {
@@ -620,11 +625,10 @@ void mp_parse(mp_lexer_t *lex, mp_parse_input_kind_t input_kind, mp_parse_state_
                         num_not_nil += 1;
                     }
                 }
-                if (emit_rule) {
+                if (emit_rule || num_not_nil != 1) {
+                    // need to add rule when num_not_nil==0 for, eg, atom_paren, testlist_comp_3b
                     push_result_rule(&parser, rule_src_line, rule, i);
-                } else if (num_not_nil == 0) {
-                    push_result_rule(&parser, rule_src_line, rule, i); // needed for, eg, atom_paren, testlist_comp_3b
-                } else if (num_not_nil == 1) {
+                } else {
                     // single result, leave it on stack
                     mp_parse_node_t pn = MP_PARSE_NODE_NULL;
                     for (mp_uint_t x = 0; x < i; ++x) {
@@ -634,8 +638,6 @@ void mp_parse(mp_lexer_t *lex, mp_parse_input_kind_t input_kind, mp_parse_state_
                         }
                     }
                     push_result_node(&parser, pn);
-                } else {
-                    push_result_rule(&parser, rule_src_line, rule, i);
                 }
                 break;
             }
@@ -735,6 +737,16 @@ void mp_parse(mp_lexer_t *lex, mp_parse_input_kind_t input_kind, mp_parse_state_
         }
     }
 
+    // truncate final chunk and link into chain of chunks
+    if (parser.cur_chunk != NULL) {
+        (void)m_renew(byte, parser.cur_chunk,
+            sizeof(mp_parse_chunk_t) + parser.cur_chunk->alloc,
+            sizeof(mp_parse_chunk_t) + parser.cur_chunk->union_.used);
+        parser.cur_chunk->alloc = parser.cur_chunk->union_.used;
+        parser.cur_chunk->union_.next = parser.tree.chunk;
+        parser.tree.chunk = parser.cur_chunk;
+    }
+
     mp_obj_t exc;
 
     // check if we had a memory error
@@ -742,7 +754,7 @@ void mp_parse(mp_lexer_t *lex, mp_parse_input_kind_t input_kind, mp_parse_state_
 memory_error:
         exc = mp_obj_new_exception_msg(&mp_type_MemoryError,
             "parser could not allocate enough memory");
-        state->root = MP_PARSE_NODE_NULL;
+        parser.tree.root = MP_PARSE_NODE_NULL;
         goto finished;
     }
 
@@ -764,7 +776,7 @@ memory_error:
     // get the root parse node that we created
     assert(parser.result_stack_top == 1);
     exc = MP_OBJ_NULL;
-    state->root = parser.result_stack[0];
+    parser.tree.root = parser.result_stack[0];
 
 finished:
     // free the memory that we don't need anymore
@@ -781,7 +793,7 @@ finished:
         nlr_raise(exc);
     } else {
         mp_lexer_free(lex);
-        return;
+        return parser.tree;
     }
 
 syntax_error:
@@ -802,10 +814,15 @@ syntax_error:
 #endif
 #endif
     }
-    state->root = MP_PARSE_NODE_NULL;
+    parser.tree.root = MP_PARSE_NODE_NULL;
     goto finished;
 }
 
-void mp_parse_state_clear(mp_parse_state_t *state) {
-    // TODO
+void mp_parse_tree_clear(mp_parse_tree_t *tree) {
+    mp_parse_chunk_t *chunk = tree->chunk;
+    while (chunk != NULL) {
+        mp_parse_chunk_t *next = chunk->union_.next;
+        m_del(byte, chunk, sizeof(mp_parse_chunk_t) + chunk->alloc);
+        chunk = next;
+    }
 }

@@ -62,9 +62,8 @@ STATIC int parse_compile_execute(mp_lexer_t *lex, mp_parse_input_kind_t input_ki
     if (nlr_push(&nlr) == 0) {
         // parse and compile the script
         qstr source_name = lex->source_name;
-        mp_parse_state_t parse_state;
-        mp_parse(lex, input_kind, &parse_state);
-        mp_obj_t module_fun = mp_compile(&parse_state, source_name, MP_EMIT_OPT_NONE, exec_flags & EXEC_FLAG_IS_REPL);
+        mp_parse_tree_t parse_tree = mp_parse(lex, input_kind);
+        mp_obj_t module_fun = mp_compile(&parse_tree, source_name, MP_EMIT_OPT_NONE, exec_flags & EXEC_FLAG_IS_REPL);
 
         // execute code
         mp_hal_set_interrupt_char(CHAR_CTRL_C); // allow ctrl-C to interrupt us
