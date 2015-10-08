@@ -477,11 +477,7 @@ STATIC const mp_map_elem_t microbit_image_locals_dict_table[] = {
 
 STATIC MP_DEFINE_CONST_DICT(microbit_image_locals_dict, microbit_image_locals_dict_table);
 
-STATIC mp_obj_t microbit_image_dim(mp_obj_t lhs_in, mp_obj_t rhs_in) {
-    if (mp_obj_get_type(lhs_in) != &microbit_image_type)
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_TypeError, "Must be an image"));
-    microbit_image_obj_t *lhs = (microbit_image_obj_t *)lhs_in;
-    mp_float_t fval = mp_obj_get_float(rhs_in);
+STATIC mp_obj_t microbit_image_dim(microbit_image_obj_t *lhs, mp_float_t fval) {
     if (fval < 0) 
         nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "Brightness multiplier must not be negative."));
     greyscale_t *result = greyscale_new(lhs->width(), lhs->height());
@@ -492,50 +488,50 @@ STATIC mp_obj_t microbit_image_dim(mp_obj_t lhs_in, mp_obj_t rhs_in) {
         }
     }
     return result;
-    
 }
 
+STATIC mp_obj_t microbit_image_sum(microbit_image_obj_t *lhs, microbit_image_obj_t *rhs, bool add) {
+    mp_int_t h = lhs->height();
+    mp_int_t w = lhs->width();
+    if (rhs->height() != h || lhs->width() != w) {
+        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "Images must be the same size."));
+    }
+    greyscale_t *result = greyscale_new(w, h);
+    for (int x = 0; x < w; ++x) {
+        for (int y = 0; y < h; ++y) {
+            int val;
+            int lval = lhs->getPixelValue(x,y);
+            int rval = rhs->getPixelValue(x,y);
+            if (add) 
+                val = min(lval + rval, MAX_BRIGHTNESS);
+            else
+                val = max(0, lval - rval);
+            result->setPixelValue(x, y, val);
+        }
+    }
+    return result;
+}                      
+                                   
 STATIC mp_obj_t image_binary_op(mp_uint_t op, mp_obj_t lhs_in, mp_obj_t rhs_in) {
+    if (mp_obj_get_type(lhs_in) != &microbit_image_type) {
+        return MP_OBJ_NULL; // op not supported
+    }
+    microbit_image_obj_t *lhs = (microbit_image_obj_t *)lhs_in;
     switch(op) {
     case MP_BINARY_OP_ADD:
     case MP_BINARY_OP_SUBTRACT:
         break;
     case MP_BINARY_OP_MULTIPLY:
-        return microbit_image_dim(lhs_in, rhs_in);
+        return microbit_image_dim(lhs, mp_obj_get_float(rhs_in));
+    case MP_BINARY_OP_TRUE_DIVIDE:
+        return microbit_image_dim(lhs, 1.0/mp_obj_get_float(rhs_in));
     default:
         return MP_OBJ_NULL; // op not supported
     }
-    if (mp_obj_get_type(lhs_in) != &microbit_image_type || mp_obj_get_type(rhs_in) != &microbit_image_type) {
-        const char *msg;
-        if (op == MP_BINARY_OP_ADD) {
-            msg = "Can only add other images to images.";
-        } else {
-            msg = "Can only subtract other images from images.";
-        }
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_TypeError, msg));
+    if (mp_obj_get_type(rhs_in) != &microbit_image_type) {
+        return MP_OBJ_NULL; // op not supported
     }
-    microbit_image_obj_t *lhs = (microbit_image_obj_t *)lhs_in;
-    microbit_image_obj_t *rhs = (microbit_image_obj_t *)rhs_in;
-    mp_int_t h = lhs->height();
-    mp_int_t w = lhs->width();
-    if (rhs->height() != h || rhs->width() != w) {
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "Images must be the same size."));
-    }
-    greyscale_t *result;
-    /* Make sure that we have a result image that can handle greyscale if necessary */
-    result = greyscale_new(w, h);
-    for (int x = 0; x < w; ++x) {
-        for (int y = 0; y < h; ++y) {
-            int val;
-            if (op == MP_BINARY_OP_ADD) {
-                val = min(lhs->getPixelValue(x,y) + rhs->getPixelValue(x,y), MAX_BRIGHTNESS);
-            } else {
-                val = max(0, lhs->getPixelValue(x,y) - rhs->getPixelValue(x,y));
-            }
-            result->setPixelValue(x, y, val);
-        }
-    }
-    return result;
+    return microbit_image_sum(lhs, (microbit_image_obj_t *)rhs_in, op == MP_BINARY_OP_ADD);
 }
 
 const mp_obj_type_t microbit_image_type = {
