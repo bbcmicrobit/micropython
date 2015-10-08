@@ -71,7 +71,7 @@ STATIC void play_note(microbit_music_obj_t *self, const char *note_str, size_t n
     // TODO: the duration and bpm should be persistent between notes
     uint8_t ms_per_tick = (60000/self->bpm)/self->ticks;
 
-    int8_t octave = 4;
+    int8_t octave = 0;
     bool sharp = false;
 
     uint8_t current_position = 1;
@@ -100,7 +100,7 @@ STATIC void play_note(microbit_music_obj_t *self, const char *note_str, size_t n
     if (current_position < note_len && note_str[current_position] != ':') {
         // currently this will only work with a one digit number
         // use +=, since the sharp/flat code changes octave to compensate.
-        self->last_octave = (note_str[current_position] & 0xf) - 4;
+        self->last_octave = (note_str[current_position] & 0xf);
         current_position++;
     }
 
