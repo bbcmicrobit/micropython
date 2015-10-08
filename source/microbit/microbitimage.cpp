@@ -90,7 +90,7 @@ void microbit_image_obj_t::printPixel(mp_int_t x, mp_int_t y, const mp_print_t *
     
 void monochrome_5by5_t::printPixel(mp_int_t x, mp_int_t y, const mp_print_t *print) {
     if (this->getPixelValue(x, y)) {
-        mp_printf(print, "X");
+        mp_printf(print, "9");
     } else {
         mp_printf(print, " ");
     }
@@ -98,7 +98,7 @@ void monochrome_5by5_t::printPixel(mp_int_t x, mp_int_t y, const mp_print_t *pri
     
 void monochrome_t::printPixel(mp_int_t x, mp_int_t y, const mp_print_t *print) {
     if (this->getPixelValue(x, y)) {
-        mp_printf(print, "X");
+        mp_printf(print, "9");
     } else {
         mp_printf(print, " ");
     }
@@ -115,102 +115,53 @@ int monochrome_5by5_t::getPixelValue(mp_int_t x, mp_int_t y) {
     return (this->bits24[index>>3] >> (index&7))&1;
 }
 
-void monochrome_5by5_t::setPixelValue(mp_int_t x, mp_int_t y, mp_int_t val) {
-    unsigned int index = y*5+x;
-    if (index == 24) {
-        this->pixel44 = (val!=0);
-        return;
-    }
-    uint8_t mask = 1 << (index&7);
-    if (val)
-        this->bits24[index>>3] |= mask;
-    else
-        this->bits24[index>>3] &= ~mask;
-}
-
 int monochrome_t::getPixelValue(mp_int_t x, mp_int_t y) {
     unsigned int index = y*this->width+x;
     return (this->bit_data[index>>3] >> (index&7))&1;
 }
 
-void monochrome_t::setPixelValue(mp_int_t x, mp_int_t y, mp_int_t val) {
-    unsigned int index = y*this->width+x;
-    uint8_t mask = 1 << (index&7);
-    if (val)
-        this->bit_data[index>>3] |= mask;
-    else
-        this->bit_data[index>>3] &= ~mask;
-}
-
 int greyscale_t::getPixelValue(mp_int_t x, mp_int_t y) {
     unsigned int index = y*this->width+x;
-    return this->byte_data[index];
+    unsigned int shift = ((index<<2)&4);
+    return (this->byte_data[index>>1] >> shift)&15;
 }
 
 void greyscale_t::setPixelValue(mp_int_t x, mp_int_t y, mp_int_t val) {
     unsigned int index = y*this->width+x;
-    this->byte_data[index] = val;
+    unsigned int shift = ((index<<2)&4);
+    uint8_t mask = 240 >> shift;
+    this->byte_data[index] = (this->byte_data[index] & mask) | (val << shift);
 }
-
 
 mp_int_t microbit_image_obj_t::getPixelValue(mp_int_t x, mp_int_t y) {
     if (this->base.five)
         return this->monochrome_5by5.getPixelValue(x, y)*MAX_BRIGHTNESS;
-    else if (this->base.monochrome)
-        return this->monochrome.getPixelValue(x, y)*MAX_BRIGHTNESS;
-    else
+    else if (this->base.greyscale)
         return this->greyscale.getPixelValue(x, y);
-}
-
-void microbit_image_obj_t::setPixelValue(mp_int_t x, mp_int_t y, mp_int_t val) {
-    if (this->base.five)
-        this->monochrome_5by5.setPixelValue(x, y, val);
-    else if (this->base.monochrome)
-        this->monochrome.setPixelValue(x, y, val);
     else
-        this->greyscale.setPixelValue(x, y, val);
+        return this->monochrome.getPixelValue(x, y)*MAX_BRIGHTNESS;
 }
 
 mp_int_t microbit_image_obj_t::width() {
     if (this->base.five)
         return 5;
-    else if (this->base.monochrome)
-        return this->monochrome.width;
-    else
+    else if (this->base.greyscale)
         return this->greyscale.width;
+    else
+        return this->monochrome.width;
 }
 
 mp_int_t microbit_image_obj_t::height() {
     if (this->base.five)
         return 5;
-    else if (this->base.monochrome)
-        return this->monochrome.height;
-    else
+    else if (this->base.greyscale)
         return this->greyscale.height;
-}
-
-STATIC monochrome_5by5_t *monochrome_5by5_new() {
-    monochrome_5by5_t *result = m_new_obj(monochrome_5by5_t);
-    result->base.type = &microbit_image_type;
-    result->five = 1;
-    result->monochrome = 0;
-    result->greyscale = 0;
-    return result;
-}
-
-STATIC monochrome_t *monochrome_new(mp_int_t w, mp_int_t h) {
-    monochrome_t *result = m_new_obj_var(monochrome_t, uint8_t, (w*h+7)>>3);
-    result->base.type = &microbit_image_type;
-    result->five = 0;
-    result->monochrome = 1;
-    result->greyscale = 0;
-    result->width = w;
-    result->height = h;
-    return result;
+    else
+        return this->monochrome.height;
 }
 
 STATIC greyscale_t *greyscale_new(mp_int_t w, mp_int_t h) {
-    greyscale_t *result = m_new_obj_var(greyscale_t, uint8_t, w*h);
+    greyscale_t *result = m_new_obj_var(greyscale_t, uint8_t, (w*h+1)>>1);
     result->base.type = &microbit_image_type;
     result->five = 0;
     result->monochrome = 0;
@@ -220,16 +171,16 @@ STATIC greyscale_t *greyscale_new(mp_int_t w, mp_int_t h) {
     return result;
 }
 
-microbit_image_obj_t *microbit_image_obj_t::partialCopy() {
-    microbit_image_obj_t *result;
-    if (this->base.five) {
-        result = (microbit_image_obj_t *)monochrome_5by5_new();
-    } else if (this->base.monochrome) {
-        result = (microbit_image_obj_t *)monochrome_new(this->monochrome.width, this->monochrome.height);
-    } else {
-        result = (microbit_image_obj_t *)greyscale_new(this->greyscale.width, this->greyscale.height);
+microbit_image_obj_t *microbit_image_obj_t::copy() {
+    mp_int_t w = this->width();
+    mp_int_t h = this->height();
+    greyscale_t *result = greyscale_new(w, h);
+    for (mp_int_t y = 0; y < h; y++) {
+        for (mp_int_t x = 0; x < w; ++x) {
+            result->setPixelValue(x,y, this->getPixelValue(x,y));
+        }
     }
-    return result;
+    return (microbit_image_obj_t *)result;
 }
 
 microbit_image_obj_t *microbit_image_obj_t::shiftLeft(mp_int_t n) {
@@ -240,7 +191,7 @@ microbit_image_obj_t *microbit_image_obj_t::shiftLeft(mp_int_t n) {
     mp_int_t src_start = max(n, 0);
     mp_int_t src_end = min(w+n,w);
     mp_int_t dest = max(0,-n);
-    microbit_image_obj_t *result = this->partialCopy();
+    greyscale_t *result = greyscale_new(w, h);
     for (mp_int_t x = 0; x < dest; ++x) {
         for (mp_int_t y = 0; y < h; y++) {
             result->setPixelValue(x, y, 0);
@@ -257,7 +208,7 @@ microbit_image_obj_t *microbit_image_obj_t::shiftLeft(mp_int_t n) {
             result->setPixelValue(x, y, 0);
         }
     }
-    return result;
+    return (microbit_image_obj_t *)result;
 }
 
 
@@ -269,7 +220,7 @@ microbit_image_obj_t *microbit_image_obj_t::shiftUp(mp_int_t n) {
     mp_int_t src_start = max(n, 0);
     mp_int_t src_end = min(h+n,h);
     mp_int_t dest = max(0,-n);
-    microbit_image_obj_t *result = this->partialCopy();
+    greyscale_t *result = greyscale_new(w, h);
     for (mp_int_t y = 0; y < dest; ++y) {
         for (mp_int_t x = 0; x < w; x++) {
             result->setPixelValue(x, y, 0);
@@ -286,42 +237,14 @@ microbit_image_obj_t *microbit_image_obj_t::shiftUp(mp_int_t n) {
             result->setPixelValue(x, y, 0);
         }
     }
-    return result;
+    return (microbit_image_obj_t *)result;
 }
-
-STATIC monochrome_t *monochrome_from_str(const char *s, mp_int_t len) {
-    monochrome_t *image = monochrome_new(len*5, MICROBIT_FONT_HEIGHT);
-    MicroBitFont font = uBit.display.getFont();
-    for (mp_int_t i = 0; i < len; ++i) {
-        char c = s[i];
-        if (c < MICROBIT_FONT_ASCII_START || c > font.asciiEnd)
-            c = '?';
-        
-        /* The following logic belongs in MicroBitFont */
-        int offset = (c-MICROBIT_FONT_ASCII_START) * 5;
-
-        for (int row=0; row<MICROBIT_FONT_HEIGHT; row++)
-        {
-            unsigned char v = font.characters[offset+row];
-
-            for (int col = 0; col < MICROBIT_FONT_WIDTH; col++)
-            {
-                image->setPixelValue(len*5+col, row, v & (0x10 >> col));
-            }
-        }
-    }
-    return image;
-};
-
 
 STATIC microbit_image_obj_t *image_from_parsed_str(const char *s, mp_int_t len) {
     mp_int_t w = 0;
     mp_int_t h = 0;
     mp_int_t line_len = 0;
-    bool old_style = len > 1 && s[1] == ',';
-    bool seen_one = false;
-    bool monochrome = true;
-    microbit_image_obj_t *result;
+    greyscale_t *result;
     /*First pass -- Establish metadata */
     for (int i = 0; i < len; i++) {
         char c = s[i];
@@ -331,17 +254,13 @@ STATIC microbit_image_obj_t *image_from_parsed_str(const char *s, mp_int_t len) 
             ++h;
         } else if (c == ',') {
             /* Ignore commas */
-        } else if (c == '0') {
+        } else if (c == ' ') {
             ++line_len;
-        } else if (c == '1') {
+        } else if ('c' >= '0' && c <= '9') {
             ++line_len;
-            seen_one = true;
-        } else if ('c' > '1' && c <= '9') {
-            ++line_len;
-            monochrome = false;
         } else {
-            old_style = false;
-            ++line_len;
+            nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError,
+                "Unexpected character in Image definition."));
         }
     }
     if (line_len) {
@@ -349,18 +268,7 @@ STATIC microbit_image_obj_t *image_from_parsed_str(const char *s, mp_int_t len) 
         ++h;
         w = max(line_len, w); 
     }
-    if (!old_style && seen_one)
-        monochrome = false;
-    //Create new image
-    if (monochrome) {
-        if (w == 5 && h == 5) {
-            result = (microbit_image_obj_t *)monochrome_5by5_new();
-        } else {
-            result = (microbit_image_obj_t *)monochrome_new(w, h);
-        }
-    } else {
-        result = (microbit_image_obj_t *)greyscale_new(w, h);
-    }
+    result = greyscale_new(w, h);
     mp_int_t x = 0;
     mp_int_t y = 0;
     /* Second pass -- Fill in data */
@@ -382,9 +290,6 @@ STATIC microbit_image_obj_t *image_from_parsed_str(const char *s, mp_int_t len) 
         } else if ('c' >= '0' && c <= '9') {
             result->setPixelValue(x, y, c - '0');
             ++x;
-        } else {
-            result->setPixelValue(x, y, MAX_BRIGHTNESS);
-            ++x;
         }
     }
     if (y < h) {
@@ -393,7 +298,7 @@ STATIC microbit_image_obj_t *image_from_parsed_str(const char *s, mp_int_t len) 
             x++;
         }
     }
-    return result;
+    return (microbit_image_obj_t *)result;
 }
 
 
@@ -429,8 +334,12 @@ STATIC mp_obj_t microbit_image_make_new(mp_obj_t type_in, mp_uint_t n_args, mp_u
                     "image data is incorrect size"));
             }
             greyscale_t *image = greyscale_new(w, h);
-            for (mp_int_t i = 0; i < w*h; ++i) {
-                image->byte_data[i] = ((const uint8_t*)bufinfo.buf)[i];
+            mp_int_t i = 0;
+            for (mp_int_t y = 0; y < h; y++) {
+                for (mp_int_t x = 0; x < w; ++x) {
+                    image->setPixelValue(x,y, ((const uint8_t*)bufinfo.buf)[i]);
+                    ++i;
+                }
             }
             return image;
         }
@@ -464,12 +373,33 @@ mp_obj_t microbit_image_get_pixel(mp_obj_t self_in, mp_obj_t x_in, mp_obj_t y_in
 }
 MP_DEFINE_CONST_FUN_OBJ_3(microbit_image_get_pixel_obj, microbit_image_get_pixel);
 
+mp_obj_t microbit_image_set_pixel(mp_uint_t n_args, const mp_obj_t *args) {
+    (void)n_args;
+    microbit_image_obj_t *self = (microbit_image_obj_t*)args[0];
+    if (!self->base.greyscale) {
+        nlr_raise(mp_obj_new_exception_msg(&mp_type_TypeError, "This image cannot be modified. Try copying it first."));
+    }
+    mp_int_t x = mp_obj_get_int(args[1]);
+    mp_int_t y = mp_obj_get_int(args[2]);
+    if (x < 0 || y < 0) {
+        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError,
+            "index cannot be negative"));
+    }
+    mp_int_t bright = mp_obj_get_int(args[3]);
+    if (bright < 0 || bright > MAX_BRIGHTNESS) 
+        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "brightness out of bounds."));
+    if (x < self->width() && y < self->height()) {
+        self->greyscale.setPixelValue(x, y, bright);
+        return mp_const_none;
+    }
+    nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "index too large"));
+}
+MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_image_set_pixel_obj, 4, 4, microbit_image_set_pixel);
+
 
 mp_obj_t microbit_image_shift_left(mp_obj_t self_in, mp_obj_t n_in) {
     microbit_image_obj_t *self = (microbit_image_obj_t*)self_in;
     mp_int_t n = mp_obj_get_int(n_in);
-    if (n == 0)
-        return self;
     return self->shiftLeft(n);
 }
 MP_DEFINE_CONST_FUN_OBJ_2(microbit_image_shift_left_obj, microbit_image_shift_left);
@@ -477,8 +407,6 @@ MP_DEFINE_CONST_FUN_OBJ_2(microbit_image_shift_left_obj, microbit_image_shift_le
 mp_obj_t microbit_image_shift_right(mp_obj_t self_in, mp_obj_t n_in) {
     microbit_image_obj_t *self = (microbit_image_obj_t*)self_in;
     mp_int_t n = mp_obj_get_int(n_in);
-    if (n == 0)
-        return self;
     return self->shiftLeft(-n);
 }
 MP_DEFINE_CONST_FUN_OBJ_2(microbit_image_shift_right_obj, microbit_image_shift_right);
@@ -486,8 +414,6 @@ MP_DEFINE_CONST_FUN_OBJ_2(microbit_image_shift_right_obj, microbit_image_shift_r
 mp_obj_t microbit_image_shift_up(mp_obj_t self_in, mp_obj_t n_in) {
     microbit_image_obj_t *self = (microbit_image_obj_t*)self_in;
     mp_int_t n = mp_obj_get_int(n_in);
-    if (n == 0)
-        return self;
     return self->shiftUp(n);
 }
 MP_DEFINE_CONST_FUN_OBJ_2(microbit_image_shift_up_obj, microbit_image_shift_up);
@@ -495,20 +421,26 @@ MP_DEFINE_CONST_FUN_OBJ_2(microbit_image_shift_up_obj, microbit_image_shift_up);
 mp_obj_t microbit_image_shift_down(mp_obj_t self_in, mp_obj_t n_in) {
     microbit_image_obj_t *self = (microbit_image_obj_t*)self_in;
     mp_int_t n = mp_obj_get_int(n_in);
-    if (n == 0)
-        return self;
     return self->shiftUp(-n);
 }
 MP_DEFINE_CONST_FUN_OBJ_2(microbit_image_shift_down_obj, microbit_image_shift_down);
+
+mp_obj_t microbit_image_copy(mp_obj_t self_in) {
+    microbit_image_obj_t *self = (microbit_image_obj_t*)self_in;
+    return self->copy();
+}
+MP_DEFINE_CONST_FUN_OBJ_1(microbit_image_copy_obj, microbit_image_copy);
 
 STATIC const mp_map_elem_t microbit_image_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_width), (mp_obj_t)&microbit_image_width_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_height), (mp_obj_t)&microbit_image_height_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_get_pixel), (mp_obj_t)&microbit_image_get_pixel_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_set_pixel), (mp_obj_t)&microbit_image_set_pixel_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_shift_left), (mp_obj_t)&microbit_image_shift_left_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_shift_right), (mp_obj_t)&microbit_image_shift_right_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_shift_up), (mp_obj_t)&microbit_image_shift_up_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_shift_down), (mp_obj_t)&microbit_image_shift_down_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_copy), (mp_obj_t)&microbit_image_copy_obj },
 
     { MP_OBJ_NEW_QSTR(MP_QSTR_HEART), (mp_obj_t)&microbit_const_image_heart_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_HEART_SMALL), (mp_obj_t)&microbit_const_image_heart_small_obj },
@@ -589,12 +521,9 @@ STATIC mp_obj_t image_binary_op(mp_uint_t op, mp_obj_t lhs_in, mp_obj_t rhs_in) 
     if (rhs->height() != h || rhs->width() != w) {
         nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "Images must be the same size."));
     }
-    microbit_image_obj_t *result;
+    greyscale_t *result;
     /* Make sure that we have a result image that can handle greyscale if necessary */
-    if (lhs->base.greyscale)
-        result = lhs->partialCopy();
-    else 
-        result = rhs->partialCopy();
+    result = greyscale_new(w, h);
     for (int x = 0; x < w; ++x) {
         for (int y = 0; y < h; ++y) {
             int val;

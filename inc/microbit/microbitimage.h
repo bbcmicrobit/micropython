@@ -1,6 +1,10 @@
    
 #define MAX_BRIGHTNESS 9
 
+/** Monochrome images are immutable, which means that 
+ * we only need one bit per pixel which saves quite a lot
+ * of memory */
+
 #define TYPE_AND_FLAGS \
     mp_obj_base_t base; \
     uint8_t five:1; \
@@ -20,9 +24,7 @@ typedef struct _monochrome_5by5_t {
     /* This is an internal method it is up to the caller to validate the inputs */
     int getPixelValue(mp_int_t x, mp_int_t y);
     void printPixel(mp_int_t x, mp_int_t y, const mp_print_t *print);
-    
-    /* This should only be used in constructors */
-    void setPixelValue(mp_int_t x, mp_int_t y, mp_int_t val);
+
 } monochrome_5by5_t;
 
 typedef struct _monochrome_t {
@@ -35,8 +37,6 @@ typedef struct _monochrome_t {
     int getPixelValue(mp_int_t x, mp_int_t y);
     void printPixel(mp_int_t x, mp_int_t y, const mp_print_t *print);
     
-    /* This should only be used in constructors */
-    void setPixelValue(mp_int_t x, mp_int_t y, mp_int_t val);
 } monochrome_t;
 
 typedef struct _greyscale_t {
@@ -62,15 +62,14 @@ typedef union _microbit_image_obj_t {
     mp_int_t height();
     mp_int_t width();
     void printPixel(mp_int_t x, mp_int_t y, const mp_print_t *print);
+    union _microbit_image_obj_t *copy();
     
     /* This is an internal method it is up to the caller to validate the inputs */
     int getPixelValue(mp_int_t x, mp_int_t y);
     
     /* These are modifying or incomplete and should only be used in constructors */
-    union _microbit_image_obj_t *partialCopy();
     union _microbit_image_obj_t *shiftLeft(mp_int_t n);
     union _microbit_image_obj_t *shiftUp(mp_int_t n);
-    void setPixelValue(mp_int_t x, mp_int_t y, mp_int_t val);
 } microbit_image_obj_t;
 
 #define SMALL_IMAGE(p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22, p23, p44) \
