@@ -74,8 +74,8 @@ mp_obj_t microbit_display_print(mp_uint_t n_args, const mp_obj_t *args) {
         // arg should be an image
         MicroBitImage *display_image = &self->display->image;
         microbit_image_obj_t *image = (microbit_image_obj_t *)args[1];
-        mp_int_t w = max(image->width(), 5);
-        mp_int_t h = max(image->height(), 5);
+        mp_int_t w = min(image->width(), 5);
+        mp_int_t h = min(image->height(), 5);
         mp_int_t x = 0;
         for (; x < w; ++x) {
             mp_int_t y = 0;
