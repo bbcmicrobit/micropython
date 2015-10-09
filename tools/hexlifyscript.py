@@ -1,29 +1,35 @@
+#!/usr/bin/env python3
 '''
-Turn a Python script into Intel HEX format to be concatenated at the
-end of the MicroPython firmware.hex.  A simple header is added to the
-script.
+Produce a combined HEX file.
 '''
-
+import os
 import sys
-import struct
-import binascii
+import argparse
 
-# read script body
-with open(sys.argv[1], "rb") as f:
-    data = f.read()
+from intelhex import IntelHex
 
-# add header, pad to multiple of 16 bytes
-data = b'MP' + struct.pack('<H', len(data)) + data
-data = data + bytes(16 - len(data) % 16)
-assert len(data) <= 0x2000
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Create a hex version of a Python script')
 
-# convert to .hex format
-addr = 0x3e000 # magic start address in flash
-print(':020000040003F7') # extended linear address, 0x0003
-for i in range(0, len(data), 16):
-    chunk = data[i:min(i + 16, len(data))]
-    chunk = struct.pack('>BHB', len(chunk), addr & 0xffff, 0) + chunk
-    checksum = (-(sum(chunk))) & 0xff
-    hexline = ':%s%02X' % (str(binascii.hexlify(chunk), 'utf8').upper(), checksum)
-    print(hexline)
-    addr += 16
+    parser.add_argument('pythonfile', type=argparse.FileType('rb'), help='Python file to be hexlified')
+
+    # this is applicable to hexlify and merge
+    parser.add_argument('-o', '--output', type=argparse.FileType('wb'), help='Output hex file (default: stdout)', default=sys.stdout)
+    parser.add_argument('-a', '--address', type=int, help='Start address for the python script', default=0x3e000)
+
+    # this is only useful if you're merging.
+    parser.add_argument('-m', '--merge', nargs='?', type=argparse.FileType('rt'), help='micropython hex file to merge with', default=os.devnull)
+
+    args = parser.parse_args()
+
+    base_hex = IntelHex(args.merge)
+    python_hex = IntelHex()
+
+    data = bytes(args.pythonfile.read())
+    data = b'MP' + len(data).to_bytes(2, 'little') + data + bytes(16 - len(data) % 16)
+    python_hex.puts(args.address, data)
+
+    base_hex.merge(python_hex, overlap='error')
+
+    base_hex.tobinfile(args.output)
+
