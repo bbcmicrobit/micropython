@@ -49,7 +49,8 @@ typedef struct _greyscale_t {
     int getPixelValue(mp_int_t x, mp_int_t y);
     void printPixel(mp_int_t x, mp_int_t y, const mp_print_t *print);
     
-    /* This should only be used in constructors */
+    /* These should only be used in constructors */
+    void clear();
     void setPixelValue(mp_int_t x, mp_int_t y, mp_int_t val);
 } greyscale_t;
 
@@ -62,15 +63,19 @@ typedef union _microbit_image_obj_t {
     mp_int_t height();
     mp_int_t width();
     void printPixel(mp_int_t x, mp_int_t y, const mp_print_t *print);
-    union _microbit_image_obj_t *copy();
-    union _microbit_image_obj_t *invert();
-    union _microbit_image_obj_t *shiftLeft(mp_int_t n);
-    union _microbit_image_obj_t *shiftUp(mp_int_t n);
+    greyscale_t *copy();
+    greyscale_t *invert();
+    greyscale_t *shiftLeft(mp_int_t n);
+    greyscale_t *shiftUp(mp_int_t n);
     
     /* This is an internal method it is up to the caller to validate the inputs */
     int getPixelValue(mp_int_t x, mp_int_t y);
     
 } microbit_image_obj_t;
+
+microbit_image_obj_t *microbit_image_for_char(char c);
+mp_obj_t microbit_image_slice(microbit_image_obj_t *img, mp_int_t start, mp_int_t width, mp_int_t stride);
+mp_obj_t scrolling_string_image_iterable(mp_obj_t str);
 
 #define SMALL_IMAGE(p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22, p23, p44) \
 { \
@@ -84,3 +89,5 @@ typedef union _microbit_image_obj_t {
 }
 
 extern int BRIGHTNESS_SCALE[];
+
+extern monochrome_5by5_t BLANK_IMAGE;
