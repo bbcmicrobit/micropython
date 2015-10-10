@@ -28,7 +28,7 @@
 #include <stdio.h>
 #include "MicroBit.h"
 
-void love(uint8_t interval = 500 /* ms */) {
+void love(int interval = 500 /* ms */) {
     // Display a beating heart then clear the screen.
     const uint8_t heart[] = {
         0, 0, 0, 0, 0,  0, 1, 0, 1, 0,
@@ -38,7 +38,7 @@ void love(uint8_t interval = 500 /* ms */) {
         0, 0, 0, 0, 0,  0, 0, 1, 0, 0,
     };
     MicroBitImage i(10, 5, heart);
-    for(uint8_t iteration = 0; iteration < 5; iteration++) {
+    for(int iteration = 0; iteration < 5; iteration++) {
         uBit.display.animate(i, interval, 5);
         uBit.sleep(interval);
     }
