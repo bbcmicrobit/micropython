@@ -53,7 +53,7 @@ int BRIGHTNESS_SCALE[] = {
 
 monochrome_5by5_t BLANK_IMAGE = {
     { &microbit_image_type },
-    1, 0, 0, 0, 0,
+    1, 0, 0, 0,
     { 0, 0, 0 }
 };
 
@@ -67,7 +67,7 @@ STATIC void microbit_image_print(const mp_print_t *print, mp_obj_t self_in, mp_p
     for (int y = 0; y < self->height(); ++y) {
         mp_printf(print, "|");
         for (int x = 0; x < self->width(); ++x) {
-            self->printPixel(x, y, print);
+            mp_printf(print, "%c", " 123456789"[self->getPixelValue(x, y)]);
         }
         mp_printf(print, "|\n");
     }
@@ -77,47 +77,12 @@ STATIC void microbit_image_print(const mp_print_t *print, mp_obj_t self_in, mp_p
     }
     mp_printf(print, "+\n");
 }
-    
-    
-void microbit_image_obj_t::printPixel(mp_int_t x, mp_int_t y, const mp_print_t *print) {
-    if (this->base.five)
-        this->monochrome_5by5.printPixel(x, y, print);
-    else if (this->base.monochrome)
-        this->monochrome.printPixel(x, y, print);
-    else
-        this->greyscale.printPixel(x, y, print);
-}
-    
-void monochrome_5by5_t::printPixel(mp_int_t x, mp_int_t y, const mp_print_t *print) {
-    if (this->getPixelValue(x, y)) {
-        mp_printf(print, "9");
-    } else {
-        mp_printf(print, " ");
-    }
-}
-    
-void monochrome_t::printPixel(mp_int_t x, mp_int_t y, const mp_print_t *print) {
-    if (this->getPixelValue(x, y)) {
-        mp_printf(print, "9");
-    } else {
-        mp_printf(print, " ");
-    }
-}
-
-void greyscale_t::printPixel(mp_int_t x, mp_int_t y, const mp_print_t *print) {
-    mp_printf(print, "%c", " 123456789"[this->getPixelValue(x, y)]);
-}
 
 int monochrome_5by5_t::getPixelValue(mp_int_t x, mp_int_t y) {
     unsigned int index = y*5+x;
     if (index == 24) 
         return this->pixel44;
     return (this->bits24[index>>3] >> (index&7))&1;
-}
-
-int monochrome_t::getPixelValue(mp_int_t x, mp_int_t y) {
-    unsigned int index = y*this->width+x;
-    return (this->bit_data[index>>3] >> (index&7))&1;
 }
 
 int greyscale_t::getPixelValue(mp_int_t x, mp_int_t y) {
@@ -140,36 +105,28 @@ void greyscale_t::clear() {
 mp_int_t microbit_image_obj_t::getPixelValue(mp_int_t x, mp_int_t y) {
     if (this->base.five)
         return this->monochrome_5by5.getPixelValue(x, y)*MAX_BRIGHTNESS;
-    else if (this->base.greyscale)
-        return this->greyscale.getPixelValue(x, y);
     else
-        return this->monochrome.getPixelValue(x, y)*MAX_BRIGHTNESS;
+        return this->greyscale.getPixelValue(x, y);
 }
 
 mp_int_t microbit_image_obj_t::width() {
     if (this->base.five)
         return 5;
-    else if (this->base.greyscale)
-        return this->greyscale.width;
     else
-        return this->monochrome.width;
+        return this->greyscale.width;
 }
 
 mp_int_t microbit_image_obj_t::height() {
     if (this->base.five)
         return 5;
-    else if (this->base.greyscale)
-        return this->greyscale.height;
     else
-        return this->monochrome.height;
+        return this->greyscale.height;
 }
 
 STATIC greyscale_t *greyscale_new(mp_int_t w, mp_int_t h) {
     greyscale_t *result = m_new_obj_var(greyscale_t, uint8_t, (w*h+1)>>1);
     result->base.type = &microbit_image_type;
     result->five = 0;
-    result->monochrome = 0;
-    result->greyscale = 1;
     result->width = w;
     result->height = h;
     return result;
@@ -334,8 +291,10 @@ STATIC mp_obj_t microbit_image_make_new(mp_obj_t type_in, mp_uint_t n_args, mp_u
                 const char *str = mp_obj_str_get_data(args[0], &len);
                 // make image from string
                 if (len == 1) {
+                    /* For a single charater, return the font glyph */
                     return microbit_image_for_char(str[0]);
                 } else {
+                    /* Otherwise parse the image description string */
                     return image_from_parsed_str(str, len);
                 }
             } else {
@@ -427,7 +386,7 @@ MP_DEFINE_CONST_FUN_OBJ_3(microbit_image_get_pixel_obj, microbit_image_get_pixel
 mp_obj_t microbit_image_set_pixel(mp_uint_t n_args, const mp_obj_t *args) {
     (void)n_args;
     microbit_image_obj_t *self = (microbit_image_obj_t*)args[0];
-    if (!self->base.greyscale) {
+    if (self->base.five) {
         nlr_raise(mp_obj_new_exception_msg(&mp_type_TypeError, "This image cannot be modified. Try copying it first."));
     }
     mp_int_t x = mp_obj_get_int(args[1]);
@@ -661,52 +620,6 @@ const mp_obj_type_t microbit_image_type = {
     /* .locals_dict = */ (mp_obj_t)&microbit_image_locals_dict,
 };
 
-// this is a very big hack: the class layout should match MicroBitImage
-class MBCI {
-public:
-    int16_t width;
-    int16_t height;
-    int16_t *ref;
-    const uint8_t *bitmap;
-};
-
-// only 1 const image can fake a MicroBitImage at a time
-static int16_t fake_image_ref;
-static MBCI fake_image_class;
-static uint8_t fake_data[25];
-
-/** Temporary  -- This WILL be deleted */
-MicroBitImage *microbit_obj_get_image(mp_obj_t o) {
-    if (mp_obj_get_type(o) == &microbit_image_type) {
-        microbit_image_obj_t *img = (microbit_image_obj_t*)o;
-        if (img->base.monochrome) {
-            nlr_raise(mp_obj_new_exception_msg(&mp_type_TypeError, "Cannot convert a non 5x5 monchrome image into a MicroBitImage. Sorry."));
-        }
-        fake_image_class.ref = &fake_image_ref;
-        fake_image_ref = 10; // just to make sure the data is never freed
-        if (img->base.five) {
-            fake_image_class.width = 5;
-            fake_image_class.height = 5;
-            for (int y = 0; y < 5; ++y) {
-                for (int x = 0; x < 5; ++x) {
-                    if (img->monochrome_5by5.getPixelValue(x, y)) {
-                        fake_data[y*5+x] = 255;
-                    } else {
-                        fake_data[y*5+x] = 0;
-                    }
-                }
-            }
-            fake_image_class.bitmap = fake_data;
-        } else {
-            fake_image_class.width = img->width();
-            fake_image_class.height = img->height();
-            fake_image_class.bitmap = img->greyscale.byte_data;
-        }
-        return (MicroBitImage*)&fake_image_class;
-    } else {
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_TypeError, "expecting an image"));
-    }
-}
 
 /* Image slices */
 
