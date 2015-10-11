@@ -35,9 +35,5 @@ def ticks():
 #Run a clock speeded up 60 times, so we can watch the animation.
 display.animate(ticks(), 1000)
 
-#It even runs in the background...
-#display.animate(ticks(), 1000, wait=False)
-#So you can change the brightness or
-#change the ticker_image while it runs,
 
 
