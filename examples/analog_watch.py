@@ -6,7 +6,7 @@ hands = (Image.CLOCK12, Image.CLOCK1, Image.CLOCK2, Image.CLOCK3,
          )
 
 #A centre dot of brightness 2.
-ticker_image = Image("\n\n  2  \n\n\n")
+ticker_image = Image("2\n").crop(-2,-2,5,5)
 
 #Adjust these to taste
 MINUTE_BRIGHT = 0.1111

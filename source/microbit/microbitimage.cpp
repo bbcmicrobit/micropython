@@ -303,54 +303,58 @@ STATIC mp_obj_t microbit_image_make_new(mp_obj_t type_in, mp_uint_t n_args, mp_u
             }
         }
 
-        case 2: {
-            nlr_raise(mp_obj_new_exception_msg(&mp_type_TypeError,
-                "Image() takes 0, 1 or 3 arguments"));
-        }
-
-        case 3:
-        default: {
+        case 2:
+        case 3: {
             mp_int_t w = mp_obj_get_int(args[0]);
             mp_int_t h = mp_obj_get_int(args[1]);
-            mp_buffer_info_t bufinfo;
-            mp_get_buffer_raise(args[2], &bufinfo, MP_BUFFER_READ);
-
-            if (w < 0 || h < 0 || (size_t)(w * h) != bufinfo.len) {
-                nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError,
-                    "image data is incorrect size"));
-            }
             greyscale_t *image = greyscale_new(w, h);
-            mp_int_t i = 0;
-            for (mp_int_t y = 0; y < h; y++) {
-                for (mp_int_t x = 0; x < w; ++x) {
-                    image->setPixelValue(x,y, ((const uint8_t*)bufinfo.buf)[i]);
-                    ++i;
+            if (n_args == 2) {
+                image->clear();
+            } else {
+                mp_buffer_info_t bufinfo;
+                mp_get_buffer_raise(args[2], &bufinfo, MP_BUFFER_READ);
+
+                if (w < 0 || h < 0 || (size_t)(w * h) != bufinfo.len) {
+                    nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError,
+                        "image data is incorrect size"));
+                }
+                mp_int_t i = 0;
+                for (mp_int_t y = 0; y < h; y++) {
+                    for (mp_int_t x = 0; x < w; ++x) {
+                        image->setPixelValue(x,y, ((const uint8_t*)bufinfo.buf)[i]);
+                        ++i;
+                    }
                 }
             }
             return image;
         }
+
+        default: {
+            nlr_raise(mp_obj_new_exception_msg(&mp_type_TypeError,
+                "Image() takes 0 to 3 arguments"));
+        }
     }
 }
 
-STATIC microbit_image_obj_t *image_crop(microbit_image_obj_t *img, mp_int_t x0, mp_int_t y0, mp_int_t x1, mp_int_t y1) {
-    int w = x1 - x0;
-    int h = y1 - y0;
+STATIC microbit_image_obj_t *image_crop(microbit_image_obj_t *img, mp_int_t x, mp_int_t y, mp_int_t w, mp_int_t h) {
     if (w < 0)
         w = 0;
     if (h < 0)
         h = 0;
     greyscale_t *result = greyscale_new(w, h);
-    mp_int_t win_x0 = max(0, x0);   
-    mp_int_t win_y0 = max(0, y0);
-    mp_int_t win_x1 = min(img->width(), x1);
-    mp_int_t win_y1 = min(img->height(), y1);
-    if (w > win_x1 - win_x0 || h > win_y1 - win_y0) {
+    mp_int_t intersect_x0 = max(0, x);   
+    mp_int_t intersect_y0 = max(0, y);
+    mp_int_t intersect_x1 = min(img->width(), x+w);
+    mp_int_t intersect_y1 = min(img->height(), y+h);
+    /* If the cropped image is larger than the intersection then
+     * make sure that all other pixels are set to 0 */
+    if (w > intersect_x1 - intersect_x0 || h > intersect_y1 - intersect_y0) {
         result->clear();
     }
-    for (int i = win_x0; i < win_x1; ++i) {
-        for (int j = win_y0; j < win_y1; ++j) {
+    for (int i = intersect_x0; i < intersect_x1; ++i) {
+        for (int j = intersect_y0; j < intersect_y1; ++j) {
             int val = img->getPixelValue(i, j);
-            result->setPixelValue(i-x0, j-y0, val);
+            result->setPixelValue(i-x, j-y, val);
         }
     }
     return (microbit_image_obj_t *)result;
