@@ -347,6 +347,9 @@ STATIC const mp_map_elem_t microbit_music_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_tune), (mp_obj_t)&microbit_music_tune_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_pitch), (mp_obj_t)&microbit_music_pitch_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_stop), (mp_obj_t)&microbit_music_stop_obj },
+
+    { MP_OBJ_NEW_QSTR(MP_QSTR_ENTERTAINER), (mp_obj_t)&microbit_music_tune_entertainer_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_NYAN), (mp_obj_t)&microbit_music_tune_nyan_obj },
 };
 
 STATIC MP_DEFINE_CONST_DICT(microbit_music_locals_dict, microbit_music_locals_dict_table);
