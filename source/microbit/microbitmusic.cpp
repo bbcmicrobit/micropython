@@ -130,46 +130,37 @@ STATIC void play_note(microbit_music_obj_t *self, const char *note_str, size_t n
     // make the octave relative to octave 4
     octave -= 4;
 
-    // printf("index: %d\n", note_index);
-    // printf("sharp?: %s\n", sharp ? "yes" : "no");
-    // printf("octave: %d\n", octave);
-    // printf("duration: %d\n", duration);
-
     // 18 is 'r' or 'R'
     if (note_index < 10) {
         if (sharp) {
-            // printf("period: %d\n", periods_sharps_us[note_index] >> octave);
             if (octave >= 0) {
-                // printf("period: %d\n", periods_sharps_us[note_index] >> octave);
                 pin->setAnalogPeriodUs(periods_sharps_us[note_index] >> octave);
             }
             else {
-                // printf("period: %d\n", periods_sharps_us[note_index] << -octave);
                 pin->setAnalogPeriodUs(periods_sharps_us[note_index] << -octave);
             }
         } else {
-            // printf("period: %d\n", periods_sharps_us[note_index] >> octave);
             if (octave >= 0) {
-                // printf("period: %d\n", periods_us[note_index] >> octave);
                 pin->setAnalogPeriodUs(periods_us[note_index] >> octave);
             }
             else {
-                // printf("period: %d\n", periods_us[note_index] >> -octave);
                 pin->setAnalogPeriodUs(periods_us[note_index] << -octave);
             }
         }
     } else {
-        // printf("rest!\r\n");
         pin->setAnalogValue(0);
     }
 
-    uBit.sleep(ms_per_tick * self->last_duration);
+    // Cut off 10ms from end of note so we hear articulation.
+    uBit.sleep((ms_per_tick * self->last_duration) - 10);
 
     if (note_index >= 10) {
         pin->setAnalogValue(128);
     }
 
     pin->setAnalogValue(0);
+    // Add 10ms of silence to the end of note so we hear articulation.
+    uBit.sleep(10);
 }
 
 STATIC mp_obj_t microbit_music_reset(mp_obj_t self_in) {
@@ -280,7 +271,7 @@ STATIC mp_obj_t microbit_music_pitch(mp_uint_t n_args, const mp_obj_t *pos_args,
         { MP_QSTR_pin,    MP_ARG_REQUIRED | MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
         { MP_QSTR_frequency, MP_ARG_REQUIRED | MP_ARG_INT, {.u_int = 0} },
         { MP_QSTR_len,    MP_ARG_REQUIRED | MP_ARG_INT, {.u_int = -1} },
-        { MP_QSTR_wait,   MP_ARG_KW_ONLY | MP_ARG_BOOL, {.u_bool = false} },
+        { MP_QSTR_wait,   MP_ARG_KW_ONLY | MP_ARG_BOOL, {.u_bool = true} },
     };
 
     // extract self.
