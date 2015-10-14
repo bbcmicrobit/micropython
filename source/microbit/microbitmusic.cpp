@@ -339,8 +339,18 @@ STATIC const mp_map_elem_t microbit_music_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_pitch), (mp_obj_t)&microbit_music_pitch_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_stop), (mp_obj_t)&microbit_music_stop_obj },
 
+    { MP_OBJ_NEW_QSTR(MP_QSTR_DADADADUM), (mp_obj_t)&microbit_music_tune_dadadadum_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_ENTERTAINER), (mp_obj_t)&microbit_music_tune_entertainer_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_PRELUDE), (mp_obj_t)&microbit_music_tune_prelude_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_ODE), (mp_obj_t)&microbit_music_tune_ode_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_NYAN), (mp_obj_t)&microbit_music_tune_nyan_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_RINGTONE), (mp_obj_t)&microbit_music_tune_ringtone_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_FUNK), (mp_obj_t)&microbit_music_tune_funk_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_BLUES), (mp_obj_t)&microbit_music_tune_blues_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_BIRTHDAY), (mp_obj_t)&microbit_music_tune_birthday_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_WEDDING), (mp_obj_t)&microbit_music_tune_wedding_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_FUNERAL), (mp_obj_t)&microbit_music_tune_funeral_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_PUNCHLINE), (mp_obj_t)&microbit_music_tune_punchline_obj },
 };
 
 STATIC MP_DEFINE_CONST_DICT(microbit_music_locals_dict, microbit_music_locals_dict_table);
