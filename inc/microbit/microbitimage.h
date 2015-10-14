@@ -71,6 +71,4 @@ mp_obj_t scrolling_string_image_iterable(mp_obj_t str);
     } \
 }
 
-extern int BRIGHTNESS_SCALE[];
-
 extern monochrome_5by5_t BLANK_IMAGE;

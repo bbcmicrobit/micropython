@@ -26,6 +26,7 @@
 
 #include "MicroBit.h"
 #include "microbitobj.h"
+#include "nrf_gpio.h"
 
 extern "C" {
 
@@ -33,28 +34,30 @@ extern "C" {
 #include "modmicrobit.h"
 #include "microbitimage.h"
 
+
+
 typedef struct _microbit_display_obj_t {
     mp_obj_base_t base;
-    MicroBitDisplay *display;
+    mp_int_t image_buffer[5][5];
 } microbit_display_obj_t;
 
-STATIC void display_print(const microbit_display_obj_t *display, microbit_image_obj_t *image) {
-    MicroBitImage *display_image = &display->display->image;
+
+STATIC void display_print(microbit_display_obj_t *display, microbit_image_obj_t *image) {
     mp_int_t w = min(image->width(), 5);
     mp_int_t h = min(image->height(), 5);
     mp_int_t x = 0;
     for (; x < w; ++x) {
         mp_int_t y = 0;
         for (; y < h; ++y) {
-            display_image->setPixelValue(x, y, BRIGHTNESS_SCALE[image->getPixelValue(x, y)]);
+            display->image_buffer[x][y] = image->getPixelValue(x, y);
         }
         for (; y < 5; ++y) {
-            display_image->setPixelValue(x, y, 0);
+            display->image_buffer[x][y] = 0;
         }
     }
     for (; x < 5; ++x) {
         for (mp_int_t y = 0; y < 5; ++y) {
-            display_image->setPixelValue(x, y, 0);
+            display->image_buffer[x][y] = 0;
         }
     }
 }
@@ -111,6 +114,11 @@ static bool async_error = false;
 static uint16_t async_nonce = 0;
 static int async_delay = 1000;
 static int async_tick = 0;
+static int strobe_row = 0;
+static int strobe_mask = 0x20;
+static int minimum_brightness = 0;
+static Ticker renderTimer;
+
 
 STATIC void wakeup_event() {
     // Wake up any fibers that were blocked on the animation (if any).
@@ -134,7 +142,103 @@ STATIC void async_stop(void) {
     wakeup_event();
 }
 
-void microbit_display_tick(void) {
+struct DisplayPoint {
+    uint8_t x;
+    uint8_t y;
+};
+
+#define NO_CONN 0
+
+DisplayPoint display_map[MICROBIT_DISPLAY_COLUMN_COUNT][MICROBIT_DISPLAY_ROW_COUNT] = {
+    {{0,0}, {4,2}, {2,4}},
+    {{2,0}, {0,2}, {4,4}},
+    {{4,0}, {2,2}, {0,4}},
+    {{4,3}, {1,0}, {0,1}},
+    {{3,3}, {3,0}, {1,1}},
+    {{2,3}, {3,4}, {2,1}},
+    {{1,3}, {1,4}, {3,1}},
+    {{0,3}, {NO_CONN,NO_CONN}, {4,1}},
+    {{1,2}, {NO_CONN,NO_CONN}, {3,2}}
+};
+
+static void set_pins_for_pixels(int brightness) {
+
+    int column_strobe = 0;
+
+    // Calculate the bitpattern to write.
+    for (int i = 0; i<MICROBIT_DISPLAY_COLUMN_COUNT; i++)
+    {
+        int x = display_map[i][strobe_row].x;
+        int y = display_map[i][strobe_row].y;
+        
+        if (microbit_display_obj.image_buffer[x][y] >= brightness)
+            column_strobe |= (1 << i);
+    }
+
+    //write the new bit pattern
+    //set port 0 4-7 and retain lower 4 bits
+    nrf_gpio_port_write(NRF_GPIO_PORT_SELECT_PORT0, ~column_strobe<<4 & 0xF0 | nrf_gpio_port_read(NRF_GPIO_PORT_SELECT_PORT0) & 0x0F);
+
+    //set port 1 8-12 for the current row
+    nrf_gpio_port_write(NRF_GPIO_PORT_SELECT_PORT1, strobe_mask | (~column_strobe>>4 & 0x1F));
+
+}
+
+static void clear_row()
+{
+    //clear the old bit pattern for this row.
+    //clear port 0 4-7 and retain lower 4 bits
+    nrf_gpio_port_write(NRF_GPIO_PORT_SELECT_PORT0, 0xF0 | nrf_gpio_port_read(NRF_GPIO_PORT_SELECT_PORT0) & 0x0F);
+
+    // clear port 1 8-12 for the current row
+    nrf_gpio_port_write(NRF_GPIO_PORT_SELECT_PORT1, strobe_mask | 0x1F);
+}
+
+static void microbit_display_advance_row(void) {
+
+    /* Clear the old row */
+    clear_row();
+
+    // Move on to the next row.
+    strobe_mask <<= 1;
+    strobe_row++;
+
+    //reset the row counts and bit mask when we have hit the max.
+    if(strobe_row == MICROBIT_DISPLAY_ROW_COUNT) {
+        strobe_row = 0;
+        strobe_mask = 0x20;
+    }
+    /* Turn on any pixels that are at max */
+    set_pins_for_pixels(MAX_BRIGHTNESS);
+
+}
+
+static const int render_timings[] = 
+{   0, /* Brightness, Duration */
+    32,   /*    1,     32   */
+    32,   /*    2,     64   */
+    64,   /*    3,     128  */
+    128,  /*    4,     256  */
+    256,  /*    5,     512  */
+    480,  /*    6,     992  */
+    924,  /*    7,     1916 */
+    1784, /*    8,     3700 */
+/*  Always on   9,     6000 */
+};
+
+static void render_row() {
+    
+    // Attach to timer
+    if (minimum_brightness < MAX_BRIGHTNESS) {
+        renderTimer.attach_us(render_row, render_timings[minimum_brightness]);
+    }
+    set_pins_for_pixels(minimum_brightness);
+    ++minimum_brightness;
+    
+}
+
+
+static void microbit_display_update(void) {
     async_tick += FIBER_TICK_PERIOD_MS;
     if(async_tick < async_delay)
         return;
@@ -181,6 +285,17 @@ void microbit_display_tick(void) {
             async_stop();
             break;
     }
+}
+
+void microbit_display_tick(void) {
+
+    microbit_display_advance_row();
+    
+    microbit_display_update();
+    
+    minimum_brightness = 1;
+    render_row();
+    
 }
 
 STATIC void do_synchronous_animation_once(microbit_display_obj_t *display, mp_obj_t iterator, mp_int_t delay) {
@@ -301,51 +416,27 @@ mp_obj_t microbit_display_clear(void) {
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_display_clear_obj, microbit_display_clear);
 
-mp_obj_t microbit_display_set_pixel_raw(mp_uint_t n_args, const mp_obj_t *args) {
-    (void)n_args;
-    microbit_display_obj_t *self = (microbit_display_obj_t*)args[0];
-    self->display->image.setPixelValue(mp_obj_get_int(args[1]), mp_obj_get_int(args[2]), mp_obj_get_int(args[3]));
-    return mp_const_none;
-}
-MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_display_set_pixel_raw_obj, 4, 4, microbit_display_set_pixel_raw);
-
 mp_obj_t microbit_display_set_pixel(mp_uint_t n_args, const mp_obj_t *args) {
     (void)n_args;
     microbit_display_obj_t *self = (microbit_display_obj_t*)args[0];
     mp_int_t bright = mp_obj_get_int(args[3]);
     if (bright < 0 || bright > MAX_BRIGHTNESS) 
         nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "brightness out of bounds."));
-    self->display->image.setPixelValue(mp_obj_get_int(args[1]), mp_obj_get_int(args[2]), BRIGHTNESS_SCALE[bright]);
+    self->image_buffer[mp_obj_get_int(args[1])][mp_obj_get_int(args[2])] = bright;
     return mp_const_none;
 }
 MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_display_set_pixel_obj, 4, 4, microbit_display_set_pixel);
 
-mp_obj_t microbit_display_get_pixel_raw(mp_obj_t self_in, mp_obj_t x_in, mp_obj_t y_in) {
-    microbit_display_obj_t *self = (microbit_display_obj_t*)self_in;
-    mp_int_t raw = self->display->image.getPixelValue(mp_obj_get_int(x_in), mp_obj_get_int(y_in));
-    return MP_OBJ_NEW_SMALL_INT(raw);
-}
-MP_DEFINE_CONST_FUN_OBJ_3(microbit_display_get_pixel_raw_obj, microbit_display_get_pixel_raw);
-
 mp_obj_t microbit_display_get_pixel(mp_obj_t self_in, mp_obj_t x_in, mp_obj_t y_in) {
     microbit_display_obj_t *self = (microbit_display_obj_t*)self_in;
-    mp_int_t raw = self->display->image.getPixelValue(mp_obj_get_int(x_in), mp_obj_get_int(y_in));
-    for (int i = 0; i < MAX_BRIGHTNESS; ++i) {
-        mp_int_t bright = BRIGHTNESS_SCALE[i];
-        mp_int_t next = BRIGHTNESS_SCALE[i+1];
-        if (raw < (bright + next)/2)
-            return MP_OBJ_NEW_SMALL_INT(i);
-    }
-    return MP_OBJ_NEW_SMALL_INT(MAX_BRIGHTNESS);
+    return MP_OBJ_NEW_SMALL_INT(self->image_buffer[mp_obj_get_int(x_in)][mp_obj_get_int(y_in)]);
 }
 MP_DEFINE_CONST_FUN_OBJ_3(microbit_display_get_pixel_obj, microbit_display_get_pixel);
 
 STATIC const mp_map_elem_t microbit_display_locals_dict_table[] = {
     
     { MP_OBJ_NEW_QSTR(MP_QSTR_get_pixel),  (mp_obj_t)&microbit_display_get_pixel_obj },
-    { MP_OBJ_NEW_QSTR(MP_QSTR_get_pixel_raw),  (mp_obj_t)&microbit_display_get_pixel_raw_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_set_pixel),  (mp_obj_t)&microbit_display_set_pixel_obj },
-    { MP_OBJ_NEW_QSTR(MP_QSTR_set_pixel_raw),  (mp_obj_t)&microbit_display_set_pixel_raw_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_print), (mp_obj_t)&microbit_display_print_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_scroll), (mp_obj_t)&microbit_display_scroll_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_animate), (mp_obj_t)&microbit_display_animate_obj },
@@ -372,14 +463,16 @@ STATIC const mp_obj_type_t microbit_display_type = {
     /* .locals_dict = */ (mp_obj_t)&microbit_display_locals_dict,
 };
 
-const microbit_display_obj_t microbit_display_obj = {
+microbit_display_obj_t microbit_display_obj = {
     {&microbit_display_type},
-    .display = &uBit.display
+    { 0 }
 };
 
 void microbit_display_init(void) {
-    microbit_display_obj.display->setBrightness(255);
-    microbit_display_obj.display->setDisplayMode(DISPLAY_MODE_GREYSCALE);
+    //set pins as output
+    nrf_gpio_range_cfg_output(MICROBIT_DISPLAY_COLUMN_START,MICROBIT_DISPLAY_COLUMN_START + MICROBIT_DISPLAY_COLUMN_COUNT + MICROBIT_DISPLAY_ROW_COUNT);
+    
+    uBit.display.disable();
 }
 
 }
