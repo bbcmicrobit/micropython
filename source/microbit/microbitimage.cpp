@@ -34,23 +34,6 @@ extern "C" {
 #include "microbitimage.h"
 #include "py/runtime0.h"
 
-/* This scale has been determined experimentally (and subjectively) 
-   It is not as even as I (Mark Shannon) would like.
- */
-int BRIGHTNESS_SCALE[] = { 
-   /* 0 */ 0, 
-   /* 1 */ 2, 
-   /* 2 */ 5, 
-   /* 3 */ 10,
-   /* 4 */ 14,
-   /* 5 */ 24,
-   /* 6 */ 43,
-   /* 7 */ 78,
-   /* 8 */ 141,
-   /* 9 */ 255
-};
-
-
 monochrome_5by5_t BLANK_IMAGE = {
     { &microbit_image_type },
     1, 0, 0, 0,
