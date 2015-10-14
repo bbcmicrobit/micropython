@@ -84,8 +84,18 @@ extern const struct _microbit_const_image_obj_t microbit_const_image_arrow_sw_ob
 extern const struct _microbit_const_image_obj_t microbit_const_image_arrow_w_obj;
 extern const struct _microbit_const_image_obj_t microbit_const_image_arrow_nw_obj;
 
+extern const struct _mp_obj_tuple_t microbit_music_tune_dadadadum_obj;
 extern const struct _mp_obj_tuple_t microbit_music_tune_entertainer_obj;
+extern const struct _mp_obj_tuple_t microbit_music_tune_prelude_obj;
+extern const struct _mp_obj_tuple_t microbit_music_tune_ode_obj;
 extern const struct _mp_obj_tuple_t microbit_music_tune_nyan_obj;
+extern const struct _mp_obj_tuple_t microbit_music_tune_ringtone_obj;
+extern const struct _mp_obj_tuple_t microbit_music_tune_funk_obj;
+extern const struct _mp_obj_tuple_t microbit_music_tune_blues_obj;
+extern const struct _mp_obj_tuple_t microbit_music_tune_birthday_obj;
+extern const struct _mp_obj_tuple_t microbit_music_tune_wedding_obj;
+extern const struct _mp_obj_tuple_t microbit_music_tune_funeral_obj;
+extern const struct _mp_obj_tuple_t microbit_music_tune_punchline_obj;
 
 extern const mp_obj_type_t microbit_image_type;
 extern const struct _microbit_image_obj_t microbit_image_obj;
