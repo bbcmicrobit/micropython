@@ -104,7 +104,7 @@ extern const mp_obj_type_t microbit_image_type;
 extern const mp_obj_type_t microbit_accelerometer_type;
 extern const struct _microbit_accelerometer_obj_t microbit_accelerometer_obj;
 
-extern const struct _microbit_display_obj_t microbit_display_obj;
+extern struct _microbit_display_obj_t microbit_display_obj;
 extern const struct _microbit_button_obj_t microbit_button_a_obj;
 extern const struct _microbit_button_obj_t microbit_button_b_obj;
 extern const struct _microbit_compass_obj_t microbit_compass_obj;
@@ -133,9 +133,7 @@ MP_DECLARE_CONST_FUN_OBJ(microbit_display_scroll_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_display_clear_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_display_animate_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_display_get_pixel_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_display_get_pixel_raw_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_display_set_pixel_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_display_set_pixel_raw_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_pin_read_digital_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_pin_write_digital_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_pin_read_analog_obj);
