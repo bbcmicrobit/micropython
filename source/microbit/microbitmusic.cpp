@@ -128,7 +128,7 @@ STATIC void play_note(microbit_music_obj_t *self, const char *note_str, size_t n
     // play the note!
 
     // make the octave relative to octave 4
-    octave -= 3;
+    octave -= 4;
 
     // 18 is 'r' or 'R'
     if (note_index < 10) {

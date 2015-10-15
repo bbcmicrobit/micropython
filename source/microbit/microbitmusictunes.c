@@ -37,22 +37,22 @@
 
 
 T(dadadadum,
-    N(r3_colon_2), N(g), N(g), N(g), N(eb_colon_8), N(r_colon_2), N(f), N(f),
+    N(r4_colon_2), N(g), N(g), N(g), N(eb_colon_8), N(r_colon_2), N(f), N(f),
     N(f), N(d_colon_8));
 
 T(entertainer,
-    N(d3_colon_1), N(d_hash_), N(e), N(c4_colon_2), N(e3_colon_1),
-    N(c4_colon_2), N(e3_colon_1), N(c4_colon_3), N(c_colon_1), N(d),
-    N(d_hash_), N(e), N(c), N(d), N(e_colon_2), N(b3_colon_1), N(d4_colon_2),
+    N(d4_colon_1), N(d_hash_), N(e), N(c5_colon_2), N(e4_colon_1),
+    N(c5_colon_2), N(e4_colon_1), N(c5_colon_3), N(c_colon_1), N(d),
+    N(d_hash_), N(e), N(c), N(d), N(e_colon_2), N(b4_colon_1), N(d5_colon_2),
     N(c_colon_4));
 
 T(prelude,
-    N(c3_colon_1), N(e), N(g), N(c4), N(e), N(g3), N(c4), N(e), N(c3), N(e),
-    N(g), N(c4), N(e), N(g3), N(c4), N(e), N(c3), N(d), N(g), N(d4), N(f),
-    N(g3), N(d4), N(f), N(c3), N(d), N(g), N(d4), N(f), N(g3), N(d4), N(f),
-    N(b2), N(d3), N(g), N(d4), N(f), N(g3), N(d4), N(f), N(b2), N(d3), N(g),
-    N(d4), N(f), N(g3), N(d4), N(f), N(c3), N(e), N(g), N(c4), N(e), N(g3),
-    N(c4), N(e), N(c3), N(e), N(g), N(c4), N(e), N(g3), N(c4), N(e));
+    N(c4_colon_1), N(e), N(g), N(c5), N(e), N(g4), N(c5), N(e), N(c4), N(e),
+    N(g), N(c5), N(e), N(g4), N(c5), N(e), N(c4), N(d), N(g), N(d5), N(f),
+    N(g4), N(d5), N(f), N(c4), N(d), N(g), N(d5), N(f), N(g4), N(d5), N(f),
+    N(b3), N(d4), N(g), N(d5), N(f), N(g4), N(d5), N(f), N(b3), N(d4), N(g),
+    N(d5), N(f), N(g4), N(d5), N(f), N(c4), N(e), N(g), N(c5), N(e), N(g4),
+    N(c5), N(e), N(c4), N(e), N(g), N(c5), N(e), N(g4), N(c5), N(e));
 
 T(ode,
     N(e4), N(e), N(f), N(g), N(g), N(f), N(e), N(d), N(c), N(c), N(d), N(e),
@@ -61,29 +61,29 @@ T(ode,
     N(c_colon_2), N(c_colon_8));
 
 T(nyan,
-    N(f_hash_4_colon_2), N(g_hash_), N(c_hash__colon_1), N(d_hash__colon_2),
-    N(b3_colon_1), N(d4_colon_1), N(c_hash_), N(b3_colon_2), N(b),
-    N(c_hash_4), N(d), N(d_colon_1), N(c_hash_), N(b3_colon_1),
-    N(c_hash_4_colon_1), N(d_hash_), N(f_hash_), N(g_hash_), N(d_hash_),
-    N(f_hash_), N(c_hash_), N(d), N(b3), N(c_hash_4), N(b3),
-    N(d_hash_4_colon_2), N(f_hash_), N(g_hash__colon_1), N(d_hash_),
-    N(f_hash_), N(c_hash_), N(d_hash_), N(b3), N(d4), N(d_hash_), N(d),
-    N(c_hash_), N(b3), N(c_hash_4), N(d_colon_2), N(b3_colon_1), N(c_hash_4),
-    N(d_hash_), N(f_hash_), N(c_hash_), N(d), N(c_hash_), N(b3),
-    N(c_hash_4_colon_2), N(b3), N(c_hash_4), N(b3), N(f_hash__colon_1),
+    N(f_hash_5_colon_2), N(g_hash_), N(c_hash__colon_1), N(d_hash__colon_2),
+    N(b4_colon_1), N(d5_colon_1), N(c_hash_), N(b4_colon_2), N(b),
+    N(c_hash_5), N(d), N(d_colon_1), N(c_hash_), N(b4_colon_1),
+    N(c_hash_5_colon_1), N(d_hash_), N(f_hash_), N(g_hash_), N(d_hash_),
+    N(f_hash_), N(c_hash_), N(d), N(b4), N(c_hash_5), N(b4),
+    N(d_hash_5_colon_2), N(f_hash_), N(g_hash__colon_1), N(d_hash_),
+    N(f_hash_), N(c_hash_), N(d_hash_), N(b4), N(d5), N(d_hash_), N(d),
+    N(c_hash_), N(b4), N(c_hash_5), N(d_colon_2), N(b4_colon_1), N(c_hash_5),
+    N(d_hash_), N(f_hash_), N(c_hash_), N(d), N(c_hash_), N(b4),
+    N(c_hash_5_colon_2), N(b4), N(c_hash_5), N(b4), N(f_hash__colon_1),
     N(g_hash_), N(b_colon_2), N(f_hash__colon_1), N(g_hash_), N(b),
-    N(c_hash_4), N(d_hash_), N(b3), N(e4), N(d_hash_), N(e), N(f_hash_),
-    N(b3_colon_2), N(b), N(f_hash__colon_1), N(g_hash_), N(b), N(f_hash_),
-    N(e4), N(d_hash_), N(c_hash_), N(b3), N(f_hash_), N(d_hash_), N(e),
-    N(f_hash_), N(b3_colon_2), N(f_hash__colon_1), N(g_hash_), N(b_colon_2),
-    N(f_hash__colon_1), N(g_hash_), N(b), N(b), N(c_hash_4), N(d_hash_),
-    N(b3), N(f_hash_), N(g_hash_), N(f_hash_), N(b_colon_2), N(b_colon_1),
-    N(a_hash_), N(b), N(f_hash_), N(g_hash_), N(b), N(e4), N(d_hash_), N(e),
-    N(f_hash_), N(b3_colon_2), N(c_hash_4));
+    N(c_hash_5), N(d_hash_), N(b4), N(e5), N(d_hash_), N(e), N(f_hash_),
+    N(b4_colon_2), N(b), N(f_hash__colon_1), N(g_hash_), N(b), N(f_hash_),
+    N(e5), N(d_hash_), N(c_hash_), N(b4), N(f_hash_), N(d_hash_), N(e),
+    N(f_hash_), N(b_colon_2), N(f_hash__colon_1), N(g_hash_), N(b_colon_2),
+    N(f_hash__colon_1), N(g_hash_), N(b), N(b), N(c_hash_5), N(d_hash_),
+    N(b4), N(f_hash_), N(g_hash_), N(f_hash_), N(b_colon_2), N(b_colon_1),
+    N(a_hash_), N(b), N(f_hash_), N(g_hash_), N(b), N(e5), N(d_hash_), N(e),
+    N(f_hash_), N(b4_colon_2), N(c_hash_5));
 
 T(ringtone,
-    N(c3_colon_1), N(d), N(e_colon_2), N(g), N(d_colon_1), N(e), N(f_colon_2),
-    N(a), N(e_colon_1), N(f), N(g_colon_2), N(b), N(c4_colon_4));
+    N(c4_colon_1), N(d), N(e_colon_2), N(g), N(d_colon_1), N(e), N(f_colon_2),
+    N(a), N(e_colon_1), N(f), N(g_colon_2), N(b), N(c5_colon_4));
 
 T(funk,
     N(c2_colon_2), N(c), N(d_hash_), N(c_colon_1), N(f_colon_2), N(c_colon_1),
@@ -99,9 +99,9 @@ T(blues,
     N(d));
 
 T(birthday,
-    N(c3_colon_3), N(c_colon_1), N(d_colon_4), N(c_colon_4), N(f),
+    N(c4_colon_3), N(c_colon_1), N(d_colon_4), N(c_colon_4), N(f),
     N(e_colon_8), N(c_colon_3), N(c_colon_1), N(d_colon_4), N(c_colon_4),
-    N(g), N(f_colon_8), N(c3_colon_3), N(c_colon_1), N(c4_colon_4), N(a3),
+    N(g), N(f_colon_8), N(c_colon_3), N(c_colon_1), N(c5_colon_4), N(a4),
     N(f), N(e), N(d), N(a_hash__colon_3), N(a_hash__colon_1), N(a_colon_4),
     N(f), N(g), N(f_colon_8));
 
