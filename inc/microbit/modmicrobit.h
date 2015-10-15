@@ -96,6 +96,7 @@ extern const struct _mp_obj_tuple_t microbit_music_tune_birthday_obj;
 extern const struct _mp_obj_tuple_t microbit_music_tune_wedding_obj;
 extern const struct _mp_obj_tuple_t microbit_music_tune_funeral_obj;
 extern const struct _mp_obj_tuple_t microbit_music_tune_punchline_obj;
+extern const struct _mp_obj_tuple_t microbit_music_tune_python_obj;
 
 extern const mp_obj_type_t microbit_image_type;
 extern const struct _microbit_image_obj_t microbit_image_obj;

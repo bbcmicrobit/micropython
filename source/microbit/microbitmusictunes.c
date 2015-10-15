@@ -120,5 +120,17 @@ T(punchline,
     N(c4_colon_3), N(g3_colon_1), N(f_hash_), N(g), N(g_hash__colon_3), N(g),
     N(r), N(b), N(c4));
 
+T(python,
+    N(d5_colon_1), N(b4), N(r), N(b), N(b), N(a_hash_), N(b), N(g5), N(r),
+    N(d), N(d), N(r), N(b4), N(c5), N(r), N(c), N(c), N(r), N(d),
+    N(e_colon_5), N(c_colon_1), N(a4), N(r), N(a), N(a), N(g_hash_), N(a),
+    N(f_hash_5), N(r), N(e), N(e), N(r), N(c), N(b4), N(r), N(b), N(b), N(r),
+    N(c5), N(d_colon_5), N(d_colon_1), N(b4), N(r), N(b), N(b), N(a_hash_),
+    N(b), N(b5), N(r), N(g), N(g), N(r), N(d), N(c_hash_), N(r), N(a), N(a),
+    N(r), N(a), N(a_colon_5), N(g_colon_1), N(f_hash__colon_2), N(a_colon_1),
+    N(a), N(g_hash_), N(a), N(e_colon_2), N(a_colon_1), N(a), N(g_hash_),
+    N(a), N(d), N(r), N(c_hash_), N(d), N(r), N(c_hash_), N(d_colon_2),
+    N(r_colon_3));
+
 #undef N
 #undef T
