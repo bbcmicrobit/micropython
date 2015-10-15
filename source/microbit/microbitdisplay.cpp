@@ -33,16 +33,10 @@ extern "C" {
 #include "py/runtime.h"
 #include "modmicrobit.h"
 #include "microbitimage.h"
+#include "microbitdisplay.h"
 
 
-
-typedef struct _microbit_display_obj_t {
-    mp_obj_base_t base;
-    mp_int_t image_buffer[5][5];
-} microbit_display_obj_t;
-
-
-STATIC void display_print(microbit_display_obj_t *display, microbit_image_obj_t *image) {
+void microbit_display_print(microbit_display_obj_t *display, microbit_image_obj_t *image) {
     mp_int_t w = min(image->width(), 5);
     mp_int_t h = min(image->height(), 5);
     mp_int_t x = 0;
@@ -64,7 +58,7 @@ STATIC void display_print(microbit_display_obj_t *display, microbit_image_obj_t 
 
 STATIC void do_synchronous_animation(microbit_display_obj_t *display, mp_obj_t iterable, mp_int_t delay, bool repeat);
 
-mp_obj_t microbit_display_print(mp_uint_t n_args, const mp_obj_t *args) {
+mp_obj_t microbit_display_print_func(mp_uint_t n_args, const mp_obj_t *args) {
     // TODO support async mode
 
     microbit_display_obj_t *self = (microbit_display_obj_t*)args[0];
@@ -82,7 +76,7 @@ mp_obj_t microbit_display_print(mp_uint_t n_args, const mp_obj_t *args) {
             // no chars, do nothing
         } else if (len == 1) {
             // single char
-            display_print(self, microbit_image_for_char(str[0]));
+            microbit_display_print(self, microbit_image_for_char(str[0]));
         } else {
             mp_int_t delay;
             if (n_args == 3) {
@@ -93,13 +87,13 @@ mp_obj_t microbit_display_print(mp_uint_t n_args, const mp_obj_t *args) {
             do_synchronous_animation(self, args[1], delay, false);
         }
     } else if (mp_obj_get_type(args[1]) == &microbit_image_type) {
-        display_print(self, (microbit_image_obj_t *)args[1]);
+        microbit_display_print(self, (microbit_image_obj_t *)args[1]);
     } else {
         nlr_raise(mp_obj_new_exception_msg(&mp_type_TypeError, "expecting an image or a string."));
     }
     return mp_const_none;
 }
-MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_display_print_obj, 2, 3, microbit_display_print);
+MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_display_print_obj, 2, 3, microbit_display_print_func);
 
 #define ASYNC_MODE_STOPPED 0
 #define ASYNC_MODE_ANIMATION 1
@@ -260,16 +254,16 @@ static void microbit_display_update(void) {
                 if (async_repeat_iterable) {
                     async_iterator = mp_getiter(async_repeat_iterable);
                 } else {
-                    display_print(display, (microbit_image_obj_t *)&BLANK_IMAGE);
+                    microbit_display_print(display, BLANK_IMAGE);
                     async_stop();
                 }
             } else if (mp_obj_get_type(obj) == &microbit_image_type) {
-                display_print(display, (microbit_image_obj_t *)obj);
+                microbit_display_print(display, (microbit_image_obj_t *)obj);
             } else if (MP_OBJ_IS_STR(obj)) {
                 mp_uint_t len;
                 const char *str = mp_obj_str_get_data(obj, &len);
                 if (len == 1) {
-                    display_print(display, microbit_image_for_char(str[0]));
+                    microbit_display_print(display, microbit_image_for_char(str[0]));
                 } else {
                     async_error = true;
                     async_stop();
@@ -281,7 +275,7 @@ static void microbit_display_update(void) {
             break;
         }
         case ASYNC_MODE_CLEAR:
-            display_print(&microbit_display_obj, (microbit_image_obj_t *)&BLANK_IMAGE);
+            microbit_display_print(&microbit_display_obj, BLANK_IMAGE);
             async_stop();
             break;
     }
@@ -308,12 +302,12 @@ STATIC void do_synchronous_animation_once(microbit_display_obj_t *display, mp_ob
             async_mode = ASYNC_MODE_STOPPED;
             return;
         } else if (mp_obj_get_type(obj) == &microbit_image_type) {
-            display_print(display, (microbit_image_obj_t *)obj);
+            microbit_display_print(display, (microbit_image_obj_t *)obj);
         } else if (MP_OBJ_IS_STR(obj)) {
             mp_uint_t len;
             const char *str = mp_obj_str_get_data(obj, &len);
             if (len == 1) {
-                display_print(display, microbit_image_for_char(str[0]));
+                microbit_display_print(display, microbit_image_for_char(str[0]));
             } else {
                 break; /* error */
             }
@@ -346,7 +340,7 @@ STATIC void start_asynchronous_animation(microbit_display_obj_t *self, mp_obj_t 
     async_mode = ASYNC_MODE_ANIMATION;
 }
 
-STATIC void do_animation(microbit_display_obj_t *self, mp_obj_t iterable, mp_int_t delay, bool wait, bool loop) {
+void microbit_display_animate(microbit_display_obj_t *self, mp_obj_t iterable, mp_int_t delay, bool wait, bool loop) {
     // reset repeat state
     MP_STATE_PORT(async_data)[0] = NULL;
     MP_STATE_PORT(async_data)[1] = NULL;
@@ -358,7 +352,7 @@ STATIC void do_animation(microbit_display_obj_t *self, mp_obj_t iterable, mp_int
     }
 }
 
-STATIC mp_obj_t microbit_display_animate(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
+STATIC mp_obj_t microbit_display_animate_func(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
     static const mp_arg_t animate_allowed_args[] = {
         { MP_QSTR_image,    MP_ARG_REQUIRED | MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
         { MP_QSTR_delay,    MP_ARG_REQUIRED | MP_ARG_INT, {.u_int = 0} },
@@ -383,55 +377,76 @@ STATIC mp_obj_t microbit_display_animate(mp_uint_t n_args, const mp_obj_t *pos_a
         iterable = arg0;
     }
 
-    do_animation(self, iterable, args[1].u_int /*delay*/, args[4].u_bool /*wait? */, args[5].u_bool/*loop?*/);
+    microbit_display_animate(self, iterable, args[1].u_int /*delay*/, args[4].u_bool /*wait? */, args[5].u_bool/*loop?*/);
     return mp_const_none;
 }
-MP_DEFINE_CONST_FUN_OBJ_KW(microbit_display_animate_obj, 2, microbit_display_animate);
+MP_DEFINE_CONST_FUN_OBJ_KW(microbit_display_animate_obj, 2, microbit_display_animate_func);
 
-mp_obj_t microbit_display_scroll(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
+void microbit_display_scroll(microbit_display_obj_t *self, const char* str, mp_int_t len, bool wait) {
+    mp_obj_t iterable = scrolling_string_image_iterable(str, len, NULL);
+    microbit_display_animate(self, iterable, MICROBIT_DEFAULT_SCROLL_SPEED, wait, false);
+}
+
+
+mp_obj_t microbit_display_scroll_func(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
     static const mp_arg_t scroll_allowed_args[] = {
         { MP_QSTR_text,     MP_ARG_REQUIRED | MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
         { MP_QSTR_delay,    MP_ARG_INT, {.u_int = MICROBIT_DEFAULT_SCROLL_SPEED} },
         { MP_QSTR_wait,     MP_ARG_KW_ONLY | MP_ARG_BOOL, {.u_bool = true} },
         { MP_QSTR_loop,     MP_ARG_KW_ONLY | MP_ARG_BOOL, {.u_bool = false} },
     };
-
     // parse args
     microbit_display_obj_t *self = (microbit_display_obj_t*)pos_args[0];
     mp_arg_val_t args[MP_ARRAY_SIZE(scroll_allowed_args)];
     mp_arg_parse_all(n_args - 1, pos_args + 1, kw_args, MP_ARRAY_SIZE(scroll_allowed_args), scroll_allowed_args, args);
-    mp_obj_t iterable = scrolling_string_image_iterable(args[0].u_obj);
-    do_animation(self, iterable, args[1].u_int /*delay*/, args[2].u_bool/*wait?*/, args[3].u_bool/*loop?*/);
-
+    mp_uint_t len;
+    const char* str = mp_obj_str_get_data(args[0].u_obj, &len);
+    mp_obj_t iterable = scrolling_string_image_iterable(str, len, args[0].u_obj);
+    microbit_display_animate(self, iterable, args[1].u_int /*delay*/, args[2].u_bool/*wait?*/, args[3].u_bool/*loop?*/);
     return mp_const_none;
 }
-MP_DEFINE_CONST_FUN_OBJ_KW(microbit_display_scroll_obj, 1, microbit_display_scroll);
+MP_DEFINE_CONST_FUN_OBJ_KW(microbit_display_scroll_obj, 1, microbit_display_scroll_func);
 
-mp_obj_t microbit_display_clear(void) {
+void microbit_display_clear(void) {
     // reset repeat state, cancel animation and clear screen
     async_mode = ASYNC_MODE_CLEAR;
     async_tick = async_delay - FIBER_TICK_PERIOD_MS;
     wait_for_event();
+}
+
+mp_obj_t microbit_display_clear_func(void) {
+    microbit_display_clear();
     return mp_const_none;
 }
-MP_DEFINE_CONST_FUN_OBJ_1(microbit_display_clear_obj, microbit_display_clear);
+MP_DEFINE_CONST_FUN_OBJ_1(microbit_display_clear_obj, microbit_display_clear_func);
 
-mp_obj_t microbit_display_set_pixel(mp_uint_t n_args, const mp_obj_t *args) {
-    (void)n_args;
-    microbit_display_obj_t *self = (microbit_display_obj_t*)args[0];
-    mp_int_t bright = mp_obj_get_int(args[3]);
+void microbit_display_set_pixel(microbit_display_obj_t *display, mp_int_t x, mp_int_t y, mp_int_t bright) {
+    if (x < 0 || y < 0 || x > 4 || y > 4) 
+        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "index out of bounds."));
     if (bright < 0 || bright > MAX_BRIGHTNESS) 
         nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "brightness out of bounds."));
-    self->image_buffer[mp_obj_get_int(args[1])][mp_obj_get_int(args[2])] = bright;
+    display->image_buffer[x][y] = bright;
+}
+
+STATIC mp_obj_t microbit_display_set_pixel_func(mp_uint_t n_args, const mp_obj_t *args) {
+    (void)n_args;
+    microbit_display_obj_t *self = (microbit_display_obj_t*)args[0];
+    microbit_display_set_pixel(self, mp_obj_get_int(args[1]), mp_obj_get_int(args[2]), mp_obj_get_int(args[3]));
     return mp_const_none;
 }
-MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_display_set_pixel_obj, 4, 4, microbit_display_set_pixel);
+MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_display_set_pixel_obj, 4, 4, microbit_display_set_pixel_func);
 
-mp_obj_t microbit_display_get_pixel(mp_obj_t self_in, mp_obj_t x_in, mp_obj_t y_in) {
-    microbit_display_obj_t *self = (microbit_display_obj_t*)self_in;
-    return MP_OBJ_NEW_SMALL_INT(self->image_buffer[mp_obj_get_int(x_in)][mp_obj_get_int(y_in)]);
+mp_int_t microbit_display_get_pixel(microbit_display_obj_t *display, mp_int_t x, mp_int_t y) {
+    if (x < 0 || y < 0 || x > 4 || y > 4) 
+        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "index out of bounds."));
+    return display->image_buffer[x][y];
 }
-MP_DEFINE_CONST_FUN_OBJ_3(microbit_display_get_pixel_obj, microbit_display_get_pixel);
+
+STATIC mp_obj_t microbit_display_get_pixel_func(mp_obj_t self_in, mp_obj_t x_in, mp_obj_t y_in) {
+    microbit_display_obj_t *self = (microbit_display_obj_t*)self_in;
+    return MP_OBJ_NEW_SMALL_INT(microbit_display_get_pixel(self, mp_obj_get_int(x_in), mp_obj_get_int(y_in)));
+}
+MP_DEFINE_CONST_FUN_OBJ_3(microbit_display_get_pixel_obj, microbit_display_get_pixel_func);
 
 STATIC const mp_map_elem_t microbit_display_locals_dict_table[] = {
     

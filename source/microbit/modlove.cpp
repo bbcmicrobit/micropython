@@ -28,26 +28,33 @@
 #include <stdio.h>
 #include "MicroBit.h"
 
-void love(int interval = 500 /* ms */) {
-    // Display a beating heart then clear the screen.
-    const uint8_t heart[] = {
-        0, 0, 0, 0, 0,  0, 1, 0, 1, 0,
-        0, 1, 0, 1, 0,  1, 1, 1, 1, 1,
-        0, 1, 1, 1, 0,  1, 1, 1, 1, 1,
-        0, 0, 1, 0, 0,  0, 1, 1, 1, 0,
-        0, 0, 0, 0, 0,  0, 0, 1, 0, 0,
-    };
-    MicroBitImage i(10, 5, heart);
-    for(int iteration = 0; iteration < 5; iteration++) {
-        uBit.display.animate(i, interval, 5);
-        uBit.sleep(interval);
-    }
-    uBit.display.clear();
-}
-
 extern "C" {
 
-#include "py/obj.h"
+#include "microbitimage.h"
+#include "microbitdisplay.h"
+
+static const mp_float_t bright[7] = { 
+    0.0, 1.0/9, 2.0/9, 4.0/9, 6.0/9, 7.0/9, 8.0/9 
+};
+
+void love(int interval = 80 /* ms */) {
+    microbit_image_obj_t * hearts[7];
+    for (int i = 0; i < 7; i++) {
+         hearts[i] = microbit_image_dim(HEART_IMAGE, bright[i]);
+    }
+   
+    for(int iteration = 0; iteration < 5; iteration++) {
+        for(int step = 0; step < 7; ++step) {
+            microbit_display_print(&microbit_display_obj, hearts[step]);
+            uBit.sleep(interval);
+        }
+        for(int step = 6; step >= 0; --step) {
+            microbit_display_print(&microbit_display_obj, hearts[step]);
+            uBit.sleep(interval);
+        }
+    }
+    microbit_display_clear();
+}
 
 STATIC mp_obj_t love_badaboom(void) {
     // make
