@@ -28,6 +28,14 @@
 #include <stdio.h>
 #include "MicroBit.h"
 
+extern "C" {
+
+#include "microbitimage.h"
+#include "microbitdisplay.h"
+
+#define GET_PIXEL(x, y) microbit_display_get_pixel(&microbit_display_obj, x, y)
+#define SET_PIXEL(x, y, v) microbit_display_set_pixel(&microbit_display_obj, x, y, v)
+
 void antigravity(uint8_t interval = 200 /* ms */) {
     // move all of the LED's upwards (we can move them in other directions in the future)
 
@@ -37,13 +45,12 @@ void antigravity(uint8_t interval = 200 /* ms */) {
         for (uint8_t row = 1; row < 5 - iteration; row++) {
             for (uint8_t col = 0; col < 5; col++) {
                 // move this bit down if possible
-                uint8_t val = uBit.display.image.getPixelValue(col, row);
-
+                uint8_t val = GET_PIXEL(col, row);
                 if (val) {
                     // this is why the row for loop starts at one
-                    if (!uBit.display.image.getPixelValue(col, row - 1)) {
-                        uBit.display.image.setPixelValue(col, row, 0);
-                        uBit.display.image.setPixelValue(col, row - 1, val);
+                    if (!GET_PIXEL(col, row - 1)) {
+                        SET_PIXEL(col, row, 0);
+                        SET_PIXEL(col, row - 1, val);
                         wait = true;
                     }
                 } // we don't care if the LED is off
@@ -55,10 +62,6 @@ void antigravity(uint8_t interval = 200 /* ms */) {
         }
     }
 }
-
-extern "C" {
-
-#include "py/obj.h"
 
 STATIC mp_obj_t antigravity__init__(void) {
     antigravity();

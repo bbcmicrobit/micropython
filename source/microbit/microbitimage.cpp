@@ -34,7 +34,7 @@ extern "C" {
 #include "microbitimage.h"
 #include "py/runtime0.h"
 
-monochrome_5by5_t BLANK_IMAGE = {
+const monochrome_5by5_t microbit_blank_image = {
     { &microbit_image_type },
     1, 0, 0, 0,
     { 0, 0, 0 }
@@ -264,7 +264,7 @@ STATIC mp_obj_t microbit_image_make_new(mp_obj_t type_in, mp_uint_t n_args, mp_u
 
     switch (n_args) {
         case 0: {
-            return &BLANK_IMAGE;
+            return BLANK_IMAGE;
         }
 
         case 1: {
@@ -531,7 +531,7 @@ microbit_image_obj_t *microbit_image_for_char(char c) {
     return (microbit_image_obj_t *)result;
 }
 
-STATIC mp_obj_t microbit_image_dim(microbit_image_obj_t *lhs, mp_float_t fval) {
+microbit_image_obj_t *microbit_image_dim(microbit_image_obj_t *lhs, mp_float_t fval) {
     if (fval < 0) 
         nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "Brightness multiplier must not be negative."));
     greyscale_t *result = greyscale_new(lhs->width(), lhs->height());
@@ -541,10 +541,10 @@ STATIC mp_obj_t microbit_image_dim(microbit_image_obj_t *lhs, mp_float_t fval) {
             result->setPixelValue(x, y, val);
         }
     }
-    return result;
+    return (microbit_image_obj_t *)result;
 }
 
-STATIC mp_obj_t microbit_image_sum(microbit_image_obj_t *lhs, microbit_image_obj_t *rhs, bool add) {
+microbit_image_obj_t *microbit_image_sum(microbit_image_obj_t *lhs, microbit_image_obj_t *rhs, bool add) {
     mp_int_t h = lhs->height();
     mp_int_t w = lhs->width();
     if (rhs->height() != h || lhs->width() != w) {
@@ -563,7 +563,7 @@ STATIC mp_obj_t microbit_image_sum(microbit_image_obj_t *lhs, microbit_image_obj
             result->setPixelValue(x, y, val);
         }
     }
-    return result;
+    return (microbit_image_obj_t *)result;
 }                      
                                    
 STATIC mp_obj_t image_binary_op(mp_uint_t op, mp_obj_t lhs_in, mp_obj_t rhs_in) {
@@ -695,12 +695,14 @@ const mp_obj_type_t microbit_sliced_image_iterator_type = {
  
 typedef struct _scrolling_string_t {
     mp_obj_base_t base; 
-    mp_obj_t str;
+    char const *str;
+    mp_uint_t len;
+    mp_obj_t ref;
 } scrolling_string_t;
 
 typedef struct _scrolling_string_iterator_t {
     mp_obj_base_t base; 
-    mp_obj_t str;
+    mp_obj_t ref;
     microbit_image_obj_t *img;
     char const *next_char;
     char const *end;
@@ -711,10 +713,12 @@ typedef struct _scrolling_string_iterator_t {
 extern const mp_obj_type_t microbit_scrolling_string_type;
 extern const mp_obj_type_t microbit_scrolling_string_iterator_type;
 
-mp_obj_t scrolling_string_image_iterable(mp_obj_t str) {
+mp_obj_t scrolling_string_image_iterable(const char* str, mp_uint_t len, mp_obj_t ref) {
     scrolling_string_t *result = m_new_obj(scrolling_string_t);
     result->base.type = &microbit_scrolling_string_type;
     result->str = str;
+    result->len = len;
+    result->ref = ref;
     return result;
 }
 
@@ -722,12 +726,12 @@ STATIC mp_obj_t get_microbit_scrolling_string_iter(mp_obj_t o_in) {
     scrolling_string_t *str = (scrolling_string_t *)o_in;
     scrolling_string_iterator_t *result = m_new_obj(scrolling_string_iterator_t);
     result->base.type = &microbit_scrolling_string_iterator_type;
-    result->img = (microbit_image_obj_t*)&BLANK_IMAGE;
+    result->img = BLANK_IMAGE;
     result->offset = 0;
-    mp_uint_t len;
-    result->next_char = mp_obj_str_get_data(str->str, &len);
-    result->end = result->next_char + len;
-    if (len)
+    result->next_char = str->str;
+    result->ref = str->ref;
+    result->end = result->next_char + str->len;
+    if (str->len)
         result->right = *result->next_char;
     else
         result->right = ' ';
