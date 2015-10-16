@@ -78,7 +78,7 @@ static inline bool pt_is_any_id(const byte *p) {
 
 static inline bool pt_is_id(const byte *p, qstr qst) {
     //assert(*p == MP_PT_ID_BASE);
-    return qst == (p[1] | ((p[0] - MP_PT_ID_BASE) << 8));
+    return qst == ((mp_uint_t)p[1] | (((mp_uint_t)p[0] - MP_PT_ID_BASE) << 8));
 }
 
 static inline bool pt_is_any_tok(const byte *p) {

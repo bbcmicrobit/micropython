@@ -26,13 +26,12 @@
 
 #include <assert.h>
 
-#include "py/parse.h"
 #include "py/scope.h"
 
-scope_t *scope_new(scope_kind_t kind, const byte *p, qstr source_file, mp_uint_t emit_options) {
+scope_t *scope_new(scope_kind_t kind, const byte *pn, qstr source_file, mp_uint_t emit_options) {
     scope_t *scope = m_new0(scope_t, 1);
     scope->kind = kind;
-    scope->p = p;
+    scope->pn = pn;
     scope->source_file = source_file;
     switch (kind) {
         case SCOPE_MODULE:
@@ -40,7 +39,7 @@ scope_t *scope_new(scope_kind_t kind, const byte *p, qstr source_file, mp_uint_t
             break;
         case SCOPE_FUNCTION:
         case SCOPE_CLASS:
-            pt_extract_id(p, &scope->simple_name); // function name
+            pt_extract_id(pn, &scope->simple_name); // function name
             break;
         case SCOPE_LAMBDA:
             scope->simple_name = MP_QSTR__lt_lambda_gt_;

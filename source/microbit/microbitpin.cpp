@@ -97,7 +97,7 @@ MP_DEFINE_CONST_FUN_OBJ_2(microbit_pin_set_analog_period_microseconds_obj, micro
 
 mp_obj_t microbit_pin_is_touched(mp_obj_t self_in) {
     microbit_pin_obj_t *self = (microbit_pin_obj_t*)self_in;
-    return MP_BOOL(self->pin->isTouched());
+    return mp_obj_new_bool(self->pin->isTouched());
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_pin_is_touched_obj, microbit_pin_is_touched);
 

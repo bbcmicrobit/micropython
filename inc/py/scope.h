@@ -26,6 +26,7 @@
 #ifndef __MICROPY_INCLUDED_PY_SCOPE_H__
 #define __MICROPY_INCLUDED_PY_SCOPE_H__
 
+#include "py/parse.h"
 #include "py/emitglue.h"
 
 enum {
@@ -56,7 +57,7 @@ typedef enum { SCOPE_MODULE, SCOPE_FUNCTION, SCOPE_LAMBDA, SCOPE_LIST_COMP, SCOP
 typedef struct _scope_t {
     scope_kind_t kind;
     struct _scope_t *parent;
-    const byte *p; // points to the node after the scope index node
+    const byte *pn; // points to the node after the scope index node
     qstr source_file;
     qstr simple_name;
     mp_raw_code_t *raw_code;

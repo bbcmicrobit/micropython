@@ -38,7 +38,7 @@ typedef struct _microbit_compass_obj_t {
 
 mp_obj_t microbit_compass_is_calibrated(mp_obj_t self_in) {
     microbit_compass_obj_t *self = (microbit_compass_obj_t*)self_in;
-    return MP_BOOL(self->compass->isCalibrated());
+    return mp_obj_new_bool(self->compass->isCalibrated());
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_compass_is_calibrated_obj, microbit_compass_is_calibrated);
 
@@ -51,7 +51,7 @@ MP_DEFINE_CONST_FUN_OBJ_1(microbit_compass_calibrate_obj, microbit_compass_calib
 
 mp_obj_t microbit_compass_is_calibrating(mp_obj_t self_in) {
     microbit_compass_obj_t *self = (microbit_compass_obj_t*)self_in;
-    return MP_BOOL(self->compass->isCalibrating());
+    return mp_obj_new_bool(self->compass->isCalibrating());
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_compass_is_calibrating_obj, microbit_compass_is_calibrating);
 

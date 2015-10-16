@@ -199,6 +199,11 @@
 #define MICROPY_EMIT_INLINE_THUMB (0)
 #endif
 
+// Whether to enable ARMv7-M instruction support in the Thumb2 inline assembler
+#ifndef MICROPY_EMIT_INLINE_THUMB_ARMV7M
+#define MICROPY_EMIT_INLINE_THUMB_ARMV7M (1)
+#endif
+
 // Whether to enable float support in the Thumb2 inline assembler
 #ifndef MICROPY_EMIT_INLINE_THUMB_FLOAT
 #define MICROPY_EMIT_INLINE_THUMB_FLOAT (1)
@@ -214,6 +219,11 @@
 
 /*****************************************************************************/
 /* Compiler configuration                                                    */
+
+// Whether to enable constant folding; eg 1+2 rewritten as 3
+#ifndef MICROPY_COMP_CONST_FOLDING
+#define MICROPY_COMP_CONST_FOLDING (1)
+#endif
 
 // Whether to enable lookup of constants in modules; eg module.CONST
 #ifndef MICROPY_COMP_MODULE_CONST
@@ -399,6 +409,11 @@ typedef double mp_float_t;
 // Whether POSIX-semantics non-blocking streams are supported
 #ifndef MICROPY_STREAMS_NON_BLOCK
 #define MICROPY_STREAMS_NON_BLOCK (0)
+#endif
+
+// Whether to call __init__ when importing builtin modules for the first time
+#ifndef MICROPY_MODULE_BUILTIN_INIT
+#define MICROPY_MODULE_BUILTIN_INIT (0)
 #endif
 
 // Whether module weak links are supported
@@ -796,7 +811,7 @@ typedef double mp_float_t;
 
 // This macro is used to do all output (except when MICROPY_PY_IO is defined)
 #ifndef MP_PLAT_PRINT_STRN
-#define MP_PLAT_PRINT_STRN(str, len) printf("%.*s", (int)len, str)
+#define MP_PLAT_PRINT_STRN(str, len) mp_hal_stdout_tx_strn_cooked(str, len)
 #endif
 
 #ifndef MP_SSIZE_MAX

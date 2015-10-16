@@ -119,8 +119,14 @@ typedef struct _mp_parse_chunk_t {
     byte data[];
 } mp_parse_chunk_t;
 
+typedef enum {
+    PARSE_ERROR_NONE = 0,
+    PARSE_ERROR_MEMORY,
+    PARSE_ERROR_CONST,
+} parse_error_t;
+
 typedef struct _parser_t {
-    bool had_memory_error;
+    parse_error_t parse_error;
 
     mp_uint_t rule_stack_alloc;
     mp_uint_t rule_stack_top;
@@ -135,20 +141,20 @@ typedef struct _parser_t {
     mp_lexer_t *lexer;
 
     mp_parse_tree_t tree;
+
+    #if MICROPY_COMP_CONST
+    mp_map_t consts;
+    #endif
 } parser_t;
 
-STATIC inline void memory_error(parser_t *parser) {
-    parser->had_memory_error = true;
-}
-
 STATIC void push_rule(parser_t *parser, mp_uint_t src_line, const rule_t *rule, mp_uint_t arg_i, size_t pt_off) {
-    if (parser->had_memory_error) {
+    if (parser->parse_error) {
         return;
     }
     if (parser->rule_stack_top >= parser->rule_stack_alloc) {
         rule_stack_t *rs = m_renew_maybe(rule_stack_t, parser->rule_stack, parser->rule_stack_alloc, parser->rule_stack_alloc + MICROPY_ALLOC_PARSE_RULE_INC, true);
         if (rs == NULL) {
-            memory_error(parser);
+            parser->parse_error = PARSE_ERROR_MEMORY;
             return;
         }
         parser->rule_stack = rs;
@@ -169,7 +175,7 @@ STATIC void push_rule_from_arg(parser_t *parser, mp_uint_t arg) {
 }
 
 STATIC void pop_rule(parser_t *parser, const rule_t **rule, mp_uint_t *arg_i, mp_uint_t *src_line, size_t *pt_off) {
-    assert(!parser->had_memory_error);
+    assert(!parser->parse_error);
     parser->rule_stack_top -= 1;
     *rule = rules[parser->rule_stack[parser->rule_stack_top].rule_id];
     *arg_i = parser->rule_stack[parser->rule_stack_top].arg_i;
@@ -299,7 +305,7 @@ const byte *pt_extract_const_obj(const byte *p, mp_uint_t *idx) {
 const byte *pt_get_small_int(const byte *p, mp_int_t *val) {
     assert(*p == MP_PT_SMALL_INT);
     *val = 0;
-    for (int i = 0; i < BYTES_PER_WORD; i++) {
+    for (size_t i = 0; i < BYTES_PER_WORD; i++) {
         *val |= (mp_int_t)*++p << (8 * i);
     }
     return p + 1;
@@ -422,7 +428,7 @@ const byte pt_const_int0[] = {MP_PT_SMALL_INT, 0, 0, 0, 0, 0, 0, 0, 0};
 STATIC void pt_add_kind_int(pt_t *pt, byte kind, mp_int_t val) {
     byte *buf = pt_raw_add_blank(pt, 1 + BYTES_PER_WORD);
     buf[0] = kind;
-    for (int i = 0; i < BYTES_PER_WORD; ++i) {
+    for (size_t i = 0; i < BYTES_PER_WORD; ++i) {
         buf[i + 1] = val;
         val >>= 8;
     }
@@ -437,7 +443,239 @@ STATIC const byte *pt_del_byte(pt_t *pt, const byte *p) {
     return p;
 }
 
+#if MICROPY_COMP_MODULE_CONST
+#include "py/builtin.h"
+STATIC const mp_map_elem_t mp_constants_table[] = {
+    #if MICROPY_PY_UCTYPES
+    { MP_OBJ_NEW_QSTR(MP_QSTR_uctypes), (mp_obj_t)&mp_module_uctypes },
+    #endif
+    // Extra constants as defined by a port
+    MICROPY_PORT_CONSTANTS
+};
+STATIC MP_DEFINE_CONST_MAP(mp_constants_map, mp_constants_table);
+#endif
+
+#if MICROPY_COMP_CONST_FOLDING
+STATIC bool fold_constants(parser_t *parser, pt_t *pt, size_t pt_off, const rule_t *rule) {
+    (void)parser;
+
+    // this code does folding of arbitrary integer expressions, eg 1 + 2 * 3 + 4
+    // it does not do partial folding, eg 1 + 2 + x -> 3 + x
+
+    mp_int_t arg0;
+    if (rule->rule_id == RULE_expr
+        || rule->rule_id == RULE_xor_expr
+        || rule->rule_id == RULE_and_expr) {
+        // folding for binary ops: | ^ &
+        const byte *p = (byte*)pt->vv.buf + pt_off;
+        const byte *ptop = (byte*)pt->vv.buf + pt->vv.len;
+        if (*p != MP_PT_SMALL_INT) {
+            return false;
+        }
+        p = pt_get_small_int(p, &arg0);
+        while (p != ptop) {
+            if (*p != MP_PT_SMALL_INT) {
+                return false;
+            }
+            mp_int_t arg1;
+            p = pt_get_small_int(p, &arg1);
+            if (rule->rule_id == RULE_expr) {
+                // int | int
+                arg0 |= arg1;
+            } else if (rule->rule_id == RULE_xor_expr) {
+                // int ^ int
+                arg0 ^= arg1;
+            } else if (rule->rule_id == RULE_and_expr) {
+                // int & int
+                arg0 &= arg1;
+            }
+        }
+    } else if (rule->rule_id == RULE_shift_expr
+        || rule->rule_id == RULE_arith_expr
+        || rule->rule_id == RULE_term) {
+        // folding for binary ops: << >> + - * / % //
+        const byte *p = (byte*)pt->vv.buf + pt_off;
+        const byte *ptop = (byte*)pt->vv.buf + pt->vv.len;
+        if (*p != MP_PT_SMALL_INT) {
+            return false;
+        }
+        p = pt_get_small_int(p, &arg0);
+        while (p != ptop) {
+            p += 1; // it's a token
+            byte tok = *p++;
+            if (*p != MP_PT_SMALL_INT) {
+                return false;
+            }
+            mp_int_t arg1;
+            p = pt_get_small_int(p, &arg1);
+            if (tok == MP_TOKEN_OP_DBL_LESS) {
+                // int << int
+                if (arg1 >= (mp_int_t)BITS_PER_WORD
+                    || arg0 > (MP_SMALL_INT_MAX >> arg1)
+                    || arg0 < (MP_SMALL_INT_MIN >> arg1)) {
+                    return false;
+                }
+                arg0 <<= arg1;
+            } else if (tok == MP_TOKEN_OP_DBL_MORE) {
+                // int >> int
+                if (arg1 >= (mp_int_t)BITS_PER_WORD) {
+                    // Shifting to big amounts is underfined behavior
+                    // in C and is CPU-dependent; propagate sign bit.
+                    arg1 = BITS_PER_WORD - 1;
+                }
+                arg0 >>= arg1;
+            } else if (tok == MP_TOKEN_OP_PLUS) {
+                // int + int
+                arg0 += arg1;
+            } else if (tok == MP_TOKEN_OP_MINUS) {
+                // int - int
+                arg0 -= arg1;
+            } else if (tok == MP_TOKEN_OP_STAR) {
+                // int * int
+                if (mp_small_int_mul_overflow(arg0, arg1)) {
+                    return false;
+                }
+                arg0 *= arg1;
+            } else if (tok == MP_TOKEN_OP_SLASH) {
+                // int / int
+                return false;
+            } else if (tok == MP_TOKEN_OP_PERCENT) {
+                // int % int
+                if (arg1 == 0) {
+                    return false;
+                }
+                arg0 = mp_small_int_modulo(arg0, arg1);
+            } else {
+                assert(tok == MP_TOKEN_OP_DBL_SLASH); // should be
+                // int // int
+                if (arg1 == 0) {
+                    return false;
+                }
+                arg0 = mp_small_int_floor_divide(arg0, arg1);
+            }
+            if (!MP_SMALL_INT_FITS(arg0)) {
+                return false;
+            }
+        }
+    } else if (rule->rule_id == RULE_factor_2) {
+        // folding for unary ops: + - ~
+        const byte *p = (byte*)pt->vv.buf + pt_off;
+        p += 1; // it's a token
+        byte tok = *p++;
+        if (*p != MP_PT_SMALL_INT) {
+            return false;
+        }
+        arg0 = pt_small_int_value(p);
+        if (tok == MP_TOKEN_OP_PLUS) {
+            // +int
+        } else if (tok == MP_TOKEN_OP_MINUS) {
+            // -int
+            arg0 = -arg0;
+            if (!MP_SMALL_INT_FITS(arg0)) {
+                return false;
+            }
+        } else {
+            assert(tok == MP_TOKEN_OP_TILDE); // should be
+            // ~int
+            arg0 = ~arg0;
+        }
+
+    #if 0&&MICROPY_COMP_CONST
+    } else if (rule->rule_id == RULE_expr_stmt) {
+        mp_parse_node_t pn1 = peek_result(parser, 0);
+        if (!MP_PARSE_NODE_IS_NULL(pn1)
+            && !(MP_PARSE_NODE_IS_STRUCT_KIND(pn1, RULE_expr_stmt_augassign)
+            || MP_PARSE_NODE_IS_STRUCT_KIND(pn1, RULE_expr_stmt_assign_list))) {
+            // this node is of the form <x> = <y>
+            mp_parse_node_t pn0 = peek_result(parser, 1);
+            if (MP_PARSE_NODE_IS_ID(pn0)
+                && MP_PARSE_NODE_IS_STRUCT_KIND(pn1, RULE_power)
+                && MP_PARSE_NODE_IS_ID(((mp_parse_node_struct_t*)pn1)->nodes[0])
+                && MP_PARSE_NODE_LEAF_ARG(((mp_parse_node_struct_t*)pn1)->nodes[0]) == MP_QSTR_const
+                && MP_PARSE_NODE_IS_STRUCT_KIND(((mp_parse_node_struct_t*)pn1)->nodes[1], RULE_trailer_paren)
+                && MP_PARSE_NODE_IS_NULL(((mp_parse_node_struct_t*)pn1)->nodes[2])
+                ) {
+                // code to assign dynamic constants: id = const(value)
+
+                // get the id
+                qstr id = MP_PARSE_NODE_LEAF_ARG(pn0);
+
+                // get the value
+                mp_parse_node_t pn_value = ((mp_parse_node_struct_t*)((mp_parse_node_struct_t*)pn1)->nodes[1])->nodes[0];
+                if (!MP_PARSE_NODE_IS_SMALL_INT(pn_value)) {
+                    parser->parse_error = PARSE_ERROR_CONST;
+                    return false;
+                }
+                mp_int_t value = MP_PARSE_NODE_LEAF_SMALL_INT(pn_value);
+
+                // store the value in the table of dynamic constants
+                mp_map_elem_t *elem = mp_map_lookup(&parser->consts, MP_OBJ_NEW_QSTR(id), MP_MAP_LOOKUP_ADD_IF_NOT_FOUND);
+                assert(elem->value == MP_OBJ_NULL);
+                elem->value = MP_OBJ_NEW_SMALL_INT(value);
+
+                // replace const(value) with value
+                pop_result(parser);
+                push_result_node(parser, pn_value);
+
+                // finished folding this assignment, but we still want it to be part of the tree
+                return false;
+            }
+        }
+        return false;
+    #endif
+
+    #if 0&&MICROPY_COMP_MODULE_CONST
+    } else if (rule->rule_id == RULE_power) {
+        mp_parse_node_t pn0 = peek_result(parser, 2);
+        mp_parse_node_t pn1 = peek_result(parser, 1);
+        mp_parse_node_t pn2 = peek_result(parser, 0);
+        if (!(MP_PARSE_NODE_IS_ID(pn0)
+            && MP_PARSE_NODE_IS_STRUCT_KIND(pn1, RULE_trailer_period)
+            && MP_PARSE_NODE_IS_NULL(pn2))) {
+            return false;
+        }
+        // id1.id2
+        // look it up in constant table, see if it can be replaced with an integer
+        mp_parse_node_struct_t *pns1 = (mp_parse_node_struct_t*)pn1;
+        assert(MP_PARSE_NODE_IS_ID(pns1->nodes[0]));
+        qstr q_base = MP_PARSE_NODE_LEAF_ARG(pn0);
+        qstr q_attr = MP_PARSE_NODE_LEAF_ARG(pns1->nodes[0]);
+        mp_map_elem_t *elem = mp_map_lookup((mp_map_t*)&mp_constants_map, MP_OBJ_NEW_QSTR(q_base), MP_MAP_LOOKUP);
+        if (elem == NULL) {
+            return false;
+        }
+        mp_obj_t dest[2];
+        mp_load_method_maybe(elem->value, q_attr, dest);
+        if (!(MP_OBJ_IS_SMALL_INT(dest[0]) && dest[1] == NULL)) {
+            return false;
+        }
+        arg0 = MP_OBJ_SMALL_INT_VALUE(dest[0]);
+    #endif
+
+    } else {
+        return false;
+    }
+
+    // success folding this rule
+
+    pt_raw_truncate_at(pt, pt_off);
+    pt_add_kind_int(pt, MP_PT_SMALL_INT, arg0);
+
+    return true;
+}
+#endif
+
 STATIC void pt_ins_rule(parser_t *parser, pt_t *pt, size_t pt_off, mp_uint_t src_line, const rule_t *rule, mp_uint_t num_args) {
+    (void)num_args;
+
+    #if MICROPY_COMP_CONST_FOLDING
+    if (fold_constants(parser, pt, pt_off, rule)) {
+        // we folded this rule so return straight away
+        return;
+    }
+    #endif
+
+#if 0
     // TODO partial folding, eg 1 + 2 + x -> 3 + x
     mp_int_t arg0;
     if (rule->rule_id == RULE_expr
@@ -568,6 +806,7 @@ STATIC void pt_ins_rule(parser_t *parser, pt_t *pt, size_t pt_off, mp_uint_t src
     return;
 
 folding_fail:;
+#endif
 
     int extra_node = 0;
     /*
@@ -588,7 +827,7 @@ folding_fail:;
     if (extra_node != 0) {
         dest[1 + nb1 + nb2] = MP_PT_SMALL_INT;
         mp_uint_t val = ++parser->cur_scope_id;
-        for (int i = 0; i < BYTES_PER_WORD; ++i) {
+        for (size_t i = 0; i < BYTES_PER_WORD; ++i) {
             dest[1 + nb1 + nb2 + 1 + i] = val;
             val >>= 8;
         }
@@ -622,7 +861,17 @@ STATIC void make_node_string_bytes(parser_t *parser, pt_t *pt, mp_token_kind_t t
 STATIC bool pt_add_token(parser_t *parser, pt_t *pt) {
     mp_lexer_t *lex = parser->lexer;
     if (lex->tok_kind == MP_TOKEN_NAME) {
-        pt_add_kind_qstr(pt, MP_PT_ID_BASE, qstr_from_strn(lex->vstr.buf, lex->vstr.len));
+        qstr id = qstr_from_strn(lex->vstr.buf, lex->vstr.len);
+        #if MICROPY_COMP_CONST
+        // lookup identifier in table of dynamic constants
+        mp_map_elem_t *elem = mp_map_lookup(&parser->consts, MP_OBJ_NEW_QSTR(id), MP_MAP_LOOKUP);
+        if (elem != NULL) {
+            pt_add_kind_int(pt, MP_PT_SMALL_INT, MP_OBJ_SMALL_INT_VALUE(elem->value));
+        } else
+        #endif
+        {
+            pt_add_kind_qstr(pt, MP_PT_ID_BASE, id);
+        }
     } else if (lex->tok_kind == MP_TOKEN_INTEGER) {
         mp_obj_t o = mp_parse_num_integer(lex->vstr.buf, lex->vstr.len, 0, lex);
         if (MP_OBJ_IS_SMALL_INT(o)) {
@@ -702,7 +951,7 @@ mp_parse_tree_t mp_parse(mp_lexer_t *lex, mp_parse_input_kind_t input_kind) {
     // initialise parser and allocate memory for its stacks
     parser_t parser;
 
-    parser.had_memory_error = false;
+    parser.parse_error = PARSE_ERROR_NONE;
 
     parser.rule_stack_alloc = MICROPY_ALLOC_PARSE_RULE_INIT;
     parser.rule_stack_top = 0;
@@ -717,6 +966,10 @@ mp_parse_tree_t mp_parse(mp_lexer_t *lex, mp_parse_input_kind_t input_kind) {
     parser.lexer = lex;
 
     parser.tree.chunk = NULL;
+
+    #if MICROPY_COMP_CONST
+    mp_map_init(&parser.consts, 0);
+    #endif
 
     // check if we could allocate the stacks
     if (parser.rule_stack == NULL) {
@@ -743,7 +996,7 @@ mp_parse_tree_t mp_parse(mp_lexer_t *lex, mp_parse_input_kind_t input_kind) {
 
     for (;;) {
         next_rule:
-        if (parser.rule_stack_top == 0 || parser.had_memory_error) {
+        if (parser.rule_stack_top == 0 || parser.parse_error) {
             break;
         }
 
@@ -1052,6 +1305,10 @@ mp_parse_tree_t mp_parse(mp_lexer_t *lex, mp_parse_input_kind_t input_kind) {
         }
     }
 
+    #if MICROPY_COMP_CONST
+    mp_map_deinit(&parser.consts);
+    #endif
+
     #if 0
     pt_show(pt);
 
@@ -1066,40 +1323,57 @@ mp_parse_tree_t mp_parse(mp_lexer_t *lex, mp_parse_input_kind_t input_kind) {
 
     mp_obj_t exc;
 
-    // check if we had a memory error
-    if (parser.had_memory_error) {
-memory_error:
-        exc = mp_obj_new_exception_msg(&mp_type_MemoryError,
-            "parser could not allocate enough memory");
+    if (parser.parse_error) {
+        #if MICROPY_COMP_CONST
+        if (parser.parse_error == PARSE_ERROR_CONST) {
+            exc = mp_obj_new_exception_msg(&mp_type_SyntaxError,
+                "constant must be an integer");
+        } else
+        #endif
+        {
+            assert(parser.parse_error == PARSE_ERROR_MEMORY);
+        memory_error:
+            exc = mp_obj_new_exception_msg(&mp_type_MemoryError,
+                "parser could not allocate enough memory");
+        }
         parser.tree.root = NULL;
-        goto finished;
+    } else if (
+        lex->tok_kind != MP_TOKEN_END // check we are at the end of the token stream
+        || pt->vv.len == 0 // check that we got a node (can fail on empty input)
+        ) {
+    syntax_error:
+        if (lex->tok_kind == MP_TOKEN_INDENT) {
+            exc = mp_obj_new_exception_msg(&mp_type_IndentationError,
+                "unexpected indent");
+        } else if (lex->tok_kind == MP_TOKEN_DEDENT_MISMATCH) {
+            exc = mp_obj_new_exception_msg(&mp_type_IndentationError,
+                "unindent does not match any outer indentation level");
+        } else if (lex->tok_kind == MP_TOKEN_STRING || lex->tok_kind == MP_TOKEN_BYTES) {
+            exc = mp_obj_new_exception_msg(&mp_type_SyntaxError,
+                "cannot mix bytes and nonbytes literals");
+        } else {
+            exc = mp_obj_new_exception_msg(&mp_type_SyntaxError,
+                "invalid syntax");
+        }
+        parser.tree.root = NULL;
+    } else {
+        // no errors
+
+        //result_stack_show(parser);
+        //printf("rule stack alloc: %d\n", parser.rule_stack_alloc);
+        //printf("result stack alloc: %d\n", parser.result_stack_alloc);
+        //printf("number of parse nodes allocated: %d\n", num_parse_nodes_allocated);
+
+        // add number of scopes
+        pt_add_kind_int(pt, MP_PT_SMALL_INT, parser.cur_scope_id + 1);
+
+        // get the root parse node that we created
+        //assert(parser.result_stack_top == 1);
+        exc = MP_OBJ_NULL;
+        parser.tree.root = (byte*)pt->vv.buf;
+        parser.tree.co_data = parser.co_data;
     }
 
-    // check we are at the end of the token stream
-    if (lex->tok_kind != MP_TOKEN_END) {
-        goto syntax_error;
-    }
-
-    // check that parsing resulted in a parse node (can fail on empty input)
-    if (pt->vv.len == 0) {
-        goto syntax_error;
-    }
-
-    //result_stack_show(parser);
-    //printf("rule stack alloc: %d\n", parser.rule_stack_alloc);
-    //printf("result stack alloc: %d\n", parser.result_stack_alloc);
-    //printf("number of parse nodes allocated: %d\n", num_parse_nodes_allocated);
-
-    // add number of scopes
-    pt_add_kind_int(pt, MP_PT_SMALL_INT, parser.cur_scope_id + 1);
-
-    // get the root parse node that we created
-    //assert(parser.result_stack_top == 1);
-    exc = MP_OBJ_NULL;
-    parser.tree.root = (byte*)pt->vv.buf;
-    parser.tree.co_data = parser.co_data;
-
-finished:
     // free the memory that we don't need anymore
     m_del(rule_stack_t, parser.rule_stack, parser.rule_stack_alloc);
     // we also free the lexer on behalf of the caller (see below)
@@ -1115,23 +1389,6 @@ finished:
         mp_lexer_free(lex);
         return parser.tree;
     }
-
-syntax_error:
-    if (lex->tok_kind == MP_TOKEN_INDENT) {
-        exc = mp_obj_new_exception_msg(&mp_type_IndentationError,
-            "unexpected indent");
-    } else if (lex->tok_kind == MP_TOKEN_DEDENT_MISMATCH) {
-        exc = mp_obj_new_exception_msg(&mp_type_IndentationError,
-            "unindent does not match any outer indentation level");
-    } else if (lex->tok_kind == MP_TOKEN_STRING || lex->tok_kind == MP_TOKEN_BYTES) {
-        exc = mp_obj_new_exception_msg(&mp_type_SyntaxError,
-            "cannot mix bytes and nonbytes literals");
-    } else {
-        exc = mp_obj_new_exception_msg(&mp_type_SyntaxError,
-            "invalid syntax");
-    }
-    parser.tree.root = NULL;
-    goto finished;
 }
 
 void mp_parse_tree_clear(mp_parse_tree_t *tree) {
