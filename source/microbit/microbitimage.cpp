@@ -61,14 +61,14 @@ STATIC void microbit_image_print(const mp_print_t *print, mp_obj_t self_in, mp_p
     mp_printf(print, "+\n");
 }
 
-uint8_t  monochrome_5by5_t::getPixelValue(mp_int_t x, mp_int_t y) {
+uint8_t monochrome_5by5_t::getPixelValue(mp_int_t x, mp_int_t y) {
     unsigned int index = y*5+x;
     if (index == 24) 
         return this->pixel44;
     return (this->bits24[index>>3] >> (index&7))&1;
 }
 
-uint8_t  greyscale_t::getPixelValue(mp_int_t x, mp_int_t y) {
+uint8_t greyscale_t::getPixelValue(mp_int_t x, mp_int_t y) {
     unsigned int index = y*this->width+x;
     unsigned int shift = ((index<<2)&4);
     return (this->byte_data[index>>1] >> shift)&15;
@@ -85,7 +85,7 @@ void greyscale_t::clear() {
     memset(&this->byte_data, 0, (this->width*this->height+1)>>1);
 }
 
-mp_int_t microbit_image_obj_t::getPixelValue(mp_int_t x, mp_int_t y) {
+uint8_t microbit_image_obj_t::getPixelValue(mp_int_t x, mp_int_t y) {
     if (this->base.five)
         return this->monochrome_5by5.getPixelValue(x, y)*MAX_BRIGHTNESS;
     else
