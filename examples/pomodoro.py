@@ -12,7 +12,7 @@ from microbit import *
 
 CLOCK_ADJUST = 4/60 
 
-ALL_LEDS_ON = Image('1,1,1,1,1\n'*5)
+ALL_LEDS_ON = Image('99999\n'*5)
 
 
 def index_to_xy(i):
