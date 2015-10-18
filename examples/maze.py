@@ -5,7 +5,7 @@ using the accelerometer.
 
 import microbit
 
-d = microbit.display.image
+d = microbit.display
 ac = microbit.accelerometer
 
 # the maze data, as binary numbers (outside walls are added automatically)
@@ -34,10 +34,15 @@ def get_maze(x, y):
     else:
         return 1
 
-def draw(x, y):
+def draw(x, y, tick):
+    img = microbit.Image(5,5)
     for j in range(5):
         for i in range(5):
-            d.set_pixel(i, j, get_maze(x + i - 2, y + j - 2))
+            img.set_pixel(i, j, get_maze(x + i - 2, y + j - 2)*5)
+
+    # draw the player, flashing
+    img.set_pixel(2, 2, (tick & 1)*4+5)
+    d.print(img)
 
 def main():
     x = 0
@@ -60,10 +65,8 @@ def main():
             y = min(15, max(0, y))
 
         # draw the maze
-        draw(x, y)
+        draw(x, y, tick)
 
-        # draw the player, flashing
-        d.set_pixel(2, 2, tick & 1)
 
         microbit.sleep(50)
 

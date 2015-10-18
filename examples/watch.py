@@ -78,8 +78,8 @@ def show_time(time):
 
 
 def show_colon(visible):
-    display.image.set_pixel(2, 1, visible)
-    display.image.set_pixel(2, 3, visible)
+    display.set_pixel(2, 1, visible*9)
+    display.set_pixel(2, 3, visible*9)
 
 
 def get_clock_time():
@@ -98,16 +98,16 @@ def plot_LED_column(column, number):
     if number <= 5:
         for i in range(4, -1, -1):
             if i < 5 - number:
-                display.image.set_pixel(column, i, 0)
+                display.set_pixel(column, i, 0)
             else:
-                display.image.set_pixel(column, i, 1)
+                display.set_pixel(column, i, 9)
 
     if number > 5:
         for i in range(4, -1, -1):
             if i < 5 - (number - 5):
-                display.image.set_pixel(column, i, 1)
+                display.set_pixel(column, i, 9)
             else:
-                display.image.set_pixel(column, i, 0)
+                display.set_pixel(column, i, 0)
 
 
 while True:
