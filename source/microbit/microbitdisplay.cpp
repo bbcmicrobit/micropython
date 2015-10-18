@@ -40,10 +40,13 @@ void microbit_display_print(microbit_display_obj_t *display, microbit_image_obj_
     mp_int_t w = min(image->width(), 5);
     mp_int_t h = min(image->height(), 5);
     mp_int_t x = 0;
+    mp_int_t brightnesses = 0;
     for (; x < w; ++x) {
         mp_int_t y = 0;
         for (; y < h; ++y) {
-            display->image_buffer[x][y] = image->getPixelValue(x, y);
+            mp_int_t pix = image->getPixelValue(x, y);
+            display->image_buffer[x][y] = pix;
+            brightnesses |= (1 << pix);
         }
         for (; y < 5; ++y) {
             display->image_buffer[x][y] = 0;
@@ -54,6 +57,7 @@ void microbit_display_print(microbit_display_obj_t *display, microbit_image_obj_
             display->image_buffer[x][y] = 0;
         }
     }
+    display->brightnesses = brightnesses;
 }
 
 STATIC void do_synchronous_animation(microbit_display_obj_t *display, mp_obj_t iterable, mp_int_t delay, bool repeat);
@@ -110,7 +114,7 @@ static int async_delay = 1000;
 static int async_tick = 0;
 static int strobe_row = 0;
 static int strobe_mask = 0x20;
-static int minimum_brightness = 0;
+static int previous_brightness = 0;
 static Ticker renderTimer;
 
 
@@ -143,7 +147,7 @@ struct DisplayPoint {
 
 #define NO_CONN 0
 
-DisplayPoint display_map[MICROBIT_DISPLAY_COLUMN_COUNT][MICROBIT_DISPLAY_ROW_COUNT] = {
+static const DisplayPoint display_map[MICROBIT_DISPLAY_COLUMN_COUNT][MICROBIT_DISPLAY_ROW_COUNT] = {
     {{0,0}, {4,2}, {2,4}},
     {{2,0}, {0,2}, {4,4}},
     {{4,0}, {2,2}, {0,4}},
@@ -208,26 +212,35 @@ static void microbit_display_advance_row(void) {
 }
 
 static const int render_timings[] = 
-{   0, /* Brightness, Duration */
-    32,   /*    1,     32   */
-    32,   /*    2,     64   */
-    64,   /*    3,     128  */
-    128,  /*    4,     256  */
-    256,  /*    5,     512  */
-    480,  /*    6,     992  */
-    924,  /*    7,     1916 */
-    1784, /*    8,     3700 */
-/*  Always on   9,     6000 */
+{   0,   /* Brightness*/
+    32,   /*    1 */
+    64,   /*    2 */
+    128,  /*    3 */
+    256,  /*    4 */
+    512,  /*    5 */
+    992,  /*    6 */
+    1916, /*    7 */
+    3700, /*    8 */
+/*  Always on   9 */
 };
 
+#define GREYSCALE_MASK ((1<<MAX_BRIGHTNESS)-2)
+
 static void render_row() {
-    
-    // Attach to timer
-    if (minimum_brightness < MAX_BRIGHTNESS) {
-        renderTimer.attach_us(render_row, render_timings[minimum_brightness]);
+    mp_int_t next_brightness = previous_brightness+1;
+    mp_int_t brightnesses = microbit_display_obj.brightnesses;
+    for (; next_brightness < MAX_BRIGHTNESS; ++next_brightness) {
+        if ((1<< next_brightness) & brightnesses) {
+            break;
+        }
     }
-    set_pins_for_pixels(minimum_brightness);
-    ++minimum_brightness;
+    // Attach to timer
+    if (next_brightness < MAX_BRIGHTNESS) {
+        mp_int_t interval = render_timings[next_brightness] - render_timings[previous_brightness];
+        renderTimer.attach_us(render_row, interval);
+    }
+    set_pins_for_pixels(next_brightness);
+    previous_brightness = next_brightness;
     
 }
 
@@ -286,10 +299,9 @@ void microbit_display_tick(void) {
     microbit_display_advance_row();
     
     microbit_display_update();
-    
-    minimum_brightness = 1;
-    render_row();
-    
+    previous_brightness = 0;
+    if (microbit_display_obj.brightnesses & GREYSCALE_MASK)
+        render_row();
 }
 
 STATIC void do_synchronous_animation_once(microbit_display_obj_t *display, mp_obj_t iterator, mp_int_t delay) {
@@ -426,6 +438,7 @@ void microbit_display_set_pixel(microbit_display_obj_t *display, mp_int_t x, mp_
     if (bright < 0 || bright > MAX_BRIGHTNESS) 
         nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "brightness out of bounds."));
     display->image_buffer[x][y] = bright;
+    display->brightnesses |= (1 << bright);
 }
 
 STATIC mp_obj_t microbit_display_set_pixel_func(mp_uint_t n_args, const mp_obj_t *args) {
@@ -480,14 +493,25 @@ STATIC const mp_obj_type_t microbit_display_type = {
 
 microbit_display_obj_t microbit_display_obj = {
     {&microbit_display_type},
+    0,
     { 0 }
 };
+
+static void ticker(void) {
+    /* Make sure we call the DAL ticker function */
+    uBit.systemTick();
+    /* Update display */
+    microbit_display_tick();
+}
 
 void microbit_display_init(void) {
     //set pins as output
     nrf_gpio_range_cfg_output(MICROBIT_DISPLAY_COLUMN_START,MICROBIT_DISPLAY_COLUMN_START + MICROBIT_DISPLAY_COLUMN_COUNT + MICROBIT_DISPLAY_ROW_COUNT);
     
     uBit.display.disable();
+    
+    /* Hijack the DAL system ticker */
+    uBit.systemTicker.attach(ticker, MICROBIT_DISPLAY_REFRESH_PERIOD);
 }
 
 }
