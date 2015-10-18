@@ -97,23 +97,14 @@ mp_obj_t microbit_display_print_func(mp_uint_t n_args, const mp_obj_t *args) {
 }
 MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_display_print_obj, 2, 3, microbit_display_print_func);
 
-#define ASYNC_MODE_STOPPED 0
-#define ASYNC_MODE_ANIMATION 1
-#define ASYNC_MODE_CLEAR 2
-
-static int async_mode = ASYNC_MODE_STOPPED;
+static uint8_t async_mode;
 static mp_obj_t async_repeat_iterable = NULL;
 static mp_obj_t async_iterator = NULL;
 /* Record if an error occurs in async animation -- Unfortunately there is no way to report this */
 static bool async_error = false;
 static uint16_t async_nonce = 0;
-static int async_delay = 1000;
-static int async_tick = 0;
-static int strobe_row = 0;
-static int strobe_mask = 0x20;
-static int previous_brightness = 0;
-static Ticker renderTimer;
-
+static mp_uint_t async_delay = 1000;
+static mp_uint_t async_tick = 0;
 
 STATIC void wakeup_event() {
     // Wake up any fibers that were blocked on the animation (if any).
@@ -156,17 +147,14 @@ static const DisplayPoint display_map[MICROBIT_DISPLAY_COLUMN_COUNT][MICROBIT_DI
     {{1,2}, {NO_CONN,NO_CONN}, {3,2}}
 };
 
-static void set_pins_for_pixels(int brightness) {
+inline void microbit_display_obj_t::setPinsForRow(uint8_t brightness) {
 
     int column_strobe = 0;
 
     // Calculate the bitpattern to write.
     for (int i = 0; i<MICROBIT_DISPLAY_COLUMN_COUNT; i++)
     {
-        int x = display_map[i][strobe_row].x;
-        int y = display_map[i][strobe_row].y;
-        
-        if (microbit_display_obj.image_buffer[x][y] >= brightness)
+        if (row_brightness[i] >= brightness)
             column_strobe |= (1 << i);
     }
 
@@ -179,20 +167,16 @@ static void set_pins_for_pixels(int brightness) {
 
 }
 
-static void clear_row()
-{
+void microbit_display_obj_t::advanceRow() {
+
+    /* Clear the old row */
+    
     //clear the old bit pattern for this row.
     //clear port 0 4-7 and retain lower 4 bits
     nrf_gpio_port_write(NRF_GPIO_PORT_SELECT_PORT0, 0xF0 | nrf_gpio_port_read(NRF_GPIO_PORT_SELECT_PORT0) & 0x0F);
 
     // clear port 1 8-12 for the current row
     nrf_gpio_port_write(NRF_GPIO_PORT_SELECT_PORT1, strobe_mask | 0x1F);
-}
-
-static void microbit_display_advance_row(void) {
-
-    /* Clear the old row */
-    clear_row();
 
     // Move on to the next row.
     strobe_mask <<= 1;
@@ -203,41 +187,44 @@ static void microbit_display_advance_row(void) {
         strobe_row = 0;
         strobe_mask = 0x20;
     }
+
+    // prepare row for rendering
+    for (int i = 0; i<MICROBIT_DISPLAY_COLUMN_COUNT; i++)
+    {
+        int x = display_map[i][strobe_row].x;
+        int y = display_map[i][strobe_row].y;
+        
+        row_brightness[i] = microbit_display_obj.image_buffer[x][y];
+    }
     /* Turn on any pixels that are at max */
-    set_pins_for_pixels(MAX_BRIGHTNESS);
+    setPinsForRow(MAX_BRIGHTNESS);
 
 }
 
-static const int render_timings[] = 
-{   0,   /* Brightness*/
-    32,   /*    1 */
-    64,   /*    2 */
-    128,  /*    3 */
-    256,  /*    4 */
-    512,  /*    5 */
-    992,  /*    6 */
-    1916, /*    7 */
-    3700, /*    8 */
-/*  Always on   9 */
+static const uint16_t render_timings[] = 
+// The timer precision is only about 32us, so these timing will be rounded.
+// The scale is exponential, each step is approx x1.9 greater than the previous.
+{   0, // Brightness, Duration (approx)
+    35,   //    1,     35
+    32,   //    2,     67   
+    61,   //    3,     128  
+    115,  //    4,     243  
+    219,  //    5,     462  
+    417,  //    6,     879  
+    791,  //    7,     1670 
+    1500, //    8,     3170 
+//  Always on   9,    ~6000
 };
 
-#define GREYSCALE_MASK ((1<<MAX_BRIGHTNESS)-2)
 
-static void render_row() {
-    mp_int_t next_brightness = previous_brightness+1;
-    uint16_t brightnesses = microbit_display_obj.brightnesses;
-    for (; next_brightness < MAX_BRIGHTNESS; ++next_brightness) {
-        if ((1<< next_brightness) & brightnesses) {
-            break;
-        }
-    }
+void microbit_display_obj_t::renderRow() {
+    mp_uint_t brightness = previous_brightness+1;
+    setPinsForRow(brightness);
+    if (brightness == MAX_BRIGHTNESS)
+        return;
+    previous_brightness = brightness;
     // Attach to timer
-    if (next_brightness < MAX_BRIGHTNESS) {
-        mp_int_t interval = render_timings[next_brightness] - render_timings[previous_brightness];
-        renderTimer.attach_us(render_row, interval);
-    }
-    set_pins_for_pixels(next_brightness);
-    previous_brightness = next_brightness;
+    uBit.display.renderTimer.attach_us(this, &microbit_display_obj_t::renderRow, render_timings[brightness]);
     
 }
 
@@ -288,14 +275,17 @@ static void microbit_display_update(void) {
     }
 }
 
+#define GREYSCALE_MASK ((1<<MAX_BRIGHTNESS)-2)
+
 void microbit_display_tick(void) {
 
-    microbit_display_advance_row();
+    microbit_display_obj.advanceRow();
     
     microbit_display_update();
-    previous_brightness = 0;
-    if (microbit_display_obj.brightnesses & GREYSCALE_MASK)
-        render_row();
+    microbit_display_obj.previous_brightness = 0;
+    if (microbit_display_obj.brightnesses & GREYSCALE_MASK) {
+        microbit_display_obj.renderRow();
+    }
 }
 
 void microbit_display_animate(microbit_display_obj_t *self, mp_obj_t iterable, mp_int_t delay, bool wait, bool loop) {
@@ -447,8 +437,12 @@ STATIC const mp_obj_type_t microbit_display_type = {
 
 microbit_display_obj_t microbit_display_obj = {
     {&microbit_display_type},
-    0,
-    { 0 }
+    { 0 },
+    .row_brightness = { 0 },
+    .previous_brightness = 0,
+    .strobe_row = 0,
+    .brightnesses = 0,
+    .strobe_mask = 0x20
 };
 
 static void ticker(void) {
