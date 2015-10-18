@@ -100,7 +100,6 @@ MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_display_print_obj, 2, 3, microbit_d
 #define ASYNC_MODE_STOPPED 0
 #define ASYNC_MODE_ANIMATION 1
 #define ASYNC_MODE_CLEAR 2
-#define ASYNC_MODE_WAIT_ONLY 3
 
 static int async_mode = ASYNC_MODE_STOPPED;
 static mp_obj_t async_repeat_iterable = NULL;
@@ -249,9 +248,6 @@ static void microbit_display_update(void) {
         return;
     async_tick = 0;
     switch (async_mode) {
-        case ASYNC_MODE_WAIT_ONLY:
-            wakeup_event();
-            break;
         case ASYNC_MODE_ANIMATION:
         {
             if (MP_STATE_PORT(async_data)[0] == NULL || MP_STATE_PORT(async_data)[1] == NULL) {
