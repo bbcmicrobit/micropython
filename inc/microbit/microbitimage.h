@@ -26,7 +26,7 @@ typedef struct _monochrome_5by5_t {
     uint8_t bits24[3];
     
     /* This is an internal method it is up to the caller to validate the inputs */
-    int getPixelValue(mp_int_t x, mp_int_t y);
+    uint8_t getPixelValue(mp_int_t x, mp_int_t y);
 
 } monochrome_5by5_t;
 
@@ -38,7 +38,7 @@ typedef struct _greyscale_t {
     void clear();
     
     /* Thiese are internal methods and it is up to the caller to validate the inputs */
-    int getPixelValue(mp_int_t x, mp_int_t y);
+    uint8_t getPixelValue(mp_int_t x, mp_int_t y);
     void setPixelValue(mp_int_t x, mp_int_t y, mp_int_t val);
 } greyscale_t;
 

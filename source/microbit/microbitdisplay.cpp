@@ -60,8 +60,6 @@ void microbit_display_print(microbit_display_obj_t *display, microbit_image_obj_
     display->brightnesses = brightnesses;
 }
 
-STATIC void do_synchronous_animation(microbit_display_obj_t *display, mp_obj_t iterable, mp_int_t delay, bool repeat);
-
 mp_obj_t microbit_display_print_func(mp_uint_t n_args, const mp_obj_t *args) {
     // TODO support async mode
 
@@ -88,7 +86,7 @@ mp_obj_t microbit_display_print_func(mp_uint_t n_args, const mp_obj_t *args) {
             } else {
                 delay = MICROBIT_DEFAULT_PRINT_SPEED;
             }
-            do_synchronous_animation(self, args[1], delay, false);
+            microbit_display_animate(self, args[1], delay, false, false);
         }
     } else if (mp_obj_get_type(args[1]) == &microbit_image_type) {
         microbit_display_print(self, (microbit_image_obj_t *)args[1]);
@@ -228,7 +226,7 @@ static const int render_timings[] =
 
 static void render_row() {
     mp_int_t next_brightness = previous_brightness+1;
-    mp_int_t brightnesses = microbit_display_obj.brightnesses;
+    uint16_t brightnesses = microbit_display_obj.brightnesses;
     for (; next_brightness < MAX_BRIGHTNESS; ++next_brightness) {
         if ((1<< next_brightness) & brightnesses) {
             break;
@@ -304,63 +302,23 @@ void microbit_display_tick(void) {
         render_row();
 }
 
-STATIC void do_synchronous_animation_once(microbit_display_obj_t *display, mp_obj_t iterator, mp_int_t delay) {
-    do {
-        async_tick = 0;
-        async_mode = ASYNC_MODE_WAIT_ONLY;
-        async_delay = delay;
-        mp_obj_t obj = mp_iternext(iterator);
-        if (obj == MP_OBJ_STOP_ITERATION) {
-            async_mode = ASYNC_MODE_STOPPED;
-            return;
-        } else if (mp_obj_get_type(obj) == &microbit_image_type) {
-            microbit_display_print(display, (microbit_image_obj_t *)obj);
-        } else if (MP_OBJ_IS_STR(obj)) {
-            mp_uint_t len;
-            const char *str = mp_obj_str_get_data(obj, &len);
-            if (len == 1) {
-                microbit_display_print(display, microbit_image_for_char(str[0]));
-            } else {
-                break; /* error */
-            }
-        } else {
-            break; /* error */
-        }
-        wait_for_event();
-    } while (1);
-    async_mode = ASYNC_MODE_STOPPED;
-    nlr_raise(mp_obj_new_exception_msg(&mp_type_TypeError, "items in animation sequence must be images or single characters."));
-}
-
-STATIC void do_synchronous_animation(microbit_display_obj_t *display, mp_obj_t iterable, mp_int_t delay, bool repeat) {
-    do {
-        mp_obj_t iterator = mp_getiter(iterable);
-        do_synchronous_animation_once(display, iterator, delay);
-    } while(repeat);
-}
-
-STATIC void start_asynchronous_animation(microbit_display_obj_t *self, mp_obj_t iterable, mp_int_t delay, bool repeat) {
-    async_iterator = mp_getiter(iterable);
-    async_error = false;
-    async_delay = delay;
-    MP_STATE_PORT(async_data)[0] = self; // so it doesn't get GC'd
-    MP_STATE_PORT(async_data)[1] = async_iterator;
-    if (repeat) {
-        async_repeat_iterable = iterable;
-        MP_STATE_PORT(async_data)[2] = iterable;
-    }
-    async_mode = ASYNC_MODE_ANIMATION;
-}
-
 void microbit_display_animate(microbit_display_obj_t *self, mp_obj_t iterable, mp_int_t delay, bool wait, bool loop) {
     // reset repeat state
     MP_STATE_PORT(async_data)[0] = NULL;
     MP_STATE_PORT(async_data)[1] = NULL;
     MP_STATE_PORT(async_data)[2] = NULL;
+    async_iterator = mp_getiter(iterable);
+    async_error = false;
+    async_delay = delay;
+    MP_STATE_PORT(async_data)[0] = self; // so it doesn't get GC'd
+    MP_STATE_PORT(async_data)[1] = async_iterator;
+    if (loop) {
+        async_repeat_iterable = iterable;
+        MP_STATE_PORT(async_data)[2] = iterable;
+    }
+    async_mode = ASYNC_MODE_ANIMATION;
     if (wait) {
-        do_synchronous_animation(self, iterable, delay, loop);
-    } else {
-        start_asynchronous_animation(self, iterable, delay, loop);
+        wait_for_event();
     }
 }
 
