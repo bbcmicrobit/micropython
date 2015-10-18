@@ -4,7 +4,7 @@ typedef struct _microbit_display_obj_t {
     mp_obj_base_t base;
     /* boolean histogram of brightness in buffer */
     mp_int_t brightnesses;
-    mp_int_t image_buffer[5][5];
+    uint8_t image_buffer[5][5];
 } microbit_display_obj_t;
 
 

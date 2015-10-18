@@ -44,7 +44,7 @@ void microbit_display_print(microbit_display_obj_t *display, microbit_image_obj_
     for (; x < w; ++x) {
         mp_int_t y = 0;
         for (; y < h; ++y) {
-            mp_int_t pix = image->getPixelValue(x, y);
+            uint8_t pix = image->getPixelValue(x, y);
             display->image_buffer[x][y] = pix;
             brightnesses |= (1 << pix);
         }

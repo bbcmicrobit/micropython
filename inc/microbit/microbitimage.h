@@ -55,7 +55,7 @@ typedef union _microbit_image_obj_t {
     greyscale_t *shiftUp(mp_int_t n);
     
     /* This is an internal method it is up to the caller to validate the inputs */
-    int getPixelValue(mp_int_t x, mp_int_t y);
+    uint8_t getPixelValue(mp_int_t x, mp_int_t y);
     
 } microbit_image_obj_t;
 
