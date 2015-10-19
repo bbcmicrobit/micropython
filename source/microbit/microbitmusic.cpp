@@ -187,10 +187,13 @@ STATIC mp_obj_t microbit_music_get_tempo(mp_obj_t self_in) {
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_music_get_tempo_obj, microbit_music_get_tempo);
 
-STATIC mp_obj_t microbit_music_stop(mp_obj_t self_in, mp_obj_t pin_in) {
-    (void)self_in; // unused
-
-    MicroBitPin *pin = microbit_obj_get_pin(pin_in);
+STATIC mp_obj_t microbit_music_stop(mp_uint_t n_args, const mp_obj_t *args) {
+    MicroBitPin *pin;
+    if (n_args == 1) {
+        pin = &uBit.io.P0;
+    } else {
+        pin = microbit_obj_get_pin(args[1]);
+    }
 
     pin->setAnalogValue(0);
 
@@ -198,38 +201,14 @@ STATIC mp_obj_t microbit_music_stop(mp_obj_t self_in, mp_obj_t pin_in) {
 
     return mp_const_none;
 }
-MP_DEFINE_CONST_FUN_OBJ_2(microbit_music_stop_obj, microbit_music_stop);
+MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_music_stop_obj, 1, 2, microbit_music_stop);
 
-STATIC mp_obj_t microbit_music_note(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
+STATIC mp_obj_t microbit_music_play(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
     static const mp_arg_t allowed_args[] = {
-        { MP_QSTR_pin,   MP_ARG_REQUIRED | MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
-        { MP_QSTR_note,  MP_ARG_REQUIRED | MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
-        { MP_QSTR_wait,  MP_ARG_KW_ONLY | MP_ARG_BOOL, {.u_bool = false} },
-    };
-
-    // extract self.
-    microbit_music_obj_t *self = (microbit_music_obj_t *)pos_args[0];
-
-    // parse args
-    mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
-    mp_arg_parse_all(n_args - 1, pos_args + 1, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
-
-    MicroBitPin *pin = microbit_obj_get_pin(args[0].u_obj);
-
-    mp_uint_t note_len;
-    const char * note_str = mp_obj_str_get_data(args[1].u_obj, &note_len);
-
-    play_note(self, note_str, note_len, pin, args[2].u_bool);
-
-    return mp_const_none;
-}
-MP_DEFINE_CONST_FUN_OBJ_KW(microbit_music_note_obj, 2, microbit_music_note);
-
-STATIC mp_obj_t microbit_music_tune(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
-    static const mp_arg_t allowed_args[] = {
-        { MP_QSTR_pin,   MP_ARG_REQUIRED | MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
-        { MP_QSTR_tune,  MP_ARG_REQUIRED | MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
-        { MP_QSTR_wait,  MP_ARG_KW_ONLY | MP_ARG_BOOL, {.u_bool = false} },
+        { MP_QSTR_music, MP_ARG_REQUIRED | MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
+        { MP_QSTR_pin,   MP_ARG_OBJ, {.u_obj = (mp_obj_t)&microbit_p0_obj} },
+        { MP_QSTR_wait,  MP_ARG_BOOL, {.u_bool = true} },
+        { MP_QSTR_loop,  MP_ARG_BOOL, {.u_bool = false} },
     };
 
     // extract self.
@@ -242,36 +221,45 @@ STATIC mp_obj_t microbit_music_tune(mp_uint_t n_args, const mp_obj_t *pos_args, 
     // reset state so tunes always play the same
     microbit_music_reset(self);
 
-    MicroBitPin *pin = microbit_obj_get_pin(args[0].u_obj);
-
+    // get either a single note or a list of notes
     mp_uint_t len;
     mp_obj_t *items;
-    mp_obj_get_array(args[1].u_obj, &len, &items);
-
-    for (mp_uint_t i = 0; i < len; i++) {
-        if (items[i] != mp_const_none) {
-            mp_uint_t note_len;
-            const char * note_str = mp_obj_str_get_data(items[i], &note_len);
-            play_note(self, note_str, note_len, pin, args[2].u_bool);
-        } else {
-            uBit.sleep((60000/self->bpm));
-        }
-        // allow CTRL-C to stop the tune
-        if (MP_STATE_VM(mp_pending_exception) != MP_OBJ_NULL) {
-            break;
-        }
+    if (MP_OBJ_IS_STR_OR_BYTES(args[0].u_obj)) {
+        len = 1;
+        items = &args[0].u_obj;
+    } else {
+        mp_obj_get_array(args[0].u_obj, &len, &items);
     }
+
+    // get the pin to play on
+    MicroBitPin *pin = microbit_obj_get_pin(args[1].u_obj);
+
+    do {
+        for (mp_uint_t i = 0; i < len; i++) {
+            if (items[i] != mp_const_none) {
+                mp_uint_t note_len;
+                const char * note_str = mp_obj_str_get_data(items[i], &note_len);
+                play_note(self, note_str, note_len, pin, args[2].u_bool);
+            } else {
+                uBit.sleep((60000/self->bpm));
+            }
+            // allow CTRL-C to stop the tune
+            if (MP_STATE_VM(mp_pending_exception) != MP_OBJ_NULL) {
+                return mp_const_none;
+            }
+        }
+    } while (args[3].u_bool);
 
     return mp_const_none;
 }
-MP_DEFINE_CONST_FUN_OBJ_KW(microbit_music_tune_obj, 2, microbit_music_tune);
+MP_DEFINE_CONST_FUN_OBJ_KW(microbit_music_play_obj, 1, microbit_music_play);
 
 STATIC mp_obj_t microbit_music_pitch(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
     static const mp_arg_t allowed_args[] = {
-        { MP_QSTR_pin,    MP_ARG_REQUIRED | MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
         { MP_QSTR_frequency, MP_ARG_REQUIRED | MP_ARG_INT, {.u_int = 0} },
-        { MP_QSTR_len,    MP_ARG_REQUIRED | MP_ARG_INT, {.u_int = -1} },
-        { MP_QSTR_wait,   MP_ARG_KW_ONLY | MP_ARG_BOOL, {.u_bool = true} },
+        { MP_QSTR_len,    MP_ARG_INT, {.u_int = -1} },
+        { MP_QSTR_pin,    MP_ARG_OBJ, {.u_obj = (mp_obj_t)&microbit_p0_obj} },
+        { MP_QSTR_wait,   MP_ARG_BOOL, {.u_bool = true} },
     };
 
     // extract self.
@@ -281,10 +269,10 @@ STATIC mp_obj_t microbit_music_pitch(mp_uint_t n_args, const mp_obj_t *pos_args,
     mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
     mp_arg_parse_all(n_args - 1, pos_args + 1, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
 
-    MicroBitPin *pin = microbit_obj_get_pin(args[0].u_obj);
-
-    mp_uint_t frequency = args[1].u_int;
-    mp_int_t length = args[2].u_int;
+    // get the parameters
+    mp_uint_t frequency = args[0].u_int;
+    mp_int_t length = args[1].u_int;
+    MicroBitPin *pin = microbit_obj_get_pin(args[2].u_obj);
     bool wait = args[3].u_bool;
 
     pin->setAnalogValue(128);
@@ -303,7 +291,7 @@ STATIC mp_obj_t microbit_music_pitch(mp_uint_t n_args, const mp_obj_t *pos_args,
 
     return mp_const_none;
 }
-MP_DEFINE_CONST_FUN_OBJ_KW(microbit_music_pitch_obj, 2, microbit_music_pitch);
+MP_DEFINE_CONST_FUN_OBJ_KW(microbit_music_pitch_obj, 1, microbit_music_pitch);
 
 STATIC mp_obj_t microbit_music_set_tempo(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
     static const mp_arg_t allowed_args[] = {
@@ -334,8 +322,7 @@ STATIC const mp_map_elem_t microbit_music_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_reset), (mp_obj_t)&microbit_music_reset_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_set_tempo), (mp_obj_t)&microbit_music_set_tempo_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_get_tempo), (mp_obj_t)&microbit_music_get_tempo_obj },
-    { MP_OBJ_NEW_QSTR(MP_QSTR_note), (mp_obj_t)&microbit_music_note_obj },
-    { MP_OBJ_NEW_QSTR(MP_QSTR_tune), (mp_obj_t)&microbit_music_tune_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_play), (mp_obj_t)&microbit_music_play_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_pitch), (mp_obj_t)&microbit_music_pitch_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_stop), (mp_obj_t)&microbit_music_stop_obj },
 
