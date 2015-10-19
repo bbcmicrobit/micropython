@@ -3,6 +3,7 @@
 QDEF(MP_QSTR_NULL, (const byte*)"\x00\x00" "")
 QDEF(MP_QSTR_, (const byte*)"\x05\x00" "")
 QDEF(MP_QSTR__star_, (const byte*)"\x8f\x01" "*")
+QDEF(MP_QSTR__, (const byte*)"\xfa\x01" "_")
 QDEF(MP_QSTR___build_class__, (const byte*)"\x42\x0f" "__build_class__")
 QDEF(MP_QSTR___class__, (const byte*)"\x2b\x09" "__class__")
 QDEF(MP_QSTR___doc__, (const byte*)"\x2d\x07" "__doc__")
