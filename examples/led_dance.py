@@ -13,13 +13,12 @@ import microbit
 
 def led_dance(delay):
     dots = [ [0]*5, [0]*5, [0]*5, [0]*5, [0]*5 ]
-    microbit.display.set_display_mode(1)
     while True:
-        dots[microbit.random(5)][microbit.random(5)] = 128
+        dots[microbit.random(5)][microbit.random(5)] = 8
         for i in range(5):
             for j in range(5):
-                microbit.display.image.set_pixel(i, j, dots[i][j])
-                dots[i][j] = int(dots[i][j]/2)
+                microbit.display.set_pixel(i, j, dots[i][j])
+                dots[i][j] = max(dots[i][j] - 1, 0)
         microbit.sleep(delay)
 
 led_dance(100)
