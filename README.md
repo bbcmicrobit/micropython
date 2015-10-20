@@ -1,7 +1,7 @@
-MicroPython for the micro:bit
-=============================
+MicroPython for the BBC micro:bit
+=================================
 
-This is the source code for MicroPython running on the BBC's micro:bit!
+This is the source code for MicroPython running on the BBC micro:bit!
 
 Various things are in this repository, including:
 - Source code in source/ and inc/ directories.
