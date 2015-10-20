@@ -34,6 +34,8 @@ extern "C" {
 typedef struct _microbit_button_obj_t {
     mp_obj_base_t base;
     MicroBitButton *button;
+    /* Stores pressed count in top 31 bits and was_pressed in the low bit */
+    mp_uint_t pressed;
 } microbit_button_obj_t;
 
 mp_obj_t microbit_button_is_pressed(mp_obj_t self_in) {
@@ -42,8 +44,53 @@ mp_obj_t microbit_button_is_pressed(mp_obj_t self_in) {
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_button_is_pressed_obj, microbit_button_is_pressed);
 
+
+mp_obj_t microbit_button_get_presses(mp_obj_t self_in) {
+    microbit_button_obj_t *self = (microbit_button_obj_t*)self_in;
+    return mp_obj_new_int(self->pressed >> 1);
+}
+MP_DEFINE_CONST_FUN_OBJ_1(microbit_button_get_presses_obj, microbit_button_get_presses);
+
+mp_obj_t microbit_button_reset(mp_obj_t self_in) {
+    microbit_button_obj_t *self = (microbit_button_obj_t*)self_in;
+    self->pressed &= 1;
+    return mp_const_none;
+}
+MP_DEFINE_CONST_FUN_OBJ_1(microbit_button_reset_obj, microbit_button_reset);
+
+
+mp_obj_t microbit_button_was_pressed(mp_obj_t self_in) {
+    microbit_button_obj_t *self = (microbit_button_obj_t*)self_in;
+    mp_int_t pressed = self->pressed;
+    mp_obj_t result = mp_obj_new_bool(pressed & 1);
+    self->pressed = pressed & -2;
+    return result;
+}
+MP_DEFINE_CONST_FUN_OBJ_1(microbit_button_was_pressed_obj, microbit_button_was_pressed);
+
+void button_a_listener(MicroBitEvent evt) {
+    if (evt.value == MICROBIT_BUTTON_EVT_DOWN) {
+        microbit_button_a_obj.pressed = (microbit_button_a_obj.pressed + 2) | 1;
+    }
+}
+
+void button_b_listener(MicroBitEvent evt) {
+    if (evt.value == MICROBIT_BUTTON_EVT_DOWN)
+        microbit_button_b_obj.pressed = (microbit_button_b_obj.pressed + 2) | 1;
+}
+
+void microbit_button_init(void) {
+    uBit.MessageBus.listen(MICROBIT_ID_BUTTON_A, MICROBIT_BUTTON_EVT_DOWN, button_a_listener,
+                           MESSAGE_BUS_LISTENER_REENTRANT | MESSAGE_BUS_LISTENER_NONBLOCKING);
+    uBit.MessageBus.listen(MICROBIT_ID_BUTTON_B, MICROBIT_BUTTON_EVT_DOWN, button_b_listener,
+                           MESSAGE_BUS_LISTENER_REENTRANT | MESSAGE_BUS_LISTENER_NONBLOCKING);
+}
+
 STATIC const mp_map_elem_t microbit_button_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_is_pressed), (mp_obj_t)&microbit_button_is_pressed_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_was_pressed), (mp_obj_t)&microbit_button_was_pressed_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_get_presses), (mp_obj_t)&microbit_button_get_presses_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_reset), (mp_obj_t)&microbit_button_reset_obj }
 };
 
 STATIC MP_DEFINE_CONST_DICT(microbit_button_locals_dict, microbit_button_locals_dict_table);
@@ -66,14 +113,16 @@ STATIC const mp_obj_type_t microbit_button_type = {
     /* .locals_dict = */ (mp_obj_t)&microbit_button_locals_dict,
 };
 
-const microbit_button_obj_t microbit_button_a_obj = {
+microbit_button_obj_t microbit_button_a_obj = {
     {&microbit_button_type},
     .button = &uBit.buttonA,
+    .pressed = 0
 };
 
-const microbit_button_obj_t microbit_button_b_obj = {
+microbit_button_obj_t microbit_button_b_obj = {
     {&microbit_button_type},
     .button = &uBit.buttonB,
+    .pressed = 0
 };
 
 }

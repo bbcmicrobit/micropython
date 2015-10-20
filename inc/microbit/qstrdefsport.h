@@ -118,6 +118,8 @@ Q(MicroBitButton)
 Q(button_a)
 Q(button_b)
 Q(is_pressed)
+Q(was_pressed)
+Q(get_presses)
 
 Q(MicroBitAccelerometer)
 Q(accelerometer)
