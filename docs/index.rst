@@ -12,6 +12,8 @@ Contents:
    :maxdepth: 2
 
    api_design_heuristics.rst
+   microbit_micropython_api.rst
+   music_api.rst
 
 
 Indices and tables
