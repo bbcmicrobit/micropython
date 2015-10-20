@@ -30,6 +30,8 @@ extern "C" {
 
 #include "mphal.h"
 #include "py/mpstate.h"
+#include "microbitimage.h"
+#include "microbitdisplay.h"
 
 #define UART_RX_BUF_SIZE (64) // it's large so we can paste example code
 
@@ -122,8 +124,7 @@ void mp_hal_erase_line_from_cursor(uint n_chars) {
 }
 
 void mp_hal_display_string(const char *str) {
-    ManagedString s(str);
-    uBit.display.scrollAsync(s);
+    microbit_display_scroll(&microbit_display_obj, str, strlen(str), false);
 }
 
 }

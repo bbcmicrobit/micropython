@@ -11,6 +11,8 @@
 #include "pyexec.h"
 #include MICROPY_HAL_H
 
+extern void microbit_display_init(void);
+    
 void microbit_display_exception(mp_obj_t exc_in) {
     mp_uint_t n, *values;
     mp_obj_exception_get_traceback(exc_in, &n, &values);
@@ -73,7 +75,7 @@ void mp_run(void) {
     mp_stack_set_limit(1800); // stack is 2k
 
     // allocate the heap statically in the bss
-    static uint32_t heap[9856 / 4];
+    static uint32_t heap[9820 / 4];
     gc_init(heap, (uint8_t*)heap + sizeof(heap));
 
     /*
@@ -90,6 +92,7 @@ void mp_run(void) {
 
     mp_init();
     mp_hal_init();
+    microbit_display_init();
 
     if (APPENDED_SCRIPT->header[0] == 'M' && APPENDED_SCRIPT->header[1] == 'P') {
         // run appended script

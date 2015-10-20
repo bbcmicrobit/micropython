@@ -4,8 +4,6 @@
 
 import microbit as m
 
-m.display.set_display_mode(1)
-
 p = m.display.print
 
 min_x = -1024
@@ -98,7 +96,7 @@ while True:
                 use_wall_y = max(wall_y, 0)
                 for wall_x in range(5):
                     if wall_x != hole:
-                        s(wall_x, use_wall_y, 32)
+                        s(wall_x, use_wall_y, 6)
 
         if wall_reached_player and not handled_this_wall:
             handled_this_wall = True
@@ -108,7 +106,7 @@ while True:
             score += 1
 
         if player_update:
-            s(player_x, 4, 255) # turn on new pixel
+            s(player_x, 4, 9) # turn on new pixel
 
         p(i)
 
