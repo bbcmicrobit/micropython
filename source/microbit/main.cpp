@@ -6,6 +6,7 @@
 extern "C" {
     void mp_run(void);
     
+    void microbit_button_init(void);
 }
 
 void app_main() {
@@ -26,6 +27,8 @@ void app_main() {
 
     currentFiber->flags |= MICROBIT_FIBER_FLAG_DO_NOT_PAGE;
 
+    
+    microbit_button_init();
 
     while (1) {
         mp_run();
