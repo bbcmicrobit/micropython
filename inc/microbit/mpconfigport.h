@@ -2,6 +2,7 @@
 
 // options to control how Micro Python is built
 
+#define MICROPY_OBJ_REPR            (MICROPY_OBJ_REPR_C)
 #define MICROPY_ALLOC_GC_STACK_SIZE (32)
 #define MICROPY_ALLOC_PATH_MAX      (64)
 #define MICROPY_QSTR_BYTES_IN_HASH  (1)
