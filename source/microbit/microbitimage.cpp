@@ -42,23 +42,22 @@ const monochrome_5by5_t microbit_blank_image = {
 
 STATIC void microbit_image_print(const mp_print_t *print, mp_obj_t self_in, mp_print_kind_t kind) {
     microbit_image_obj_t *self = (microbit_image_obj_t*)self_in;
-    mp_printf(print, "+");
-    for (int x = 0; x < self->width(); ++x) {
-        mp_printf(print, "-");
-    }
-    mp_printf(print, "+\n");
+    mp_printf(print, "Image(");
+    if (kind == PRINT_STR)
+        mp_printf(print, "\n    ");
+    mp_printf(print, "'");
     for (int y = 0; y < self->height(); ++y) {
-        mp_printf(print, "|");
         for (int x = 0; x < self->width(); ++x) {
             mp_printf(print, "%c", " 123456789"[self->getPixelValue(x, y)]);
         }
-        mp_printf(print, "|\n");
+        mp_printf(print, "\\n");
+        if (kind == PRINT_STR && y < self->height()-1)
+            mp_printf(print, "'\n    '");
     }
-    mp_printf(print, "+");
-    for (int x = 0; x < self->width(); ++x) {
-        mp_printf(print, "-");
-    }
-    mp_printf(print, "+\n");
+    mp_printf(print, "'");
+    if (kind == PRINT_STR)
+        mp_printf(print, "\n");
+    mp_printf(print, ")");
 }
 
 uint8_t monochrome_5by5_t::getPixelValue(mp_int_t x, mp_int_t y) {
@@ -674,6 +673,7 @@ const mp_obj_type_t microbit_sliced_image_type = {
     .buffer_p = {NULL},
     .stream_p = NULL,
     .bases_tuple = MP_OBJ_NULL,
+    MP_OBJ_NULL
 };
 
 const mp_obj_type_t microbit_sliced_image_iterator_type = {
@@ -691,6 +691,7 @@ const mp_obj_type_t microbit_sliced_image_iterator_type = {
     .buffer_p = {NULL},
     .stream_p = NULL,
     .bases_tuple = MP_OBJ_NULL,
+    MP_OBJ_NULL
 };
  
 typedef struct _scrolling_string_t {
@@ -778,6 +779,7 @@ const mp_obj_type_t microbit_scrolling_string_type = {
     .buffer_p = {NULL},
     .stream_p = NULL,
     .bases_tuple = MP_OBJ_NULL,
+    MP_OBJ_NULL
 };
 
 const mp_obj_type_t microbit_scrolling_string_iterator_type = {
@@ -795,6 +797,7 @@ const mp_obj_type_t microbit_scrolling_string_iterator_type = {
     .buffer_p = {NULL},
     .stream_p = NULL,
     .bases_tuple = MP_OBJ_NULL,
+    MP_OBJ_NULL
 };
 
 }
