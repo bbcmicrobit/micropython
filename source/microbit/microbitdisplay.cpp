@@ -215,7 +215,26 @@ static const uint16_t render_timings[] =
     1500, //    8,     3170 
 //  Always on   9,    ~6000
 };
+  
 
+/** Egregious hack to work around paranoia in the DAL API.
+ */
+struct FakeMicroBitDisplay : public MicroBitComponent
+{
+    uint8_t width;
+    uint8_t height;
+    uint8_t brightness;
+    uint8_t strobeRow;
+    uint8_t strobeBitMsk;
+    uint8_t rotation;
+    uint8_t mode;
+    uint8_t greyscaleBitMsk;
+    uint8_t timingCount;
+    uint16_t nonce;
+    Timeout renderTimer;
+};
+
+Timeout *renderTimer = &((FakeMicroBitDisplay*)(&(uBit.display)))->renderTimer;
 
 void microbit_display_obj_t::renderRow() {
     mp_uint_t brightness = previous_brightness+1;
@@ -224,7 +243,7 @@ void microbit_display_obj_t::renderRow() {
         return;
     previous_brightness = brightness;
     // Attach to timer
-    uBit.display.renderTimer.attach_us(this, &microbit_display_obj_t::renderRow, render_timings[brightness]);
+    renderTimer->attach_us(this, &microbit_display_obj_t::renderRow, render_timings[brightness]);
     
 }
 
