@@ -56,11 +56,11 @@ Upon reset you will have a REPL on the USB CDC serial port, with baudrate
 115200 (eg picocom /dev/ttyACM0 -b 115200).
 
 Then try:
-
-    >>> import microbit
-    >>> microbit.display.scroll('hello!')
-    >>> microbit.random(100)
-
+```python
+>>> import microbit
+>>> microbit.display.scroll('hello!')
+>>> microbit.random(100)
+```
 Tab completion works and is very useful!
 
 You can also use the tools/pyboard.py script to run Python scripts directly
