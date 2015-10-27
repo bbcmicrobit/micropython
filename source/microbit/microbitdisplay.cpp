@@ -61,11 +61,11 @@ void microbit_display_print(microbit_display_obj_t *display, microbit_image_obj_
 }
 
 mp_obj_t microbit_display_print_func(mp_uint_t n_args, const mp_obj_t *args) {
-    // TODO support async mode
+    // TODO: Support async mode.
 
     microbit_display_obj_t *self = (microbit_display_obj_t*)args[0];
 
-    // cancel any animations
+    // Cancel any animations.
     MP_STATE_PORT(async_data)[0] = NULL;
     MP_STATE_PORT(async_data)[1] = NULL;
     MP_STATE_PORT(async_data)[2] = NULL;
@@ -75,9 +75,9 @@ mp_obj_t microbit_display_print_func(mp_uint_t n_args, const mp_obj_t *args) {
         mp_uint_t len;
         const char *str = mp_obj_str_get_data(args[1], &len);
         if (len == 0) {
-            // no chars, do nothing
+            // There are no chars; do nothing.
         } else if (len == 1) {
-            // single char
+            // A single char; convert to an image and print that.
             microbit_display_print(self, microbit_image_for_char(str[0]));
         } else {
             mp_int_t delay;
@@ -100,7 +100,7 @@ MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_display_print_obj, 2, 3, microbit_d
 static uint8_t async_mode;
 static mp_obj_t async_repeat_iterable = NULL;
 static mp_obj_t async_iterator = NULL;
-/* Record if an error occurs in async animation -- Unfortunately there is no way to report this */
+// Record if an error occurs in async animation. Unfortunately there is no way to report this.
 static bool async_error = false;
 static uint16_t async_nonce = 0;
 static mp_uint_t async_delay = 1000;
@@ -148,77 +148,69 @@ static const DisplayPoint display_map[MICROBIT_DISPLAY_COLUMN_COUNT][MICROBIT_DI
 };
 
 inline void microbit_display_obj_t::setPinsForRow(uint8_t brightness) {
-
     int column_strobe = 0;
 
     // Calculate the bitpattern to write.
-    for (int i = 0; i<MICROBIT_DISPLAY_COLUMN_COUNT; i++)
-    {
-        if (row_brightness[i] >= brightness)
+    for (int i = 0; i < MICROBIT_DISPLAY_COLUMN_COUNT; i++) {
+        if (row_brightness[i] >= brightness) {
             column_strobe |= (1 << i);
+        }
     }
 
-    //write the new bit pattern
-    //set port 0 4-7 and retain lower 4 bits
+    // Wwrite the new bit pattern.
+    // Set port 0 4-7 and retain lower 4 bits.
     nrf_gpio_port_write(NRF_GPIO_PORT_SELECT_PORT0, ~column_strobe<<4 & 0xF0 | nrf_gpio_port_read(NRF_GPIO_PORT_SELECT_PORT0) & 0x0F);
 
-    //set port 1 8-12 for the current row
+    // Set port 1 8-12 for the current row.
     nrf_gpio_port_write(NRF_GPIO_PORT_SELECT_PORT1, strobe_mask | (~column_strobe>>4 & 0x1F));
-
 }
 
 void microbit_display_obj_t::advanceRow() {
+    // First, clear the old row.
 
-    /* Clear the old row */
-    
-    //clear the old bit pattern for this row.
-    //clear port 0 4-7 and retain lower 4 bits
+    // Clear the old bit pattern for this row.
+    // Clear port 0 4-7 and retain lower 4 bits.
     nrf_gpio_port_write(NRF_GPIO_PORT_SELECT_PORT0, 0xF0 | nrf_gpio_port_read(NRF_GPIO_PORT_SELECT_PORT0) & 0x0F);
-
-    // clear port 1 8-12 for the current row
+    // Clear port 1 8-12 for the current row.
     nrf_gpio_port_write(NRF_GPIO_PORT_SELECT_PORT1, strobe_mask | 0x1F);
 
     // Move on to the next row.
     strobe_mask <<= 1;
     strobe_row++;
 
-    //reset the row counts and bit mask when we have hit the max.
-    if(strobe_row == MICROBIT_DISPLAY_ROW_COUNT) {
+    // Reset the row counts and bit mask when we have hit the max.
+    if (strobe_row == MICROBIT_DISPLAY_ROW_COUNT) {
         strobe_row = 0;
         strobe_mask = 0x20;
     }
 
-    // prepare row for rendering
-    for (int i = 0; i<MICROBIT_DISPLAY_COLUMN_COUNT; i++)
-    {
+    // Prepare row for rendering.
+    for (int i = 0; i < MICROBIT_DISPLAY_COLUMN_COUNT; i++) {
         int x = display_map[i][strobe_row].x;
         int y = display_map[i][strobe_row].y;
-        
         row_brightness[i] = microbit_display_obj.image_buffer[x][y];
     }
-    /* Turn on any pixels that are at max */
+    // Turn on any pixels that are at max.
     setPinsForRow(MAX_BRIGHTNESS);
-
 }
 
-static const uint16_t render_timings[] = 
+static const uint16_t render_timings[] =
 // The timer precision is only about 32us, so these timing will be rounded.
 // The scale is exponential, each step is approx x1.9 greater than the previous.
 {   0, // Brightness, Duration (approx)
     35,   //    1,     35
-    32,   //    2,     67   
-    61,   //    3,     128  
-    115,  //    4,     243  
-    219,  //    5,     462  
-    417,  //    6,     879  
-    791,  //    7,     1670 
-    1500, //    8,     3170 
+    32,   //    2,     67
+    61,   //    3,     128
+    115,  //    4,     243
+    219,  //    5,     462
+    417,  //    6,     879
+    791,  //    7,     1670
+    1500, //    8,     3170
 //  Always on   9,    ~6000
 };
-  
 
-/** Egregious hack to work around paranoia in the DAL API.
- */
+
+// Egregious hack to work around paranoia in the DAL API.
 struct FakeMicroBitDisplay : public MicroBitComponent
 {
     uint8_t width;
@@ -239,19 +231,20 @@ Timeout *renderTimer = &((FakeMicroBitDisplay*)(&(uBit.display)))->renderTimer;
 void microbit_display_obj_t::renderRow() {
     mp_uint_t brightness = previous_brightness+1;
     setPinsForRow(brightness);
-    if (brightness == MAX_BRIGHTNESS)
+    if (brightness == MAX_BRIGHTNESS) {
         return;
+    }
     previous_brightness = brightness;
-    // Attach to timer
+    // Attach this function to the timer.
     renderTimer->attach_us(this, &microbit_display_obj_t::renderRow, render_timings[brightness]);
-    
 }
 
 
 static void microbit_display_update(void) {
     async_tick += FIBER_TICK_PERIOD_MS;
-    if(async_tick < async_delay)
+    if (async_tick < async_delay) {
         return;
+    }
     async_tick = 0;
     switch (async_mode) {
         case ASYNC_MODE_ANIMATION:
@@ -261,7 +254,7 @@ static void microbit_display_update(void) {
             }
             microbit_display_obj_t *display = (microbit_display_obj_t*)MP_STATE_PORT(async_data)[0];
             /* WARNING: We are executing in an interrupt handler.
-             * If an exception is raised here, then a reset is the only way to recover */
+             * If an exception is raised here, then a reset is the only way to recover. */
             mp_obj_t obj = mp_iternext(async_iterator);
             if (obj == MP_OBJ_STOP_ITERATION) {
                 if (async_repeat_iterable) {
@@ -299,7 +292,7 @@ static void microbit_display_update(void) {
 void microbit_display_tick(void) {
 
     microbit_display_obj.advanceRow();
-    
+
     microbit_display_update();
     microbit_display_obj.previous_brightness = 0;
     if (microbit_display_obj.brightnesses & GREYSCALE_MASK) {
@@ -308,7 +301,7 @@ void microbit_display_tick(void) {
 }
 
 void microbit_display_animate(microbit_display_obj_t *self, mp_obj_t iterable, mp_int_t delay, bool wait, bool loop) {
-    // reset repeat state
+    // Reset the repeat state.
     MP_STATE_PORT(async_data)[0] = NULL;
     MP_STATE_PORT(async_data)[1] = NULL;
     MP_STATE_PORT(async_data)[2] = NULL;
@@ -337,22 +330,23 @@ STATIC mp_obj_t microbit_display_animate_func(mp_uint_t n_args, const mp_obj_t *
         { MP_QSTR_loop,     MP_ARG_KW_ONLY | MP_ARG_BOOL, {.u_bool = false} },
     };
 
-    // parse args
+    // Parse the args.
     microbit_display_obj_t *self = (microbit_display_obj_t*)pos_args[0];
     mp_arg_val_t args[MP_ARRAY_SIZE(animate_allowed_args)];
     mp_arg_parse_all(n_args - 1, pos_args + 1, kw_args, MP_ARRAY_SIZE(animate_allowed_args), animate_allowed_args, args);
-    
+
     mp_obj_t arg0 = args[0].u_obj;
     mp_int_t stride = args[2].u_int;
     mp_int_t start = args[3].u_int;
     mp_obj_t iterable;
     if (mp_obj_get_type(arg0) == &microbit_image_type) {
-        iterable = microbit_image_slice((microbit_image_obj_t *)arg0, start, /*width*/5, stride);
+        // Convert single image into an iterable of images.
+        iterable = microbit_image_slice((microbit_image_obj_t *)arg0, start, 5 /*width*/, stride);
     } else {
         iterable = arg0;
     }
 
-    microbit_display_animate(self, iterable, args[1].u_int /*delay*/, args[4].u_bool /*wait? */, args[5].u_bool/*loop?*/);
+    microbit_display_animate(self, iterable, args[1].u_int /*delay*/, args[4].u_bool /*wait?*/, args[5].u_bool /*loop?*/);
     return mp_const_none;
 }
 MP_DEFINE_CONST_FUN_OBJ_KW(microbit_display_animate_obj, 2, microbit_display_animate_func);
@@ -370,20 +364,20 @@ mp_obj_t microbit_display_scroll_func(mp_uint_t n_args, const mp_obj_t *pos_args
         { MP_QSTR_wait,     MP_ARG_KW_ONLY | MP_ARG_BOOL, {.u_bool = true} },
         { MP_QSTR_loop,     MP_ARG_KW_ONLY | MP_ARG_BOOL, {.u_bool = false} },
     };
-    // parse args
+    // Parse the args.
     microbit_display_obj_t *self = (microbit_display_obj_t*)pos_args[0];
     mp_arg_val_t args[MP_ARRAY_SIZE(scroll_allowed_args)];
     mp_arg_parse_all(n_args - 1, pos_args + 1, kw_args, MP_ARRAY_SIZE(scroll_allowed_args), scroll_allowed_args, args);
     mp_uint_t len;
     const char* str = mp_obj_str_get_data(args[0].u_obj, &len);
     mp_obj_t iterable = scrolling_string_image_iterable(str, len, args[0].u_obj);
-    microbit_display_animate(self, iterable, args[1].u_int /*delay*/, args[2].u_bool/*wait?*/, args[3].u_bool/*loop?*/);
+    microbit_display_animate(self, iterable, args[1].u_int /*delay*/, args[2].u_bool/*wait?*/, args[3].u_bool /*loop?*/);
     return mp_const_none;
 }
 MP_DEFINE_CONST_FUN_OBJ_KW(microbit_display_scroll_obj, 1, microbit_display_scroll_func);
 
 void microbit_display_clear(void) {
-    // reset repeat state, cancel animation and clear screen
+    // Reset repeat state, cancel animation and clear screen.
     async_mode = ASYNC_MODE_CLEAR;
     async_tick = async_delay - FIBER_TICK_PERIOD_MS;
     wait_for_event();
@@ -396,10 +390,12 @@ mp_obj_t microbit_display_clear_func(void) {
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_display_clear_obj, microbit_display_clear_func);
 
 void microbit_display_set_pixel(microbit_display_obj_t *display, mp_int_t x, mp_int_t y, mp_int_t bright) {
-    if (x < 0 || y < 0 || x > 4 || y > 4) 
+    if (x < 0 || y < 0 || x > 4 || y > 4) {
         nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "index out of bounds."));
-    if (bright < 0 || bright > MAX_BRIGHTNESS) 
+    }
+    if (bright < 0 || bright > MAX_BRIGHTNESS) {
         nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "brightness out of bounds."));
+    }
     display->image_buffer[x][y] = bright;
     display->brightnesses |= (1 << bright);
 }
@@ -413,8 +409,9 @@ STATIC mp_obj_t microbit_display_set_pixel_func(mp_uint_t n_args, const mp_obj_t
 MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_display_set_pixel_obj, 4, 4, microbit_display_set_pixel_func);
 
 mp_int_t microbit_display_get_pixel(microbit_display_obj_t *display, mp_int_t x, mp_int_t y) {
-    if (x < 0 || y < 0 || x > 4 || y > 4) 
+    if (x < 0 || y < 0 || x > 4 || y > 4) {
         nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "index out of bounds."));
+    }
     return display->image_buffer[x][y];
 }
 
@@ -425,7 +422,7 @@ STATIC mp_obj_t microbit_display_get_pixel_func(mp_obj_t self_in, mp_obj_t x_in,
 MP_DEFINE_CONST_FUN_OBJ_3(microbit_display_get_pixel_obj, microbit_display_get_pixel_func);
 
 STATIC const mp_map_elem_t microbit_display_locals_dict_table[] = {
-    
+
     { MP_OBJ_NEW_QSTR(MP_QSTR_get_pixel),  (mp_obj_t)&microbit_display_get_pixel_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_set_pixel),  (mp_obj_t)&microbit_display_set_pixel_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_print), (mp_obj_t)&microbit_display_print_obj },
@@ -465,19 +462,19 @@ microbit_display_obj_t microbit_display_obj = {
 };
 
 static void ticker(void) {
-    /* Make sure we call the DAL ticker function */
+    // Make sure we call the DAL ticker function.
     uBit.systemTick();
-    /* Update display */
+    // Update the display.
     microbit_display_tick();
 }
 
 void microbit_display_init(void) {
-    //set pins as output
+    //  Set pins as output.
     nrf_gpio_range_cfg_output(MICROBIT_DISPLAY_COLUMN_START,MICROBIT_DISPLAY_COLUMN_START + MICROBIT_DISPLAY_COLUMN_COUNT + MICROBIT_DISPLAY_ROW_COUNT);
-    
+
     uBit.display.disable();
-    
-    /* Hijack the DAL system ticker */
+
+    // Hijack the DAL system ticker.
     uBit.systemTicker.attach(ticker, MICROBIT_DISPLAY_REFRESH_PERIOD);
 }
 
