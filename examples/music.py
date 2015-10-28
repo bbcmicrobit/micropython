@@ -19,4 +19,4 @@ notes = [
     'g3', 'b', 'd4', 'g', 'b', 'd', 'g', 'b', 'g3', 'b3', 'd4', 'g', 'b', 'd', 'g', 'b'
 ]
 
-microbit.music.tune(microbit.pin0, notes)
+microbit.music.play(notes)
