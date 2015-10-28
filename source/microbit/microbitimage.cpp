@@ -303,7 +303,8 @@ STATIC mp_obj_t microbit_image_make_new(mp_obj_t type_in, mp_uint_t n_args, mp_u
                 mp_int_t i = 0;
                 for (mp_int_t y = 0; y < h; y++) {
                     for (mp_int_t x = 0; x < w; ++x) {
-                        image->setPixelValue(x,y, ((const uint8_t*)bufinfo.buf)[i]);
+                        uint8_t val = min(((const uint8_t*)bufinfo.buf)[i], MAX_BRIGHTNESS);
+                        image->setPixelValue(x, y, val);
                         ++i;
                     }
                 }
@@ -649,11 +650,13 @@ STATIC mp_obj_t microbit_image_slice_iter_next(mp_obj_t o_in) {
     image_slice_iterator_t *iter = (image_slice_iterator_t *)o_in;
     mp_obj_t result;
     microbit_image_obj_t *img = iter->slice->img;
-    if (iter->next_start <= img->width()-iter->slice->width) {
-        result = image_crop(img, iter->next_start, 0, iter->next_start  + iter->slice->width, img->height());
-    } else {
-        result = MP_OBJ_STOP_ITERATION;
+    if (iter->slice->stride > 0 && iter->next_start >= img->width()) {
+        return MP_OBJ_STOP_ITERATION;
     }
+    if (iter->slice->stride < 0 && iter->next_start <= -iter->slice->width) {
+        return MP_OBJ_STOP_ITERATION;
+    }
+    result = image_crop(img, iter->next_start, 0, iter->slice->width, img->height());
     iter->next_start += iter->slice->stride;
     return result;
 }
