@@ -50,6 +50,8 @@ void mp_hal_erase_line_from_cursor(uint n_chars);
 
 void mp_hal_display_string(const char*);
 
+void mp_hal_sleep(int ms);
+
 #ifdef __cplusplus
 }
 #endif

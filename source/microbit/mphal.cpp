@@ -127,4 +127,20 @@ void mp_hal_display_string(const char *str) {
     microbit_display_scroll(&microbit_display_obj, str, strlen(str), false);
 }
 
+void mp_hal_sleep(mp_int_t ms) {
+    if (ms <= 0)
+        return;
+    unsigned long current = uBit.systemTime();
+    unsigned long wakeup = current + ms;
+    if (wakeup < current) {
+        // Overflow
+        do {
+            __WFI();
+        } while (uBit.systemTime() > current);
+    }
+    do {
+        __WFI();
+    } while (uBit.systemTime() < wakeup);
+}
+
 }

@@ -29,6 +29,7 @@
 extern "C" {
 
 #include "py/obj.h"
+#include "mphal.h"
 #include "modmicrobit.h"
 
 STATIC mp_obj_t microbit_reset_(void) {
@@ -39,19 +40,7 @@ MP_DEFINE_CONST_FUN_OBJ_0(microbit_reset_obj, microbit_reset_);
 
 STATIC mp_obj_t microbit_sleep(mp_obj_t ms_in) {
     mp_int_t ms = mp_obj_get_int(ms_in);
-    if (ms <= 0)
-        return mp_const_none;
-    unsigned long current = uBit.systemTime();
-    unsigned long wakeup = current + ms;
-    if (wakeup < current) {
-        // Overflow
-        do {
-            __WFI();
-        } while (uBit.systemTime() > current);
-    }
-    do {
-        __WFI();
-    } while (uBit.systemTime() < wakeup);
+    mp_hal_sleep(ms);
     return mp_const_none;
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_sleep_obj, microbit_sleep);

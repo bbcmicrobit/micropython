@@ -29,6 +29,7 @@
 
 extern "C" {
 
+#include "mphal.h"
 #include "py/runtime.h"
 #include "py/objstr.h"
 #include "modmicrobit.h"
@@ -152,7 +153,7 @@ STATIC void play_note(microbit_music_obj_t *self, const char *note_str, size_t n
     }
 
     // Cut off 10ms from end of note so we hear articulation.
-    uBit.sleep((ms_per_tick * self->last_duration) - 10);
+    mp_hal_sleep((ms_per_tick * self->last_duration) - 10);
 
     if (note_index >= 10) {
         pin->setAnalogValue(128);
@@ -160,7 +161,7 @@ STATIC void play_note(microbit_music_obj_t *self, const char *note_str, size_t n
 
     pin->setAnalogValue(0);
     // Add 10ms of silence to the end of note so we hear articulation.
-    uBit.sleep(10);
+    mp_hal_sleep(10);
 }
 
 STATIC mp_obj_t microbit_music_reset(mp_obj_t self_in) {
@@ -241,7 +242,7 @@ STATIC mp_obj_t microbit_music_play(mp_uint_t n_args, const mp_obj_t *pos_args, 
                 const char * note_str = mp_obj_str_get_data(items[i], &note_len);
                 play_note(self, note_str, note_len, pin, args[2].u_bool);
             } else {
-                uBit.sleep((60000/self->bpm));
+                mp_hal_sleep((60000/self->bpm));
             }
             // allow CTRL-C to stop the tune
             if (MP_STATE_VM(mp_pending_exception) != MP_OBJ_NULL) {
@@ -280,7 +281,7 @@ STATIC mp_obj_t microbit_music_pitch(mp_uint_t n_args, const mp_obj_t *pos_args,
 
     if (length >= 0) {
         if (wait) {
-            uBit.sleep(length);
+            mp_hal_sleep(length);
             pin->setAnalogValue(0);
         } else {
             // FIXME: schedule a callback to stop
