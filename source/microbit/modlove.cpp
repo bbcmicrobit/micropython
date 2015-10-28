@@ -30,6 +30,7 @@
 
 extern "C" {
 
+#include "mphal.h"
 #include "microbitimage.h"
 #include "microbitdisplay.h"
 
@@ -46,11 +47,11 @@ void love(int interval = 80 /* ms */) {
     for(int iteration = 0; iteration < 5; iteration++) {
         for(int step = 0; step < 7; ++step) {
             microbit_display_print(&microbit_display_obj, hearts[step]);
-            uBit.sleep(interval);
+            mp_hal_delay_ms(interval);
         }
         for(int step = 6; step >= 0; --step) {
             microbit_display_print(&microbit_display_obj, hearts[step]);
-            uBit.sleep(interval);
+            mp_hal_delay_ms(interval);
         }
     }
     microbit_display_clear();

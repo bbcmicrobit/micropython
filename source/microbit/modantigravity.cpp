@@ -30,6 +30,7 @@
 
 extern "C" {
 
+#include "mphal.h"
 #include "microbitimage.h"
 #include "microbitdisplay.h"
 
@@ -40,7 +41,7 @@ void antigravity(uint8_t interval = 200 /* ms */) {
     // move all of the LED's upwards (we can move them in other directions in the future)
 
     for (uint8_t iteration = 0; iteration < 5; iteration++) {
-        uBit.sleep(interval);
+        mp_hal_delay_ms(interval);
         bool wait = false;
         for (uint8_t row = 1; row < 5 - iteration; row++) {
             for (uint8_t col = 0; col < 5; col++) {
