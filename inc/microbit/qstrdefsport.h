@@ -124,6 +124,7 @@ Q(accelerometer)
 Q(get_x)
 Q(get_y)
 Q(get_z)
+Q(get_values)
 
 Q(MicroBitCompass)
 Q(compass)

@@ -36,28 +36,57 @@ typedef struct _microbit_accelerometer_obj_t {
     MicroBitAccelerometer *accelerometer;
 } microbit_accelerometer_obj_t;
 
+bool accelerometer_up_to_date = false;
+
 mp_obj_t microbit_accelerometer_get_x(mp_obj_t self_in) {
     microbit_accelerometer_obj_t *self = (microbit_accelerometer_obj_t*)self_in;
+    if (!accelerometer_up_to_date) {
+        self->accelerometer->idleTick();
+        accelerometer_up_to_date = true;
+    }
     return mp_obj_new_int(self->accelerometer->getX());
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_accelerometer_get_x_obj, microbit_accelerometer_get_x);
 
 mp_obj_t microbit_accelerometer_get_y(mp_obj_t self_in) {
     microbit_accelerometer_obj_t *self = (microbit_accelerometer_obj_t*)self_in;
+    if (!accelerometer_up_to_date) {
+        self->accelerometer->idleTick();
+        accelerometer_up_to_date = true;
+    }
     return mp_obj_new_int(self->accelerometer->getY());
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_accelerometer_get_y_obj, microbit_accelerometer_get_y);
 
 mp_obj_t microbit_accelerometer_get_z(mp_obj_t self_in) {
     microbit_accelerometer_obj_t *self = (microbit_accelerometer_obj_t*)self_in;
+    if (!accelerometer_up_to_date) {
+        self->accelerometer->idleTick();
+        accelerometer_up_to_date = true;
+    }
     return mp_obj_new_int(self->accelerometer->getZ());
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_accelerometer_get_z_obj, microbit_accelerometer_get_z);
+
+mp_obj_t microbit_accelerometer_get_values(mp_obj_t self_in) {
+    microbit_accelerometer_obj_t *self = (microbit_accelerometer_obj_t*)self_in;
+    mp_obj_tuple_t *tuple = (mp_obj_tuple_t *)mp_obj_new_tuple(3, NULL);
+    if (!accelerometer_up_to_date) {
+        self->accelerometer->idleTick();
+        accelerometer_up_to_date = true;
+    }
+    tuple->items[0] = mp_obj_new_int(self->accelerometer->getX());
+    tuple->items[1] = mp_obj_new_int(self->accelerometer->getY());
+    tuple->items[2] = mp_obj_new_int(self->accelerometer->getZ());
+    return tuple;
+}
+MP_DEFINE_CONST_FUN_OBJ_1(microbit_accelerometer_get_values_obj, microbit_accelerometer_get_values);
 
 STATIC const mp_map_elem_t microbit_accelerometer_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_get_x), (mp_obj_t)&microbit_accelerometer_get_x_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_get_y), (mp_obj_t)&microbit_accelerometer_get_y_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_get_z), (mp_obj_t)&microbit_accelerometer_get_z_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_get_values), (mp_obj_t)&microbit_accelerometer_get_values_obj },
 };
 
 STATIC MP_DEFINE_CONST_DICT(microbit_accelerometer_locals_dict, microbit_accelerometer_locals_dict_table);

@@ -62,26 +62,44 @@ mp_obj_t microbit_compass_clear_calibration(mp_obj_t self_in) {
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_compass_clear_calibration_obj, microbit_compass_clear_calibration);
 
+bool compass_up_to_date = false;
+
 mp_obj_t microbit_compass_heading(mp_obj_t self_in) {
     microbit_compass_obj_t *self = (microbit_compass_obj_t*)self_in;
+    if (!compass_up_to_date) {
+        self->compass->idleTick();
+        compass_up_to_date = true;
+    }
     return mp_obj_new_int(self->compass->heading());
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_compass_heading_obj, microbit_compass_heading);
 
 mp_obj_t microbit_compass_get_x(mp_obj_t self_in) {
     microbit_compass_obj_t *self = (microbit_compass_obj_t*)self_in;
+    if (!compass_up_to_date) {
+        self->compass->idleTick();
+        compass_up_to_date = true;
+    }
     return mp_obj_new_int(self->compass->getX());
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_compass_get_x_obj, microbit_compass_get_x);
 
 mp_obj_t microbit_compass_get_y(mp_obj_t self_in) {
     microbit_compass_obj_t *self = (microbit_compass_obj_t*)self_in;
+    if (!compass_up_to_date) {
+        self->compass->idleTick();
+        compass_up_to_date = true;
+    }
     return mp_obj_new_int(self->compass->getY());
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_compass_get_y_obj, microbit_compass_get_y);
 
 mp_obj_t microbit_compass_get_z(mp_obj_t self_in) {
     microbit_compass_obj_t *self = (microbit_compass_obj_t*)self_in;
+    if (!compass_up_to_date) {
+        self->compass->idleTick();
+        compass_up_to_date = true;
+    }
     return mp_obj_new_int(self->compass->getZ());
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_compass_get_z_obj, microbit_compass_get_z);
