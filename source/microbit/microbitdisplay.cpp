@@ -102,18 +102,15 @@ static mp_obj_t async_repeat_iterable = NULL;
 static mp_obj_t async_iterator = NULL;
 // Record if an error occurs in async animation. Unfortunately there is no way to report this.
 static bool async_error = false;
+static volatile bool wakeup_event = false;
 static uint16_t async_nonce = 0;
 static mp_uint_t async_delay = 1000;
 static mp_uint_t async_tick = 0;
 
-STATIC void wakeup_event() {
-    // Wake up any fibers that were blocked on the animation (if any).
-    MicroBitEvent event(MICROBIT_ID_ALERT, async_nonce);
-}
-
 STATIC void wait_for_event() {
-    async_nonce = uBit.MessageBus.nonce();
-    fiber_wait_for_event(MICROBIT_ID_ALERT, async_nonce);
+    while (!wakeup_event)
+        __WFI();
+    wakeup_event = false;
 }
 
 STATIC void async_stop(void) {
@@ -125,7 +122,7 @@ STATIC void async_stop(void) {
     MP_STATE_PORT(async_data)[0] = NULL;
     MP_STATE_PORT(async_data)[1] = NULL;
     MP_STATE_PORT(async_data)[2] = NULL;
-    wakeup_event();
+    wakeup_event = true;
 }
 
 struct DisplayPoint {
@@ -250,6 +247,7 @@ static void microbit_display_update(void) {
         case ASYNC_MODE_ANIMATION:
         {
             if (MP_STATE_PORT(async_data)[0] == NULL || MP_STATE_PORT(async_data)[1] == NULL) {
+                async_stop();
                 break;
             }
             microbit_display_obj_t *display = (microbit_display_obj_t*)MP_STATE_PORT(async_data)[0];
@@ -314,6 +312,7 @@ void microbit_display_animate(microbit_display_obj_t *self, mp_obj_t iterable, m
         async_repeat_iterable = iterable;
         MP_STATE_PORT(async_data)[2] = iterable;
     }
+    wakeup_event = false;
     async_mode = ASYNC_MODE_ANIMATION;
     if (wait) {
         wait_for_event();
@@ -378,6 +377,7 @@ MP_DEFINE_CONST_FUN_OBJ_KW(microbit_display_scroll_obj, 1, microbit_display_scro
 
 void microbit_display_clear(void) {
     // Reset repeat state, cancel animation and clear screen.
+    wakeup_event = false;
     async_mode = ASYNC_MODE_CLEAR;
     async_tick = async_delay - FIBER_TICK_PERIOD_MS;
     wait_for_event();
@@ -461,9 +461,25 @@ microbit_display_obj_t microbit_display_obj = {
     .strobe_mask = 0x20
 };
 
+extern bool compass_up_to_date;
+extern bool accelerometer_up_to_date;
+
 static void ticker(void) {
-    // Make sure we call the DAL ticker function.
-    uBit.systemTick();
+
+    // increment our real-time counter.
+    ticks += FIBER_TICK_PERIOD_MS;
+
+    if (uBit.compass.isCalibrating()) {
+        uBit.compass.idleTick();
+    }
+
+    compass_up_to_date = false;
+    accelerometer_up_to_date = false;
+
+    // Update buttons
+    uBit.buttonA.systemTick();
+    uBit.buttonB.systemTick();
+
     // Update the display.
     microbit_display_tick();
 }

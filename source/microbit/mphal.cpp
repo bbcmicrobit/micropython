@@ -77,7 +77,7 @@ bool mp_hal_stdin_rx_any(void) {
 
 int mp_hal_stdin_rx_chr(void) {
     while (uart_rx_buf_tail == uart_rx_buf_head) {
-        schedule();
+        __WFI();
     }
     int c = uart_rx_buf[uart_rx_buf_tail];
     uart_rx_buf_tail = (uart_rx_buf_tail + 1) % UART_RX_BUF_SIZE;
