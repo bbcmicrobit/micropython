@@ -38,15 +38,14 @@ The LED display
 
 The LED display is exposed via the `display` object::
 
-    display.image # this is a MicroBitImage object - changes to this will directly affect the display
-    display.set_brightness(int) # sets the brightness of the display (between 0 and 255, inclusive)
-    display.set_display_mode(mode) # mode=0 means put in B&W mode, mode=1 means put in greyscale mode [WILL CHANGE]
+    display.get_pixel(x, y) # gets the brightness of the pixel (x,y)
+    display.set_pixel(x, y, val) # sets the brightness of the pixel (x,y) to val (between 0 and 9, inclusive)
     display.clear() # clears the display
     display.print(string, delay=400) # prints the string to the display one character at a time
-    display.print(MicroBitImage, delay=400) # prints the image to the screen.
+    display.print(image, delay=400) # prints the image to the screen.
     display.scroll(string, delay=400) # scrolls a string across the display (more exciting than display.print)
-    display.scroll(MicroBitImage, delay=400, stride=-1) # scrolls an image bigger than 5x5 across the screen
     display.animate(image, delay, stride, start, wait=True, loop=False)
+    display.animate(iterable, delay, wait=True, loop=False)
 
 Pins
 ----
@@ -86,22 +85,25 @@ Images API::
 
     # constructor overloads:
     image = Image() # creates an empty 5x5 image
-    image = Image('0 0 0 0 0\n0 0 0 0 0\n0 0 0 0 0\n0 0 0 0 0\n0 0 0 0 0') # create an image from a string - each character in the string represents an LED - 0 is off and 1 is on.
+    image = Image('90009\n09090\n00900\n09090\n90009') # create an image from a string - each character in the string represents an LED - 0 (or space) is off and 9 is maximum brightness.
     image = Image(width, height) # create an empty image of given size
     image = Image(width, height, buffer) # initialises an Image with the specified width and height. The buffer should be an array of length width * height
 
     # methods
-    image.clear() # clear all pixels
     image.width() # returns the image's width (most often 5)
     image.height() # returns the image's height (most often 5)
-    image.set_pixel(x, y, value) # sets the pixel at the specified position (between 0 and 255)
-    image.get_pixel(x, y) # gets the pixel at the specified position (between 0 and 255)
-    image.shift_left(n) # shifts the picture left 'n' times.
-    image.shift_right(n) # shifts the picture right 'n' times.
-    image.shift_up(n) # shifts the picture up 'n' times.
-    image.shift_down(n) # shifts the picture down 'n' times.
-    image.paste(image, x, y, transparent=False) # paste another image to this one at (x,y) [NOT YET IMPLEMENTED]
-    str(image) # get the string representation of the image
+    image.set_pixel(x, y, value) # sets the pixel at the specified position (between 0 and 9). May fail for constant images.
+    image.get_pixel(x, y) # gets the pixel at the specified position (between 0 and 9)
+    image.shift_left(n) # returns a new image created by shifting the picture left 'n' times.
+    image.shift_right(n) # returns a new image created by shifting the picture right 'n' times.
+    image.shift_up(n) # returns a new image created by shifting the picture up 'n' times.
+    image.shift_down(n) # returns a new image created by shifting the picture down 'n' times.
+    repr(image) # get a compact string representation of the image
+    str(image) # get a more readable string representation of the image
+
+    #operators
+    image + image # returns a new image created by superimposing the two images
+    image * n # returns a new image created by multiplying the brightness of each pixel by n
 
     # constants (currently, just lots of images)
     Image.HEART
