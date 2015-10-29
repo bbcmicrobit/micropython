@@ -11,7 +11,7 @@
 #include "pyexec.h"
 #include MICROPY_HAL_H
 
-extern void microbit_display_init(void);
+extern void microbit_init(void);
     
 void microbit_display_exception(mp_obj_t exc_in) {
     mp_uint_t n, *values;
@@ -92,7 +92,8 @@ void mp_run(void) {
 
     mp_init();
     mp_hal_init();
-    microbit_display_init();
+
+    microbit_init();
 
     if (APPENDED_SCRIPT->header[0] == 'M' && APPENDED_SCRIPT->header[1] == 'P') {
         // run appended script

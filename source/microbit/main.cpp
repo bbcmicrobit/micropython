@@ -1,9 +1,8 @@
 #include "MicroBit.h"
+#include "microbitdisplay.h"
 
 extern "C" {
     void mp_run(void);
-
-    void microbit_display_tick(void);
     
 }
 
@@ -29,4 +28,38 @@ void app_main() {
     while (1) {
         mp_run();
     }
+}
+
+extern bool compass_up_to_date;
+extern bool accelerometer_up_to_date;
+
+static void ticker(void) {
+
+    // increment our real-time counter.
+    ticks += FIBER_TICK_PERIOD_MS;
+
+    if (uBit.compass.isCalibrating()) {
+        uBit.compass.idleTick();
+    }
+
+    compass_up_to_date = false;
+    accelerometer_up_to_date = false;
+
+    // Update buttons
+    uBit.buttonA.systemTick();
+    uBit.buttonB.systemTick();
+
+    // Update the display.
+    microbit_display_tick();
+}
+
+extern "C" {
+
+void microbit_init(void) {
+    microbit_display_init();
+
+    // Hijack the DAL system ticker.
+    uBit.systemTicker.attach(ticker, MICROBIT_DISPLAY_REFRESH_PERIOD);
+}
+
 }

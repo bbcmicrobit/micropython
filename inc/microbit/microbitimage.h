@@ -1,4 +1,5 @@
-
+#ifndef __MICROPY_INCLUDED_MICROBIT_IMAGE_H__
+#define __MICROPY_INCLUDED_MICROBIT_IMAGE_H__
 
 #include "py/runtime.h"
    
@@ -85,4 +86,4 @@ microbit_image_obj_t *microbit_image_for_char(char c);
 microbit_image_obj_t *microbit_image_dim(microbit_image_obj_t *lhs, mp_float_t fval);
 microbit_image_obj_t *microbit_image_sum(microbit_image_obj_t *lhs, microbit_image_obj_t *rhs, bool add);
 
-
+#endif // __MICROPY_INCLUDED_MICROBIT_IMAGE_H__
