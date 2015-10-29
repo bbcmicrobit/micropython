@@ -298,6 +298,7 @@ void microbit_display_tick(void) {
     }
 }
 
+
 void microbit_display_animate(microbit_display_obj_t *self, mp_obj_t iterable, mp_int_t delay, bool wait, bool loop) {
     // Reset the repeat state.
     MP_STATE_PORT(async_data)[0] = NULL;
@@ -461,37 +462,11 @@ microbit_display_obj_t microbit_display_obj = {
     .strobe_mask = 0x20
 };
 
-extern bool compass_up_to_date;
-extern bool accelerometer_up_to_date;
-
-static void ticker(void) {
-
-    // increment our real-time counter.
-    ticks += FIBER_TICK_PERIOD_MS;
-
-    if (uBit.compass.isCalibrating()) {
-        uBit.compass.idleTick();
-    }
-
-    compass_up_to_date = false;
-    accelerometer_up_to_date = false;
-
-    // Update buttons
-    uBit.buttonA.systemTick();
-    uBit.buttonB.systemTick();
-
-    // Update the display.
-    microbit_display_tick();
-}
-
 void microbit_display_init(void) {
     //  Set pins as output.
     nrf_gpio_range_cfg_output(MICROBIT_DISPLAY_COLUMN_START,MICROBIT_DISPLAY_COLUMN_START + MICROBIT_DISPLAY_COLUMN_COUNT + MICROBIT_DISPLAY_ROW_COUNT);
 
     uBit.display.disable();
-
-    // Hijack the DAL system ticker.
-    uBit.systemTicker.attach(ticker, MICROBIT_DISPLAY_REFRESH_PERIOD);
 }
 
 }
