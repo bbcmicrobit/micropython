@@ -4,7 +4,7 @@
 
     Creates a compass.
 
-    To calibrate the compass, lie it flat and spin it horizontally. For best
+    To calibrate the compass, lay it flat and spin it horizontally. For best
     results during calibration, try not to tilt the compass up and down.
 """
 from microbit import *
