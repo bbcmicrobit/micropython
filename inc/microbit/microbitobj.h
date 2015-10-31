@@ -33,7 +33,7 @@ extern "C" {
 #include "py/obj.h"
 
 MicroBitPin *microbit_obj_get_pin(mp_obj_t o);
-MicroBitImage *microbit_obj_get_image(mp_obj_t o);
+
 
 }
 
