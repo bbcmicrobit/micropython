@@ -1,4 +1,5 @@
 #include "MicroBit.h"
+#include "microbitobj.h"
 #include "microbitdisplay.h"
 
 extern "C" {
@@ -30,15 +31,15 @@ void app_main() {
     }
 }
 
-extern bool compass_up_to_date;
-extern bool accelerometer_up_to_date;
-
 static void ticker(void) {
 
     // increment our real-time counter.
     ticks += FIBER_TICK_PERIOD_MS;
 
-    if (uBit.compass.isCalibrating()) {
+    /** Update compass if it is calibrating, but not if it is still
+     *  updating as compass.idleTick() is not reentrant.
+     */
+    if (uBit.compass.isCalibrating() && !compass_updating) {
         uBit.compass.idleTick();
     }
 

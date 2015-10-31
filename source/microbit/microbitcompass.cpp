@@ -62,44 +62,47 @@ mp_obj_t microbit_compass_clear_calibration(mp_obj_t self_in) {
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_compass_clear_calibration_obj, microbit_compass_clear_calibration);
 
-bool compass_up_to_date = false;
+volatile bool compass_up_to_date = false;
+volatile bool compass_updating = false;
+
+static void update(microbit_compass_obj_t *self) {
+    /* The only time it is possible for compass_updating to be true here
+     * is if this is called in an interrupt when it is already updating in
+     * the main execution thread. This is extremely unlikely, so we just
+     * accept that a slightly out-of-date result will be returned
+     */
+    if (!compass_up_to_date && !compass_updating) {
+        compass_updating = true;
+        self->compass->idleTick();
+        compass_updating = false;
+        compass_up_to_date = true;
+    }
+}
 
 mp_obj_t microbit_compass_heading(mp_obj_t self_in) {
     microbit_compass_obj_t *self = (microbit_compass_obj_t*)self_in;
-    if (!compass_up_to_date) {
-        self->compass->idleTick();
-        compass_up_to_date = true;
-    }
+    update(self);
     return mp_obj_new_int(self->compass->heading());
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_compass_heading_obj, microbit_compass_heading);
 
 mp_obj_t microbit_compass_get_x(mp_obj_t self_in) {
     microbit_compass_obj_t *self = (microbit_compass_obj_t*)self_in;
-    if (!compass_up_to_date) {
-        self->compass->idleTick();
-        compass_up_to_date = true;
-    }
+    update(self);
     return mp_obj_new_int(self->compass->getX());
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_compass_get_x_obj, microbit_compass_get_x);
 
 mp_obj_t microbit_compass_get_y(mp_obj_t self_in) {
     microbit_compass_obj_t *self = (microbit_compass_obj_t*)self_in;
-    if (!compass_up_to_date) {
-        self->compass->idleTick();
-        compass_up_to_date = true;
-    }
+    update(self);
     return mp_obj_new_int(self->compass->getY());
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_compass_get_y_obj, microbit_compass_get_y);
 
 mp_obj_t microbit_compass_get_z(mp_obj_t self_in) {
     microbit_compass_obj_t *self = (microbit_compass_obj_t*)self_in;
-    if (!compass_up_to_date) {
-        self->compass->idleTick();
-        compass_up_to_date = true;
-    }
+    update(self);
     return mp_obj_new_int(self->compass->getZ());
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_compass_get_z_obj, microbit_compass_get_z);
