@@ -127,7 +127,7 @@ void mp_hal_display_string(const char *str) {
     microbit_display_scroll(&microbit_display_obj, str, strlen(str), false);
 }
 
-void mp_hal_sleep(mp_int_t ms) {
+void mp_hal_delay_ms(mp_int_t ms) {
     if (ms <= 0)
         return;
     unsigned long current = uBit.systemTime();

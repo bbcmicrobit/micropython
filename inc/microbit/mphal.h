@@ -35,7 +35,6 @@ extern "C" {
 void mp_hal_init(void);
 
 unsigned int mp_hal_get_milliseconds(void);
-void mp_hal_milli_delay(unsigned int ms);
 
 void mp_hal_set_interrupt_char(int c);
 bool mp_hal_stdin_rx_any(void);
@@ -50,7 +49,7 @@ void mp_hal_erase_line_from_cursor(uint n_chars);
 
 void mp_hal_display_string(const char*);
 
-void mp_hal_sleep(int ms);
+void mp_hal_delay_ms(int ms);
 
 #ifdef __cplusplus
 }
