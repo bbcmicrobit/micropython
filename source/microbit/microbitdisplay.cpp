@@ -352,17 +352,18 @@ STATIC mp_obj_t microbit_display_animate_func(mp_uint_t n_args, const mp_obj_t *
 MP_DEFINE_CONST_FUN_OBJ_KW(microbit_display_animate_obj, 2, microbit_display_animate_func);
 
 void microbit_display_scroll(microbit_display_obj_t *self, const char* str, mp_int_t len, bool wait) {
-    mp_obj_t iterable = scrolling_string_image_iterable(str, len, NULL);
+    mp_obj_t iterable = scrolling_string_image_iterable(str, len, NULL, false);
     microbit_display_animate(self, iterable, MICROBIT_DEFAULT_SCROLL_SPEED, wait, false);
 }
 
 
 mp_obj_t microbit_display_scroll_func(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
     static const mp_arg_t scroll_allowed_args[] = {
-        { MP_QSTR_text,     MP_ARG_REQUIRED | MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
-        { MP_QSTR_delay,    MP_ARG_INT, {.u_int = MICROBIT_DEFAULT_SCROLL_SPEED} },
-        { MP_QSTR_wait,     MP_ARG_KW_ONLY | MP_ARG_BOOL, {.u_bool = true} },
-        { MP_QSTR_loop,     MP_ARG_KW_ONLY | MP_ARG_BOOL, {.u_bool = false} },
+        { MP_QSTR_text, MP_ARG_REQUIRED | MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
+        { MP_QSTR_delay, MP_ARG_INT, {.u_int = MICROBIT_DEFAULT_SCROLL_SPEED} },
+        { MP_QSTR_wait, MP_ARG_KW_ONLY | MP_ARG_BOOL, {.u_bool = true} },
+        { MP_QSTR_loop, MP_ARG_KW_ONLY | MP_ARG_BOOL, {.u_bool = false} },
+        { MP_QSTR_monospace, MP_ARG_KW_ONLY | MP_ARG_BOOL, {.u_bool = false} },
     };
     // Parse the args.
     microbit_display_obj_t *self = (microbit_display_obj_t*)pos_args[0];
@@ -370,7 +371,7 @@ mp_obj_t microbit_display_scroll_func(mp_uint_t n_args, const mp_obj_t *pos_args
     mp_arg_parse_all(n_args - 1, pos_args + 1, kw_args, MP_ARRAY_SIZE(scroll_allowed_args), scroll_allowed_args, args);
     mp_uint_t len;
     const char* str = mp_obj_str_get_data(args[0].u_obj, &len);
-    mp_obj_t iterable = scrolling_string_image_iterable(str, len, args[0].u_obj);
+    mp_obj_t iterable = scrolling_string_image_iterable(str, len, args[0].u_obj, args[4].u_bool /*monospace?*/);
     microbit_display_animate(self, iterable, args[1].u_int /*delay*/, args[2].u_bool/*wait?*/, args[3].u_bool /*loop?*/);
     return mp_const_none;
 }

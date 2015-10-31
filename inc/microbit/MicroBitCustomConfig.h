@@ -19,4 +19,7 @@
 #define MICROBIT_BLE_EVENT_SERVICE  0
 #define MICROBIT_BLE_DEVICE_INFORMATION_SERVICE     0
 
+// Slow this down a bit as proportional spacing reduces length
+#define MICROBIT_DEFAULT_SCROLL_SPEED       150
+
 #endif

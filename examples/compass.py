@@ -7,9 +7,7 @@ needles = (Image.CLOCK12, Image.CLOCK1, Image.CLOCK2, Image.CLOCK3,
 # You need to spin the microbit about a few times to help calibrate the compass
 
 # Scroll a message to encourage user to help calibrate the compass
-# "Spin" "Me!" reads better than "Spin Me!" due to lack of kerning
-display.scroll("Spin")
-display.scroll("Me!")
+display.scroll("Spin Me!")
 
 # Start calibrating
 compass.calibrate()

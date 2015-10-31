@@ -517,7 +517,7 @@ STATIC const unsigned char *get_font_data_from_char(char c) {
 
 STATIC mp_int_t get_pixel_from_font_data(const unsigned char *data, int x, int y) {
     /* The following logic belongs in MicroBitFont */
-    return ((data[y]>>(4-x))&1)*MAX_BRIGHTNESS;
+    return ((data[y]>>(4-x))&1);
 }
 
 microbit_image_obj_t *microbit_image_for_char(char c) {
@@ -525,7 +525,7 @@ microbit_image_obj_t *microbit_image_for_char(char c) {
     greyscale_t *result = greyscale_new(5,5);
     for (int x = 0; x < 5; ++x) {
         for (int y = 0; y < 5; ++y) {
-            result->setPixelValue(x, y, get_pixel_from_font_data(data, x, y));
+            result->setPixelValue(x, y, get_pixel_from_font_data(data, x, y)*MAX_BRIGHTNESS);
         }
     }
     return (microbit_image_obj_t *)result;
@@ -702,6 +702,7 @@ typedef struct _scrolling_string_t {
     char const *str;
     mp_uint_t len;
     mp_obj_t ref;
+    bool monospace;
 } scrolling_string_t;
 
 typedef struct _scrolling_string_iterator_t {
@@ -711,19 +712,42 @@ typedef struct _scrolling_string_iterator_t {
     char const *next_char;
     char const *end;
     uint8_t offset;
+    uint8_t offset_limit;
+    bool monospace;
     char right;
 } scrolling_string_iterator_t;
 
 extern const mp_obj_type_t microbit_scrolling_string_type;
 extern const mp_obj_type_t microbit_scrolling_string_iterator_type;
 
-mp_obj_t scrolling_string_image_iterable(const char* str, mp_uint_t len, mp_obj_t ref) {
+mp_obj_t scrolling_string_image_iterable(const char* str, mp_uint_t len, mp_obj_t ref, bool monospace) {
     scrolling_string_t *result = m_new_obj(scrolling_string_t);
     result->base.type = &microbit_scrolling_string_type;
     result->str = str;
     result->len = len;
     result->ref = ref;
+    result->monospace = monospace;
     return result;
+}
+
+STATIC int font_column_non_blank(const unsigned char *font_data, unsigned int col) {
+    for (int y = 0; y < 5; ++y) {
+        if (get_pixel_from_font_data(font_data, col, y)) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+/* Not strictly the rightmost non-blank column, but the rightmost in columns 2,3 or 4. */
+STATIC unsigned int rightmost_non_blank_column(const unsigned char *font_data) {
+    if (font_column_non_blank(font_data, 4)) {
+        return 4;
+    }
+    if (font_column_non_blank(font_data, 3)) {
+        return 3;
+    }
+    return 2;
 }
 
 STATIC mp_obj_t get_microbit_scrolling_string_iter(mp_obj_t o_in) {
@@ -734,11 +758,19 @@ STATIC mp_obj_t get_microbit_scrolling_string_iter(mp_obj_t o_in) {
     result->offset = 0;
     result->next_char = str->str;
     result->ref = str->ref;
+    result->monospace = str->monospace;
     result->end = result->next_char + str->len;
-    if (str->len)
+    if (str->len) {
         result->right = *result->next_char;
-    else
+        if (result->monospace) {
+            result->offset_limit = 5;
+        } else {
+            result->offset_limit = rightmost_non_blank_column(get_font_data_from_char(result->right)) + 1;
+        }
+    } else {
         result->right = ' ';
+        result->offset_limit = 5;
+    }
     return result;
 }
 
@@ -749,19 +781,30 @@ STATIC mp_obj_t microbit_scrolling_string_iter_next(mp_obj_t o_in) {
     }
     greyscale_t *result = iter->img->shiftLeft(1);
     iter->img = (microbit_image_obj_t*)result;
-    const unsigned char *font_data = get_font_data_from_char(iter->right);
-    if (iter->offset < 5) {
+    const unsigned char *font_data;
+    if (iter->offset < iter->offset_limit) {
+        font_data = get_font_data_from_char(iter->right);
         for (int y = 0; y < 5; ++y) {
-            int pix = get_pixel_from_font_data(font_data, iter->offset, y);
+            int pix = get_pixel_from_font_data(font_data, iter->offset, y)*MAX_BRIGHTNESS;
             result->setPixelValue(4, y, pix);
         }
-    } else if (iter->offset == 6) {
+    } else if (iter->offset == iter->offset_limit) {
         ++iter->next_char;
-        if (iter->next_char == iter->end)
+        if (iter->next_char == iter->end) {
             iter->right = ' ';
-        else
+            iter->offset_limit = 5;
+            iter->offset = 0;
+        } else {
             iter->right = *iter->next_char;
-        iter->offset = -1;
+            font_data = get_font_data_from_char(iter->right);
+            if (iter->monospace) {
+                iter->offset = -1;
+                iter->offset_limit = 5;
+            } else {
+                iter->offset = -font_column_non_blank(font_data, 0);
+                iter->offset_limit = rightmost_non_blank_column(font_data)+1;
+            }
+        }
     }
     ++iter->offset;
     return result;
