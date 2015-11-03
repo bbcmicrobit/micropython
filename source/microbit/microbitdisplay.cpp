@@ -219,7 +219,6 @@ struct FakeMicroBitDisplay : public MicroBitComponent
     uint8_t mode;
     uint8_t greyscaleBitMsk;
     uint8_t timingCount;
-    uint16_t nonce;
     Timeout renderTimer;
 };
 
