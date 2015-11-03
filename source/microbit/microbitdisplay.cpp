@@ -103,7 +103,6 @@ static mp_obj_t async_iterator = NULL;
 // Record if an error occurs in async animation. Unfortunately there is no way to report this.
 static bool async_error = false;
 static volatile bool wakeup_event = false;
-static uint16_t async_nonce = 0;
 static mp_uint_t async_delay = 1000;
 static mp_uint_t async_tick = 0;
 
@@ -156,7 +155,7 @@ inline void microbit_display_obj_t::setPinsForRow(uint8_t brightness) {
 
     // Wwrite the new bit pattern.
     // Set port 0 4-7 and retain lower 4 bits.
-    nrf_gpio_port_write(NRF_GPIO_PORT_SELECT_PORT0, ~column_strobe<<4 & 0xF0 | nrf_gpio_port_read(NRF_GPIO_PORT_SELECT_PORT0) & 0x0F);
+    nrf_gpio_port_write(NRF_GPIO_PORT_SELECT_PORT0, (~column_strobe<<4 & 0xF0) | (nrf_gpio_port_read(NRF_GPIO_PORT_SELECT_PORT0) & 0x0F));
 
     // Set port 1 8-12 for the current row.
     nrf_gpio_port_write(NRF_GPIO_PORT_SELECT_PORT1, strobe_mask | (~column_strobe>>4 & 0x1F));
@@ -167,7 +166,7 @@ void microbit_display_obj_t::advanceRow() {
 
     // Clear the old bit pattern for this row.
     // Clear port 0 4-7 and retain lower 4 bits.
-    nrf_gpio_port_write(NRF_GPIO_PORT_SELECT_PORT0, 0xF0 | nrf_gpio_port_read(NRF_GPIO_PORT_SELECT_PORT0) & 0x0F);
+    nrf_gpio_port_write(NRF_GPIO_PORT_SELECT_PORT0, 0xF0 | (nrf_gpio_port_read(NRF_GPIO_PORT_SELECT_PORT0) & 0x0F));
     // Clear port 1 8-12 for the current row.
     nrf_gpio_port_write(NRF_GPIO_PORT_SELECT_PORT1, strobe_mask | 0x1F);
 
