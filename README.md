@@ -46,7 +46,7 @@ repository.
 
 There is a Makefile provided that does some extra preprocessing of the source,
 which is needed only if you add new interned strings to qstrdefsport.h.  The
-Makefile also puts the resulting firmare at build/firmware.hex, and includes
+Makefile also puts the resulting firmware at build/firmware.hex, and includes
 some convenience targets.
 
 How to use
