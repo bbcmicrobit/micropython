@@ -35,21 +35,27 @@ extern "C" {
 #include "microbitdisplay.h"
 
 static const mp_float_t bright[7] = { 
-    0.0, 1.0/9, 2.0/9, 4.0/9, 6.0/9, 7.0/9, 8.0/9 
+    0.0, 1.0/9, 2.0/9, 4.0/9, 6.0/9, 7.0/9, 1.0,
 };
 
-void love(int interval = 80 /* ms */) {
-    microbit_image_obj_t * hearts[7];
-    for (int i = 0; i < 7; i++) {
+void love(int interval = 25 /* ms */) {
+    microbit_image_obj_t *hearts[MP_ARRAY_SIZE(bright)];
+    for (uint i = 0; i < MP_ARRAY_SIZE(bright); i++) {
          hearts[i] = microbit_image_dim(HEART_IMAGE, bright[i]);
     }
    
-    for(int iteration = 0; iteration < 5; iteration++) {
-        for(int step = 0; step < 7; ++step) {
+    for (int iteration = 0; iteration < 8; iteration++) {
+        // pause between double beats of the heart
+        if (iteration && (iteration & 1) == 0) {
+            mp_hal_delay_ms(20 * interval);
+        }
+        // pulse heart to max brightness
+        for(uint step = 0; step < MP_ARRAY_SIZE(bright); ++step) {
             microbit_display_print(&microbit_display_obj, hearts[step]);
             mp_hal_delay_ms(interval);
         }
-        for(int step = 6; step >= 0; --step) {
+        // pulse heart to min brightness
+        for(int step = MP_ARRAY_SIZE(bright) - 1; step >= 0; --step) {
             microbit_display_print(&microbit_display_obj, hearts[step]);
             mp_hal_delay_ms(interval);
         }
