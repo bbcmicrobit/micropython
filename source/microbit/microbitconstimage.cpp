@@ -52,6 +52,8 @@ IMAGE_T microbit_const_image_heart_small_obj = SMALL_IMAGE(
     0,0,0,0,0
 );
 
+// smilies
+
 IMAGE_T microbit_const_image_happy_obj = SMALL_IMAGE(
     0,0,0,0,0,
     0,1,0,1,0,
@@ -108,6 +110,32 @@ IMAGE_T microbit_const_image_surprised_obj = SMALL_IMAGE(
     0,0,1,0,0
 );
 
+IMAGE_T microbit_const_image_silly_obj = SMALL_IMAGE(
+    1,0,0,0,1,
+    0,0,0,0,0,
+    1,1,1,1,1,
+    0,0,1,0,1,
+    0,0,1,1,1
+);
+
+IMAGE_T microbit_const_image_fabulous_obj = SMALL_IMAGE(
+    1,1,1,1,1,
+    1,1,0,1,1,
+    0,0,0,0,0,
+    0,1,0,1,0,
+    0,1,1,1,0
+);
+
+IMAGE_T microbit_const_image_meh_obj = SMALL_IMAGE(
+    0,1,0,1,0,
+    0,0,0,0,0,
+    0,0,0,1,0,
+    0,0,1,0,0,
+    0,1,0,0,0
+);
+
+// yes/no
+
 IMAGE_T microbit_const_image_yes_obj = SMALL_IMAGE(
     0,0,0,0,0,
     0,0,0,0,1,
@@ -123,6 +151,8 @@ IMAGE_T microbit_const_image_no_obj = SMALL_IMAGE(
     0,1,0,1,0,
     1,0,0,0,1
 );
+
+// clock hands
 
 IMAGE_T microbit_const_image_clock12_obj = SMALL_IMAGE(
     0,0,1,0,0,
@@ -220,6 +250,8 @@ IMAGE_T microbit_const_image_clock11_obj = SMALL_IMAGE(
     0,0,0,0,0
 );
 
+// arrows
+
 IMAGE_T microbit_const_image_arrow_n_obj = SMALL_IMAGE(
     0,0,1,0,0,
     0,1,1,1,0,
@@ -282,6 +314,134 @@ IMAGE_T microbit_const_image_arrow_nw_obj = SMALL_IMAGE(
     1,0,1,0,0,
     0,0,0,1,0,
     0,0,0,0,1
+);
+
+// geometry
+
+IMAGE_T microbit_const_image_triangle_obj = SMALL_IMAGE(
+    0,0,0,0,0,
+    0,0,1,0,0,
+    0,1,0,1,0,
+    1,1,1,1,1,
+    0,0,0,0,0
+);
+
+IMAGE_T microbit_const_image_triangle_left_obj = SMALL_IMAGE(
+    1,0,0,0,0,
+    1,1,0,0,0,
+    1,0,1,0,0,
+    1,0,0,1,0,
+    1,1,1,1,1
+);
+
+IMAGE_T microbit_const_image_chessboard_obj = SMALL_IMAGE(
+    0,1,0,1,0,
+    1,0,1,0,1,
+    0,1,0,1,0,
+    1,0,1,0,1,
+    0,1,0,1,0
+);
+
+IMAGE_T microbit_const_image_diamond_obj = SMALL_IMAGE(
+    0,0,1,0,0,
+    0,1,0,1,0,
+    1,0,0,0,1,
+    0,1,0,1,0,
+    0,0,1,0,0
+);
+
+IMAGE_T microbit_const_image_diamond_small_obj = SMALL_IMAGE(
+    0,0,0,0,0,
+    0,0,1,0,0,
+    0,1,0,1,0,
+    0,0,1,0,0,
+    0,0,0,0,0
+);
+
+IMAGE_T microbit_const_image_square_obj = SMALL_IMAGE(
+    1,1,1,1,1,
+    1,0,0,0,1,
+    1,0,0,0,1,
+    1,0,0,0,1,
+    1,1,1,1,1
+);
+
+IMAGE_T microbit_const_image_square_small_obj = SMALL_IMAGE(
+    0,0,0,0,0,
+    0,1,1,1,0,
+    0,1,0,1,0,
+    0,1,1,1,0,
+    0,0,0,0,0
+);
+
+// animals
+
+IMAGE_T microbit_const_image_rabbit = SMALL_IMAGE(
+    1,0,1,0,0,
+    1,0,1,0,0,
+    1,1,1,1,0,
+    1,1,0,1,0,
+    1,1,1,1,0
+);
+
+IMAGE_T microbit_const_image_cow = SMALL_IMAGE(
+    1,0,0,0,1,
+    1,0,0,0,1,
+    1,1,1,1,1,
+    0,1,1,1,0,
+    0,0,1,0,0
+);
+
+// musical notes
+
+IMAGE_T microbit_const_image_musical_note_obj = SMALL_IMAGE(
+    0,0,1,0,0,
+    0,0,1,1,0,
+    0,0,1,0,1,
+    1,1,1,0,0,
+    1,1,1,0,0
+);
+
+IMAGE_T microbit_const_image_musical_note_beamed_obj = SMALL_IMAGE(
+    0,1,1,1,1,
+    0,1,0,0,1,
+    0,1,0,0,1,
+    1,1,0,1,1,
+    1,1,0,1,1
+);
+
+// other icons
+
+IMAGE_T microbit_const_image_pitchfork_obj = SMALL_IMAGE(
+    1,0,1,0,1,
+    1,0,1,0,1,
+    1,1,1,1,1,
+    0,0,1,0,0,
+    0,0,1,0,0
+);
+
+IMAGE_T microbit_const_image_xmas_obj = SMALL_IMAGE(
+    0,0,1,0,0,
+    0,1,1,1,0,
+    0,0,1,0,0,
+    0,1,1,1,0,
+    1,1,1,1,1
+);
+
+IMAGE_T microbit_const_image_pacman_obj = SMALL_IMAGE(
+    0,1,1,1,1,
+    1,1,0,1,0,
+    1,1,1,0,0,
+    1,1,1,1,0,
+    0,1,1,1,1
+);
+
+IMAGE_T microbit_const_image_target_obj = SMALL_IMAGE(
+    0,0,1,0,0,
+    0,1,1,1,0,
+    1,1,0,1,1,
+    0,1,1,1,0,
+    0,0,1,0,0
 );
 
 }
