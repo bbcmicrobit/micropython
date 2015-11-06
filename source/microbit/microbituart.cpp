@@ -24,6 +24,8 @@
  * THE SOFTWARE.
  */
 
+#include <errno.h>
+
 #include "MicroBit.h"
 
 extern "C" {
@@ -121,9 +123,8 @@ STATIC mp_uint_t microbit_uart_read(mp_obj_t self_in, void *buf_in, mp_uint_t si
 
     // check there is at least 1 char available
     if (!mp_hal_stdin_rx_any()) {
-        // we can either return 0 to indicate EOF (then read() method returns b'')
-        // or return EAGAIN error to indicate non-blocking (then read() method returns None)
-        return 0;
+        *errcode = EAGAIN;
+        return MP_STREAM_ERROR;
     }
 
     // read the data
