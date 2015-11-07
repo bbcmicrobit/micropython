@@ -17,6 +17,7 @@ Contents:
    music.rst
    compass.rst
    accelerometer.rst
+   button.rst
 
 
 Indices and tables
