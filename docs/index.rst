@@ -14,6 +14,7 @@ Contents:
    api_design_heuristics.rst
    microbit_micropython_api.rst
    music_api.rst
+   compass.rst
 
 
 Indices and tables
