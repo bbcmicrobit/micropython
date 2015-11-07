@@ -3,6 +3,10 @@ MicroPython for the BBC micro:bit
 
 This is the source code for MicroPython running on the BBC micro:bit!
 
+To get involved with the community subscribe to the microbit@python.org
+mailing list (https://mail.python.org/mailman/listinfo/microbit). You need to
+be a member to post messages.
+
 Various things are in this repository, including:
 - Source code in source/ and inc/ directories.
 - Example Python programs in the examples/ directory.
@@ -13,7 +17,7 @@ with an ARM compiler toolchain (eg arm-none-eabi-gcc and friends).
 
 Ubuntu users can install the needed packages using:
 ```
-sudo add-apt-repository -y ppa:terry.guo/gcc-arm-embedded 
+sudo add-apt-repository -y ppa:terry.guo/gcc-arm-embedded
 sudo add-apt-repository -y ppa:pmiller-opensource/ppa
 sudo apt-get update
 sudo apt-get install cmake ninja-build gcc-arm-none-eabi srecord
@@ -62,6 +66,10 @@ Then try:
     >>> microbit.random(100)
 
 Tab completion works and is very useful!
+
+Read our documentation here:
+
+http://microbit-micropython.readthedocs.org/en/latest/
 
 You can also use the tools/pyboard.py script to run Python scripts directly
 from your PC, eg:
