@@ -340,6 +340,14 @@ STATIC const mp_map_elem_t microbit_music_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_FUNERAL), (mp_obj_t)&microbit_music_tune_funeral_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_PUNCHLINE), (mp_obj_t)&microbit_music_tune_punchline_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_PYTHON), (mp_obj_t)&microbit_music_tune_python_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_BADDY), (mp_obj_t)&microbit_music_tune_baddy_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_CHASE), (mp_obj_t)&microbit_music_tune_chase_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_BA_DING), (mp_obj_t)&microbit_music_tune_ba_ding_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_WAWAWAWAA), (mp_obj_t)&microbit_music_tune_wawawawaa_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_JUMP_UP), (mp_obj_t)&microbit_music_tune_jump_up_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_JUMP_DOWN), (mp_obj_t)&microbit_music_tune_jump_down_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_POWER_UP), (mp_obj_t)&microbit_music_tune_power_up_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_POWER_DOWN), (mp_obj_t)&microbit_music_tune_power_down_obj },
 };
 
 STATIC MP_DEFINE_CONST_DICT(microbit_music_locals_dict, microbit_music_locals_dict_table);
