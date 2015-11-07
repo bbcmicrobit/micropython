@@ -35,22 +35,30 @@ Functions
 
 .. py:function:: get_x()
 
-    Gives the reading on the ``x`` axis of the compass.
+    Gives the reading of the magnetic force on the ``x`` axis, as a
+    positive or negative integer, depending on the direction of the
+    force.
 
 
 .. py:function:: get_y()
 
-    Gives the reading on the ``y`` axis of the compass.
+    Gives the reading of the magnetic force on the ``x`` axis, as a
+    positive or negative integer, depending on the direction of the
+    force.
 
 
 .. py:function:: get_z()
 
-    Gives the reading on the ``z`` axis of the compass (vertical).
+    Gives the reading of the magnetic force on the ``x`` axis, as a
+    positive or negative integer, depending on the direction of the
+    force.
 
 
 .. py:function:: heading()
 
-    Gives the compass heading, calculated from the above readings.
+    Gives the compass heading, calculated from the above readings, as an
+    integer in the range from 0 to 360, representing the angle in degrees,
+    clockwise, with north as 0.
 
 
 Example
