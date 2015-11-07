@@ -138,7 +138,7 @@ They are:
     * ``PYTHON`` - John Philip Sousa's march "Liberty Bell" aka, the theme for "Monty Python's Flying Circus" (after which the Python programming language is named).
     * ``BADDY`` - silent movie era entrance of a baddy.
     * ``CHASE`` - silent movie era chase scene.
-    * ``BA DING`` - a short signal to indicate something has happened.
+    * ``BA_DING`` - a short signal to indicate something has happened.
     * ``WAWAWAWAA`` - a very sad trombone.
     * ``JUMP_UP`` - for use in a game, indicating upward movement.
     * ``JUMP_DOWN`` - for use in a game, indicating downward movement.
