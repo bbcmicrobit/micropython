@@ -116,6 +116,14 @@ extern const struct _mp_obj_tuple_t microbit_music_tune_wedding_obj;
 extern const struct _mp_obj_tuple_t microbit_music_tune_funeral_obj;
 extern const struct _mp_obj_tuple_t microbit_music_tune_punchline_obj;
 extern const struct _mp_obj_tuple_t microbit_music_tune_python_obj;
+extern const struct _mp_obj_tuple_t microbit_music_tune_baddy_obj;
+extern const struct _mp_obj_tuple_t microbit_music_tune_chase_obj;
+extern const struct _mp_obj_tuple_t microbit_music_tune_ba_ding_obj;
+extern const struct _mp_obj_tuple_t microbit_music_tune_wawawawaa_obj;
+extern const struct _mp_obj_tuple_t microbit_music_tune_jump_up_obj;
+extern const struct _mp_obj_tuple_t microbit_music_tune_jump_down_obj;
+extern const struct _mp_obj_tuple_t microbit_music_tune_power_up_obj;
+extern const struct _mp_obj_tuple_t microbit_music_tune_power_down_obj;
 
 extern const mp_obj_type_t microbit_image_type;
 

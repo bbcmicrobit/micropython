@@ -136,3 +136,11 @@ They are:
     * ``FUNERAL`` - the "funeral march" otherwise known as Frédéric Chopin's Piano Sonata No. 2 in B♭ minor, Op. 35.
     * ``PUNCHLINE`` - a fun fragment that signifies a joke has been made.
     * ``PYTHON`` - John Philip Sousa's march "Liberty Bell" aka, the theme for "Monty Python's Flying Circus" (after which the Python programming language is named).
+    * ``BADDY`` - silent movie era entrance of a baddy.
+    * ``CHASE`` - silent movie era chase scene.
+    * ``BA_DING`` - a short signal to indicate something has happened.
+    * ``WAWAWAWAA`` - a very sad trombone.
+    * ``JUMP_UP`` - for use in a game, indicating upward movement.
+    * ``JUMP_DOWN`` - for use in a game, indicating downward movement.
+    * ``POWER_UP`` - a fanfare to indicate an achievement unlocked.
+    * ``POWER_DOWN`` - a sad fanfare to indicate an achievement lost.

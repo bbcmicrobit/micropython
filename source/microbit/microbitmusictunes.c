@@ -132,5 +132,29 @@ T(python,
     N(a), N(d), N(r), N(c_hash_), N(d), N(r), N(c_hash_), N(d_colon_2),
     N(r_colon_3));
 
+T(baddy,
+    N(c3_colon_3), N(r), N(d_colon_2), N(d_hash_), N(r), N(c), N(r), N(f_hash__colon_8), );
+
+T(chase,
+    N(a4_colon_1), N(b), N(c5), N(b4), N(a_colon_2), N(r), N(a_colon_1), N(b), N(c5), N(b4), N(a_colon_2), N(r), N(a_colon_2), N(e5), N(d_hash_), N(e), N(f), N(e), N(d_hash_), N(e), N(b4_colon_1), N(c5), N(d), N(c), N(b4_colon_2), N(r), N(b_colon_1), N(c5), N(d), N(c), N(b4_colon_2), N(r), N(b_colon_2), N(e5), N(d_hash_), N(e), N(f), N(e), N(d_hash_), N(e), );
+
+T(ba_ding,
+    N(b5_colon_1), N(e6_colon_3), );
+
+T(wawawawaa,
+    N(e3_colon_3), N(r_colon_1), N(d_hash__colon_3), N(r_colon_1), N(d_colon_4), N(r_colon_1), N(c_hash__colon_8), );
+
+T(jump_up,
+    N(c5_colon_1), N(d), N(e), N(f), N(g), );
+
+T(jump_down,
+    N(g5_colon_1), N(f), N(e), N(d), N(c), );
+
+T(power_up,
+    N(g4_colon_1), N(c5), N(e), N(g_colon_2), N(e_colon_1), N(g_colon_3), );
+
+T(power_down,
+    N(g5_colon_1), N(d_hash_), N(c), N(g4_colon_2), N(b_colon_1), N(c5_colon_3), );
+
 #undef N
 #undef T
