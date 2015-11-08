@@ -1,7 +1,7 @@
 Microbit Module
 ***************
 
-.. py::module:: microbit
+.. py:module:: microbit
 
 
 The ``microbit`` module gives you access to all the hardware that is built-in
