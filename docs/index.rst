@@ -20,6 +20,7 @@ Contents:
    accelerometer.rst
    button.rst
    display.rst
+   i2c.rst
 
 
 Indices and tables
