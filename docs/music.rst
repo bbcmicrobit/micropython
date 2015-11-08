@@ -1,13 +1,14 @@
-Music API
-*********
+Music
+*****
 
 .. py:module:: music
 
-This is the music API - we plan to start with an implementation that is purely
-blocking, as a proof of concept, and then add the wait parameter.
+This is the ``music`` module. You can use it to play simple tunes, provided
+that you connect a speaker to your board.
 
-Musical DSL
-===========
+
+Musical Notation
+================
 
 An individual note is specified thus::
 
@@ -39,6 +40,7 @@ page about scientific pitch notation`_.  For example, middle "C" is ``'c4'`` and
 concert "A" (440) is ``'a4'``. Octaves start on the note "C".
 
 .. _on this page about scientific pitch notation: https://en.wikipedia.org/wiki/Scientific_pitch_notation#Table_of_note_frequencies
+
 
 Functions
 =========

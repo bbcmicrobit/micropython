@@ -71,7 +71,7 @@ Modules
     :maxdepth: 1
 
     display.rst
-    music_api.rst
+    music.rst
     uart.rst
     i2c.rst
     accelerometer.rst
