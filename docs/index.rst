@@ -22,6 +22,7 @@ Contents:
    button.rst
    display.rst
    i2c.rst
+   uart.rst
 
 
 Indices and tables
