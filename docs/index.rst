@@ -16,6 +16,7 @@ Contents:
    microbit.rst
    music_api.rst
    compass.rst
+   accelerometer.rst
 
 
 Indices and tables
