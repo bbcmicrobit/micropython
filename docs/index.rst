@@ -14,6 +14,7 @@ Contents:
    api_design_heuristics.rst
    microbit_micropython_api.rst
    microbit.rst
+   pin.rst
    music.rst
    compass.rst
    accelerometer.rst
