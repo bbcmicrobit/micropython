@@ -18,6 +18,7 @@ Contents:
    compass.rst
    accelerometer.rst
    button.rst
+   display.rst
 
 
 Indices and tables
