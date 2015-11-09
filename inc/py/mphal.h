@@ -23,36 +23,39 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef __MICROPY_INCLUDED_MICROBIT_MPHAL_H__
-#define __MICROPY_INCLUDED_MICROBIT_MPHAL_H__
+#ifndef __MICROPY_INCLUDED_PY_MPHAL_H__
+#define __MICROPY_INCLUDED_PY_MPHAL_H__
 
-#ifdef __cplusplus
-extern "C" {
+#include "py/mpconfig.h"
+
+#ifdef MICROPY_MPHALPORT_H
+#include MICROPY_MPHALPORT_H
+#else
+#include <mphalport.h>
 #endif
 
-#define HAL_GetTick mp_hal_get_milliseconds
-
-void mp_hal_init(void);
-
-unsigned int mp_hal_get_milliseconds(void);
-
-void mp_hal_set_interrupt_char(int c);
-bool mp_hal_stdin_rx_any(void);
+#ifndef mp_hal_stdin_rx_chr
 int mp_hal_stdin_rx_chr(void);
-void mp_hal_stdout_tx_str(const char *str);
-void mp_hal_stdout_tx_strn(const char *str, unsigned int len);
-void mp_hal_stdout_tx_strn_cooked(const char *str, unsigned int len);
-
-// provide these since we don't assume VT100 support
-void mp_hal_move_cursor_back(uint pos);
-void mp_hal_erase_line_from_cursor(uint n_chars);
-
-void mp_hal_display_string(const char*);
-
-void mp_hal_delay_ms(int ms);
-
-#ifdef __cplusplus
-}
 #endif
 
-#endif // __MICROPY_INCLUDED_MICROBIT_MPHAL_H__
+#ifndef mp_hal_stdout_tx_str
+void mp_hal_stdout_tx_str(const char *str);
+#endif
+
+#ifndef mp_hal_stdout_tx_strn
+void mp_hal_stdout_tx_strn(const char *str, size_t len);
+#endif
+
+#ifndef mp_hal_stdout_tx_strn_cooked
+void mp_hal_stdout_tx_strn_cooked(const char *str, size_t len);
+#endif
+
+#ifndef mp_hal_delay_ms
+void mp_hal_delay_ms(mp_uint_t ms);
+#endif
+
+#ifndef mp_hal_ticks_ms
+mp_uint_t mp_hal_ticks_ms(void);
+#endif
+
+#endif // __MICROPY_INCLUDED_PY_MPHAL_H__

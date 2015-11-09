@@ -28,8 +28,8 @@
 
 extern "C" {
 
-#include "mphal.h"
 #include "py/mpstate.h"
+#include "py/mphal.h"
 #include "microbitimage.h"
 #include "microbitdisplay.h"
 
@@ -71,7 +71,7 @@ void mp_hal_set_interrupt_char(int c) {
     interrupt_char = c;
 }
 
-bool mp_hal_stdin_rx_any(void) {
+int mp_hal_stdin_rx_any(void) {
     return uart_rx_buf_tail != uart_rx_buf_head;
 }
 
@@ -88,13 +88,13 @@ void mp_hal_stdout_tx_str(const char *str) {
     mp_hal_stdout_tx_strn(str, strlen(str));
 }
 
-void mp_hal_stdout_tx_strn(const char *str, unsigned int len) {
+void mp_hal_stdout_tx_strn(const char *str, size_t len) {
     for (; len > 0; --len) {
         uBit.serial.putc(*str++);
     }
 }
 
-void mp_hal_stdout_tx_strn_cooked(const char *str, unsigned int len) {
+void mp_hal_stdout_tx_strn_cooked(const char *str, size_t len) {
     for (; len > 0; --len) {
         if (*str == '\n') {
             uBit.serial.putc('\r');
@@ -127,7 +127,7 @@ void mp_hal_display_string(const char *str) {
     microbit_display_scroll(&microbit_display_obj, str, strlen(str), false);
 }
 
-void mp_hal_delay_ms(mp_int_t ms) {
+void mp_hal_delay_ms(mp_uint_t ms) {
     if (ms <= 0)
         return;
     unsigned long current = uBit.systemTime();

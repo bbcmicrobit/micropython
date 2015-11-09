@@ -32,7 +32,7 @@ extern "C" {
 
 #include "py/runtime.h"
 #include "py/stream.h"
-#include "mphal.h"
+#include "py/mphal.h"
 #include "modmicrobit.h"
 #include "microbitobj.h"
 

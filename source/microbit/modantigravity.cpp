@@ -30,7 +30,7 @@
 
 extern "C" {
 
-#include "mphal.h"
+#include "py/mphal.h"
 #include "microbitimage.h"
 #include "microbitdisplay.h"
 

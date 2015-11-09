@@ -29,9 +29,9 @@
 
 extern "C" {
 
-#include "mphal.h"
 #include "py/runtime.h"
 #include "py/objstr.h"
+#include "py/mphal.h"
 #include "modmicrobit.h"
 
 #define DEFAULT_BPM      120
@@ -153,7 +153,10 @@ STATIC void play_note(microbit_music_obj_t *self, const char *note_str, size_t n
     }
 
     // Cut off 10ms from end of note so we hear articulation.
-    mp_hal_delay_ms((ms_per_tick * self->last_duration) - 10);
+    mp_int_t gap_ms = (ms_per_tick * self->last_duration) - 10;
+    if (gap_ms > 0) {
+        mp_hal_delay_ms(gap_ms);
+    }
 
     if (note_index >= 10) {
         pin->setAnalogValue(128);

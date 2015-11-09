@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2013, 2014 Damien P. George
+ * Copyright (c) 2015 Damien P. George
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,44 +23,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef __MICROPY_INCLUDED_PY_GC_H__
-#define __MICROPY_INCLUDED_PY_GC_H__
+#ifndef __MICROPY_INCLUDED_MICROBIT_MPHALPORT_H__
+#define __MICROPY_INCLUDED_MICROBIT_MPHALPORT_H__
 
-#include <stdint.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-#include "py/mpconfig.h"
-#include "py/misc.h"
+void mp_hal_init(void);
 
-void gc_init(void *start, void *end);
+void mp_hal_set_interrupt_char(int c);
+int mp_hal_stdin_rx_any(void);
 
-// These lock/unlock functions can be nested.
-// They can be used to prevent the GC from allocating/freeing.
-void gc_lock(void);
-void gc_unlock(void);
-bool gc_is_locked(void);
+// provide these since we don't assume VT100 support
+void mp_hal_move_cursor_back(uint pos);
+void mp_hal_erase_line_from_cursor(uint n_chars);
 
-// A given port must implement gc_collect by using the other collect functions.
-void gc_collect(void);
-void gc_collect_start(void);
-void gc_collect_root(void **ptrs, mp_uint_t len);
-void gc_collect_end(void);
+void mp_hal_display_string(const char*);
 
-void *gc_alloc(mp_uint_t n_bytes, bool has_finaliser);
-void gc_free(void *ptr); // does not call finaliser
-mp_uint_t gc_nbytes(const void *ptr);
-void *gc_realloc(void *ptr, mp_uint_t n_bytes, bool allow_move);
+#ifdef __cplusplus
+}
+#endif
 
-typedef struct _gc_info_t {
-    mp_uint_t total;
-    mp_uint_t used;
-    mp_uint_t free;
-    mp_uint_t num_1block;
-    mp_uint_t num_2block;
-    mp_uint_t max_block;
-} gc_info_t;
-
-void gc_info(gc_info_t *info);
-void gc_dump_info(void);
-void gc_dump_alloc_table(void);
-
-#endif // __MICROPY_INCLUDED_PY_GC_H__
+#endif // __MICROPY_INCLUDED_MICROBIT_MPHALPORT_H__

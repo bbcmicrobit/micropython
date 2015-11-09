@@ -1834,6 +1834,7 @@ STATIC void compile_expr_stmt(compiler_t *comp, const byte *p, const byte *ptop)
 }
 
 STATIC void compile_test_if_expr(compiler_t *comp, const byte *p, const byte *ptop) {
+    (void)ptop;
     const byte *p_test_if_else = pt_next(p);
     assert(p_test_if_else != ptop && pt_is_rule(p_test_if_else, PN_test_if_else));
     p_test_if_else = pt_rule_first(p_test_if_else);
@@ -2536,6 +2537,7 @@ STATIC const byte *compile_node(compiler_t *comp, const byte *p) {
 }
 
 STATIC void compile_scope_func_lambda_param(compiler_t *comp, const byte *p, pn_kind_t pn_name, pn_kind_t pn_star, pn_kind_t pn_dbl_star) {
+    (void)pn_dbl_star;
     // TODO verify that *k and **k are last etc
     qstr param_name = MP_QSTR_NULL;
     uint param_flag = ID_FLAG_IS_PARAM;
@@ -2995,7 +2997,7 @@ STATIC void compile_scope_inline_asm(compiler_t *comp, scope_t *scope, pass_kind
 
         const byte *p_args = pt_rule_first(p_expr_paren);
         const byte *p_args_top = mp_parse_node_extract_list(&p_args, PN_arglist);
-        int n_args = pt_num_nodes(p_args, p_args_top);
+        uint n_args = pt_num_nodes(p_args, p_args_top);
 
         // emit instructions
         if (op == MP_QSTR_label) {

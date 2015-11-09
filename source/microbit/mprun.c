@@ -8,8 +8,8 @@
 #include "py/runtime.h"
 #include "py/repl.h"
 #include "py/gc.h"
-#include "pyexec.h"
-#include MICROPY_HAL_H
+#include "py/mphal.h"
+#include "lib/utils/pyexec.h"
 
 extern void microbit_init(void);
     
