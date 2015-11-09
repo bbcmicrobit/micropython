@@ -16,6 +16,7 @@ Contents:
    microbit.rst
    pin.rst
    music.rst
+   image.rst
    compass.rst
    accelerometer.rst
    button.rst

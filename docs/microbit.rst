@@ -51,6 +51,7 @@ Attributes
 
 .. toctree::
     :maxdepth: 1
+
     button.rst
     pin.rst
 
