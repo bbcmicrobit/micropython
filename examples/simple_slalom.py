@@ -4,7 +4,7 @@
 
 import microbit as m
 
-p = m.display.print
+p = m.display.show
 
 min_x = -1024
 max_x = 1024

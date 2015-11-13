@@ -31,7 +31,7 @@ extern microbit_display_obj_t microbit_display_obj;
 
 extern "C" {
 
-void microbit_display_print(microbit_display_obj_t *display, microbit_image_obj_t *image);
+void microbit_display_show(microbit_display_obj_t *display, microbit_image_obj_t *image);
 
 void microbit_display_animate(microbit_display_obj_t *display, mp_obj_t iterable, mp_int_t delay, bool wait, bool loop);
 

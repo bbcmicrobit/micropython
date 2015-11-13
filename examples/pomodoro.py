@@ -23,7 +23,7 @@ def index_to_xy(i):
 
 def show_alarm():
     for i in range(10):
-        display.print(ALL_LEDS_ON)
+        display.show(ALL_LEDS_ON)
         sleep(250)
         display.clear()
         sleep(250)
@@ -50,7 +50,7 @@ print("pomodoro timer")
 
 # time the pomodoro work session, 25 minutes
 display.scroll("Go!")
-display.print(ALL_LEDS_ON)
+display.show(ALL_LEDS_ON)
 run_timer(25 * 60, 0)
 show_alarm()
 
@@ -61,7 +61,7 @@ display.clear()
 run_timer(5 * 60, 1)
 show_alarm()
 
-display.print(Image.NO)
+display.show(Image.NO)
 
 print("finished\n")
 print("Press the reset button to restart timer.")

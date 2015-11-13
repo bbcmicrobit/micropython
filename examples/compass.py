@@ -24,7 +24,7 @@ compass.calibrate()
 # Spin needle until calibrated.
 while compass.is_calibrating():
     for i in range(12):
-        display.print(needles[i])
+        display.show(needles[i])
         sleep(80)
 display.clear()
 
@@ -32,4 +32,4 @@ display.clear()
 while True:
     sleep(500)
     needle = ((15 - compass.heading()) // 30) % 12
-    display.print(needles[needle])
+    display.show(needles[needle])

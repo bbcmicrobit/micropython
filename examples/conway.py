@@ -14,7 +14,7 @@ def show():
     for y in range(5):
         for x in range(5):
             img.set_pixel(x, y, arena1[8 + y * 7 + x]*9)
-    microbit.display.print(img)
+    microbit.display.show(img)
 
 # do 1 iteration of Conway's Game of Life
 def conway_step():
