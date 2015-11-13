@@ -42,7 +42,7 @@ def draw(x, y, tick):
 
     # draw the player, flashing
     img.set_pixel(2, 2, (tick & 1)*4+5)
-    d.print(img)
+    d.show(img)
 
 def main():
     x = 0

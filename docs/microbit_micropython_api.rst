@@ -41,8 +41,8 @@ The LED display is exposed via the `display` object::
     display.get_pixel(x, y) # gets the brightness of the pixel (x,y)
     display.set_pixel(x, y, val) # sets the brightness of the pixel (x,y) to val (between 0 and 9, inclusive)
     display.clear() # clears the display
-    display.print(string, delay=400) # prints the string to the display one character at a time
-    display.print(image, delay=400) # prints the image to the screen.
+    display.show(string, delay=400) # prints the string to the display one character at a time
+    display.show(image, delay=400) # shows the image on the screen.
     display.scroll(string, delay=400) # scrolls a string across the display (more exciting than display.print)
     display.animate(image, delay, stride, start, wait=True, loop=False)
     display.animate(iterable, delay, wait=True, loop=False)
