@@ -1,6 +1,7 @@
 #include "MicroBit.h"
 #include "microbitobj.h"
 #include "microbitdisplay.h"
+#include "microbitmusic.h"
 
 extern "C" {
     void mp_run(void);
@@ -52,6 +53,9 @@ static void ticker(void) {
 
     // Update the display.
     microbit_display_tick();
+
+    // Update the music
+    microbit_music_tick();
 }
 
 extern "C" {
