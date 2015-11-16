@@ -74,7 +74,7 @@ typedef union {
     uint8_t grb[3];
 } color_t;
 
-typedef struct {
+typedef struct _neopixel_strip_t {
 	uint8_t pin_num;
 	uint16_t num_leds;
 	color_t *leds;
