@@ -67,7 +67,6 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 				" NOP\n\t" \
 			);
 		
-extern void nrf_delay_us(uint32_t volatile number_of_us);
 typedef union {
 		struct {
 			uint8_t g, r, b;
