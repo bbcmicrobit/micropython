@@ -105,9 +105,9 @@ STATIC const mp_doc_t help_table_instances[] = {
     {&microbit_compass_calibrate_obj, "If micro:bit is confused, calibrate() the compass to adjust the its accuracy.\n"},
     {&microbit_compass_is_calibrating_obj, "If micro:bit's compass is_calibrating() its accuracy, it sends True.\nIf it's not busy calibrating things, it sends False.\n"},
     {&microbit_compass_clear_calibration_obj, "Reset micro:bit's compass using clear_calibration() command. Run calibrate() to improve accuracy.\n"},
-    {&microbit_compass_get_x_obj, "Return magnetic field detected along the micro:bit's X axis.\nUsually, the compass returns the earth's magnetic field in micro-Tesla units.\nUnless...a strong magnet is nearby!\n"},
-    {&microbit_compass_get_y_obj, "Return magnetic field detected along the micro:bit's Y axis.\nUsually, the compass returns the earth's magnetic field in micro-Tesla units.\nUnless...a strong magnet is nearby!\n"},
-    {&microbit_compass_get_z_obj, "Return magnetic field detected along the micro:bit's Z axis.\nUsually, the compass returns the earth's magnetic field in micro-Tesla units.\nUnless...a strong magnet is nearby!\n"},
+    {&microbit_compass_get_x_obj, "Return magnetic field detected along micro:bit's X axis.\nUsually, the compass returns the earth's magnetic field in micro-Tesla units.\nUnless...a strong magnet is nearby!\n"},
+    {&microbit_compass_get_y_obj, "Return magnetic field detected along micro:bit's Y axis.\nUsually, the compass returns the earth's magnetic field in micro-Tesla units.\nUnless...a strong magnet is nearby!\n"},
+    {&microbit_compass_get_z_obj, "Return magnetic field detected along micro:bit's Z axis.\nUsually, the compass returns the earth's magnetic field in micro-Tesla units.\nUnless...a strong magnet is nearby!\n"},
     // Display 5x5 LED grid
     {&microbit_display_obj, "micro:bit's 5x5 LED display.\n"},
     {&microbit_display_show_obj, "Use show(s) to print the string 's' to the display. Try show('Hello!').\nUse show(s, i) to show string 's', one character at a time with a delay of 'i' milliseconds.\n"},
