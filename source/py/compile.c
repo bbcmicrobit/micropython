@@ -537,6 +537,12 @@ STATIC void close_over_variables_etc(compiler_t *comp, scope_t *this_scope, int 
     assert(n_pos_defaults >= 0);
     assert(n_kw_defaults >= 0);
 
+    // set flags
+    if (n_kw_defaults > 0) {
+        this_scope->scope_flags |= MP_SCOPE_FLAG_DEFKWARGS;
+    }
+    this_scope->num_def_pos_args = n_pos_defaults;
+
     // make closed over variables, if any
     // ensure they are closed over in the order defined in the outer scope (mainly to agree with CPython)
     int nfree = 0;
@@ -564,10 +570,11 @@ STATIC void close_over_variables_etc(compiler_t *comp, scope_t *this_scope, int 
     }
 }
 
-STATIC void compile_funcdef_param(compiler_t *comp, const byte *p) {
+STATIC void compile_funcdef_lambdef_param(compiler_t *comp, const byte *p) {
     const byte *p_orig = p;
 
-    if (pt_is_rule(p, PN_typedargslist_star)) {
+    if (pt_is_rule(p, PN_typedargslist_star)
+        || pt_is_rule(p, PN_varargslist_star)) {
         comp->have_star = true;
         /* don't need to distinguish bare from named star
         mp_parse_node_struct_t *pns = (mp_parse_node_struct_t*)pn;
@@ -578,7 +585,8 @@ STATIC void compile_funcdef_param(compiler_t *comp, const byte *p) {
         }
         */
 
-    } else if (pt_is_rule(p, PN_typedargslist_dbl_star)) {
+    } else if (pt_is_rule(p, PN_typedargslist_dbl_star)
+        || pt_is_rule(p, PN_varargslist_dbl_star)) {
         // named double star
         // TODO do we need to do anything with this?
 
@@ -591,10 +599,8 @@ STATIC void compile_funcdef_param(compiler_t *comp, const byte *p) {
 
             p_id = p;
 
-        } else {
+        } else if (pt_is_rule(p, PN_typedargslist_name)) {
             // this parameter has a colon and/or equal specifier
-
-            assert(pt_is_rule(p, PN_typedargslist_name)); // should be
 
             const byte *ptop;
             p = pt_rule_extract_top(p, &ptop);
@@ -608,6 +614,13 @@ STATIC void compile_funcdef_param(compiler_t *comp, const byte *p) {
                     p_equal = p;
                 }
             }
+
+        } else {
+            assert(pt_is_rule(p, PN_varargslist_name)); // should be
+            // this parameter has an equal specifier
+
+            p_id = pt_rule_first(p);
+            p_equal = pt_next(p_id);
         }
 
         qstr q_id;
@@ -656,6 +669,28 @@ STATIC void compile_funcdef_param(compiler_t *comp, const byte *p) {
     }
 }
 
+STATIC void compile_funcdef_lambdef(compiler_t *comp, scope_t *scope, const byte *p, pn_kind_t pn_list_kind) {
+    // compile default parameters
+    comp->have_star = false;
+    comp->num_dict_params = 0;
+    comp->num_default_params = 0;
+    apply_to_single_or_list(comp, p, pn_list_kind, compile_funcdef_lambdef_param);
+
+    if (comp->compile_error != MP_OBJ_NULL) {
+        return;
+    }
+
+    // in Micro Python we put the default positional parameters into a tuple using the bytecode
+    // the default keywords args may have already made the tuple; if not, do it now
+    if (comp->num_default_params > 0 && comp->num_dict_params == 0) {
+        EMIT_ARG(build_tuple, comp->num_default_params);
+        EMIT(load_null); // sentinel indicating empty default keyword args
+    }
+
+    // make the function
+    close_over_variables_etc(comp, scope, comp->num_default_params, comp->num_dict_params);
+}
+
 // leaves function object on stack
 // returns function name
 STATIC qstr compile_funcdef_helper(compiler_t *comp, const byte *p, uint emit_options) {
@@ -669,38 +704,11 @@ STATIC qstr compile_funcdef_helper(compiler_t *comp, const byte *p, uint emit_op
 
     p = pt_next(p); // skip function name
 
-    // save variables (probably don't need to do this, since we can't have nested definitions..?)
-    uint old_have_star = comp->have_star;
-    uint old_num_dict_params = comp->num_dict_params;
-    uint old_num_default_params = comp->num_default_params;
-
-    // compile default parameters
-    comp->have_star = false;
-    comp->num_dict_params = 0;
-    comp->num_default_params = 0;
-    apply_to_single_or_list(comp, p, PN_typedargslist, compile_funcdef_param);
-
-    if (comp->compile_error != MP_OBJ_NULL) {
-        return MP_QSTR_NULL;
-    }
-
-    // in Micro Python we put the default positional parameters into a tuple using the bytecode
-    // the default keywords args may have already made the tuple; if not, do it now
-    if (comp->num_default_params > 0 && comp->num_dict_params == 0) {
-        EMIT_ARG(build_tuple, comp->num_default_params);
-        EMIT(load_null); // sentinel indicating empty default keyword args
-    }
-
     // get the scope for this function
     scope_t *fscope = comp->scopes[scope_idx];
 
-    // make the function
-    close_over_variables_etc(comp, fscope, comp->num_default_params, comp->num_dict_params);
-
-    // restore variables
-    comp->have_star = old_have_star;
-    comp->num_dict_params = old_num_dict_params;
-    comp->num_default_params = old_num_default_params;
+    // compile the function definition
+    compile_funcdef_lambdef(comp, fscope, p, PN_typedargslist);
 
     // return its name (the 'f' in "def f(...):")
     return fscope->simple_name;
@@ -1852,10 +1860,6 @@ STATIC void compile_test_if_expr(compiler_t *comp, const byte *p, const byte *pt
 
 STATIC void compile_lambdef(compiler_t *comp, const byte *p, const byte *ptop) {
     (void)ptop;
-    // TODO default params etc for lambda; possibly just use funcdef code
-    //mp_parse_node_t pn_params = pns->nodes[0];
-    //mp_parse_node_t pn_body = pns->nodes[1];
-
     mp_int_t scope_idx;
     p = pt_get_small_int(p, &scope_idx);
 
@@ -1867,8 +1871,8 @@ STATIC void compile_lambdef(compiler_t *comp, const byte *p, const byte *ptop) {
     // get the scope for this lambda
     scope_t *this_scope = comp->scopes[scope_idx];
 
-    // make the lambda
-    close_over_variables_etc(comp, this_scope, 0, 0);
+    // compile the lambda definition
+    compile_funcdef_lambdef(comp, this_scope, p, PN_varargslist);
 }
 
 STATIC void compile_or_and_test(compiler_t *comp, const byte *p, const byte *ptop, bool cond) {
