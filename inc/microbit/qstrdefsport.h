@@ -165,7 +165,6 @@ Q(n)
 Q(buf)
 Q(repeat)
 
-Q(MicroBitMusic)
 Q(music)
 Q(frequency)
 Q(pitch)

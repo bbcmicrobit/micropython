@@ -41,16 +41,14 @@ extern "C" {
 #define DEFAULT_DURATION 4 // Crotchet
 #define ARTICULATION_MS  10 // articulation between notes in milliseconds
 
-typedef struct _microbit_music_obj_t {
-    mp_obj_base_t base;
-
+typedef struct _music_state_t {
     uint16_t bpm;
     uint16_t ticks;
 
     // store these to simplify the writing process
     uint8_t last_octave;
     uint8_t last_duration;
-} microbit_music_obj_t;
+} music_state_t;
 
 enum {
     ASYNC_MUSIC_STATE_IDLE,
@@ -58,16 +56,22 @@ enum {
     ASYNC_MUSIC_STATE_ARTICULATE,
 };
 
+static music_state_t music_state = {
+    .bpm = DEFAULT_BPM,
+    .ticks = DEFAULT_TICKS,
+    .last_octave = DEFAULT_OCTAVE,
+    .last_duration = DEFAULT_DURATION,
+};
+
 static volatile uint8_t async_music_state;
 static uint32_t async_music_wait_ticks;
-static microbit_music_obj_t *async_music_self; // XXX should be stored with other root pointers
 static bool async_music_loop;
 static uint16_t async_music_notes_len;
 static uint16_t async_music_notes_index;
 static mp_obj_t *async_music_notes_items; // XXX should be stored with other root pointers
 static MicroBitPin *async_music_pin;
 
-STATIC uint32_t start_note(microbit_music_obj_t *self, const char *note_str, size_t note_len, MicroBitPin *pin);
+STATIC uint32_t start_note(const char *note_str, size_t note_len, MicroBitPin *pin);
 
 void microbit_music_tick(void) {
     if (async_music_state == ASYNC_MUSIC_STATE_IDLE) {
@@ -99,13 +103,13 @@ void microbit_music_tick(void) {
         if (note == mp_const_none) {
             // a rest (is this even used anymore?)
             async_music_pin->setAnalogValue(0);
-            async_music_wait_ticks = 60000 / async_music_self->bpm;
+            async_music_wait_ticks = 60000 / music_state.bpm;
             async_music_state = ASYNC_MUSIC_STATE_NEXT_NOTE;
         } else {
             // a note
             mp_uint_t note_len;
             const char *note_str = mp_obj_str_get_data(note, &note_len);
-            uint32_t delay_on = start_note(async_music_self, note_str, note_len, async_music_pin);
+            uint32_t delay_on = start_note(note_str, note_len, async_music_pin);
             async_music_wait_ticks = ticks + delay_on;
             async_music_notes_index += 1;
             async_music_state = ASYNC_MUSIC_STATE_ARTICULATE;
@@ -113,7 +117,7 @@ void microbit_music_tick(void) {
     }
 }
 
-STATIC uint32_t start_note(microbit_music_obj_t *self, const char *note_str, size_t note_len, MicroBitPin *pin) {
+STATIC uint32_t start_note(const char *note_str, size_t note_len, MicroBitPin *pin) {
     pin->setAnalogValue(128);
 
     // [NOTE](#|b)(octave)(:length)
@@ -131,7 +135,7 @@ STATIC uint32_t start_note(microbit_music_obj_t *self, const char *note_str, siz
     uint8_t note_index = (note_str[0] & 0x1f) - 1;
 
     // TODO: the duration and bpm should be persistent between notes
-    uint8_t ms_per_tick = (60000/self->bpm)/self->ticks;
+    uint8_t ms_per_tick = (60000 / music_state.bpm) / music_state.ticks;
 
     int8_t octave = 0;
     bool sharp = false;
@@ -162,11 +166,11 @@ STATIC uint32_t start_note(microbit_music_obj_t *self, const char *note_str, siz
     if (current_position < note_len && note_str[current_position] != ':') {
         // currently this will only work with a one digit number
         // use +=, since the sharp/flat code changes octave to compensate.
-        self->last_octave = (note_str[current_position] & 0xf);
+        music_state.last_octave = (note_str[current_position] & 0xf);
         current_position++;
     }
 
-    octave += self->last_octave;
+    octave += music_state.last_octave;
 
     // parse the duration
     if (current_position < note_len && note_str[current_position] == ':') {
@@ -174,12 +178,12 @@ STATIC uint32_t start_note(microbit_music_obj_t *self, const char *note_str, siz
         current_position++;
 
         if (current_position < note_len) {
-            self->last_duration = note_str[current_position] & 0xf;
+            music_state.last_duration = note_str[current_position] & 0xf;
 
             current_position++;
             if (current_position < note_len) {
-                self->last_duration *= 10;
-                self->last_duration += note_str[current_position] & 0xf;
+                music_state.last_duration *= 10;
+                music_state.last_duration += note_str[current_position] & 0xf;
             }
         } else {
             // technically, this should be a syntax error, since this means
@@ -214,43 +218,39 @@ STATIC uint32_t start_note(microbit_music_obj_t *self, const char *note_str, siz
     }
 
     // Cut off a short time from end of note so we hear articulation.
-    mp_int_t gap_ms = (ms_per_tick * self->last_duration) - ARTICULATION_MS;
+    mp_int_t gap_ms = (ms_per_tick * music_state.last_duration) - ARTICULATION_MS;
     if (gap_ms < ARTICULATION_MS) {
         gap_ms = ARTICULATION_MS;
     }
     return gap_ms;
 }
 
-STATIC mp_obj_t microbit_music_reset(mp_obj_t self_in) {
-    microbit_music_obj_t *self = (microbit_music_obj_t *)self_in;
-
-    self->bpm = DEFAULT_BPM;
-    self->ticks = DEFAULT_TICKS;
-    self->last_octave = DEFAULT_OCTAVE;
-    self->last_duration = DEFAULT_DURATION;
+STATIC mp_obj_t microbit_music_reset(void) {
+    music_state.bpm = DEFAULT_BPM;
+    music_state.ticks = DEFAULT_TICKS;
+    music_state.last_octave = DEFAULT_OCTAVE;
+    music_state.last_duration = DEFAULT_DURATION;
 
     return mp_const_none;
 }
-MP_DEFINE_CONST_FUN_OBJ_1(microbit_music_reset_obj, microbit_music_reset);
+MP_DEFINE_CONST_FUN_OBJ_0(microbit_music_reset_obj, microbit_music_reset);
 
-STATIC mp_obj_t microbit_music_get_tempo(mp_obj_t self_in) {
-    microbit_music_obj_t *self = (microbit_music_obj_t *)self_in;
-
+STATIC mp_obj_t microbit_music_get_tempo(void) {
     mp_obj_t tempo_tuple[2];
 
-    tempo_tuple[0] = mp_obj_new_int(self->bpm);
-    tempo_tuple[1] = mp_obj_new_int(self->ticks);
+    tempo_tuple[0] = mp_obj_new_int(music_state.bpm);
+    tempo_tuple[1] = mp_obj_new_int(music_state.ticks);
 
     return mp_obj_new_tuple(2, tempo_tuple);
 }
-MP_DEFINE_CONST_FUN_OBJ_1(microbit_music_get_tempo_obj, microbit_music_get_tempo);
+MP_DEFINE_CONST_FUN_OBJ_0(microbit_music_get_tempo_obj, microbit_music_get_tempo);
 
 STATIC mp_obj_t microbit_music_stop(mp_uint_t n_args, const mp_obj_t *args) {
     MicroBitPin *pin;
-    if (n_args == 1) {
+    if (n_args == 0) {
         pin = &uBit.io.P0;
     } else {
-        pin = microbit_obj_get_pin(args[1]);
+        pin = microbit_obj_get_pin(args[0]);
     }
 
     pin->setAnalogValue(0);
@@ -259,7 +259,7 @@ STATIC mp_obj_t microbit_music_stop(mp_uint_t n_args, const mp_obj_t *args) {
 
     return mp_const_none;
 }
-MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_music_stop_obj, 1, 2, microbit_music_stop);
+MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_music_stop_obj, 0, 1, microbit_music_stop);
 
 STATIC mp_obj_t microbit_music_play(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
     static const mp_arg_t allowed_args[] = {
@@ -269,15 +269,12 @@ STATIC mp_obj_t microbit_music_play(mp_uint_t n_args, const mp_obj_t *pos_args, 
         { MP_QSTR_loop,  MP_ARG_BOOL, {.u_bool = false} },
     };
 
-    // extract self.
-    microbit_music_obj_t *self = (microbit_music_obj_t *)pos_args[0];
-
     // parse args
     mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
-    mp_arg_parse_all(n_args - 1, pos_args + 1, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
+    mp_arg_parse_all(n_args, pos_args, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
 
     // reset state so tunes always play the same
-    microbit_music_reset(self);
+    microbit_music_reset();
 
     // get either a single note or a list of notes
     mp_uint_t len;
@@ -295,7 +292,6 @@ STATIC mp_obj_t microbit_music_play(mp_uint_t n_args, const mp_obj_t *pos_args, 
     // start the tune running in the background
     async_music_state = ASYNC_MUSIC_STATE_IDLE;
     async_music_wait_ticks = ticks;
-    async_music_self = self;
     async_music_loop = args[3].u_bool;
     async_music_notes_len = len;
     async_music_notes_index = 0;
@@ -317,7 +313,7 @@ STATIC mp_obj_t microbit_music_play(mp_uint_t n_args, const mp_obj_t *pos_args, 
 
     return mp_const_none;
 }
-MP_DEFINE_CONST_FUN_OBJ_KW(microbit_music_play_obj, 1, microbit_music_play);
+MP_DEFINE_CONST_FUN_OBJ_KW(microbit_music_play_obj, 0, microbit_music_play);
 
 STATIC mp_obj_t microbit_music_pitch(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
     static const mp_arg_t allowed_args[] = {
@@ -327,12 +323,9 @@ STATIC mp_obj_t microbit_music_pitch(mp_uint_t n_args, const mp_obj_t *pos_args,
         { MP_QSTR_wait,   MP_ARG_BOOL, {.u_bool = true} },
     };
 
-    // extract self.
-    //microbit_music_obj_t *self = (microbit_music_obj_t *)pos_args[0];
-
     // parse args
     mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
-    mp_arg_parse_all(n_args - 1, pos_args + 1, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
+    mp_arg_parse_all(n_args, pos_args, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
 
     // get the parameters
     mp_uint_t frequency = args[0].u_int;
@@ -356,7 +349,7 @@ STATIC mp_obj_t microbit_music_pitch(mp_uint_t n_args, const mp_obj_t *pos_args,
 
     return mp_const_none;
 }
-MP_DEFINE_CONST_FUN_OBJ_KW(microbit_music_pitch_obj, 1, microbit_music_pitch);
+MP_DEFINE_CONST_FUN_OBJ_KW(microbit_music_pitch_obj, 0, microbit_music_pitch);
 
 STATIC mp_obj_t microbit_music_set_tempo(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
     static const mp_arg_t allowed_args[] = {
@@ -364,19 +357,16 @@ STATIC mp_obj_t microbit_music_set_tempo(mp_uint_t n_args, const mp_obj_t *pos_a
         { MP_QSTR_bpm,   MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = 0} },
     };
 
-    // get the self value
-    microbit_music_obj_t *self = (microbit_music_obj_t *)pos_args[0];
-
     mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
-    mp_arg_parse_all(n_args - 1, pos_args + 1, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
+    mp_arg_parse_all(n_args, pos_args, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
 
     if (args[0].u_int != 0) {
         // set ticks
-        self->ticks = args[0].u_int;
+        music_state.ticks = args[0].u_int;
     }
 
     if (args[1].u_int != 0) {
-        self->bpm = args[1].u_int;
+        music_state.bpm = args[1].u_int;
     }
 
     return mp_const_none;
@@ -416,30 +406,10 @@ STATIC const mp_map_elem_t microbit_music_locals_dict_table[] = {
 
 STATIC MP_DEFINE_CONST_DICT(microbit_music_locals_dict, microbit_music_locals_dict_table);
 
-STATIC const mp_obj_type_t microbit_music_type = {
-    { &mp_type_type },
-    .name = MP_QSTR_MicroBitMusic,
-    .print = NULL,
-    .make_new = NULL,
-    .call = NULL,
-    .unary_op = NULL,
-    .binary_op = NULL,
-    .attr = NULL,
-    .subscr = NULL,
-    .getiter = NULL,
-    .iternext = NULL,
-    .buffer_p = {NULL},
-    .stream_p = NULL,
-    .bases_tuple = MP_OBJ_NULL,
-    /* .locals_dict = */ (mp_obj_t)&microbit_music_locals_dict,
-};
-
-microbit_music_obj_t microbit_music_obj = {
-    {&microbit_music_type},
-    .bpm = DEFAULT_BPM,
-    .ticks = DEFAULT_TICKS,
-    .last_octave = DEFAULT_OCTAVE,
-    .last_duration = DEFAULT_DURATION,
+const mp_obj_module_t music_module = {
+    .base = { &mp_type_module },
+    .name = MP_QSTR_music,
+    .globals = (mp_obj_dict_t*)&microbit_music_locals_dict,
 };
 
 }
