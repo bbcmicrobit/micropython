@@ -45,7 +45,7 @@
 #define MICROPY_PY_ATTRTUPLE        (0)
 #define MICROPY_PY_COLLECTIONS      (1)
 #define MICROPY_PY_COLLECTIONS_ORDEREDDICT (1)
-#define MICROPY_PY_MATH             (0)
+#define MICROPY_PY_MATH             (1)
 #define MICROPY_PY_CMATH            (0)
 #define MICROPY_PY_IO               (0)
 #define MICROPY_PY_STRUCT           (1)
@@ -113,3 +113,8 @@ extern const struct _mp_obj_module_t love_module;
 #define MICROPY_HAL_H "mphal.h"
 #define MICROPY_HW_BOARD_NAME "micro:bit"
 #define MICROPY_HW_MCU_NAME "nRF51822"
+
+// Toolchain seems to be missing M_PI
+#ifndef M_PI
+#define M_PI (3.141592653589793)
+#endif
