@@ -32,11 +32,10 @@ Functions
 Connecting
 ----------
 
-Connecting an I²C device to the board is simple -- you have to connect the pin
-marked as SCL on the device to pin 19 of the board, and the one marked as SDA
-to pin 20. You also need to connect the grounds, and possibly provide power to
-the device. You can connect more than one device at once, as long as they have
-different addresses.
+You should connect the device's ``SCL`` pin to micro:bit pin 19, and the
+device's ``SDA`` pin to micro:bit pin 20. You also must connect the device's
+ground to the micro:bit ground (pin ``GND``). You may need to power the device
+using an external power supply or the micro:bit.
 
 There are internal pull-up resistors on the I²C lines of the board, but with
 particularly long wires or large number of devices you may need to add
