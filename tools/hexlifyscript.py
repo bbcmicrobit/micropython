@@ -8,9 +8,10 @@ script.
 To execute from command line: ./hexlifyscript.py <script.py>
 '''
 
-import sys
 import struct
 import binascii
+import fileinput
+
 
 SCRIPT_ADDR = 0x3e000 # magic start address in flash of script
 
@@ -37,5 +38,5 @@ def hexlify_script(script):
 
 if __name__ == '__main__':
     # read script from a file and print out the hexlified version
-    with open(sys.argv[1], 'rb') as f:
-        print(hexlify_script(f.read()))
+    with fileinput.input(mode='rb') as lines:
+        print(hexlify_script(b''.join(lines)))
