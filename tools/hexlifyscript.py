@@ -6,6 +6,7 @@ end of the MicroPython firmware.hex.  A simple header is added to the
 script.
 
 To execute from command line: ./hexlifyscript.py <script.py>
+It also accepts data on standard input.
 '''
 
 import struct
