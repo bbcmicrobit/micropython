@@ -21,7 +21,7 @@ speed_max = 12
 
 while True:
 
-    i = m.Image('0,0,0,0,0\n'*5)
+    i = m.Image('00000:'*5)
     s = i.set_pixel
 
     player_x = 2

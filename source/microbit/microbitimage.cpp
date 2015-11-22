@@ -48,9 +48,9 @@ STATIC void microbit_image_print(const mp_print_t *print, mp_obj_t self_in, mp_p
     mp_printf(print, "'");
     for (int y = 0; y < self->height(); ++y) {
         for (int x = 0; x < self->width(); ++x) {
-            mp_printf(print, "%c", " 123456789"[self->getPixelValue(x, y)]);
+            mp_printf(print, "%c", "0123456789"[self->getPixelValue(x, y)]);
         }
-        mp_printf(print, "\\n");
+        mp_printf(print, ":");
         if (kind == PRINT_STR && y < self->height()-1)
             mp_printf(print, "'\n    '");
     }
@@ -203,12 +203,10 @@ STATIC microbit_image_obj_t *image_from_parsed_str(const char *s, mp_int_t len) 
     /*First pass -- Establish metadata */
     for (int i = 0; i < len; i++) {
         char c = s[i];
-        if (c == '\n') {
+        if (c == '\n' || c == ':') {
             w = max(line_len, w);
             line_len = 0;
             ++h;
-        } else if (c == ',') {
-            /* Ignore commas */
         } else if (c == ' ') {
             ++line_len;
         } else if ('c' >= '0' && c <= '9') {
@@ -219,9 +217,9 @@ STATIC microbit_image_obj_t *image_from_parsed_str(const char *s, mp_int_t len) 
         }
     }
     if (line_len) {
-        // Omitted trainling newline
+        // Omitted trailing terminator
         ++h;
-        w = max(line_len, w); 
+        w = max(line_len, w);
     }
     result = greyscale_new(w, h);
     mp_int_t x = 0;
@@ -229,15 +227,13 @@ STATIC microbit_image_obj_t *image_from_parsed_str(const char *s, mp_int_t len) 
     /* Second pass -- Fill in data */
     for (int i = 0; i < len; i++) {
         char c = s[i];
-        if (c == '\n') {
+        if (c == '\n' || c == ':') {
             while (x < w) {
                 result->setPixelValue(x, y, 0);
                 x++;
             }
             ++y;
             x = 0;
-        } else if (c == ',') {
-            /* Ignore commas */
         } else if (c == ' ') {
             /* Treat spaces as 0 */
             result->setPixelValue(x, y, 0);
