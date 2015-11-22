@@ -518,6 +518,8 @@ STATIC const mp_map_elem_t microbit_image_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_XMAS), (mp_obj_t)&microbit_const_image_xmas_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_PACMAN), (mp_obj_t)&microbit_const_image_pacman_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_TARGET), (mp_obj_t)&microbit_const_image_target_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_CLOCKFACE), (mp_obj_t)&microbit_const_image_clockface_tuple_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_ARROWS), (mp_obj_t)&microbit_const_image_arrows_tuple_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_TSHIRT), (mp_obj_t)&microbit_const_image_tshirt_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_ROLLERSKATE), (mp_obj_t)&microbit_const_image_rollerskate_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_DUCK), (mp_obj_t)&microbit_const_image_duck_obj },

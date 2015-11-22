@@ -127,6 +127,9 @@ Q(SKULL)
 Q(UMBRELLA)
 Q(SNAKE)
 
+Q(ARROWS)
+Q(CLOCKFACE)
+
 Q(MicroBitDisplay)
 Q(set_brightness)
 Q(set_display_mode)
