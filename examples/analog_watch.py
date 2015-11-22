@@ -1,9 +1,6 @@
 from microbit import *
 
-hands = (Image.CLOCK12, Image.CLOCK1, Image.CLOCK2, Image.CLOCK3, 
-         Image.CLOCK4, Image.CLOCK5, Image.CLOCK6, Image.CLOCK7, 
-         Image.CLOCK8, Image.CLOCK9, Image.CLOCK10, Image.CLOCK11,
-         )
+hands = Image.CLOCKFACE
 
 #A centre dot of brightness 2.
 ticker_image = Image("2\n").crop(-2,-2,5,5)
