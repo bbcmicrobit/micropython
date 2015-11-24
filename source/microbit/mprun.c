@@ -9,6 +9,7 @@
 #include "py/repl.h"
 #include "py/gc.h"
 #include "py/mphal.h"
+#include "lib/readline.h"
 #include "lib/utils/pyexec.h"
 
 extern void microbit_init(void);
@@ -92,7 +93,7 @@ void mp_run(void) {
 
     mp_init();
     mp_hal_init();
-
+    readline_init0();
     microbit_init();
 
     if (APPENDED_SCRIPT->header[0] == 'M' && APPENDED_SCRIPT->header[1] == 'P') {
