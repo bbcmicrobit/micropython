@@ -187,7 +187,14 @@ MP_DECLARE_CONST_FUN_OBJ(mp_stream_readall_obj);
 MP_DECLARE_CONST_FUN_OBJ(mp_stream_unbuffered_readline_obj);
 MP_DECLARE_CONST_FUN_OBJ(mp_stream_readinto_obj);
 MP_DECLARE_CONST_FUN_OBJ(mp_stream_write_obj);
+MP_DECLARE_CONST_FUN_OBJ(microbit_music_set_tempo_obj);
+MP_DECLARE_CONST_FUN_OBJ(microbit_music_pitch_obj);
+MP_DECLARE_CONST_FUN_OBJ(microbit_music_play_obj);
+MP_DECLARE_CONST_FUN_OBJ(microbit_music_get_tempo_obj);
+MP_DECLARE_CONST_FUN_OBJ(microbit_music_stop_obj);
+MP_DECLARE_CONST_FUN_OBJ(microbit_music_reset_obj);
 
 extern const mp_obj_module_t microbit_module;
+extern const mp_obj_module_t music_module;
 
 #endif // __MICROPY_INCLUDED_MICROBIT_MODMICROBIT_H__
