@@ -70,7 +70,7 @@ STATIC mp_obj_t love_badaboom(void) {
     return mp_const_none;
 }
 MP_DEFINE_CONST_FUN_OBJ_0(love___init___obj, love_badaboom);
-STATIC MP_DEFINE_CONST_FUN_OBJ_0(love_badaboom_obj, love_badaboom);
+MP_DEFINE_CONST_FUN_OBJ_0(love_badaboom_obj, love_badaboom);
 
 STATIC const mp_map_elem_t love_module_globals_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR___name__), MP_OBJ_NEW_QSTR(MP_QSTR_love) },

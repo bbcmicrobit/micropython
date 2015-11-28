@@ -193,8 +193,13 @@ MP_DECLARE_CONST_FUN_OBJ(microbit_music_play_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_music_get_tempo_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_music_stop_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_music_reset_obj);
+MP_DECLARE_CONST_FUN_OBJ(love_badaboom_obj);
+MP_DECLARE_CONST_FUN_OBJ(this_authors_obj);
 
 extern const mp_obj_module_t microbit_module;
 extern const mp_obj_module_t music_module;
+extern const mp_obj_module_t love_module;
+extern const mp_obj_module_t antigravity_module;
+extern const mp_obj_module_t this_module;
 
 #endif // __MICROPY_INCLUDED_MICROBIT_MODMICROBIT_H__

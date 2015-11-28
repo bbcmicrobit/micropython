@@ -156,6 +156,7 @@ STATIC const mp_doc_t help_table_instances[] = {
     {&mp_stream_unbuffered_readline_obj, "Use readline() to read a line that ends with a newline character.\n"},
     {&mp_stream_readinto_obj, "Use readinto(buf) to read bytes into the buffer 'buf'.\nUse readinto(buff, n) to read, at most, 'n' number of bytes into 'buf'.\n"},
     {&mp_stream_write_obj, "Use write(buf) to write the bytes in buffer 'buf' to the connected device.\n"},
+    // Music module
     {&music_module, "Plug in a speaker with crocodile clips and make micro:bit go bleep and bloop.\n"},
     {&microbit_music_set_tempo_obj, "Use set_tempo(n, bpm) to make a beat 'n' ticks long and play at 'bpm' beats\nper minute.\n"},
     {&microbit_music_pitch_obj, "Use pitch(freq, len) to make micro:bit play a note at 'freq' frequency for\n'len' milliseconds. E.g. pitch(440, 1000) will play concert 'A' for 1 second.\n"},
@@ -163,6 +164,14 @@ STATIC const mp_doc_t help_table_instances[] = {
     {&microbit_music_get_tempo_obj, "Use get_tempo() to return the number of ticks in a beat and number of beats\nper minute.\n"},
     {&microbit_music_stop_obj, "Use to stop() the music that is playing.\n"},
     {&microbit_music_reset_obj, "If things go wrong, reset() the music to its default settings.\n"},
+    // Antigravity
+    {&antigravity_module, "See: http://xkcd.com/353/\n"},
+    // This module
+    {&this_module, "The Zen of Python defines what it is to be Pythonic. It wouldn't fit on this\ndevice so we've written a Zen of MicroPython instead.\n"},
+    //{&this_authors_obj, "Use authors() to reveal the names of the people who created this software.\n"},
+    // Love module
+    {&love_module, "All you need. Use love.badaboom() to repeat the effect.\n"},
+    //{&love_badaboom_obj, "Hear my soul speak:\nThe very instant that I saw you, did\nMy heart fly to your service.\n"},
 };
 
 STATIC void pyb_help_print_info_about_object(mp_obj_t name_o, mp_obj_t value) {
