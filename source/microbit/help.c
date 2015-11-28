@@ -57,6 +57,7 @@ STATIC const char *help_text =
 "\n"
 "For more information about Python, visit: http://python.org/\n"
 "To find out about MicroPython, visit: http://micropython.org/\n"
+"Python/micro:bit documentation is here: http://microbit-micropython.rtfd.org/\n"
 ;
 
 typedef struct _mp_doc_t {
@@ -97,12 +98,12 @@ STATIC const mp_doc_t help_table_instances[] = {
     {&microbit_compass_get_z_obj, "Return magnetic field detected along micro:bit's Z axis.\nUsually, the compass returns the earth's magnetic field in micro-Tesla units.\nUnless...a strong magnet is nearby!\n"},
     // Display 5x5 LED grid
     {&microbit_display_obj, "micro:bit's 5x5 LED display.\n"},
-    {&microbit_display_show_obj, "Use show(s) to print the string 's' to the display. Try show('Hello!').\nUse show(s, i) to show string 's', one character at a time with a delay of\n'i' milliseconds.\n"},
+    {&microbit_display_show_obj, "Use show(x) to print the string or image 'x' to the display. Try show('Hi!').\nUse show(s, i) to show string 's', one character at a time with a delay of\n'i' milliseconds.\n"},
     {&microbit_display_scroll_obj, "Use scroll(s) to scroll the string 's' across the display.\nUse scroll(s, i) to scroll string 's' with a delay of 'i' milliseconds after\neach character.\n"},
     {&microbit_display_clear_obj, "Use clear() to clear micro:bit's display.\n"},
     {&microbit_display_animate_obj, "Use animate(img, delay, stride, start=0, async=False, repeat=False) to animate\nimage 'img' with 'delay' milliseconds and 'stride' pixels offset between\nframes. Optional: 'start' offset from left hand side, 'async' to run in the\nbackground, 'repeat' to loop the animation.\n"},
-    {&microbit_display_get_pixel_obj, "Use get_brightness(x, y) to return the display's brightness at LED pixel (x,y).\nBrightness can be from 0 (LED is off) to 9 (maximum LED brightness).\n"},
-    {&microbit_display_set_pixel_obj, "Use set_brightness(x, y, b) to set the display at LED pixel (x,y) to\nbrightness 'b'.\nbrightness 'b', which can be set between 0 (off) to 9 (full brightness).\n"},
+    {&microbit_display_get_pixel_obj, "Use get_pixel(x, y) to return the display's brightness at LED pixel (x,y).\nBrightness can be from 0 (LED is off) to 9 (maximum LED brightness).\n"},
+    {&microbit_display_set_pixel_obj, "Use set_pixel(x, y, b) to set the display at LED pixel (x,y) to\nbrightness 'b'\nwhich can be set between 0 (off) to 9 (full brightness).\n"},
     // Pins
     {&microbit_p0_obj, "micro:bit's pin 0 on the gold edge connector.\n"},
     {&microbit_p1_obj, "micro:bit's pin 1 on the gold edge connector.\n"},
@@ -129,9 +130,32 @@ STATIC const mp_doc_t help_table_instances[] = {
     {&microbit_pin_read_analog_obj, "micro:bit, read_analog() value from the pin. Wow, analog has lots of values\n(0 - 65535). Digital has only 0 and 1.\n"},
     {&microbit_pin_is_touched_obj, "If pin is_touched() on micro:bit, return True. If nothing is touching the pin,\nreturn False.\n"},
     // I2C
-    {&microbit_i2c_obj, "Communicate with devices connected to micro:bit.\n"},
+    {&microbit_i2c_obj, "Communicate with named devices connected to micro:bit using the I/O pins.\n"},
     {&microbit_i2c_read_obj, "Use read(addr, n) to read n bytes from the device whose address is addr.\n"},
-    {&microbit_i2c_write_obj, "Use write(addr, buf) to write the buffer buf to the device whose address\nis addr.\n"},
+    {&microbit_i2c_write_obj, "Use write(addr, buf) to write the buffer 'buf' to the device whose address\nis addr.\n"},
+    // Image
+    {&microbit_image_type, "Create and use built-in IMAGES to show on the display. Use:\nImage(\n  '09090:'\n  '99999:'\n  '99999:'\n  '09990:'\n  '00900:')\n...to make a new 5x5 heart image. Numbers go from 0 (off) to 9 (brightest). Note\nthe colon ':' to set the end of a row.\n"},
+    {&microbit_image_width_obj, "Return the width of the image in pixels.\n"},
+    {&microbit_image_height_obj, "Return the height of the image in pixels.\n"},
+    {&microbit_image_get_pixel_obj, "Use get_pixel(x, y) to return the image's brightness at LED pixel (x,y).\nBrightness can be from 0 (LED is off) to 9 (maximum LED brightness).\n"},
+    {&microbit_image_set_pixel_obj, "Use set_pixel(x, y, b) to set the LED pixel (x,y) in the image to brightness\n'b' which can be set between 0 (off) to 9 (full brightness).\n"},
+    {&microbit_image_shift_left_obj, "Use shift_left(i) to make a copy of the image but moved 'i' pixels to the left.\n"},
+    {&microbit_image_shift_right_obj, "Use shift_right(i) to make a copy of the image but moved 'i' pixels to\nthe right.\n"},
+    {&microbit_image_shift_up_obj, "Use shift_up(i) to make a copy of the image but moved 'i' pixels up.\n"},
+    {&microbit_image_shift_down_obj, "Use shift_down(i) to make a copy of the image but moved 'i' pixels down.\n"},
+    {&microbit_image_copy_obj, "Use copy() to make a new exact copy of the image.\n"},
+    {&microbit_image_crop_obj, "Use crop(x1, y1, x2, y2) to make a cut-out copy of the image where coordinate\n(x1,y1) is the top left corner of the cut-out area and coordinate (x2,y2) is the\nbottom right corner.\n"},
+    {&microbit_image_invert_obj, "Use invert() to make a negative copy of the image. Where a pixel was bright or\non in the original, it is dim or off in the negative copy.\n"},
+    // TODO: Check Image.slice
+    // uart
+    {&microbit_uart_obj, "Communicate with a serial device connected to micro:bit's I/O pins.\n"},
+    {&microbit_uart_init_obj, "Use init() to set up communication. Use pins 0 (TX) and 1 (RX) with a baud\nrate of 9600.\nOverride the defaults for 'baudrate', 'parity' and 'pins'.\n"},
+    {&microbit_uart_any_obj, "If there are incoming characters waiting to be read, any() will return True.\nOtherwise, returns False.\n"},
+    {&mp_stream_read_obj, "Use read() to read characters.\nUse read(n) to read, at most, 'n' bytes of data.\n"},
+    {&mp_stream_readall_obj, "Use readall() to read as much data as possible.\n"},
+    {&mp_stream_unbuffered_readline_obj, "Use readline() to read a line that ends with a newline character.\n"},
+    {&mp_stream_readinto_obj, "Use readinto(buf) to read bytes into the buffer 'buf'.\nUse readinto(buff, n) to read, at most, 'n' number of bytes into 'buf'.\n"},
+    {&mp_stream_write_obj, "Use write(buf) to write the bytes in buffer 'buf' to the connected device.\n"},
 };
 
 STATIC void pyb_help_print_info_about_object(mp_obj_t name_o, mp_obj_t value) {

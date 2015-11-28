@@ -168,6 +168,25 @@ MP_DECLARE_CONST_FUN_OBJ(microbit_pin_set_analog_period_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_pin_set_analog_period_microseconds_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_i2c_read_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_i2c_write_obj);
+MP_DECLARE_CONST_FUN_OBJ(microbit_image_width_obj);
+MP_DECLARE_CONST_FUN_OBJ(microbit_image_height_obj);
+MP_DECLARE_CONST_FUN_OBJ(microbit_image_get_pixel_obj);
+MP_DECLARE_CONST_FUN_OBJ(microbit_image_set_pixel_obj);
+MP_DECLARE_CONST_FUN_OBJ(microbit_image_shift_left_obj);
+MP_DECLARE_CONST_FUN_OBJ(microbit_image_shift_right_obj);
+MP_DECLARE_CONST_FUN_OBJ(microbit_image_shift_up_obj);
+MP_DECLARE_CONST_FUN_OBJ(microbit_image_shift_down_obj);
+MP_DECLARE_CONST_FUN_OBJ(microbit_image_copy_obj);
+MP_DECLARE_CONST_FUN_OBJ(microbit_image_crop_obj);
+MP_DECLARE_CONST_FUN_OBJ(microbit_image_invert_obj);
+MP_DECLARE_CONST_FUN_OBJ(microbit_image_slice_obj);
+MP_DECLARE_CONST_FUN_OBJ(microbit_uart_init_obj);
+MP_DECLARE_CONST_FUN_OBJ(microbit_uart_any_obj);
+MP_DECLARE_CONST_FUN_OBJ(mp_stream_read_obj);
+MP_DECLARE_CONST_FUN_OBJ(mp_stream_readall_obj);
+MP_DECLARE_CONST_FUN_OBJ(mp_stream_unbuffered_readline_obj);
+MP_DECLARE_CONST_FUN_OBJ(mp_stream_readinto_obj);
+MP_DECLARE_CONST_FUN_OBJ(mp_stream_write_obj);
 
 extern const mp_obj_module_t microbit_module;
 

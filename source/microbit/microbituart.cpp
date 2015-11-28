@@ -93,7 +93,7 @@ STATIC mp_obj_t microbit_uart_any(mp_obj_t self_in) {
         return mp_const_false;
     }
 }
-STATIC MP_DEFINE_CONST_FUN_OBJ_1(microbit_uart_any_obj, microbit_uart_any);
+MP_DEFINE_CONST_FUN_OBJ_1(microbit_uart_any_obj, microbit_uart_any);
 
 STATIC const mp_map_elem_t microbit_uart_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_init), (mp_obj_t)&microbit_uart_init_obj },
