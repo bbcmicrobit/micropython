@@ -91,18 +91,18 @@ STATIC const mp_doc_t help_table_instances[] = {
     {&microbit_compass_is_calibrated_obj, "If micro:bit's compass is_calibrated() and adjusted for accuracy, return True.\nIf compass hasn't been adjusted for accuracy, return False.\n"},
     {&microbit_compass_calibrate_obj, "If micro:bit is confused, calibrate() the compass to adjust the its accuracy.\n"},
     {&microbit_compass_is_calibrating_obj, "If micro:bit's compass is_calibrating() its accuracy, it sends True.\nIf it's not busy calibrating things, it sends False.\n"},
-    {&microbit_compass_clear_calibration_obj, "Reset micro:bit's compass using clear_calibration() command. Run calibrate() to improve accuracy.\n"},
+    {&microbit_compass_clear_calibration_obj, "Reset micro:bit's compass using clear_calibration() command.\nRun calibrate() to improve accuracy.\n"},
     {&microbit_compass_get_x_obj, "Return magnetic field detected along micro:bit's X axis.\nUsually, the compass returns the earth's magnetic field in micro-Tesla units.\nUnless...a strong magnet is nearby!\n"},
     {&microbit_compass_get_y_obj, "Return magnetic field detected along micro:bit's Y axis.\nUsually, the compass returns the earth's magnetic field in micro-Tesla units.\nUnless...a strong magnet is nearby!\n"},
     {&microbit_compass_get_z_obj, "Return magnetic field detected along micro:bit's Z axis.\nUsually, the compass returns the earth's magnetic field in micro-Tesla units.\nUnless...a strong magnet is nearby!\n"},
     // Display 5x5 LED grid
     {&microbit_display_obj, "micro:bit's 5x5 LED display.\n"},
-    {&microbit_display_show_obj, "Use show(s) to print the string 's' to the display. Try show('Hello!').\nUse show(s, i) to show string 's', one character at a time with a delay of 'i' milliseconds.\n"},
-    {&microbit_display_scroll_obj, "Use scroll(s) to scroll the string 's' across the display.\nUse scroll(s, i) to scroll string 's' with a delay of 'i' milliseconds after each character.\n"},
+    {&microbit_display_show_obj, "Use show(s) to print the string 's' to the display. Try show('Hello!').\nUse show(s, i) to show string 's', one character at a time with a delay of\n'i' milliseconds.\n"},
+    {&microbit_display_scroll_obj, "Use scroll(s) to scroll the string 's' across the display.\nUse scroll(s, i) to scroll string 's' with a delay of 'i' milliseconds after\neach character.\n"},
     {&microbit_display_clear_obj, "Use clear() to clear micro:bit's display.\n"},
-    {&microbit_display_animate_obj, "Use animate(img, delay, stride, start=0, async=False, repeat=False) to animate\n    image 'img' with 'delay' milliseconds and 'stride' pixels offset between\n    frames. Optional: 'start' offset from left hand side, 'async' to run in the\n    background, 'repeat' to loop the animation.\n"},
+    {&microbit_display_animate_obj, "Use animate(img, delay, stride, start=0, async=False, repeat=False) to animate\nimage 'img' with 'delay' milliseconds and 'stride' pixels offset between\nframes. Optional: 'start' offset from left hand side, 'async' to run in the\nbackground, 'repeat' to loop the animation.\n"},
     {&microbit_display_get_pixel_obj, "Use get_brightness(x, y) to return the display's brightness at LED pixel (x,y).\nBrightness can be from 0 (LED is off) to 9 (maximum LED brightness).\n"},
-    {&microbit_display_set_pixel_obj, "Use set_brightness(x, y, b) to set the display at LED pixel (x,y) to brightness 'b'.\nbrightness 'b', which can be set between 0 (off) to 9 (full brightness).\n"},
+    {&microbit_display_set_pixel_obj, "Use set_brightness(x, y, b) to set the display at LED pixel (x,y) to\nbrightness 'b'.\nbrightness 'b', which can be set between 0 (off) to 9 (full brightness).\n"},
     // Pins
     {&microbit_p0_obj, "micro:bit's pin 0 on the gold edge connector.\n"},
     {&microbit_p1_obj, "micro:bit's pin 1 on the gold edge connector.\n"},
@@ -123,11 +123,15 @@ STATIC const mp_doc_t help_table_instances[] = {
     {&microbit_p16_obj, "micro:bit's pin 16 on the gold edge connector.\n"},
     {&microbit_p19_obj, "micro:bit's pin 19 on the gold edge connector.\n"},
     {&microbit_p20_obj, "micro:bit's pin 20 on the gold edge connector.\n"},
-    {&microbit_pin_write_digital_obj, "micro:bit, write_digital(choice) to the pin. You have two 'choice' values, 0 (lo) or 1 (hi).\n"},
+    {&microbit_pin_write_digital_obj, "micro:bit, write_digital(choice) to the pin. You have two 'choice' values,\n0 (lo) or 1 (hi).\n"},
     {&microbit_pin_read_digital_obj, "micro:bit, read_digital() value from the pin as either 0 (lo) or 1 (hi).\n"},
-    {&microbit_pin_write_analog_obj, "micro:bit, write_analog(value) to the pin. You can use a whole number between 0 and 255 as the value.\n"},
-    {&microbit_pin_read_analog_obj, "micro:bit, read_analog() value from the pin. Wow, analog has lots of values (0 - 65535). Digital has only 0 and 1.\n"},
-    {&microbit_pin_is_touched_obj, "If pin is_touched() on micro:bit, return True. If nothing is touching the pin, return False.\n"},
+    {&microbit_pin_write_analog_obj, "micro:bit, write_analog(value) to the pin. You can use a whole number between\n0 and 255 as the value.\n"},
+    {&microbit_pin_read_analog_obj, "micro:bit, read_analog() value from the pin. Wow, analog has lots of values\n(0 - 65535). Digital has only 0 and 1.\n"},
+    {&microbit_pin_is_touched_obj, "If pin is_touched() on micro:bit, return True. If nothing is touching the pin,\nreturn False.\n"},
+    // I2C
+    {&microbit_i2c_obj, "Communicate with devices connected to micro:bit.\n"},
+    {&microbit_i2c_read_obj, "Use read(addr, n) to read n bytes from the device whose address is addr.\n"},
+    {&microbit_i2c_write_obj, "Use write(addr, buf) to write the buffer buf to the device whose address\nis addr.\n"},
 };
 
 STATIC void pyb_help_print_info_about_object(mp_obj_t name_o, mp_obj_t value) {

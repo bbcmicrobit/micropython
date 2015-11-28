@@ -166,6 +166,8 @@ MP_DECLARE_CONST_FUN_OBJ(microbit_pin_write_analog_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_pin_is_touched_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_pin_set_analog_period_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_pin_set_analog_period_microseconds_obj);
+MP_DECLARE_CONST_FUN_OBJ(microbit_i2c_read_obj);
+MP_DECLARE_CONST_FUN_OBJ(microbit_i2c_write_obj);
 
 extern const mp_obj_module_t microbit_module;
 
