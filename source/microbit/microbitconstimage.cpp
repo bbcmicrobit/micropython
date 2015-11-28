@@ -34,7 +34,7 @@ extern "C" {
 #include "microbitimage.h"
 
 
-#define IMAGE_T const monochrome_5by5_t 
+#define IMAGE_T const monochrome_5by5_t
 
 IMAGE_T microbit_const_image_heart_obj = SMALL_IMAGE(
     0,1,0,1,0,
@@ -442,6 +442,114 @@ IMAGE_T microbit_const_image_target_obj = SMALL_IMAGE(
     1,1,0,1,1,
     0,1,1,1,0,
     0,0,1,0,0
+);
+
+/*
+The following images were designed by Abbie Brooks.
+*/
+
+IMAGE_T microbit_const_image_tshirt_obj = SMALL_IMAGE(
+    1,1,0,1,1,
+    1,1,1,1,1,
+    0,1,1,1,0,
+    0,1,1,1,0,
+    0,1,1,1,0
+);
+
+IMAGE_T microbit_const_image_rollerskate_obj = SMALL_IMAGE(
+    0,0,0,1,1,
+    0,0,0,1,1,
+    1,1,1,1,1,
+    1,1,1,1,1,
+    0,1,0,1,0
+);
+
+IMAGE_T microbit_const_image_duck_obj = SMALL_IMAGE(
+    0,1,1,0,0,
+    1,1,1,0,0,
+    0,1,1,1,1,
+    0,1,1,1,0,
+    0,0,0,0,0
+);
+
+IMAGE_T microbit_const_image_house_obj = SMALL_IMAGE(
+    0,0,1,0,0,
+    0,1,1,1,0,
+    1,1,1,1,1,
+    0,1,1,1,0,
+    0,1,0,1,0
+);
+
+IMAGE_T microbit_const_image_tortoise_obj = SMALL_IMAGE(
+    0,0,0,0,0,
+    0,1,1,1,0,
+    1,1,1,1,1,
+    0,1,0,1,0,
+    0,0,0,0,0
+);
+
+IMAGE_T microbit_const_image_butterfly_obj = SMALL_IMAGE(
+    1,1,0,1,1,
+    1,1,1,1,1,
+    0,0,1,0,0,
+    1,1,1,1,1,
+    1,1,0,1,1
+);
+
+IMAGE_T microbit_const_image_stickfigure_obj = SMALL_IMAGE(
+    0,0,1,0,0,
+    1,1,1,1,1,
+    0,0,1,0,0,
+    0,1,0,1,0,
+    1,0,0,0,1
+);
+
+IMAGE_T microbit_const_image_ghost_obj = SMALL_IMAGE(
+    1,1,1,1,1,
+    1,0,1,0,1,
+    1,1,1,1,1,
+    1,1,1,1,1,
+    1,0,1,0,1
+);
+
+IMAGE_T microbit_const_image_sword_obj = SMALL_IMAGE(
+    0,0,1,0,0,
+    0,0,1,0,0,
+    0,0,1,0,0,
+    0,1,1,1,0,
+    0,0,1,0,0
+);
+
+IMAGE_T microbit_const_image_giraffe_obj = SMALL_IMAGE(
+    1,1,0,0,0,
+    0,1,0,0,0,
+    0,1,0,0,0,
+    0,1,1,1,0,
+    0,1,0,1,0
+);
+
+IMAGE_T microbit_const_image_skull_obj = SMALL_IMAGE(
+    0,1,1,1,0,
+    1,0,1,0,1,
+    1,1,1,1,1,
+    0,1,1,1,0,
+    0,1,1,1,0
+);
+
+IMAGE_T microbit_const_image_umbrella_obj = SMALL_IMAGE(
+    0,1,1,1,0,
+    1,1,1,1,1,
+    0,0,1,0,0,
+    1,0,1,0,0,
+    0,1,1,0,0
+);
+
+IMAGE_T microbit_const_image_snake_obj = SMALL_IMAGE(
+    1,1,0,0,0,
+    1,1,0,1,1,
+    0,1,0,1,0,
+    0,1,1,1,0,
+    0,0,0,0,0
 );
 
 }

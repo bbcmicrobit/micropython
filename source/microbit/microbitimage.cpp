@@ -518,6 +518,19 @@ STATIC const mp_map_elem_t microbit_image_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_XMAS), (mp_obj_t)&microbit_const_image_xmas_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_PACMAN), (mp_obj_t)&microbit_const_image_pacman_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_TARGET), (mp_obj_t)&microbit_const_image_target_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_TSHIRT), (mp_obj_t)&microbit_const_image_tshirt_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_ROLLERSKATE), (mp_obj_t)&microbit_const_image_rollerskate_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_DUCK), (mp_obj_t)&microbit_const_image_duck_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_HOUSE), (mp_obj_t)&microbit_const_image_house_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_TORTOISE), (mp_obj_t)&microbit_const_image_tortoise_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_BUTTERFLY), (mp_obj_t)&microbit_const_image_butterfly_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_STICKFIGURE), (mp_obj_t)&microbit_const_image_stickfigure_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_GHOST), (mp_obj_t)&microbit_const_image_ghost_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_SWORD), (mp_obj_t)&microbit_const_image_sword_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_GIRAFFE), (mp_obj_t)&microbit_const_image_giraffe_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_SKULL), (mp_obj_t)&microbit_const_image_skull_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_UMBRELLA), (mp_obj_t)&microbit_const_image_umbrella_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_SNAKE), (mp_obj_t)&microbit_const_image_snake_obj },
 };
 
 STATIC MP_DEFINE_CONST_DICT(microbit_image_locals_dict, microbit_image_locals_dict_table);
