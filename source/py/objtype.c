@@ -245,7 +245,7 @@ mp_obj_t mp_obj_instance_make_new(mp_obj_t self_in, mp_uint_t n_args, mp_uint_t 
 
     mp_obj_instance_t *o = mp_obj_new_instance(self_in, num_native_bases);
 
-    // This executes only "__new__" part of obejection creation.
+    // This executes only "__new__" part of object creation.
     // TODO: This won't work will for classes with native bases.
     // TODO: This is hack, should be resolved along the lines of
     // https://github.com/micropython/micropython/issues/606#issuecomment-43685883
