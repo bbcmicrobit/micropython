@@ -186,7 +186,7 @@ STATIC void indent_pop(mp_lexer_t *lex) {
 //     e<op> = end with <op>, if this opchar matches then end
 //     E<op> = mandatory end with <op>, this opchar must match, then end
 //     c<op> = continue with <op>, if this opchar matches then continue matching
-// this means if the start of two ops are the same then they are equal til the last char
+// this means if the start of two ops are the same then they are equal till the last char
 
 STATIC const char *tok_enc =
     "()[]{},:;@~" // singles

@@ -38,7 +38,7 @@ typedef struct _greyscale_t {
     uint8_t byte_data[]; /* Static initializer for this will have to be C, not C++ */
     void clear();
     
-    /* Thiese are internal methods and it is up to the caller to validate the inputs */
+    /* These are internal methods and it is up to the caller to validate the inputs */
     uint8_t getPixelValue(mp_int_t x, mp_int_t y);
     void setPixelValue(mp_int_t x, mp_int_t y, mp_int_t val);
 } greyscale_t;

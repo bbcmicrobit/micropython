@@ -32,7 +32,7 @@
 
 /// \module cmath - mathematical functions for complex numbers
 ///
-/// The `cmath` module provides some basic mathematical funtions for
+/// The `cmath` module provides some basic mathematical functions for
 /// working with complex numbers.
 
 /// \function phase(z)

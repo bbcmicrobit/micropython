@@ -21,7 +21,7 @@ def conway_step():
     global arena1, arena2
     for i in range(5 * 5): # loop over pixels
         i = 8 + (i // 5) * 7 + i % 5
-        # count number of neigbours
+        # count number of neighbours
         num_neighbours = (arena1[i - 8] +
                 arena1[i - 7] +
                 arena1[i - 6] +
@@ -36,7 +36,7 @@ def conway_step():
         if self and not (2 <= num_neighbours <= 3):
             arena2[i] = 0 # not enough, or too many neighbours: cell dies
         elif not self and num_neighbours == 3:
-            arena2[i] = 1 # exactly 3 neigbours around an empty cell: cell is born
+            arena2[i] = 1 # exactly 3 neighbours around an empty cell: cell is born
         else:
             arena2[i] = self # stay as-is
     # swap the buffers (arena1 is now the new one to display)

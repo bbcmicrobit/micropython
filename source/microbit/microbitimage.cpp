@@ -219,7 +219,7 @@ STATIC microbit_image_obj_t *image_from_parsed_str(const char *s, mp_int_t len) 
         }
     }
     if (line_len) {
-        // Omitted trainling newline
+        // Omitted trailing newline
         ++h;
         w = max(line_len, w); 
     }
@@ -273,7 +273,7 @@ STATIC mp_obj_t microbit_image_make_new(mp_obj_t type_in, mp_uint_t n_args, mp_u
                 const char *str = mp_obj_str_get_data(args[0], &len);
                 // make image from string
                 if (len == 1) {
-                    /* For a single charater, return the font glyph */
+                    /* For a single character, return the font glyph */
                     return microbit_image_for_char(str[0]);
                 } else {
                     /* Otherwise parse the image description string */

@@ -377,7 +377,7 @@ STATIC void mpn_div(mpz_dig_t *num_dig, mp_uint_t *num_len, mpz_dig_t *den_dig, 
         }
     }
 
-    // normalise denomenator (leading bit of leading digit is 1)
+    // normalise denominator (leading bit of leading digit is 1)
     for (mpz_dig_t *den = den_dig, carry = 0; den < den_dig + den_len; ++den) {
         mpz_dig_t d = *den;
         *den = ((d << norm_shift) | carry) & DIG_MASK;
@@ -504,7 +504,7 @@ STATIC void mpn_div(mpz_dig_t *num_dig, mp_uint_t *num_len, mpz_dig_t *den_dig, 
         --(*num_len);
     }
 
-    // unnormalise denomenator
+    // unnormalise denominator
     for (mpz_dig_t *den = den_dig + den_len - 1, carry = 0; den >= den_dig; --den) {
         mpz_dig_t d = *den;
         *den = ((d >> norm_shift) | carry) & DIG_MASK;

@@ -235,7 +235,7 @@ static inline bool mp_obj_is_integer(mp_const_obj_t o) { return MP_OBJ_IS_INT(o)
         }, \
     }
 
-// These macros are used to declare and define constant staticmethond and classmethod objects
+// These macros are used to declare and define constant staticmethod and classmethod objects
 // You can put "static" in front of the definitions to make them local
 
 #define MP_DECLARE_CONST_STATICMETHOD_OBJ(obj_name) extern const mp_obj_static_class_method_t obj_name
@@ -254,7 +254,7 @@ typedef struct _mp_map_elem_t {
 // TODO maybe have a truncated mp_map_t for fixed tables, since alloc=used
 // put alloc last in the structure, so the truncated version does not need it
 // this would save 1 ROM word for all ROM objects that have a locals_dict
-// would also need a trucated dict structure
+// would also need a truncated dict structure
 
 typedef struct _mp_map_t {
     mp_uint_t all_keys_are_qstrs : 1;

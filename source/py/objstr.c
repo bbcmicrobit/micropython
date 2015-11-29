@@ -1752,7 +1752,7 @@ STATIC mp_obj_t str_islower(mp_obj_t self_in) {
 }
 
 #if MICROPY_CPYTHON_COMPAT
-// These methods are superfluous in the presense of str() and bytes()
+// These methods are superfluous in the presence of str() and bytes()
 // constructors.
 // TODO: should accept kwargs too
 STATIC mp_obj_t bytes_decode(mp_uint_t n_args, const mp_obj_t *args) {

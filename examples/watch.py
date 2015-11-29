@@ -59,10 +59,10 @@ mode = 0
 modes = {0:"clock", 1:"set h", 2:"mx10", 3:"m"}
 
 
-def decode_time(miliseconds):
-    """Converts a time in miliseconds into a string with hours:minutes,"""
-    mins = int(miliseconds / (1000 * 60) % 60)
-    hrs = int(miliseconds / (1000 * 60 * 60) % 24)
+def decode_time(milliseconds):
+    """Converts a time in milliseconds into a string with hours:minutes,"""
+    mins = int(milliseconds / (1000 * 60) % 60)
+    hrs = int(milliseconds / (1000 * 60 * 60) % 24)
     return "{h:0>2}:{m:0>2}".format(h=hrs, m=mins)
 
 

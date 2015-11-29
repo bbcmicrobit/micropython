@@ -153,7 +153,7 @@ inline void microbit_display_obj_t::setPinsForRow(uint8_t brightness) {
         }
     }
 
-    // Wwrite the new bit pattern.
+    // Write the new bit pattern.
     // Set port 0 4-7 and retain lower 4 bits.
     nrf_gpio_port_write(NRF_GPIO_PORT_SELECT_PORT0, (~column_strobe<<4 & 0xF0) | (nrf_gpio_port_read(NRF_GPIO_PORT_SELECT_PORT0) & 0x0F));
 
