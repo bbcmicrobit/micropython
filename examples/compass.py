@@ -9,7 +9,7 @@
 """
 from microbit import *
 
-needles = Image.CLOCKFACE
+needles = Image.ALL_CLOCKS
 
 # You need to spin the microbit about a few times to help calibrate the compass
 

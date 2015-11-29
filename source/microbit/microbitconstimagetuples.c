@@ -25,7 +25,7 @@
 #include "py/runtime.h"
 #include "modmicrobit.h"
 
-const mp_obj_tuple_t microbit_const_image_clockface_tuple_obj = {
+const mp_obj_tuple_t microbit_const_image_all_clocks_tuple_obj = {
     {&mp_type_tuple},
     .len = 12,
     .items = {
@@ -44,7 +44,7 @@ const mp_obj_tuple_t microbit_const_image_clockface_tuple_obj = {
     }
 };
 
-const mp_obj_tuple_t microbit_const_image_arrows_tuple_obj = {
+const mp_obj_tuple_t microbit_const_image_all_arrows_tuple_obj = {
     {&mp_type_tuple},
     .len = 8,
     .items = {
