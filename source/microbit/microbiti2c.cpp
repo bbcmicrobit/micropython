@@ -51,10 +51,10 @@ STATIC mp_obj_t microbit_i2c_read(mp_uint_t n_args, const mp_obj_t *pos_args, mp
     // do the I2C read
     vstr_t vstr;
     vstr_init_len(&vstr, args[1].u_int);
-    self->i2c->read(args[0].u_int, vstr.buf, vstr.len, args[2].u_bool);
-
-    // TODO check result of read and raise exception if it failed
-
+    int err = self->i2c->read(args[0].u_int, vstr.buf, vstr.len, args[2].u_bool);
+    if (err != MICROBIT_OK) {
+        nlr_raise(mp_obj_new_exception_msg_varg(&mp_type_OSError, "I2C read failed with error code %d", err));
+    }
     // return bytes object with read data
     return mp_obj_new_str_from_vstr(&mp_type_bytes, &vstr);
 }
@@ -75,11 +75,12 @@ STATIC mp_obj_t microbit_i2c_write(mp_uint_t n_args, const mp_obj_t *pos_args, m
     // do the I2C write
     mp_buffer_info_t bufinfo;
     mp_get_buffer_raise(args[1].u_obj, &bufinfo, MP_BUFFER_READ);
-    self->i2c->write(args[0].u_int, (char*)bufinfo.buf, bufinfo.len, args[2].u_bool);
-
-    // TODO check result of write and raise exception if it failed
-
+    int err = self->i2c->write(args[0].u_int, (char*)bufinfo.buf, bufinfo.len, args[2].u_bool);
+    if (err != MICROBIT_OK) {
+        nlr_raise(mp_obj_new_exception_msg_varg(&mp_type_OSError, "I2C write failed with error code %d", err));
+    }
     return mp_const_none;
+
 }
 MP_DEFINE_CONST_FUN_OBJ_KW(microbit_i2c_write_obj, 1, microbit_i2c_write);
 
