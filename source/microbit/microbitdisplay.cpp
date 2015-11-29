@@ -35,7 +35,6 @@ extern "C" {
 #include "microbitimage.h"
 #include "microbitdisplay.h"
 
-
 void microbit_display_show(microbit_display_obj_t *display, microbit_image_obj_t *image) {
     mp_int_t w = min(image->width(), 5);
     mp_int_t h = min(image->height(), 5);
@@ -60,41 +59,65 @@ void microbit_display_show(microbit_display_obj_t *display, microbit_image_obj_t
     display->brightnesses = brightnesses;
 }
 
-mp_obj_t microbit_display_show_func(mp_uint_t n_args, const mp_obj_t *args) {
-    // TODO: Support async mode.
-
-    microbit_display_obj_t *self = (microbit_display_obj_t*)args[0];
+mp_obj_t microbit_display_show_func(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
 
     // Cancel any animations.
     MP_STATE_PORT(async_data)[0] = NULL;
     MP_STATE_PORT(async_data)[1] = NULL;
 
-    if (MP_OBJ_IS_STR(args[1])) {
+    static const mp_arg_t show_allowed_args[] = {
+        { MP_QSTR_image,    MP_ARG_REQUIRED | MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
+        { MP_QSTR_delay,    MP_ARG_INT, {.u_int = 0} },
+        { MP_QSTR_wait,     MP_ARG_KW_ONLY | MP_ARG_BOOL, {.u_bool = true} },
+    };
+
+    // Parse the args.
+    microbit_display_obj_t *self = (microbit_display_obj_t*)pos_args[0];
+    mp_arg_val_t args[MP_ARRAY_SIZE(show_allowed_args)];
+    mp_arg_parse_all(n_args - 1, pos_args + 1, kw_args, MP_ARRAY_SIZE(show_allowed_args), show_allowed_args, args);
+
+    mp_obj_t image = args[0].u_obj;
+    mp_int_t delay = args[1].u_int;
+    bool wait = args[2].u_bool;
+
+    if (MP_OBJ_IS_STR(image)) {
         // arg is a string object
         mp_uint_t len;
-        const char *str = mp_obj_str_get_data(args[1], &len);
+        const char *str = mp_obj_str_get_data(image, &len);
         if (len == 0) {
             // There are no chars; do nothing.
+            return mp_const_none;
         } else if (len == 1) {
-            // A single char; convert to an image and print that.
-            microbit_display_show(self, microbit_image_for_char(str[0]));
+            if (delay == 0) {
+                // A single char; convert to an image and print that.
+                image = microbit_image_for_char(str[0]);
+                goto single_image;
+            }
         } else {
-            mp_int_t delay;
-            if (n_args == 3) {
-                delay = mp_obj_get_int(args[2]);
-            } else {
+            if (delay == 0) {
                 delay = MICROBIT_DEFAULT_PRINT_SPEED;
             }
-            microbit_display_animate(self, args[1], delay, false);
         }
-    } else if (mp_obj_get_type(args[1]) == &microbit_image_type) {
-        microbit_display_show(self, (microbit_image_obj_t *)args[1]);
-    } else {
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_TypeError, "expecting an image or a string."));
+    } else if (mp_obj_get_type(image) == &microbit_image_type) {
+        if (delay == 0) {
+            goto single_image;
+        }
+        image = mp_obj_new_tuple(1, &image);
     }
+    else {
+        if (delay == 0) {
+            delay = MICROBIT_DEFAULT_PRINT_SPEED;
+        }
+    }
+    // iterable:
+    microbit_display_animate(self, image, delay, wait);
+    return mp_const_none;
+
+single_image:
+    microbit_display_show(self, (microbit_image_obj_t *)image);
     return mp_const_none;
 }
-MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_display_show_obj, 2, 3, microbit_display_show_func);
+MP_DEFINE_CONST_FUN_OBJ_KW(microbit_display_show_obj, 1, microbit_display_show_func);
 
 static uint8_t async_mode;
 static mp_obj_t async_iterator = NULL;
@@ -249,7 +272,6 @@ static void microbit_display_update(void) {
              * If an exception is raised here, then a reset is the only way to recover. */
             mp_obj_t obj = mp_iternext(async_iterator);
             if (obj == MP_OBJ_STOP_ITERATION) {
-                microbit_display_show(display, BLANK_IMAGE);
                 async_stop();
             } else if (mp_obj_get_type(obj) == &microbit_image_type) {
                 microbit_display_show(display, (microbit_image_obj_t *)obj);
