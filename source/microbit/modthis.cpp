@@ -29,6 +29,7 @@
 
 extern "C" {
 
+#include "microbit/modmicrobit.h"
 #include "py/obj.h"
 
 STATIC mp_obj_t this__init__(void) {
@@ -60,7 +61,7 @@ STATIC mp_obj_t this_authors(void) {
     mp_printf(&mp_plat_print, "%s", authors_text);
     return mp_const_none;
 }
-STATIC MP_DEFINE_CONST_FUN_OBJ_0(this_authors_obj, this_authors);
+MP_DEFINE_CONST_FUN_OBJ_0(this_authors_obj, this_authors);
 
 STATIC const mp_map_elem_t this_module_globals_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR___name__), MP_OBJ_NEW_QSTR(MP_QSTR_this) },

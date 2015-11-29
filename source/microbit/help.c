@@ -168,10 +168,10 @@ STATIC const mp_doc_t help_table_instances[] = {
     {&antigravity_module, "See: http://xkcd.com/353/\n"},
     // This module
     {&this_module, "The Zen of Python defines what it is to be Pythonic. It wouldn't fit on this\ndevice so we've written a Zen of MicroPython instead.\n"},
-    //{&this_authors_obj, "Use authors() to reveal the names of the people who created this software.\n"},
+    {&this_authors_obj, "Use authors() to reveal the names of the people who created this software.\n"},
     // Love module
     {&love_module, "All you need. Use love.badaboom() to repeat the effect.\n"},
-    //{&love_badaboom_obj, "Hear my soul speak:\nThe very instant that I saw you, did\nMy heart fly to your service.\n"},
+    {&love_badaboom_obj, "Hear my soul speak:\nThe very instant that I saw you, did\nMy heart fly to your service.\n"},
 };
 
 STATIC void pyb_help_print_info_about_object(mp_obj_t name_o, mp_obj_t value) {

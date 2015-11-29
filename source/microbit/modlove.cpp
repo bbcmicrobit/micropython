@@ -30,6 +30,7 @@
 
 extern "C" {
 
+#include "microbit/modmicrobit.h"
 #include "py/mphal.h"
 #include "microbitimage.h"
 #include "microbitdisplay.h"
