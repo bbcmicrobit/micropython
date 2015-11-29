@@ -28,7 +28,7 @@ Functions
     if it has finished or hasn't been started yet.
 
 
-.. py:function:: clear_calibrarion()
+.. py:function:: clear_calibration()
 
     Undoes the calibration, making the compass uncalibrated again.
 

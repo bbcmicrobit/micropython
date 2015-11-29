@@ -519,7 +519,7 @@ STATIC bool fold_constants(parser_t *parser, pt_t *pt, size_t pt_off, const rule
             } else if (tok == MP_TOKEN_OP_DBL_MORE) {
                 // int >> int
                 if (arg1 >= (mp_int_t)BITS_PER_WORD) {
-                    // Shifting to big amounts is underfined behavior
+                    // Shifting to big amounts is undefined behavior
                     // in C and is CPU-dependent; propagate sign bit.
                     arg1 = BITS_PER_WORD - 1;
                 }
@@ -737,7 +737,7 @@ STATIC void pt_ins_rule(parser_t *parser, pt_t *pt, size_t pt_off, mp_uint_t src
             } else if (tok == MP_TOKEN_OP_DBL_MORE) {
                 // int >> int
                 if (arg1 >= (mp_int_t)BITS_PER_WORD) {
-                    // Shifting to big amounts is underfined behavior
+                    // Shifting to big amounts is undefined behavior
                     // in C and is CPU-dependent; propagate sign bit.
                     arg1 = BITS_PER_WORD - 1;
                 }

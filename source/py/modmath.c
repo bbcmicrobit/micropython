@@ -32,7 +32,7 @@
 
 /// \module math - mathematical functions
 ///
-/// The `math` module provides some basic mathematical funtions for
+/// The `math` module provides some basic mathematical functions for
 /// working with floating-point numbers.
 
 //TODO: Change macros to check for overflow and raise OverflowError or RangeError

@@ -2,11 +2,11 @@
   * MicroBitCustomConfig.h
   *
   * This file is automatically included by the microbit DAL compilation
-  * process. Use this to define any custom configration options needed
+  * process. Use this to define any custom configuration options needed
   * for your build of the micro:bit runtime.
   *
   * See microbit-dal/inc/MicroBitConfig.h for a complete list of options.
-  * Any options you define here will take prescedence over those defined there.
+  * Any options you define here will take precedence over those defined there.
   */
 
 #ifndef MICROBIT_CUSTOM_CONFIG_H

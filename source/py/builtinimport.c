@@ -230,7 +230,7 @@ mp_obj_t mp_builtin___import__(mp_uint_t n_args, const mp_obj_t *args) {
     if (level != 0) {
         // What we want to do here is to take name of current module,
         // chop <level> trailing components, and concatenate with passed-in
-        // module name, thus resolving relative import name into absolue.
+        // module name, thus resolving relative import name into absolute.
         // This even appears to be correct per
         // http://legacy.python.org/dev/peps/pep-0328/#relative-imports-and-name
         // "Relative imports use a module's __name__ attribute to determine that

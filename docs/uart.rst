@@ -34,7 +34,7 @@ Functions
         * 115200
 
     The ``bits`` defines the size of bytes being transmitted, and the board
-    only supports 8. The ``parity`` parameter defines how partity is checked,
+    only supports 8. The ``parity`` parameter defines how parity is checked,
     and it can be ``None``, ``microbit.uart.ODD`` or ``microbit.uart.EVEN``.
     The ``stop`` parameter tells the number of stop bits, and has to be 1 for
     this board.

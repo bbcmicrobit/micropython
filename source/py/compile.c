@@ -637,7 +637,7 @@ STATIC void compile_funcdef_lambdef_param(compiler_t *comp, const byte *p) {
 
         } else {
             // this parameter has a default value
-            // in CPython, None (and True, False?) as default parameters are loaded with LOAD_NAME; don't understandy why
+            // in CPython, None (and True, False?) as default parameters are loaded with LOAD_NAME; don't understand why
 
             if (comp->have_star) {
                 comp->num_dict_params += 1;
@@ -1095,7 +1095,7 @@ STATIC void compile_import_name(compiler_t *comp, const byte *p, const byte *pto
 STATIC void compile_import_from(compiler_t *comp, const byte *p, const byte *ptop) {
     const byte *p_import_source = p;
 
-    // extract the preceeding .'s (if any) for a relative import, to compute the import level
+    // extract the preceding .'s (if any) for a relative import, to compute the import level
     uint import_level = 0;
     do {
         const byte *p_rel;
@@ -3202,7 +3202,7 @@ mp_obj_t mp_compile(mp_parse_tree_t *parse_tree, qstr source_file, uint emit_opt
             compile_scope(comp, s, MP_PASS_SCOPE);
         }
 
-        // update maximim number of labels needed
+        // update maximum number of labels needed
         if (comp->next_label > max_num_labels) {
             max_num_labels = comp->next_label;
         }

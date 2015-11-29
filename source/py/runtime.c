@@ -331,7 +331,7 @@ mp_obj_t mp_binary_op(mp_uint_t op, mp_obj_t lhs, mp_obj_t rhs) {
                     } else {
                         // standard precision is enough for right-shift
                         if (rhs_val >= (mp_int_t)BITS_PER_WORD) {
-                            // Shifting to big amounts is underfined behavior
+                            // Shifting to big amounts is undefined behavior
                             // in C and is CPU-dependent; propagate sign bit.
                             rhs_val = BITS_PER_WORD - 1;
                         }

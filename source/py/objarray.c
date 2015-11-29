@@ -50,7 +50,7 @@
 // Note that we don't handle the case where the original buffer might change
 // size due to a resize of the original parent object.
 
-// make (& TYPECODE_MASK) a null operation if memorview not enabled
+// make (& TYPECODE_MASK) a null operation if memoryview not enabled
 #if MICROPY_PY_BUILTINS_MEMORYVIEW
 #define TYPECODE_MASK (0x7f)
 #else
