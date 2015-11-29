@@ -109,7 +109,7 @@ extern const struct _mp_obj_module_t neopixel_module;
 #define MICROPY_PORT_ROOT_POINTERS \
     const char *readline_hist[8]; \
     mp_obj_t keyboard_interrupt_obj; \
-    void *async_data[3]; \
+    void *async_data[2]; \
 
 // We need to provide a declaration/definition of alloca()
 #include <alloca.h>
