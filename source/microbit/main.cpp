@@ -2,6 +2,8 @@
 #include "microbitobj.h"
 #include "microbitdisplay.h"
 #include "microbitmusic.h"
+#include "microbitevents.h"
+#include "modmicrobit.h"
 
 extern "C" {
 #include "lib/ticker.h"
@@ -65,6 +67,9 @@ void microbit_ticker(void) {
 
     // Update the music
     microbit_music_tick();
+
+    // Update the events
+    microbit_events_tick();
 }
 
 // We need to override this function so that the linker does not pull in

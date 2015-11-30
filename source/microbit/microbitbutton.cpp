@@ -30,13 +30,7 @@ extern "C" {
 
 #include "py/runtime.h"
 #include "modmicrobit.h"
-
-typedef struct _microbit_button_obj_t {
-    mp_obj_base_t base;
-    MicroBitButton *button;
-    /* Stores pressed count in top 31 bits and was_pressed in the low bit */
-    mp_uint_t pressed;
-} microbit_button_obj_t;
+#include "microbitbutton.h"
 
 mp_obj_t microbit_button_is_pressed(mp_obj_t self_in) {
     microbit_button_obj_t *self = (microbit_button_obj_t*)self_in;
@@ -123,4 +117,14 @@ microbit_button_obj_t microbit_button_b_obj = {
     .pressed = 0
 };
 
+microbit_button_obj_t *microbit_get_button_by_id(uint8_t button_id) {
+	switch (button_id) {
+		case MICROBIT_ID_BUTTON_A:
+			return &microbit_button_a_obj;
+		case MICROBIT_ID_BUTTON_B:
+			return &microbit_button_b_obj;
+		default:
+			return NULL;
+	}
+};
 }
