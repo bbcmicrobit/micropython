@@ -92,7 +92,7 @@ STATIC const mp_doc_t help_table_instances[] = {
     // Compass 3D direction heading
     {&microbit_compass_obj, "Use micro:bit's compass to detect the direction it is heading in.\nThe compass can detect magnetic fields.\nIt uses the Earth's magnetic field to detect direction.\n"},
     {&microbit_compass_is_calibrated_obj, "If micro:bit's compass is_calibrated() and adjusted for accuracy, return True.\nIf compass hasn't been adjusted for accuracy, return False.\n"},
-    {&microbit_compass_calibrate_obj, "If micro:bit is confused, calibrate() the compass to adjust the its accuracy.\n"},
+    {&microbit_compass_calibrate_obj, "If micro:bit is confused, calibrate() the compass to adjust the its accuracy.\nWhen calibrating, lie it flat and spin it horizontally. During calibration,\ntry not to tilt the compass up and down.\n"},
     {&microbit_compass_is_calibrating_obj, "If micro:bit's compass is_calibrating() its accuracy, it sends True.\nIf it's not busy calibrating things, it sends False.\n"},
     {&microbit_compass_clear_calibration_obj, "Reset micro:bit's compass using clear_calibration() command.\nRun calibrate() to improve accuracy.\n"},
     {&microbit_compass_get_x_obj, "Return magnetic field detected along micro:bit's X axis.\nUsually, the compass returns the earth's magnetic field in micro-Tesla units.\nUnless...a strong magnet is nearby!\n"},
