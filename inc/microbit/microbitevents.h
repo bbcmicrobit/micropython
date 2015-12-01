@@ -13,7 +13,7 @@ typedef struct {
 	event_t *tail;
 } event_queue_t;
 
-typedef uint8_t (*scanner_cb_t)(void*);
+typedef bool (*scanner_cb_t)(void*);
 
 typedef struct scanner_t {
 	uint8_t id;

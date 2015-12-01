@@ -145,10 +145,10 @@ void scanner_list_scan(scanner_list_t *scanner_list) {
 	};
 };
 
-uint8_t button_scanner(void *args) {
+bool button_scanner(void *args) {
 	button_scanner_args_t *button_args = (button_scanner_args_t *)args;
 	microbit_button_obj_t *button = microbit_get_button_by_id(button_args->button_id);
-	uint8_t result;
+	bool result;
 
 	result = button->pressed & 1;
 	button->pressed = button->pressed & -2;  // TODO: only do this if there's a result?
@@ -175,9 +175,9 @@ uint8_t add_button_scanner(uint8_t button_id) {
 	return id;
 }
 
-uint8_t tick_scanner(void *args) {
+bool tick_scanner(void *args) {
 	tick_scanner_args_t *tick_args = (tick_scanner_args_t *)args;
-	uint8_t result;
+	bool result;
 
 	if (tick_args->time_to_pop <= uBit.systemTime()) {
 		tick_args->time_to_pop += tick_args->interval_ms;
