@@ -300,17 +300,6 @@ STATIC mp_obj_t events_events(void) {
 }
 MP_DEFINE_CONST_FUN_OBJ_0(events_events_obj, events_events);
 
-STATIC mp_obj_t events_next_event(void) {
-	uint8_t event_id;
-	event_id = event_queue_dequeue(microbit_events_obj.event_queue);
-	if (event_id == 255) {
-		return mp_const_none;
-	} else {
-		return mp_obj_new_int(event_id);
-	}
-}
-MP_DEFINE_CONST_FUN_OBJ_0(events_next_event_obj, events_next_event);
-
 STATIC mp_obj_t events__init__(void) {
 	event_queue_t *event_queue = event_queue_new();
 	scanner_list_t *scanner_list = scanner_list_new(event_queue);
@@ -326,7 +315,6 @@ STATIC const mp_map_elem_t events_module_globals_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR___name__), MP_OBJ_NEW_QSTR(MP_QSTR_events) },
     { MP_OBJ_NEW_QSTR(MP_QSTR___init__), (mp_obj_t)&events___init___obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_events), (mp_obj_t)&events_events_obj},
-    { MP_OBJ_NEW_QSTR(MP_QSTR_next_event), (mp_obj_t)&events_next_event_obj},
     { MP_OBJ_NEW_QSTR(MP_QSTR_tick), (mp_obj_t)&events_tick_obj},
     { MP_OBJ_NEW_QSTR(MP_QSTR_when_button_a_pressed), (mp_obj_t)&events_when_button_a_pressed_obj},
     { MP_OBJ_NEW_QSTR(MP_QSTR_when_button_b_pressed), (mp_obj_t)&events_when_button_b_pressed_obj},
