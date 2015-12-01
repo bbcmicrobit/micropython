@@ -186,6 +186,84 @@ STATIC mp_obj_t events_when_button_b_pressed(void) {
 }
 MP_DEFINE_CONST_FUN_OBJ_0(events_when_button_b_pressed_obj, events_when_button_b_pressed);
 
+typedef struct _events_t {
+    mp_obj_base_t base;
+} events_t;
+
+typedef struct _events_iterator_t {
+    mp_obj_base_t base;
+    events_t *events;
+} events_iterator_t;
+
+extern const mp_obj_type_t microbit_events_type;
+extern const mp_obj_type_t microbit_events_iterator_type;
+
+mp_obj_t microbit_events(void){
+	events_t *result = m_new_obj(events_t);
+	result->base.type = &microbit_events_type;
+	return result;
+}
+
+STATIC mp_obj_t get_microbit_events_iter(mp_obj_t o_in) {
+    events_t *events = (events_t *)o_in;
+    events_iterator_t *result = m_new_obj(events_iterator_t);
+    result->base.type = &microbit_events_iterator_type;
+    result->events = events;
+    return result;
+}
+
+STATIC mp_obj_t microbit_events_iter_next(mp_obj_t o_in) {
+    // Is there a way to mark o_in as unused?
+    uint8_t event_id;
+    event_id = event_queue_dequeue(microbit_events_obj.event_queue);
+    if (event_id == 255) {
+	    return mp_const_none;
+    } else {
+	    return mp_obj_new_int(event_id);
+    }
+}
+
+const mp_obj_type_t microbit_events_type = {
+    { &mp_type_type },
+    .name = MP_QSTR_events,
+    .print = NULL,
+    .make_new = NULL,
+    .call = NULL,
+    .unary_op = NULL,
+    .binary_op = NULL,
+    .attr = NULL,
+    .subscr = NULL,
+    .getiter = get_microbit_events_iter,
+    .iternext = NULL,
+    .buffer_p = {NULL},
+    .stream_p = NULL,
+    .bases_tuple = MP_OBJ_NULL,
+    MP_OBJ_NULL
+};
+
+const mp_obj_type_t microbit_events_iterator_type = {
+    { &mp_type_type },
+    .name = MP_QSTR_iterator,
+    .print = NULL,
+    .make_new = NULL,
+    .call = NULL,
+    .unary_op = NULL,
+    .binary_op = NULL,
+    .attr = NULL,
+    .subscr = NULL,
+    .getiter = mp_identity,
+    .iternext = microbit_events_iter_next,
+    .buffer_p = {NULL},
+    .stream_p = NULL,
+    .bases_tuple = MP_OBJ_NULL,
+    MP_OBJ_NULL
+};
+
+STATIC mp_obj_t events_events(void) {
+	return microbit_events();
+}
+MP_DEFINE_CONST_FUN_OBJ_0(events_events_obj, events_events);
+
 STATIC mp_obj_t events_next_event(void) {
 	uint8_t event_id;
 	event_id = event_queue_dequeue(microbit_events_obj.event_queue);
@@ -211,6 +289,7 @@ MP_DEFINE_CONST_FUN_OBJ_0(events___init___obj, events__init__);
 STATIC const mp_map_elem_t events_module_globals_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR___name__), MP_OBJ_NEW_QSTR(MP_QSTR_events) },
     { MP_OBJ_NEW_QSTR(MP_QSTR___init__), (mp_obj_t)&events___init___obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_events), (mp_obj_t)&events_events_obj},
     { MP_OBJ_NEW_QSTR(MP_QSTR_next_event), (mp_obj_t)&events_next_event_obj},
     { MP_OBJ_NEW_QSTR(MP_QSTR_when_button_a_pressed), (mp_obj_t)&events_when_button_a_pressed_obj},
     { MP_OBJ_NEW_QSTR(MP_QSTR_when_button_b_pressed), (mp_obj_t)&events_when_button_b_pressed_obj},
