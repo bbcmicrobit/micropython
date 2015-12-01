@@ -50,13 +50,11 @@ event_queue_t *event_queue_new() {
 	return event_queue;
 }
 
-void event_queue_enqueue(event_queue_t *event_queue, uint8_t id) {
+void event_queue_enqueue(event_queue_t *event_queue, uint16_t scanner_id) {
 	event_t *event = (event_t *)malloc(sizeof(event_t));
 	if (!event) {
 		return;  // Should we actually indicate failure?
 	}
-
-	event->id = id;
 
 	if (event_queue->head == NULL) {
 		event->next = NULL;
@@ -69,17 +67,17 @@ void event_queue_enqueue(event_queue_t *event_queue, uint8_t id) {
 	};
 
 	event->prev = NULL;
-	event->id = id;
+	event->scanner_id = scanner_id;
 };
 
-uint8_t event_queue_dequeue(event_queue_t *event_queue) {
+uint16_t event_queue_dequeue(event_queue_t *event_queue) {
 	event_t *event;
-	uint8_t id;
+	uint16_t scanner_id;
 	if (event_queue->tail == NULL) {
-		return -1;
+		return MICROBIT_EVENTS_NO_EVENT;
 	} else {
 		event = event_queue->tail;
-		id = event->id;
+		scanner_id = event->scanner_id;
 		if (event->prev == NULL) {
 			event_queue->head = NULL;
 			event_queue->tail = NULL;
@@ -88,7 +86,7 @@ uint8_t event_queue_dequeue(event_queue_t *event_queue) {
 			event_queue->tail->next = NULL;
 		}
 		free(event);
-		return id;
+		return scanner_id;
 	}
 };
 
@@ -104,7 +102,7 @@ scanner_list_t *scanner_list_new(event_queue_t *event_queue) {
 	return scanner_list;
 }
 
-uint8_t scanner_list_add(scanner_list_t *scanner_list, scanner_cb_t scanner_cb, void *scanner_cb_args) {
+uint16_t scanner_list_add(scanner_list_t *scanner_list, scanner_cb_t scanner_cb, void *scanner_cb_args) {
 	scanner_t *scanner = (scanner_t *)malloc(sizeof(scanner_t));
 
 	if (!scanner) {
@@ -161,8 +159,8 @@ button_scanner_args_t *button_scanner_args(uint8_t button_id) {
 	return args;
 }
 
-uint8_t add_button_scanner(uint8_t button_id) {
-	uint8_t id;
+uint16_t add_button_scanner(uint8_t button_id) {
+	uint16_t id;
 	microbit_button_obj_t *button = microbit_get_button_by_id(button_id);
 
 	button->pressed = button->pressed & -2;
@@ -196,8 +194,8 @@ tick_scanner_args_t *tick_scanner_args(uint16_t interval_ms) {
 	return args;
 }
 
-uint8_t add_tick_scanner(uint16_t interval_ms) {
-	uint8_t id;
+uint16_t add_tick_scanner(uint16_t interval_ms) {
+	uint16_t id;
 	id = scanner_list_add(
 		microbit_events_obj.scanner_list,
 		*tick_scanner,
@@ -250,9 +248,9 @@ STATIC mp_obj_t get_microbit_events_iter(mp_obj_t o_in) {
 
 STATIC mp_obj_t microbit_events_iter_next(mp_obj_t o_in) {
     // Is there a way to mark o_in as unused?
-    uint8_t event_id;
+    uint16_t event_id;
     event_id = event_queue_dequeue(microbit_events_obj.event_queue);
-    if (event_id == 255) {
+    if (event_id == MICROBIT_EVENTS_NO_EVENT) {
 	    return mp_const_none;
     } else {
 	    return mp_obj_new_int(event_id);
