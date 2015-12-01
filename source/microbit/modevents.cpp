@@ -151,7 +151,7 @@ uint8_t button_scanner(void *args) {
 	uint8_t result;
 
 	result = button->pressed & 1;
-	button->pressed = button->pressed & -2;
+	button->pressed = button->pressed & -2;  // TODO: only do this if there's a result?
 	return result;
 }
 
@@ -175,6 +175,42 @@ uint8_t add_button_scanner(uint8_t button_id) {
 	return id;
 }
 
+uint8_t tick_scanner(void *args) {
+	tick_scanner_args_t *tick_args = (tick_scanner_args_t *)args;
+	uint8_t result;
+
+	if (tick_args->time_to_pop <= uBit.systemTime()) {
+		tick_args->time_to_pop += tick_args->interval_ms;
+		result = 1;
+	} else {
+		result = 0;
+	}
+
+	return result;
+}
+
+tick_scanner_args_t *tick_scanner_args(uint16_t interval_ms) {
+	tick_scanner_args_t *args = (tick_scanner_args_t *)malloc(sizeof(tick_scanner_args_t));
+	args->time_to_pop = uBit.systemTime();
+	args->interval_ms = interval_ms;
+	return args;
+}
+
+uint8_t add_tick_scanner(uint16_t interval_ms) {
+	uint8_t id;
+	id = scanner_list_add(
+		microbit_events_obj.scanner_list,
+		*tick_scanner,
+		tick_scanner_args(interval_ms)
+	);
+	return id;
+}
+
+STATIC mp_obj_t events_tick(mp_obj_t ms_in) {
+	mp_int_t interval_ms = mp_obj_get_int(ms_in);
+	return mp_obj_new_int(add_tick_scanner(interval_ms));
+}
+MP_DEFINE_CONST_FUN_OBJ_1(events_tick_obj, events_tick);
 
 STATIC mp_obj_t events_when_button_a_pressed(void) {
 	return mp_obj_new_int(add_button_scanner(MICROBIT_ID_BUTTON_A));
@@ -291,6 +327,7 @@ STATIC const mp_map_elem_t events_module_globals_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR___init__), (mp_obj_t)&events___init___obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_events), (mp_obj_t)&events_events_obj},
     { MP_OBJ_NEW_QSTR(MP_QSTR_next_event), (mp_obj_t)&events_next_event_obj},
+    { MP_OBJ_NEW_QSTR(MP_QSTR_tick), (mp_obj_t)&events_tick_obj},
     { MP_OBJ_NEW_QSTR(MP_QSTR_when_button_a_pressed), (mp_obj_t)&events_when_button_a_pressed_obj},
     { MP_OBJ_NEW_QSTR(MP_QSTR_when_button_b_pressed), (mp_obj_t)&events_when_button_b_pressed_obj},
 };

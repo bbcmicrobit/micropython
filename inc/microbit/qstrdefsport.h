@@ -21,6 +21,7 @@ Q(badaboom)
 
 Q(events)
 Q(next_event)
+Q(tick)
 Q(when_button_a_pressed)
 Q(when_button_b_pressed)
 

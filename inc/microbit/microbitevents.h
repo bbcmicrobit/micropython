@@ -35,6 +35,11 @@ typedef struct _microbit_events_obj_t {
 } microbit_events_obj_t;
 
 typedef struct {
+	uint32_t time_to_pop;
+	uint16_t interval_ms;
+} tick_scanner_args_t;
+
+typedef struct {
 	uint8_t button_id;
 } button_scanner_args_t;
 
