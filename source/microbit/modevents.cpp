@@ -153,23 +153,15 @@ bool button_scanner(void *args) {
 	return result;
 }
 
-button_scanner_args_t *button_scanner_args(uint8_t button_id) {
-	button_scanner_args_t *args = (button_scanner_args_t *)malloc(sizeof(button_scanner_args_t));
-	args->button_id = button_id;
-	return args;
-}
-
 uint16_t add_button_scanner(uint8_t button_id) {
 	uint16_t id;
 	microbit_button_obj_t *button = microbit_get_button_by_id(button_id);
+	button_scanner_args_t *args = (button_scanner_args_t *)malloc(sizeof(button_scanner_args_t));
+	args->button_id = button_id;
 
 	button->pressed = button->pressed & -2;
 
-	id = scanner_list_add(
-		microbit_events_obj.scanner_list,
-		*button_scanner,
-		button_scanner_args(button_id)
-	);
+	id = scanner_list_add(microbit_events_obj.scanner_list, *button_scanner, args);
 	return id;
 }
 
@@ -187,20 +179,13 @@ bool tick_scanner(void *args) {
 	return result;
 }
 
-tick_scanner_args_t *tick_scanner_args(uint16_t interval_ms) {
+uint16_t add_tick_scanner(uint16_t interval_ms) {
+	uint16_t id;
 	tick_scanner_args_t *args = (tick_scanner_args_t *)malloc(sizeof(tick_scanner_args_t));
 	args->time_to_pop = uBit.systemTime();
 	args->interval_ms = interval_ms;
-	return args;
-}
 
-uint16_t add_tick_scanner(uint16_t interval_ms) {
-	uint16_t id;
-	id = scanner_list_add(
-		microbit_events_obj.scanner_list,
-		*tick_scanner,
-		tick_scanner_args(interval_ms)
-	);
+	id = scanner_list_add(microbit_events_obj.scanner_list, *tick_scanner, args);
 	return id;
 }
 
@@ -235,21 +220,14 @@ bool compass_scanner(void *args) {
 	return result;
 }
 
-compass_scanner_args_t *compass_scanner_args(uint16_t angle1, uint16_t angle2) {
+uint16_t add_compass_scanner(uint16_t angle1, uint16_t angle2) {
+	uint16_t id;
 	compass_scanner_args_t *args = (compass_scanner_args_t *)malloc(sizeof(compass_scanner_args_t));
 	args->angle1 = angle1;
 	args->angle2 = angle2;
 	args->last_heading = uBit.compass.heading();
-	return args;
-}
 
-uint16_t add_compass_scanner(uint16_t angle1, uint16_t angle2) {
-	uint16_t id;
-	id = scanner_list_add(
-		microbit_events_obj.scanner_list,
-		*compass_scanner,
-		compass_scanner_args(angle1, angle2)
-	);
+	id = scanner_list_add(microbit_events_obj.scanner_list, *compass_scanner, args);
 	return id;
 }
 
