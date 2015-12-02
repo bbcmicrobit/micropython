@@ -23,6 +23,7 @@ Q(events)
 Q(tick)
 Q(when_button_a_pressed)
 Q(when_button_b_pressed)
+Q(when_compass_between)
 
 Q(MicroBitDigitalPin)
 Q(MicroBitAnalogDigitalPin)

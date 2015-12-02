@@ -45,6 +45,12 @@ typedef struct {
 	uint8_t button_id;
 } button_scanner_args_t;
 
+typedef struct {
+	uint16_t angle1;
+	uint16_t angle2;
+	uint16_t last_heading;
+} compass_scanner_args_t;
+
 extern microbit_events_obj_t microbit_events_obj;
 
 extern "C" {

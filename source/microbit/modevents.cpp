@@ -204,6 +204,55 @@ uint16_t add_tick_scanner(uint16_t interval_ms) {
 	return id;
 }
 
+bool compass_scanner(void *args) {
+	compass_scanner_args_t *compass_args = (compass_scanner_args_t *)args;
+	bool result;
+	uint16_t angle1 = compass_args->angle1;
+	uint16_t angle2 = compass_args->angle2;
+	uint16_t last_heading = compass_args->last_heading;
+	uBit.compass.idleTick();
+	uint16_t heading = uBit.compass.heading();
+
+	if (angle1 < angle2) {
+		if (angle1 < last_heading && last_heading < angle2) {
+			result = 0;
+		} else if (angle1 < heading && heading < angle2) {
+			result = 1;
+		} else {
+			result = 0;
+		}
+	} else {
+		if (angle1 < last_heading || last_heading < angle2) {
+			result = 0;
+		} else if (angle1 < heading || heading < angle2) {
+			result = 1;
+		} else {
+			result = 0;
+		}
+	}
+
+	compass_args->last_heading = uBit.compass.heading();
+	return result;
+}
+
+compass_scanner_args_t *compass_scanner_args(uint16_t angle1, uint16_t angle2) {
+	compass_scanner_args_t *args = (compass_scanner_args_t *)malloc(sizeof(compass_scanner_args_t));
+	args->angle1 = angle1;
+	args->angle2 = angle2;
+	args->last_heading = uBit.compass.heading();
+	return args;
+}
+
+uint16_t add_compass_scanner(uint16_t angle1, uint16_t angle2) {
+	uint16_t id;
+	id = scanner_list_add(
+		microbit_events_obj.scanner_list,
+		*compass_scanner,
+		compass_scanner_args(angle1, angle2)
+	);
+	return id;
+}
+
 STATIC mp_obj_t events_tick(mp_obj_t ms_in) {
 	mp_int_t interval_ms = mp_obj_get_int(ms_in);
 	return mp_obj_new_int(add_tick_scanner(interval_ms));
@@ -219,6 +268,13 @@ STATIC mp_obj_t events_when_button_b_pressed(void) {
 	return mp_obj_new_int(add_button_scanner(MICROBIT_ID_BUTTON_B));
 }
 MP_DEFINE_CONST_FUN_OBJ_0(events_when_button_b_pressed_obj, events_when_button_b_pressed);
+
+STATIC mp_obj_t events_when_compass_between(mp_obj_t angle1_in, mp_obj_t angle2_in) {
+	mp_int_t angle1 = mp_obj_get_int(angle1_in);
+	mp_int_t angle2 = mp_obj_get_int(angle2_in);
+	return mp_obj_new_int(add_compass_scanner(angle1, angle2));
+}
+MP_DEFINE_CONST_FUN_OBJ_2(events_when_compass_between_obj, events_when_compass_between);
 
 typedef struct _events_t {
     mp_obj_base_t base;
@@ -316,6 +372,7 @@ STATIC const mp_map_elem_t events_module_globals_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_tick), (mp_obj_t)&events_tick_obj},
     { MP_OBJ_NEW_QSTR(MP_QSTR_when_button_a_pressed), (mp_obj_t)&events_when_button_a_pressed_obj},
     { MP_OBJ_NEW_QSTR(MP_QSTR_when_button_b_pressed), (mp_obj_t)&events_when_button_b_pressed_obj},
+    { MP_OBJ_NEW_QSTR(MP_QSTR_when_compass_between), (mp_obj_t)&events_when_compass_between_obj},
 };
 
 STATIC MP_DEFINE_CONST_DICT(events_module_globals, events_module_globals_table);
