@@ -35,10 +35,7 @@ extern "C" {
 #include "microbitevents.h"
 #include "microbitbutton.h"
 
-microbit_events_obj_t microbit_events_obj = {
-	.event_queue = NULL,
-	.scanner_list = NULL,
-};
+microbit_events_obj_t* microbit_events_obj = NULL;
 
 event_queue_t *event_queue_new() {
 	event_queue_t *event_queue = (event_queue_t *)malloc(sizeof(event_queue_t));
@@ -161,7 +158,7 @@ uint16_t add_button_scanner(uint8_t button_id) {
 
 	button->pressed = button->pressed & -2;
 
-	id = scanner_list_add(microbit_events_obj.scanner_list, *button_scanner, args);
+	id = scanner_list_add(microbit_events_obj->scanner_list, *button_scanner, args);
 	return id;
 }
 
@@ -185,7 +182,7 @@ uint16_t add_tick_scanner(uint16_t interval_ms) {
 	args->time_to_pop = uBit.systemTime();
 	args->interval_ms = interval_ms;
 
-	id = scanner_list_add(microbit_events_obj.scanner_list, *tick_scanner, args);
+	id = scanner_list_add(microbit_events_obj->scanner_list, *tick_scanner, args);
 	return id;
 }
 
@@ -227,7 +224,7 @@ uint16_t add_compass_scanner(uint16_t angle1, uint16_t angle2) {
 	args->angle2 = angle2;
 	args->last_heading = uBit.compass.heading();
 
-	id = scanner_list_add(microbit_events_obj.scanner_list, *compass_scanner, args);
+	id = scanner_list_add(microbit_events_obj->scanner_list, *compass_scanner, args);
 	return id;
 }
 
@@ -279,7 +276,7 @@ uint16_t add_accelerometer_scanner(uint8_t direction, int16_t v1, int16_t v2) {
 		args->v2 = v1;
 	}
 
-	id = scanner_list_add(microbit_events_obj.scanner_list, *accelerometer_scanner, args);
+	id = scanner_list_add(microbit_events_obj->scanner_list, *accelerometer_scanner, args);
 	return id;
 }
 
@@ -356,7 +353,7 @@ STATIC mp_obj_t get_microbit_events_iter(mp_obj_t o_in) {
 STATIC mp_obj_t microbit_events_iter_next(mp_obj_t o_in) {
     // Is there a way to mark o_in as unused?
     uint16_t event_id;
-    event_id = event_queue_dequeue(microbit_events_obj.event_queue);
+    event_id = event_queue_dequeue(microbit_events_obj->event_queue);
     if (event_id == MICROBIT_EVENTS_NO_EVENT) {
 	    return mp_const_none;
     } else {
@@ -406,11 +403,12 @@ STATIC mp_obj_t events_events(void) {
 MP_DEFINE_CONST_FUN_OBJ_0(events_events_obj, events_events);
 
 STATIC mp_obj_t events__init__(void) {
+	microbit_events_obj = (microbit_events_obj_t *)malloc(sizeof(microbit_events_obj_t));
 	event_queue_t *event_queue = event_queue_new();
 	scanner_list_t *scanner_list = scanner_list_new(event_queue);
 	
-	microbit_events_obj.event_queue = event_queue;
-	microbit_events_obj.scanner_list = scanner_list;
+	microbit_events_obj->event_queue = event_queue;
+	microbit_events_obj->scanner_list = scanner_list;
 
 	return mp_const_none;
 }
@@ -438,10 +436,10 @@ const mp_obj_module_t events_module = {
 };
 
 void microbit_events_tick(void) {
-	if (microbit_events_obj.event_queue == NULL) {
+	if (microbit_events_obj == NULL || microbit_events_obj->event_queue == NULL) {
 		return;
 	}
 
-	scanner_list_scan(microbit_events_obj.scanner_list);
+	scanner_list_scan(microbit_events_obj->scanner_list);
 }
 }

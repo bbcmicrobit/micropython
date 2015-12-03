@@ -40,6 +40,8 @@ typedef struct _microbit_events_obj_t {
 	scanner_list_t *scanner_list;
 } microbit_events_obj_t;
 
+extern struct _microbit_events_obj_t* microbit_events_obj;
+
 typedef struct {
 	uint32_t time_to_pop;
 	uint16_t interval_ms;
@@ -61,8 +63,6 @@ typedef struct {
 	int16_t v2;
 	int16_t last_v;
 } accelerometer_scanner_args_t;
-
-extern microbit_events_obj_t microbit_events_obj;
 
 extern "C" {
 void microbit_events_tick(void);
