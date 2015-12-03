@@ -25,6 +25,53 @@
  * THE SOFTWARE.
  */
 
+
+/*
+ * When the events module is initialised, the global microbit_events_obj is
+ * allocated.  This has pointers to a list of scanners and to an event queue.
+ *
+ * The purpose of a scanner is to watch for some condition to become true.
+ *
+ * A scanner has a callback function and some arguments, as well as a unique
+ * id.  While the event loop is running, on each tick of the main loop, each
+ * scanner's callback function is called with the given arguments, and if the
+ * callback function returns true, an event with the scanner's id is added to
+ * the event queue.
+ *
+ * The event loop is started when Python code iterates over events.events(),
+ * and is stopped when the iteration is broken out of.  When the loop stops,
+ * the event queue is drained, so that if it starts again, events from the last
+ * time it was running are not processed this time.
+ *
+ * When events.events() is iterated over, it pops the oldest event off the
+ * event queue, and yields the id of the event's scanner.  If the event queue
+ * is empty, it yields None instead.  (It would be much better if it didn't
+ * yield at all when the event queue is empty, but I haven't worked out how to
+ * do this yet.)
+ *
+ * This allows us to write Python code like:
+ *
+ * >>> import events
+ * >>> button_a_pressed = events.when_button_a_pressed()
+ * >>> button_b_pressed = events.when_button_b_pressed()
+ * >>> for e in events.events():
+ * ...     if e == button_a_pressed:
+ * ...         # handle button A being pressed
+ * ...     elif e == button_b_pressed:
+ * ...         # handle button B being pressed
+ *
+ * The list of currently-available events is:
+ *
+ * - events.tick(interval_ms)
+ *     fires every interval_ms milliseconds
+ * - events.when_button_[a|b]_pressed()
+ *     fires when given button is pressed
+ * - events.when_compass_between(angle1, angle2)
+ *     fires when compass is between given angles
+ * - events.when_accelerometer_[x|y|z]_between(value1, value2)
+ *     fires when accelerometer's value in given direction is between values
+ */
+
 #include <stdio.h>
 #include "MicroBit.h"
 
@@ -369,6 +416,7 @@ STATIC mp_obj_t microbit_events_iter_next(mp_obj_t o_in) {
     microbit_events_obj->state = MICROBIT_EVENTS_LOOP_RUNNING;
     event_id = event_queue_dequeue(microbit_events_obj->event_queue);
     if (event_id == MICROBIT_EVENTS_NO_EVENT) {
+	    // Is there a way to indicate that the iterator should not yield?
 	    return mp_const_none;
     } else {
 	    return mp_obj_new_int(event_id);
