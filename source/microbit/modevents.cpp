@@ -168,9 +168,9 @@ bool tick_scanner(void *args) {
 
 	if (tick_args->time_to_pop <= uBit.systemTime()) {
 		tick_args->time_to_pop += tick_args->interval_ms;
-		result = 1;
+		result = true;
 	} else {
-		result = 0;
+		result = false;
 	}
 
 	return result;
@@ -191,29 +191,29 @@ bool compass_scanner(void *args) {
 	bool result;
 	uint16_t angle1 = compass_args->angle1;
 	uint16_t angle2 = compass_args->angle2;
-	uint16_t last_heading = compass_args->last_heading;
+	uint16_t last_angle = compass_args->last_angle;
 	uBit.compass.idleTick();
 	uint16_t heading = uBit.compass.heading();
 
 	if (angle1 < angle2) {
-		if (angle1 < last_heading && last_heading < angle2) {
-			result = 0;
+		if (angle1 < last_angle && last_angle < angle2) {
+			result = false;
 		} else if (angle1 < heading && heading < angle2) {
-			result = 1;
+			result = true;
 		} else {
-			result = 0;
+			result = false;
 		}
 	} else {
-		if (angle1 < last_heading || last_heading < angle2) {
-			result = 0;
+		if (angle1 < last_angle || last_angle < angle2) {
+			result = false;
 		} else if (angle1 < heading || heading < angle2) {
-			result = 1;
+			result = true;
 		} else {
-			result = 0;
+			result = false;
 		}
 	}
 
-	compass_args->last_heading = uBit.compass.heading();
+	compass_args->last_angle = uBit.compass.heading();
 	return result;
 }
 
@@ -222,7 +222,7 @@ uint16_t add_compass_scanner(uint16_t angle1, uint16_t angle2) {
 	compass_scanner_args_t *args = (compass_scanner_args_t *)malloc(sizeof(compass_scanner_args_t));
 	args->angle1 = angle1;
 	args->angle2 = angle2;
-	args->last_heading = uBit.compass.heading();
+	args->last_angle = uBit.compass.heading();
 
 	id = scanner_list_add(microbit_events_obj->scanner_list, *compass_scanner, args);
 	return id;
@@ -252,11 +252,11 @@ bool accelerometer_scanner(void *args) {
 	}
 
 	if (v1 < last_v && last_v < v2) {
-		result = 0;
+		result = false;
 	} else if (v1 < v && v < v2) {
-		result = 1;
+		result = true;
 	} else {
-		result = 0;
+		result = false;
 	}
 
 	accelerometer_args->last_v = v;
