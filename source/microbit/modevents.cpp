@@ -349,18 +349,6 @@ STATIC mp_obj_t events_when_accelerometer_z_between(mp_obj_t v1_in, mp_obj_t v2_
 }
 MP_DEFINE_CONST_FUN_OBJ_2(events_when_accelerometer_z_between_obj, events_when_accelerometer_z_between);
 
-typedef struct _events_t {
-    mp_obj_base_t base;
-} events_t;
-
-typedef struct _events_iterator_t {
-    mp_obj_base_t base;
-    events_t *events;
-} events_iterator_t;
-
-extern const mp_obj_type_t microbit_events_type;
-extern const mp_obj_type_t microbit_events_iterator_type;
-
 mp_obj_t microbit_events(void){
 	events_t *result = m_new_obj(events_t);
 	result->base.type = &microbit_events_type;

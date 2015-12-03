@@ -47,6 +47,18 @@ typedef struct _microbit_events_obj_t {
 
 extern struct _microbit_events_obj_t* microbit_events_obj;
 
+typedef struct _events_t {
+    mp_obj_base_t base;
+} events_t;
+
+typedef struct _events_iterator_t {
+    mp_obj_base_t base;
+    events_t *events;
+} events_iterator_t;
+
+extern const mp_obj_type_t microbit_events_type;
+extern const mp_obj_type_t microbit_events_iterator_type;
+
 typedef struct _tick_scanner_args_t {
 	uint32_t time_to_pop;
 	uint16_t interval_ms;
