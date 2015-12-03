@@ -140,13 +140,38 @@ void scanner_list_scan(scanner_list_t *scanner_list) {
 	};
 };
 
+void events_event_loop_start() {
+	microbit_button_obj_t *button;
+
+	button = microbit_get_button_by_id(MICROBIT_ID_BUTTON_A);
+	button->pressed = button->pressed & -2;
+	button = microbit_get_button_by_id(MICROBIT_ID_BUTTON_B);
+	button->pressed = button->pressed & -2;
+
+	microbit_events_obj->state = MICROBIT_EVENTS_LOOP_RUNNING;
+};
+
+void events_event_loop_stop() {
+	uint16_t event_id;
+	for (;;) {
+		event_id = event_queue_dequeue(microbit_events_obj->event_queue);
+		if (event_id == MICROBIT_EVENTS_NO_EVENT) {
+			break;
+		}
+	}
+
+	microbit_events_obj->state = MICROBIT_EVENTS_LOOP_NOT_RUNNING;
+};
+
 bool button_scanner(void *args) {
 	button_scanner_args_t *button_args = (button_scanner_args_t *)args;
 	microbit_button_obj_t *button = microbit_get_button_by_id(button_args->button_id);
 	bool result;
 
 	result = button->pressed & 1;
-	button->pressed = button->pressed & -2;  // TODO: only do this if there's a result?
+	if (result) {
+		button->pressed = button->pressed & -2;
+	};
 	return result;
 }
 
@@ -353,6 +378,7 @@ STATIC mp_obj_t get_microbit_events_iter(mp_obj_t o_in) {
 STATIC mp_obj_t microbit_events_iter_next(mp_obj_t o_in) {
     // Is there a way to mark o_in as unused?
     uint16_t event_id;
+    microbit_events_obj->state = MICROBIT_EVENTS_LOOP_RUNNING;
     event_id = event_queue_dequeue(microbit_events_obj->event_queue);
     if (event_id == MICROBIT_EVENTS_NO_EVENT) {
 	    return mp_const_none;
@@ -398,6 +424,7 @@ const mp_obj_type_t microbit_events_iterator_type = {
 };
 
 STATIC mp_obj_t events_events(void) {
+	events_event_loop_start();
 	return microbit_events();
 }
 MP_DEFINE_CONST_FUN_OBJ_0(events_events_obj, events_events);
@@ -409,6 +436,7 @@ STATIC mp_obj_t events__init__(void) {
 	
 	microbit_events_obj->event_queue = event_queue;
 	microbit_events_obj->scanner_list = scanner_list;
+	microbit_events_obj->state = MICROBIT_EVENTS_LOOP_NOT_RUNNING;
 
 	return mp_const_none;
 }
@@ -436,10 +464,15 @@ const mp_obj_module_t events_module = {
 };
 
 void microbit_events_tick(void) {
-	if (microbit_events_obj == NULL || microbit_events_obj->event_queue == NULL) {
+	if (microbit_events_obj == NULL) {
 		return;
 	}
 
-	scanner_list_scan(microbit_events_obj->scanner_list);
+	if (microbit_events_obj->state == MICROBIT_EVENTS_LOOP_RUNNING) {
+		microbit_events_obj->state = MICROBIT_EVENTS_LOOP_MAYBE_RUNNING;
+		scanner_list_scan(microbit_events_obj->scanner_list);
+	} else {
+		events_event_loop_stop();
+	}
 }
 }

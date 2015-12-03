@@ -4,6 +4,10 @@
 
 #define MICROBIT_EVENTS_NO_EVENT 255
 
+#define MICROBIT_EVENTS_LOOP_NOT_RUNNING   0
+#define MICROBIT_EVENTS_LOOP_MAYBE_RUNNING 1
+#define MICROBIT_EVENTS_LOOP_RUNNING       2
+
 #define MICROBIT_EVENTS_ACCELEROMETER_X 1
 #define MICROBIT_EVENTS_ACCELEROMETER_Y 2
 #define MICROBIT_EVENTS_ACCELEROMETER_Z 3
@@ -38,6 +42,7 @@ typedef struct _scanner_list_t {
 typedef struct _microbit_events_obj_t {
 	event_queue_t *event_queue;
 	scanner_list_t *scanner_list;
+	uint8_t state;
 } microbit_events_obj_t;
 
 extern struct _microbit_events_obj_t* microbit_events_obj;
