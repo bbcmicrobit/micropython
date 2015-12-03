@@ -231,6 +231,58 @@ uint16_t add_compass_scanner(uint16_t angle1, uint16_t angle2) {
 	return id;
 }
 
+bool accelerometer_scanner(void *args) {
+	accelerometer_scanner_args_t *accelerometer_args = (accelerometer_scanner_args_t *)args;
+	bool result;
+	int16_t v1 = accelerometer_args->v1;
+	int16_t v2 = accelerometer_args->v2;
+	int16_t last_v = accelerometer_args->last_v;
+	int16_t v;
+	uBit.accelerometer.idleTick();
+
+	switch (accelerometer_args->direction) {
+		case MICROBIT_EVENTS_ACCELEROMETER_X:
+			v = uBit.accelerometer.getX();
+			break;
+		case MICROBIT_EVENTS_ACCELEROMETER_Y:
+			v = uBit.accelerometer.getY();
+			break;
+		case MICROBIT_EVENTS_ACCELEROMETER_Z:
+			v = uBit.accelerometer.getZ();
+			break;
+		default:
+			v = 0;
+	}
+
+	if (v1 < last_v && last_v < v2) {
+		result = 0;
+	} else if (v1 < v && v < v2) {
+		result = 1;
+	} else {
+		result = 0;
+	}
+
+	accelerometer_args->last_v = v;
+	return result;
+}
+
+uint16_t add_accelerometer_scanner(uint8_t direction, int16_t v1, int16_t v2) {
+	uint16_t id;
+	accelerometer_scanner_args_t *args = (accelerometer_scanner_args_t *)malloc(sizeof(accelerometer_scanner_args_t));
+	args->direction = direction;
+
+	if (v1 < v2) {
+		args->v1 = v1;
+		args->v2 = v2;
+	} else {
+		args->v1 = v2;
+		args->v2 = v1;
+	}
+
+	id = scanner_list_add(microbit_events_obj.scanner_list, *accelerometer_scanner, args);
+	return id;
+}
+
 STATIC mp_obj_t events_tick(mp_obj_t ms_in) {
 	mp_int_t interval_ms = mp_obj_get_int(ms_in);
 	return mp_obj_new_int(add_tick_scanner(interval_ms));
@@ -253,6 +305,27 @@ STATIC mp_obj_t events_when_compass_between(mp_obj_t angle1_in, mp_obj_t angle2_
 	return mp_obj_new_int(add_compass_scanner(angle1, angle2));
 }
 MP_DEFINE_CONST_FUN_OBJ_2(events_when_compass_between_obj, events_when_compass_between);
+
+STATIC mp_obj_t events_when_accelerometer_x_between(mp_obj_t v1_in, mp_obj_t v2_in) {
+	mp_int_t v1 = mp_obj_get_int(v1_in);
+	mp_int_t v2 = mp_obj_get_int(v2_in);
+	return mp_obj_new_int(add_accelerometer_scanner(MICROBIT_EVENTS_ACCELEROMETER_X, v1, v2));
+}
+MP_DEFINE_CONST_FUN_OBJ_2(events_when_accelerometer_x_between_obj, events_when_accelerometer_x_between);
+
+STATIC mp_obj_t events_when_accelerometer_y_between(mp_obj_t v1_in, mp_obj_t v2_in) {
+	mp_int_t v1 = mp_obj_get_int(v1_in);
+	mp_int_t v2 = mp_obj_get_int(v2_in);
+	return mp_obj_new_int(add_accelerometer_scanner(MICROBIT_EVENTS_ACCELEROMETER_Y, v1, v2));
+}
+MP_DEFINE_CONST_FUN_OBJ_2(events_when_accelerometer_y_between_obj, events_when_accelerometer_y_between);
+
+STATIC mp_obj_t events_when_accelerometer_z_between(mp_obj_t v1_in, mp_obj_t v2_in) {
+	mp_int_t v1 = mp_obj_get_int(v1_in);
+	mp_int_t v2 = mp_obj_get_int(v2_in);
+	return mp_obj_new_int(add_accelerometer_scanner(MICROBIT_EVENTS_ACCELEROMETER_Z, v1, v2));
+}
+MP_DEFINE_CONST_FUN_OBJ_2(events_when_accelerometer_z_between_obj, events_when_accelerometer_z_between);
 
 typedef struct _events_t {
     mp_obj_base_t base;
@@ -351,6 +424,9 @@ STATIC const mp_map_elem_t events_module_globals_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_when_button_a_pressed), (mp_obj_t)&events_when_button_a_pressed_obj},
     { MP_OBJ_NEW_QSTR(MP_QSTR_when_button_b_pressed), (mp_obj_t)&events_when_button_b_pressed_obj},
     { MP_OBJ_NEW_QSTR(MP_QSTR_when_compass_between), (mp_obj_t)&events_when_compass_between_obj},
+    { MP_OBJ_NEW_QSTR(MP_QSTR_when_accelerometer_x_between), (mp_obj_t)&events_when_accelerometer_x_between_obj},
+    { MP_OBJ_NEW_QSTR(MP_QSTR_when_accelerometer_y_between), (mp_obj_t)&events_when_accelerometer_y_between_obj},
+    { MP_OBJ_NEW_QSTR(MP_QSTR_when_accelerometer_z_between), (mp_obj_t)&events_when_accelerometer_z_between_obj},
 };
 
 STATIC MP_DEFINE_CONST_DICT(events_module_globals, events_module_globals_table);

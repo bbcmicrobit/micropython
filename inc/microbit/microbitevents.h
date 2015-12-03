@@ -4,6 +4,10 @@
 
 #define MICROBIT_EVENTS_NO_EVENT 255
 
+#define MICROBIT_EVENTS_ACCELEROMETER_X 1
+#define MICROBIT_EVENTS_ACCELEROMETER_Y 2
+#define MICROBIT_EVENTS_ACCELEROMETER_Z 3
+
 typedef struct event_t {
 	uint16_t scanner_id;
 	struct event_t* prev;
@@ -50,6 +54,13 @@ typedef struct {
 	uint16_t angle2;
 	uint16_t last_heading;
 } compass_scanner_args_t;
+
+typedef struct {
+	uint8_t direction;
+	int16_t v1;
+	int16_t v2;
+	int16_t last_v;
+} accelerometer_scanner_args_t;
 
 extern microbit_events_obj_t microbit_events_obj;
 
