@@ -64,6 +64,10 @@ typedef struct _tick_scanner_args_t {
     uint16_t interval_ms;
 } tick_scanner_args_t;
 
+typedef struct _tick_once_scanner_args_t {
+    uint32_t time_to_pop;
+} tick_once_scanner_args_t;
+
 typedef struct _button_scanner_args_t {
     uint8_t button_id;
 } button_scanner_args_t;
@@ -83,6 +87,7 @@ typedef struct _accelerometer_scanner_args_t {
 
 extern "C" {
 void microbit_events_tick(void);
+bool tick_once_scanner(void *args);
 }
 
 #endif // __MICROPY_INCLUDED_MICROBIT_MICROBITEVENTS_H__

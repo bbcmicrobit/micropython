@@ -64,6 +64,8 @@
  *
  * - events.tick(interval_ms)
  *     fires every interval_ms milliseconds
+ * - events.tick_once(delay_ms)
+ *     fires once, after interval_ms milliseconds
  * - events.when_button_[a|b]_pressed()
  *     fires when given button is pressed
  * - events.when_compass_between(angle1, angle2)
@@ -204,6 +206,9 @@ void scanner_list_scan(scanner_list_t *scanner_list) {
         for (;;) {
             if (scanner->scanner_cb(scanner->scanner_cb_args)) {
                 event_queue_enqueue(scanner_list->event_queue, scanner->id);
+		if (scanner->scanner_cb == tick_once_scanner) {
+			scanner_list_remove(scanner_list, scanner->id);
+		};
             };
             scanner = scanner->next;
             if (scanner == NULL) {
@@ -281,6 +286,28 @@ uint16_t add_tick_scanner(uint16_t interval_ms) {
     args->interval_ms = interval_ms;
 
     id = scanner_list_add(microbit_events_obj->scanner_list, *tick_scanner, args);
+    return id;
+}
+
+bool tick_once_scanner(void *args) {
+    tick_once_scanner_args_t *tick_once_args = (tick_once_scanner_args_t *)args;
+    bool result;
+
+    if (tick_once_args->time_to_pop <= uBit.systemTime()) {
+        result = true;
+    } else {
+        result = false;
+    }
+
+    return result;
+}
+
+uint16_t add_tick_once_scanner(uint16_t delay_ms) {
+    uint16_t id;
+    tick_once_scanner_args_t *args = (tick_once_scanner_args_t *)malloc(sizeof(tick_once_scanner_args_t));
+    args->time_to_pop = uBit.systemTime() + delay_ms;
+
+    id = scanner_list_add(microbit_events_obj->scanner_list, *tick_once_scanner, args);
     return id;
 }
 
@@ -383,6 +410,12 @@ STATIC mp_obj_t events_tick(mp_obj_t ms_in) {
     return mp_obj_new_int(add_tick_scanner(interval_ms));
 }
 MP_DEFINE_CONST_FUN_OBJ_1(events_tick_obj, events_tick);
+
+STATIC mp_obj_t events_tick_once(mp_obj_t ms_in) {
+    mp_int_t delay_ms = mp_obj_get_int(ms_in);
+    return mp_obj_new_int(add_tick_once_scanner(delay_ms));
+}
+MP_DEFINE_CONST_FUN_OBJ_1(events_tick_once_obj, events_tick_once);
 
 STATIC mp_obj_t events_when_button_a_pressed(void) {
     return mp_obj_new_int(add_button_scanner(MICROBIT_ID_BUTTON_A));
@@ -517,6 +550,7 @@ STATIC const mp_map_elem_t events_module_globals_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_events), (mp_obj_t)&events_events_obj},
     { MP_OBJ_NEW_QSTR(MP_QSTR_remove_scanner), (mp_obj_t)&events_remove_scanner_obj},
     { MP_OBJ_NEW_QSTR(MP_QSTR_tick), (mp_obj_t)&events_tick_obj},
+    { MP_OBJ_NEW_QSTR(MP_QSTR_tick_once), (mp_obj_t)&events_tick_once_obj},
     { MP_OBJ_NEW_QSTR(MP_QSTR_when_button_a_pressed), (mp_obj_t)&events_when_button_a_pressed_obj},
     { MP_OBJ_NEW_QSTR(MP_QSTR_when_button_b_pressed), (mp_obj_t)&events_when_button_b_pressed_obj},
     { MP_OBJ_NEW_QSTR(MP_QSTR_when_compass_between), (mp_obj_t)&events_when_compass_between_obj},
