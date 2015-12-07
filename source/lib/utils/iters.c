@@ -61,10 +61,11 @@ const mp_obj_type_t microbit_repeat_iterator_type = {
     MP_OBJ_NULL
 };
 
-mp_obj_t microbit_new_repeat_iterator(mp_obj_t iterable) {
+mp_obj_t microbit_repeat_iterator(mp_obj_t iterable) {
     mp_obj_t iter = mp_getiter(iterable);
     repeat_iterator_t *result = m_new_obj(repeat_iterator_t);
     result->base.type = &microbit_repeat_iterator_type;
     result->iterable = iterable;
     result->iterator = iter;
+    return result;
 }
