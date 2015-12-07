@@ -440,16 +440,6 @@ mp_obj_t microbit_image_invert(mp_obj_t self_in) {
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_image_invert_obj, microbit_image_invert);
 
-mp_obj_t microbit_image_slice_func(mp_uint_t n_args, const mp_obj_t *args) {
-    (void)n_args;
-    microbit_image_obj_t *self = (microbit_image_obj_t*)args[0];
-    mp_int_t start = mp_obj_get_int(args[1]);
-    mp_int_t width = mp_obj_get_int(args[2]);
-    mp_int_t stride = mp_obj_get_int(args[3]);
-    return microbit_image_slice(self, start,  width, stride);
-}
-MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_image_slice_obj, 4, 4, microbit_image_slice_func);
-
 
 STATIC const mp_map_elem_t microbit_image_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_width), (mp_obj_t)&microbit_image_width_obj },
@@ -463,7 +453,6 @@ STATIC const mp_map_elem_t microbit_image_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_copy), (mp_obj_t)&microbit_image_copy_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_crop), (mp_obj_t)&microbit_image_crop_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_invert), (mp_obj_t)&microbit_image_invert_obj },
-    { MP_OBJ_NEW_QSTR(MP_QSTR_slice), (mp_obj_t)&microbit_image_slice_obj },
 
     { MP_OBJ_NEW_QSTR(MP_QSTR_HEART), (mp_obj_t)&microbit_const_image_heart_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_HEART_SMALL), (mp_obj_t)&microbit_const_image_heart_small_obj },
