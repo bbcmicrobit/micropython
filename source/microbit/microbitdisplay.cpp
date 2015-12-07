@@ -367,9 +367,9 @@ STATIC mp_obj_t microbit_display_animate_func(mp_uint_t n_args, const mp_obj_t *
 }
 MP_DEFINE_CONST_FUN_OBJ_KW(microbit_display_animate_obj, 2, microbit_display_animate_func);
 
-void microbit_display_scroll(microbit_display_obj_t *self, const char* str, mp_int_t len, bool wait) {
-    mp_obj_t iterable = scrolling_string_image_iterable(str, len, NULL, false);
-    microbit_display_animate(self, iterable, MICROBIT_DEFAULT_SCROLL_SPEED, false, wait);
+void microbit_display_scroll(microbit_display_obj_t *self, const char* str) {
+    mp_obj_t iterable = scrolling_string_image_iterable(str, strlen(str), NULL, false);
+    microbit_display_animate(self, iterable, MICROBIT_DEFAULT_SCROLL_SPEED, false, false);
 }
 
 
