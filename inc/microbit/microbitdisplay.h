@@ -33,7 +33,7 @@ extern "C" {
 
 void microbit_display_show(microbit_display_obj_t *display, microbit_image_obj_t *image);
 
-void microbit_display_animate(microbit_display_obj_t *display, mp_obj_t iterable, mp_int_t delay, bool wait);
+void microbit_display_animate(microbit_display_obj_t *display, mp_obj_t iterable, mp_int_t delay, bool clear, bool wait);
 
 void microbit_display_scroll(microbit_display_obj_t *display, const char* str, mp_int_t len, bool wait);
 
