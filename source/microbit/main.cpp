@@ -62,14 +62,17 @@ void microbit_ticker(void) {
         }
     }
 
+    /** Update the events.  This must come before the display is updated
+     * (otherwise the display may flicker), and after the buttons are updated
+     * (otherwise we'll miss any recent button events).
+     */
+    microbit_events_tick();
+
     // Update the display.
     microbit_display_tick();
 
     // Update the music
     microbit_music_tick();
-
-    // Update the events
-    microbit_events_tick();
 }
 
 // We need to override this function so that the linker does not pull in
