@@ -169,6 +169,32 @@ uint16_t scanner_list_add(scanner_list_t *scanner_list, scanner_cb_t scanner_cb,
     return scanner->id;
 };
 
+void scanner_list_remove(scanner_list_t *scanner_list, uint16_t scanner_id) {
+    scanner_t *scanner, *prev_scanner;
+
+    scanner = scanner_list->head;
+    if (scanner != NULL) {
+        prev_scanner = NULL;
+        for (;;) {
+            if (scanner->id == scanner_id) {
+                if (prev_scanner == NULL) {
+                    scanner_list->head = scanner->next;
+                } else {
+                    prev_scanner->next = scanner->next;
+                };
+                free(scanner->scanner_cb_args);
+                free(scanner);
+                break;
+            } else {
+                prev_scanner = scanner;
+            };
+            scanner = scanner->next;
+            if (scanner == NULL) {
+                break;
+            };
+        };
+    };
+};
 
 void scanner_list_scan(scanner_list_t *scanner_list) {
     scanner_t *scanner;
@@ -465,6 +491,13 @@ STATIC mp_obj_t events_events(void) {
 }
 MP_DEFINE_CONST_FUN_OBJ_0(events_events_obj, events_events);
 
+STATIC mp_obj_t events_remove_scanner(mp_obj_t scanner_id_in) {
+    mp_int_t scanner_id = mp_obj_get_int(scanner_id_in);
+    scanner_list_remove(microbit_events_obj->scanner_list, scanner_id);
+    return mp_const_none;
+}
+MP_DEFINE_CONST_FUN_OBJ_1(events_remove_scanner_obj, events_remove_scanner);
+
 STATIC mp_obj_t events__init__(void) {
     microbit_events_obj = (microbit_events_obj_t *)malloc(sizeof(microbit_events_obj_t));
     event_queue_t *event_queue = event_queue_new();
@@ -482,6 +515,7 @@ STATIC const mp_map_elem_t events_module_globals_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR___name__), MP_OBJ_NEW_QSTR(MP_QSTR_events) },
     { MP_OBJ_NEW_QSTR(MP_QSTR___init__), (mp_obj_t)&events___init___obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_events), (mp_obj_t)&events_events_obj},
+    { MP_OBJ_NEW_QSTR(MP_QSTR_remove_scanner), (mp_obj_t)&events_remove_scanner_obj},
     { MP_OBJ_NEW_QSTR(MP_QSTR_tick), (mp_obj_t)&events_tick_obj},
     { MP_OBJ_NEW_QSTR(MP_QSTR_when_button_a_pressed), (mp_obj_t)&events_when_button_a_pressed_obj},
     { MP_OBJ_NEW_QSTR(MP_QSTR_when_button_b_pressed), (mp_obj_t)&events_when_button_b_pressed_obj},

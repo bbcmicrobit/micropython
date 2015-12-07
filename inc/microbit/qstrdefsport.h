@@ -20,6 +20,7 @@ Q(love)
 Q(badaboom)
 
 Q(events)
+Q(remove_scanner)
 Q(tick)
 Q(when_button_a_pressed)
 Q(when_button_b_pressed)
