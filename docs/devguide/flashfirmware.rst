@@ -32,11 +32,10 @@ some convenience targets.
 Preparing firmware and a Python program
 ---------------------------------------
 
-A script in the following location, called using the following syntax, should help::
+Try these::
 
-  tools/makecombinedhex.py <firmware.hex> <script.py> [-o <combined.hex>]
-
-The script will output to ``stdout`` if no output option is provided.
+  tools/makecombined
+  hexlify
 
 Flashing to the micro:bit
 -------------------------
