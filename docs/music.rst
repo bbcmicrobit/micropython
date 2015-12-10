@@ -88,7 +88,7 @@ Functions
 
     If ``reset`` is set to ``False``, the tune will be played with the
     most recent tempo set by ``set_tempo``. Otherwise ``reset`` will
-    be called and the standard tempo will be use.
+    be called and the standard tempo will be used.
 
 .. py:function:: pitch(frequency, len=-1, pin=microbit.pin0, wait=True)
 
