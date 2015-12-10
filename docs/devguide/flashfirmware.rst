@@ -36,15 +36,22 @@ targets.
 Preparing firmware and a Python program
 ---------------------------------------
 
-tools/makecombined
+A script in the following location, called using the following syntax, should
+help::
 
-hexlify
+  tools/makecombinedhex.py <firmware.hex> <script.py> [-o <combined.hex>]
 
-
+The script will output to ``stdout`` if no output option (``-o``) is provided.
 
 Flashing to the micro:bit
 -------------------------
 
+The Microbit mounts itself as a mass storage device over USB.  When it detects
+that a .hex file has been uploaded to the internal mass storage device, it will
+flash itself with the bytecode representation, and start running the program.
+
+This means that uploading a .hex file should result in the Microbit running your
+code.
 
 
 

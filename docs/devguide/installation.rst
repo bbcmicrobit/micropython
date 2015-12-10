@@ -75,7 +75,8 @@ Debian/Ubuntu, and Red Hat Fedora/Centos.
 Debian and Ubuntu
 ^^^^^^^^^^^^^^^^^
 
-::
+The following commands should install the toolchain on a modern Debian/Ubuntu
+variant::
 
   sudo add-apt-repository -y ppa:team-gcc-arm-embedded
   sudo add-apt-repository -y ppa:pmiller-opensource/ppa
@@ -83,6 +84,13 @@ Debian and Ubuntu
   sudo apt-get install cmake ninja-build gcc-arm-none-eabi srecord libssl-dev
   pip3 install yotta
 
+In order to make development life a bit easier, you can (on Ubuntu) add yourself
+to the ``dialout`` group, which grants write access to the serial device
+``/dev/ttyACM0``::
+
+  sudo usermod -a -G dialout ${USER}
+
+You may need to relogin in order for the changes to groups to take effect.
 
 .. _microbit-redhat:
 
