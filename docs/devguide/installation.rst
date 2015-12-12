@@ -68,6 +68,13 @@ The following commands should install the toolchain on a modern Debian/Ubuntu va
   sudo apt-get install cmake ninja-build gcc-arm-none-eabi srecord
   pip3 install yotta
 
+In order to make development life a bit easier, you can (on Ubuntu) add yourself to the ``dialout`` group,
+which grants write access to the serial device ``/dev/ttyACM0``::
+
+  sudo usermod -a -G dialout ${USER}
+
+You may need to relogin in order for the changes to groups to take effect.
+
 .. _microbit-redhat:
 
 Red Hat Fedora/CentOS
