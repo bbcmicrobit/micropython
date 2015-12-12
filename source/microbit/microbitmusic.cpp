@@ -267,15 +267,17 @@ STATIC mp_obj_t microbit_music_play(mp_uint_t n_args, const mp_obj_t *pos_args, 
         { MP_QSTR_pin,   MP_ARG_OBJ, {.u_obj = (mp_obj_t)&microbit_p0_obj} },
         { MP_QSTR_wait,  MP_ARG_BOOL, {.u_bool = true} },
         { MP_QSTR_loop,  MP_ARG_BOOL, {.u_bool = false} },
+        { MP_QSTR_reset,  MP_ARG_BOOL, {.u_bool = true} },
     };
 
     // parse args
     mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
     mp_arg_parse_all(n_args, pos_args, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
 
-    // reset state so tunes always play the same
-    microbit_music_reset();
-
+    // if reset flag, reset state so tunes always play the same
+    if (args[4].u_bool) {
+      microbit_music_reset();
+    }
     // get either a single note or a list of notes
     mp_uint_t len;
     mp_obj_t *items;

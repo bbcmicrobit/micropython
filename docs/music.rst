@@ -63,7 +63,7 @@ Functions
 
     Gets the current tempo as a tuple of integers: ``(ticks, bpm)``.
 
-.. py:function:: play(music, pin=microbit.pin0, wait=True, loop=False)
+.. py:function:: play(music, pin=microbit.pin0, wait=True, loop=False, reset=True)
 
     Plays ``music`` containing the musical DSL defined above.
 
@@ -75,7 +75,8 @@ Functions
     a melody.
 
     In both cases, the ``reset`` method (see below) is tacitly called before
-    the music (whatever it may be) is played.
+    the music (whatever it may be) is played, unless ``reset`` is set
+    to ``False``.
 
     An optional argument to specify the output pin can be used to override the
     default of ``microbit.pin0``.
@@ -84,6 +85,10 @@ Functions
 
     If ``loop`` is set to ``True``, the tune repeats until ``stop`` is called
     (see below) or the blocking call is interrupted.
+
+    If ``reset`` is set to ``False``, the tune will be played with the
+    most recent tempo set by ``set_tempo``. Otherwise ``reset`` will
+    be called and the standard tempo will be used.
 
 .. py:function:: pitch(frequency, len=-1, pin=microbit.pin0, wait=True)
 
