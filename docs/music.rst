@@ -74,8 +74,8 @@ Functions
     the musical DSL, above) then they are played one after the other to perform
     a melody.
 
-    In both cases, the ``reset`` method (see below) is tacitly called before
-    the music (whatever it may be) is played.
+    In both cases, the ``duration`` and ``octave`` values are reset to
+    their defaults before the music (whatever it may be) is played.
 
     An optional argument to specify the output pin can be used to override the
     default of ``microbit.pin0``.

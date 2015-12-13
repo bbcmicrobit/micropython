@@ -273,8 +273,9 @@ STATIC mp_obj_t microbit_music_play(mp_uint_t n_args, const mp_obj_t *pos_args, 
     mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
     mp_arg_parse_all(n_args, pos_args, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
 
-    // reset state so tunes always play the same
-    microbit_music_reset();
+    // reset octave and duration so tunes always play the same
+    music_state.last_octave = DEFAULT_OCTAVE;
+    music_state.last_duration = DEFAULT_DURATION;
 
     // get either a single note or a list of notes
     mp_uint_t len;
