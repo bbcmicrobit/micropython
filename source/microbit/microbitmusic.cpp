@@ -226,8 +226,6 @@ STATIC uint32_t start_note(const char *note_str, size_t note_len, MicroBitPin *p
 }
 
 STATIC mp_obj_t microbit_music_reset(void) {
-    music_state.bpm = DEFAULT_BPM;
-    music_state.ticks = DEFAULT_TICKS;
     music_state.last_octave = DEFAULT_OCTAVE;
     music_state.last_duration = DEFAULT_DURATION;
 
