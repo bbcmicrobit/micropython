@@ -128,7 +128,7 @@ STATIC const mp_doc_t help_table_instances[] = {
     {&microbit_p20_obj, "micro:bit's pin 20 on the gold edge connector.\n"},
     {&microbit_pin_write_digital_obj, "micro:bit, write_digital(choice) to the pin. You have two 'choice' values,\n0 (lo) or 1 (hi).\n"},
     {&microbit_pin_read_digital_obj, "micro:bit, read_digital() value from the pin as either 0 (lo) or 1 (hi).\n"},
-    {&microbit_pin_write_analog_obj, "micro:bit, write_analog(value) to the pin. You can use a whole number between\n0 and 255 as the value.\n"},
+    {&microbit_pin_write_analog_obj, "micro:bit, write_analog(value) to the pin. You can use any value between\n0 and 1023.\n"},
     {&microbit_pin_read_analog_obj, "micro:bit, read_analog() value from the pin. Wow, analog has lots of values\n(0 - 65535). Digital has only 0 and 1.\n"},
     {&microbit_pin_is_touched_obj, "If pin is_touched() on micro:bit, return True. If nothing is touching the pin,\nreturn False.\n"},
     // I2C
