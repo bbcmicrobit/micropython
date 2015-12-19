@@ -14,11 +14,10 @@ Dependencies
 Development Environment
 -----------------------
 
-You will need::
+You will need:
 
 * git
 * yotta
-*
 
 Depending on your operating system, the installation instructions vary. Use
 the installation scenario that best suits your system.
@@ -61,11 +60,13 @@ Debian/Ubuntu, and Red Hat Fedora/Centos.
 Debian and Ubuntu
 ^^^^^^^^^^^^^^^^^
 
-sudo add-apt-repository -y ppa:terry.guo/gcc-arm-embedded
-sudo add-apt-repository -y ppa:pmiller-opensource/ppa
-sudo apt-get update
-sudo apt-get install cmake ninja-build gcc-arm-none-eabi srecord
-pip3 install yotta
+::
+
+  sudo add-apt-repository -y ppa:terry.guo/gcc-arm-embedded
+  sudo add-apt-repository -y ppa:pmiller-opensource/ppa
+  sudo apt-get update
+  sudo apt-get install cmake ninja-build gcc-arm-none-eabi srecord
+  pip3 install yotta
 
 
 .. _microbit-redhat:
