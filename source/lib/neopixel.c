@@ -110,6 +110,8 @@ void neopixel_show(neopixel_strip_t *strip)
 	const uint8_t PIN =  strip->pin_num;
 	NRF_GPIO->OUTCLR = (1UL << PIN);
 	nrf_delay_us(50);
+	uint32_t irq_state = __get_PRIMASK();
+	__disable_irq();
 			for (int i = 0; i < strip->num_leds; i++)
 			{
 				for (int j = 0; j < 3; j++)
@@ -139,6 +141,7 @@ void neopixel_show(neopixel_strip_t *strip)
 					else	{NEOPIXEL_SEND_ZERO}
 				}
 			}
+	__set_PRIMASK(irq_state);
 }
 
 uint8_t neopixel_set_color(neopixel_strip_t *strip, uint16_t index, uint8_t red, uint8_t green, uint8_t blue )
