@@ -1,5 +1,5 @@
 """
-A simple name generator to use in the classroom. 
+A simple random name picker to use in the classroom for questioning.
 It needs to be prepared with the names of the students and the class name.
 Press A to get a random name. Press B to display the last name again.
 By Marco Tranchino for the "BBC MicroBit with Micro Python" project.
