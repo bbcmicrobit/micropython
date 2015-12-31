@@ -97,6 +97,7 @@ extern const struct _monochrome_5by5_t microbit_const_image_square_small_obj;
 extern const struct _monochrome_5by5_t microbit_const_image_rabbit;
 extern const struct _monochrome_5by5_t microbit_const_image_cow;
 extern const struct _monochrome_5by5_t microbit_const_image_music_crotchet_obj;
+extern const struct _monochrome_5by5_t microbit_const_image_music_quaver_obj;
 extern const struct _monochrome_5by5_t microbit_const_image_music_quavers_obj;
 extern const struct _monochrome_5by5_t microbit_const_image_pitchfork_obj;
 extern const struct _monochrome_5by5_t microbit_const_image_xmas_obj;

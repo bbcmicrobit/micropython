@@ -396,6 +396,14 @@ IMAGE_T microbit_const_image_cow = SMALL_IMAGE(
 
 IMAGE_T microbit_const_image_music_crotchet_obj = SMALL_IMAGE(
     0,0,1,0,0,
+    0,0,1,0,0,
+    0,0,1,0,0,
+    1,1,1,0,0,
+    1,1,1,0,0
+);
+
+IMAGE_T microbit_const_image_music_quaver_obj = SMALL_IMAGE(
+    0,0,1,0,0,
     0,0,1,1,0,
     0,0,1,0,1,
     1,1,1,0,0,
