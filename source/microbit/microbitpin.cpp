@@ -59,7 +59,7 @@ MP_DEFINE_CONST_FUN_OBJ_1(microbit_pin_read_digital_obj, microbit_pin_read_digit
 mp_obj_t microbit_pin_write_analog(mp_obj_t self_in, mp_obj_t value_in) {
     microbit_pin_obj_t *self = (microbit_pin_obj_t*)self_in;
     int set_value;
-    if (MP_OBJ_IS_TYPE(value_in, &mp_type_float)) {
+    if (mp_obj_is_float(value_in)) {
         mp_float_t val = mp_obj_get_float(value_in);
         set_value = val+0.5;
     } else {

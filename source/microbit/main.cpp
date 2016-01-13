@@ -63,6 +63,12 @@ static void ticker(void) {
 
 extern "C" {
 
+// We need to override this function so that the linker does not pull in
+// unnecessary code and static RAM usage for unused system exit functionality.
+// There can be large static data structures to store the exit functions.
+void __register_exitproc() {
+}
+
 void microbit_init(void) {
     microbit_display_init();
 
