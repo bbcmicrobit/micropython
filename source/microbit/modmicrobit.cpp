@@ -28,6 +28,7 @@
 
 extern "C" {
 
+#include "py/nlr.h"
 #include "py/obj.h"
 #include "py/mphal.h"
 #include "modmicrobit.h"
@@ -48,7 +49,11 @@ STATIC mp_obj_t microbit_sleep(mp_obj_t ms_in) {
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_sleep_obj, microbit_sleep);
 
 STATIC mp_obj_t microbit_random(mp_obj_t max_in) {
-    return mp_obj_new_int(uBit.random(mp_obj_get_int(max_in)));
+    int val = uBit.random(mp_obj_get_int(max_in));
+    if (val == MICROBIT_INVALID_PARAMETER) {
+        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "invalid parameter"));
+    }
+    return mp_obj_new_int(val);
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_random_obj, microbit_random);
 
