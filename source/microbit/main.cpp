@@ -50,9 +50,12 @@ static void ticker(void) {
     compass_up_to_date = false;
     accelerometer_up_to_date = false;
 
-    // Update buttons
-    uBit.buttonA.systemTick();
-    uBit.buttonB.systemTick();
+    //update any components in the DAL's systemComponents array
+    for (int i = 0; i < MICROBIT_SYSTEM_COMPONENTS; i++) {
+        if (uBit.systemTickComponents[i] != NULL) {
+            uBit.systemTickComponents[i]->systemTick();
+        }
+    }
 
     // Update the display.
     microbit_display_tick();
