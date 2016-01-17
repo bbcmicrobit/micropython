@@ -39,6 +39,9 @@ STATIC mp_obj_t microbit_repeat_iter_next(mp_obj_t iter_in) {
     if (result == MP_OBJ_STOP_ITERATION) {
         iter->iterator = mp_getiter(iter->iterable);
         result = mp_iternext(iter->iterator);
+        if (result == MP_OBJ_STOP_ITERATION) {
+            nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "cannot repeat empty sequence."));
+        }
     }
     return result;
 }
