@@ -59,6 +59,10 @@ When installing `Yotta
 OS X
 ~~~~
 
+After cloning the repository, install yotta using the app and launch the app.
+You can find the latest release of yotta for OS X at
+`<https://github.com/ARMmbed/yotta_osx_installer/releases/>`_ .
+
 
 .. _microbit-linux:
 
