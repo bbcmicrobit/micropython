@@ -175,7 +175,6 @@ MP_DECLARE_CONST_FUN_OBJ(microbit_compass_get_z_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_display_show_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_display_scroll_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_display_clear_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_display_animate_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_display_get_pixel_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_display_set_pixel_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_pin_read_digital_obj);

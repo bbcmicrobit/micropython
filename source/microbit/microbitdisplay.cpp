@@ -34,7 +34,7 @@ extern "C" {
 #include "modmicrobit.h"
 #include "microbitimage.h"
 #include "microbitdisplay.h"
-#include "lib/utils/iters.h"
+#include "lib/iters.h"
 
 void microbit_display_show(microbit_display_obj_t *display, microbit_image_obj_t *image) {
     mp_int_t w = min(image->width(), 5);
@@ -334,39 +334,6 @@ void microbit_display_animate(microbit_display_obj_t *self, mp_obj_t iterable, m
     }
 }
 
-STATIC mp_obj_t microbit_display_animate_func(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
-    static const mp_arg_t animate_allowed_args[] = {
-        { MP_QSTR_image,    MP_ARG_REQUIRED | MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
-        { MP_QSTR_delay,    MP_ARG_REQUIRED | MP_ARG_INT, {.u_int = 0} },
-        { MP_QSTR_stride,   MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = 5} },
-        { MP_QSTR_start,    MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = -5} },
-        { MP_QSTR_wait,     MP_ARG_KW_ONLY | MP_ARG_BOOL, {.u_bool = true} },
-        { MP_QSTR_loop,     MP_ARG_KW_ONLY | MP_ARG_BOOL, {.u_bool = false} },
-    };
-
-    // Parse the args.
-    microbit_display_obj_t *self = (microbit_display_obj_t*)pos_args[0];
-    mp_arg_val_t args[MP_ARRAY_SIZE(animate_allowed_args)];
-    mp_arg_parse_all(n_args - 1, pos_args + 1, kw_args, MP_ARRAY_SIZE(animate_allowed_args), animate_allowed_args, args);
-
-    mp_obj_t arg0 = args[0].u_obj;
-    mp_int_t stride = args[2].u_int;
-    mp_int_t start = args[3].u_int;
-    mp_obj_t iterable;
-    if (mp_obj_get_type(arg0) == &microbit_image_type) {
-        // Convert single image into an iterable of images.
-        iterable = microbit_image_slice((microbit_image_obj_t *)arg0, start, 5 /*width*/, stride);
-    } else {
-        iterable = arg0;
-    }
-    if (args[5].u_bool) { /* loop */
-        iterable = microbit_repeat_iterator(iterable);
-    }
-    microbit_display_animate(self, iterable, args[1].u_int /*delay*/, true/*clear*/, args[4].u_bool /*wait?*/);
-    return mp_const_none;
-}
-MP_DEFINE_CONST_FUN_OBJ_KW(microbit_display_animate_obj, 2, microbit_display_animate_func);
-
 void microbit_display_scroll(microbit_display_obj_t *self, const char* str) {
     mp_obj_t iterable = scrolling_string_image_iterable(str, strlen(str), NULL, false);
     microbit_display_animate(self, iterable, MICROBIT_DEFAULT_SCROLL_SPEED, false, false);
@@ -448,7 +415,6 @@ STATIC const mp_map_elem_t microbit_display_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_set_pixel),  (mp_obj_t)&microbit_display_set_pixel_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_show), (mp_obj_t)&microbit_display_show_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_scroll), (mp_obj_t)&microbit_display_scroll_obj },
-    { MP_OBJ_NEW_QSTR(MP_QSTR_animate), (mp_obj_t)&microbit_display_animate_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_clear), (mp_obj_t)&microbit_display_clear_obj },
 };
 

@@ -100,10 +100,9 @@ STATIC const mp_doc_t help_table_instances[] = {
     {&microbit_compass_get_z_obj, "Return magnetic field detected along micro:bit's Z axis.\nUsually, the compass returns the earth's magnetic field in micro-Tesla units.\nUnless...a strong magnet is nearby!\n"},
     // Display 5x5 LED grid
     {&microbit_display_obj, "micro:bit's 5x5 LED display.\n"},
-    {&microbit_display_show_obj, "Use show(x) to print the string or image 'x' to the display. Try show('Hi!').\nUse show(s, i) to show string 's', one character at a time with a delay of\n'i' milliseconds.\n"},
+    {&microbit_display_show_obj, "Use show(x) to print the string or images 'x' to the display. Try show('Hi!').\nUse show(s, i) to show string 's', one character at a time with a delay of\n'i' milliseconds.\n"},
     {&microbit_display_scroll_obj, "Use scroll(s) to scroll the string 's' across the display.\nUse scroll(s, i) to scroll string 's' with a delay of 'i' milliseconds after\neach character.\n"},
     {&microbit_display_clear_obj, "Use clear() to clear micro:bit's display.\n"},
-    {&microbit_display_animate_obj, "Use animate(img, delay, stride, start=0, async=False, repeat=False) to animate\nimage 'img' with 'delay' milliseconds and 'stride' pixels offset between\nframes. Optional: 'start' offset from left hand side, 'async' to run in the\nbackground, 'repeat' to loop the animation.\n"},
     {&microbit_display_get_pixel_obj, "Use get_pixel(x, y) to return the display's brightness at LED pixel (x,y).\nBrightness can be from 0 (LED is off) to 9 (maximum LED brightness).\n"},
     {&microbit_display_set_pixel_obj, "Use set_pixel(x, y, b) to set the display at LED pixel (x,y) to brightness 'b'\nwhich can be set between 0 (off) to 9 (full brightness).\n"},
     // Pins
