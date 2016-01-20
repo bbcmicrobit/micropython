@@ -203,6 +203,7 @@ Q(repeat)
 
 Q(music)
 Q(frequency)
+Q(duration)
 Q(pitch)
 Q(pin)
 Q(play)
