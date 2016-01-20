@@ -29,6 +29,7 @@
 
 extern "C" {
 
+#include "py/runtime0.h"
 #include "py/runtime.h"
 #include "lib/neopixel.h"
 #include "microbitobj.h"
@@ -56,6 +57,14 @@ STATIC mp_obj_t neopixel_make_new(mp_obj_t type_in, mp_uint_t n_args, mp_uint_t 
     neopixel_init(&self->strip, pin, num_pixels);
 
     return self;
+}
+
+STATIC mp_obj_t neopixel_unary_op(mp_uint_t op, mp_obj_t self_in) {
+    neopixel_obj_t *self = (neopixel_obj_t*)self_in;
+    switch (op) {
+        case MP_UNARY_OP_LEN: return MP_OBJ_NEW_SMALL_INT(self->strip.num_leds);
+        default: return MP_OBJ_NULL; // op not supported
+    }
 }
 
 STATIC mp_obj_t neopixel_subscr(mp_obj_t self_in, mp_obj_t index_in, mp_obj_t value) {
@@ -114,7 +123,7 @@ const mp_obj_type_t neopixel_type = {
     .print = NULL,
     .make_new = neopixel_make_new,
     .call = NULL,
-    .unary_op = NULL,
+    .unary_op = neopixel_unary_op,
     .binary_op = NULL,
     .attr = NULL,
     .subscr = neopixel_subscr,
