@@ -362,7 +362,6 @@ Q(ODD)
 Q(EVEN)
 
 Q(neopixel)
-Q(init)
+Q(NeoPixel)
 Q(clear)
 Q(show)
-Q(set_colour)
