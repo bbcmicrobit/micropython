@@ -117,6 +117,18 @@ void microbit_music_tick(void) {
     }
 }
 
+STATIC void wait_async_music_idle(void) {
+    // wait for the async music state to become idle
+    while (async_music_state != ASYNC_MUSIC_STATE_IDLE) {
+        // allow CTRL-C to stop the music
+        if (MP_STATE_VM(mp_pending_exception) != MP_OBJ_NULL) {
+            async_music_state = ASYNC_MUSIC_STATE_IDLE;
+            async_music_pin->setAnalogValue(0);
+            break;
+        }
+    }
+}
+
 STATIC uint32_t start_note(const char *note_str, size_t note_len, MicroBitPin *pin) {
     pin->setAnalogValue(128);
 
@@ -302,14 +314,7 @@ STATIC mp_obj_t microbit_music_play(mp_uint_t n_args, const mp_obj_t *pos_args, 
 
     if (args[2].u_bool) {
         // wait for tune to finish
-        while (async_music_state != ASYNC_MUSIC_STATE_IDLE) {
-            // allow CTRL-C to stop the tune
-            if (MP_STATE_VM(mp_pending_exception) != MP_OBJ_NULL) {
-                async_music_state = ASYNC_MUSIC_STATE_IDLE;
-                async_music_pin->setAnalogValue(0);
-                break;
-            }
-        }
+        wait_async_music_idle();
     }
 
     return mp_const_none;
@@ -319,7 +324,7 @@ MP_DEFINE_CONST_FUN_OBJ_KW(microbit_music_play_obj, 0, microbit_music_play);
 STATIC mp_obj_t microbit_music_pitch(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
     static const mp_arg_t allowed_args[] = {
         { MP_QSTR_frequency, MP_ARG_REQUIRED | MP_ARG_INT, {.u_int = 0} },
-        { MP_QSTR_len,    MP_ARG_INT, {.u_int = -1} },
+        { MP_QSTR_duration, MP_ARG_INT, {.u_int = -1} },
         { MP_QSTR_pin,    MP_ARG_OBJ, {.u_obj = (mp_obj_t)&microbit_p0_obj} },
         { MP_QSTR_wait,   MP_ARG_BOOL, {.u_bool = true} },
     };
@@ -330,19 +335,27 @@ STATIC mp_obj_t microbit_music_pitch(mp_uint_t n_args, const mp_obj_t *pos_args,
 
     // get the parameters
     mp_uint_t frequency = args[0].u_int;
-    mp_int_t length = args[1].u_int;
+    mp_int_t duration = args[1].u_int;
     MicroBitPin *pin = microbit_obj_get_pin(args[2].u_obj);
     bool wait = args[3].u_bool;
 
     pin->setAnalogValue(128);
     pin->setAnalogPeriodUs(1000000/frequency);
 
-    if (length >= 0) {
+    if (duration >= 0) {
+        // use async machinery to stop the pitch after the duration
+        async_music_state = ASYNC_MUSIC_STATE_IDLE;
+        async_music_wait_ticks = ticks + duration;
+        async_music_loop = false;
+        async_music_notes_len = 0;
+        async_music_notes_index = 0;
+        async_music_notes_items = NULL;
+        async_music_pin = pin;
+        async_music_state = ASYNC_MUSIC_STATE_ARTICULATE;
+
         if (wait) {
-            mp_hal_delay_ms(length);
-            pin->setAnalogValue(0);
-        } else {
-            // FIXME: schedule a callback to stop
+            // wait for the pitch to finish
+            wait_async_music_idle();
         }
     } else {
         // don't block here, since there's no reason to leave a pitch forever in a blocking C function
