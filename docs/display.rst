@@ -25,13 +25,6 @@ Functions
 
     Set the brightness of all LEDs to 0.
 
-
-.. py:function:: show(string, delay=400)
-
-    Display the ``string`` one letter at a time, with ``delay`` milliseconds
-    between each pair of letters.
-
-
 .. py:function:: show(image)
 
     Display the ``image``.
@@ -43,25 +36,14 @@ Functions
     ``delay`` parameter controls how fast the text is scrolling. This function
     blocks until it is finished.
 
+.. py:function:: show(iterable, delay, wait=True, loop=False, clear=False)
 
-.. py:function:: animate(image, delay, stride, start, wait=True, loop=False)
-
-    Display the ``image`` starting with its ``start`` column, and scroll
-    it every ``delay`` milliseconds to the right by ``stride`` columns, until
-    the last column of the image is displayed.
-
-    If ``wait`` is ``True``, this function will block until the animation is
-    finished, otherwise the animation will happen in the background.
-
-    If ``loop`` is ``True``, the animation will repeat forever.
-
-
-.. py:function:: animate(iterable, delay, wait=True, loop=False)
-
-    Display images from the ``iterable`` in sequence, with ``delay``
+    Display images or letters from the ``iterable`` in sequence, with ``delay``
     milliseconds between them.
 
     If ``wait`` is ``True``, this function will block until the animation is
     finished, otherwise the animation will happen in the background.
 
     If ``loop`` is ``True``, the animation will repeat forever.
+
+    If ``clear`` is ``True``, the display will be cleared after the iterable has finished.
