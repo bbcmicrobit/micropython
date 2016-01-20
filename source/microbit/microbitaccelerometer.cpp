@@ -39,9 +39,13 @@ typedef struct _microbit_accelerometer_obj_t {
 volatile bool accelerometer_up_to_date = false;
 volatile bool accelerometer_updating = false;
 
+#define GESTURE_LIST_SIZE (8)
+
 // We store this state globally instead of in a microbit_accelerometer_obj_t
 // struct so that that whole struct does not need to go in RAM.
-volatile uint8_t gesture_state[GESTURE_SHAKE + 1] = {0};
+volatile uint16_t gesture_state = 0;                    // 1 bit per gesture
+volatile uint8_t gesture_list_cur = 0;                  // index into gesture_list
+volatile uint8_t gesture_list[GESTURE_LIST_SIZE] = {0}; // list of pending gestures, 4-bits per element
 
 static void update(microbit_accelerometer_obj_t *self) {
     /* The only time it is possible for accelerometer_updating to be true here
@@ -58,8 +62,12 @@ static void update(microbit_accelerometer_obj_t *self) {
 }
 
 STATIC void accelerometer_listener(MicroBitEvent evt) {
-    if (evt.value <= GESTURE_SHAKE) {
-        gesture_state[evt.value] = (gesture_state[evt.value] + 2) | 1;
+    if (evt.value > GESTURE_NONE && evt.value <= GESTURE_SHAKE) {
+        gesture_state |= 1 << evt.value;
+        if (gesture_list_cur < 2 * GESTURE_LIST_SIZE) {
+            gesture_list[gesture_list_cur >> 1] |= evt.value << (4 * (gesture_list_cur & 1));
+            ++gesture_list_cur;
+        }
     }
 }
 
@@ -99,30 +107,37 @@ mp_obj_t microbit_accelerometer_get_values(mp_obj_t self_in) {
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_accelerometer_get_values_obj, microbit_accelerometer_get_values);
 
-STATIC const char *gesture_name_map[] = {
-    [GESTURE_NONE] = NULL,
-    [GESTURE_UP] = "up",
-    [GESTURE_DOWN] = "down",
-    [GESTURE_LEFT] = "left",
-    [GESTURE_RIGHT] = "right",
-    [GESTURE_FACE_UP] = "face up",
-    [GESTURE_FACE_DOWN] = "face down",
-    [GESTURE_FREEFALL] = "freefall",
-    [GESTURE_3G] = "3g",
-    [GESTURE_6G] = "6g",
-    [GESTURE_8G] = "8g",
-    [GESTURE_SHAKE] = "shake",
+STATIC const qstr gesture_name_map[] = {
+    [GESTURE_NONE] = MP_QSTR_NULL,
+    [GESTURE_UP] = MP_QSTR_up,
+    [GESTURE_DOWN] = MP_QSTR_down,
+    [GESTURE_LEFT] = MP_QSTR_left,
+    [GESTURE_RIGHT] = MP_QSTR_right,
+    [GESTURE_FACE_UP] = MP_QSTR_face_space_up,
+    [GESTURE_FACE_DOWN] = MP_QSTR_face_space_down,
+    [GESTURE_FREEFALL] = MP_QSTR_freefall,
+    [GESTURE_3G] = MP_QSTR_3g,
+    [GESTURE_6G] = MP_QSTR_6g,
+    [GESTURE_8G] = MP_QSTR_8g,
+    [GESTURE_SHAKE] = MP_QSTR_shake,
 };
 
 STATIC BasicGesture gesture_from_obj(mp_obj_t gesture_in) {
-    const char *gesture = mp_obj_str_get_str(gesture_in);
+    qstr gesture = mp_obj_str_get_qstr(gesture_in);
     for (uint i = 0; i < MP_ARRAY_SIZE(gesture_name_map); ++i) {
-        if (gesture_name_map[i] != NULL && strcmp(gesture, gesture_name_map[i]) == 0) {
+        if (gesture == gesture_name_map[i]) {
             return (BasicGesture)i;
         }
     }
     nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "invalid gesture"));
 }
+
+mp_obj_t microbit_accelerometer_current_gesture(mp_obj_t self_in) {
+    microbit_accelerometer_obj_t *self = (microbit_accelerometer_obj_t*)self_in;
+    update(self);
+    return MP_OBJ_NEW_QSTR(gesture_name_map[self->accelerometer->getGesture()]);
+}
+MP_DEFINE_CONST_FUN_OBJ_1(microbit_accelerometer_current_gesture_obj, microbit_accelerometer_current_gesture);
 
 mp_obj_t microbit_accelerometer_is_gesture(mp_obj_t self_in, mp_obj_t gesture_in) {
     microbit_accelerometer_obj_t *self = (microbit_accelerometer_obj_t*)self_in;
@@ -136,35 +151,42 @@ mp_obj_t microbit_accelerometer_was_gesture(mp_obj_t self_in, mp_obj_t gesture_i
     microbit_accelerometer_obj_t *self = (microbit_accelerometer_obj_t*)self_in;
     BasicGesture gesture = gesture_from_obj(gesture_in);
     update(self);
-    uint8_t state = gesture_state[gesture];
-    mp_obj_t result = mp_obj_new_bool(state & 1);
-    gesture_state[gesture] = state & -2;
+    mp_obj_t result = mp_obj_new_bool(gesture_state & (1 << gesture));
+    gesture_state &= (~(1 << gesture));
+    gesture_list_cur = 0;
     return result;
 }
 MP_DEFINE_CONST_FUN_OBJ_2(microbit_accelerometer_was_gesture_obj, microbit_accelerometer_was_gesture);
 
-mp_obj_t microbit_accelerometer_get_gestures(mp_obj_t self_in, mp_obj_t gesture_in) {
+mp_obj_t microbit_accelerometer_get_gestures(mp_obj_t self_in) {
     microbit_accelerometer_obj_t *self = (microbit_accelerometer_obj_t*)self_in;
-    BasicGesture gesture = gesture_from_obj(gesture_in);
     update(self);
-    return mp_obj_new_int(gesture_state[gesture] >> 1);
+    if (gesture_list_cur == 0) {
+        return mp_const_empty_tuple;
+    }
+    mp_obj_tuple_t *o = (mp_obj_tuple_t*)mp_obj_new_tuple(gesture_list_cur, NULL);
+    for (uint i = 0; i < gesture_list_cur; ++i) {
+        uint gesture = (gesture_list[i >> 1] >> (4 * (i & 1))) & 0x0f;
+        o->items[i] = MP_OBJ_NEW_QSTR(gesture_name_map[gesture]);
+    }
+    return o;
 }
-MP_DEFINE_CONST_FUN_OBJ_2(microbit_accelerometer_get_gestures_obj, microbit_accelerometer_get_gestures);
+MP_DEFINE_CONST_FUN_OBJ_1(microbit_accelerometer_get_gestures_obj, microbit_accelerometer_get_gestures);
 
-mp_obj_t microbit_accelerometer_reset_gestures(mp_obj_t self_in, mp_obj_t gesture_in) {
+mp_obj_t microbit_accelerometer_reset_gestures(mp_obj_t self_in) {
     microbit_accelerometer_obj_t *self = (microbit_accelerometer_obj_t*)self_in;
-    BasicGesture gesture = gesture_from_obj(gesture_in);
     update(self);
-    gesture_state[gesture] &= 1;
+    gesture_list_cur = 0;
     return mp_const_none;
 }
-MP_DEFINE_CONST_FUN_OBJ_2(microbit_accelerometer_reset_gestures_obj, microbit_accelerometer_reset_gestures);
+MP_DEFINE_CONST_FUN_OBJ_1(microbit_accelerometer_reset_gestures_obj, microbit_accelerometer_reset_gestures);
 
 STATIC const mp_map_elem_t microbit_accelerometer_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_get_x), (mp_obj_t)&microbit_accelerometer_get_x_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_get_y), (mp_obj_t)&microbit_accelerometer_get_y_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_get_z), (mp_obj_t)&microbit_accelerometer_get_z_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_get_values), (mp_obj_t)&microbit_accelerometer_get_values_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_current_gesture), (mp_obj_t)&microbit_accelerometer_current_gesture_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_is_gesture), (mp_obj_t)&microbit_accelerometer_is_gesture_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_was_gesture), (mp_obj_t)&microbit_accelerometer_was_gesture_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_get_gestures), (mp_obj_t)&microbit_accelerometer_get_gestures_obj },
