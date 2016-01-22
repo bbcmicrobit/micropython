@@ -7,7 +7,6 @@ Q(struct)
 Q(microbit)
 Q(reset)
 Q(sleep)
-Q(random)
 Q(running_time)
 Q(panic)
 

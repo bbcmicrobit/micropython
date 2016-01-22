@@ -74,7 +74,6 @@ STATIC const mp_doc_t help_table_instances[] = {
     {&microbit_module, "Useful stuff to control the micro:bit hardware.\n"},
     // System state objects
     {&microbit_panic_obj, "Put micro:bit in panic() mode and display an unhappy face.\nPress reset button to exit panic() mode.\n"},
-    {&microbit_random_obj, "Return a random(number) between 0 and 'number - 1'.\nrandom(10) returns a number between 0 and 9.\n"},
     {&microbit_sleep_obj, "Put micro:bit to sleep(time) for some milliseconds (1 second = 1000 ms) of time.\nsleep(2000) gives micro:bit a 2 second nap.\n"},
     {&microbit_running_time_obj, "Return running_time() in milliseconds since micro:bit's last reset.\n"},
     // Accelerometer 3D orientation
