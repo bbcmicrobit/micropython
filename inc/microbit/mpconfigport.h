@@ -51,6 +51,7 @@
 #define MICROPY_PY_STRUCT           (1)
 #define MICROPY_PY_SYS              (1)
 #define MICROPY_PY_SYS_PLATFORM     "microbit"
+#define MICROPY_PY_SYS_MODULES      (0)
 #define MICROPY_MODULE_BUILTIN_INIT (1)
 #define MICROPY_MODULE_FROZEN       (0)
 #define MICROPY_CPYTHON_COMPAT      (0)

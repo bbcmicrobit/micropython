@@ -167,8 +167,8 @@ const mp_obj_type_t microbit_uart_type = {
     .iternext = NULL,
     .buffer_p = {NULL},
     .stream_p = &microbit_uart_stream_p,
-    .bases_tuple = MP_OBJ_NULL,
-    .locals_dict = (mp_obj_t)&microbit_uart_locals_dict,
+    .bases_tuple = NULL,
+    .locals_dict = (mp_obj_dict_t*)&microbit_uart_locals_dict,
 };
 
 microbit_uart_obj_t microbit_uart_obj = {

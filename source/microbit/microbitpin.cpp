@@ -144,8 +144,8 @@ const mp_obj_type_t microbit_dig_pin_type = {
     .iternext = NULL,
     .buffer_p = {NULL},
     .stream_p = NULL,
-    .bases_tuple = MP_OBJ_NULL,
-    /* .locals_dict = */ (mp_obj_t)&microbit_dig_pin_locals_dict,
+    .bases_tuple = NULL,
+    .locals_dict = (mp_obj_dict_t*)&microbit_dig_pin_locals_dict,
 };
 
 const mp_obj_type_t microbit_ad_pin_type = {
@@ -162,8 +162,8 @@ const mp_obj_type_t microbit_ad_pin_type = {
     .iternext = NULL,
     .buffer_p = {NULL},
     .stream_p = NULL,
-    .bases_tuple = MP_OBJ_NULL,
-    /* .locals_dict = */ (mp_obj_t)&microbit_ann_pin_locals_dict,
+    .bases_tuple = NULL,
+    .locals_dict = (mp_obj_dict_t*)&microbit_ann_pin_locals_dict,
 };
 
 const mp_obj_type_t microbit_touch_pin_type = {
@@ -180,8 +180,8 @@ const mp_obj_type_t microbit_touch_pin_type = {
     .iternext = NULL,
     .buffer_p = {NULL},
     .stream_p = NULL,
-    .bases_tuple = MP_OBJ_NULL,
-    /* .locals_dict = */ (mp_obj_t)&microbit_touch_pin_locals_dict,
+    .bases_tuple = NULL,
+    .locals_dict = (mp_obj_dict_t*)&microbit_touch_pin_locals_dict,
 };
 
 const microbit_pin_obj_t microbit_p0_obj = {{&microbit_touch_pin_type}, &uBit.io.P0};

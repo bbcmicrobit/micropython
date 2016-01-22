@@ -105,8 +105,8 @@ const mp_obj_type_t microbit_i2c_type = {
     .iternext = NULL,
     .buffer_p = {NULL},
     .stream_p = NULL,
-    .bases_tuple = MP_OBJ_NULL,
-    /* .locals_dict = */ (mp_obj_t)&microbit_i2c_locals_dict,
+    .bases_tuple = NULL,
+    .locals_dict = (mp_obj_dict_t*)&microbit_i2c_locals_dict,
 };
 
 const microbit_i2c_obj_t microbit_i2c_obj = {

@@ -253,7 +253,7 @@ STATIC microbit_image_obj_t *image_from_parsed_str(const char *s, mp_int_t len) 
 }
 
 
-STATIC mp_obj_t microbit_image_make_new(mp_obj_t type_in, mp_uint_t n_args, mp_uint_t n_kw, const mp_obj_t *args) {
+STATIC mp_obj_t microbit_image_make_new(const mp_obj_type_t *type_in, mp_uint_t n_args, mp_uint_t n_kw, const mp_obj_t *args) {
     (void)type_in;
     mp_arg_check_num(n_args, n_kw, 0, 3, false);
 
@@ -622,8 +622,8 @@ const mp_obj_type_t microbit_image_type = {
     .iternext = NULL,
     .buffer_p = {NULL},
     .stream_p = NULL,
-    .bases_tuple = MP_OBJ_NULL,
-    /* .locals_dict = */ (mp_obj_t)&microbit_image_locals_dict,
+    .bases_tuple = NULL,
+    .locals_dict = (mp_obj_dict_t*)&microbit_image_locals_dict,
 };
  
 typedef struct _scrolling_string_t {
@@ -753,8 +753,8 @@ const mp_obj_type_t microbit_scrolling_string_type = {
     .iternext = NULL,
     .buffer_p = {NULL},
     .stream_p = NULL,
-    .bases_tuple = MP_OBJ_NULL,
-    MP_OBJ_NULL
+    .bases_tuple = NULL,
+    .locals_dict = NULL,
 };
 
 const mp_obj_type_t microbit_scrolling_string_iterator_type = {
@@ -771,8 +771,8 @@ const mp_obj_type_t microbit_scrolling_string_iterator_type = {
     .iternext = microbit_scrolling_string_iter_next,
     .buffer_p = {NULL},
     .stream_p = NULL,
-    .bases_tuple = MP_OBJ_NULL,
-    MP_OBJ_NULL
+    .bases_tuple = NULL,
+    .locals_dict = NULL,
 };
 
 }

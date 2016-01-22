@@ -134,8 +134,8 @@ STATIC const mp_obj_type_t microbit_compass_type = {
     .iternext = NULL,
     .buffer_p = {NULL},
     .stream_p = NULL,
-    .bases_tuple = MP_OBJ_NULL,
-    /* .locals_dict = */ (mp_obj_t)&microbit_compass_locals_dict,
+    .bases_tuple = NULL,
+    .locals_dict = (mp_obj_dict_t*)&microbit_compass_locals_dict,
 };
 
 const microbit_compass_obj_t microbit_compass_obj = {

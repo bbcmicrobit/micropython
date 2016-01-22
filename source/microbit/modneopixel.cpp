@@ -41,7 +41,7 @@ typedef struct _neopixel_obj_t {
     neopixel_strip_t strip;
 } neopixel_obj_t;
 
-STATIC mp_obj_t neopixel_make_new(mp_obj_t type_in, mp_uint_t n_args, mp_uint_t n_kw, const mp_obj_t *args) {
+STATIC mp_obj_t neopixel_make_new(const mp_obj_type_t *type_in, mp_uint_t n_args, mp_uint_t n_kw, const mp_obj_t *args) {
     (void)type_in;
     mp_arg_check_num(n_args, n_kw, 2, 2, false);
 
@@ -131,8 +131,8 @@ const mp_obj_type_t neopixel_type = {
     .iternext = NULL,
     .buffer_p = {NULL},
     .stream_p = NULL,
-    .bases_tuple = MP_OBJ_NULL,
-    .locals_dict = (mp_obj_t)&neopixel_locals_dict,
+    .bases_tuple = NULL,
+    .locals_dict = (mp_obj_dict_t*)&neopixel_locals_dict,
 };
 
 STATIC const mp_map_elem_t neopixel_module_globals_table[] = {
