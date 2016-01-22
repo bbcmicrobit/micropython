@@ -139,6 +139,11 @@ STATIC void mp_map_rehash(mp_map_t *map) {
 //  - returns NULL if not found, else the slot if was found in with key null and value non-null
 mp_map_elem_t *mp_map_lookup(mp_map_t *map, mp_obj_t index, mp_map_lookup_kind_t lookup_kind) {
 
+    if (map->is_fixed && lookup_kind != MP_MAP_LOOKUP) {
+        // can't add/remove from a fixed array
+        return NULL;
+    }
+
     // Work out if we can compare just pointers
     bool compare_only_ptrs = map->all_keys_are_qstrs;
     if (compare_only_ptrs) {
@@ -160,10 +165,6 @@ mp_map_elem_t *mp_map_lookup(mp_map_t *map, mp_obj_t index, mp_map_lookup_kind_t
 
     // if the map is an ordered array then we must do a brute force linear search
     if (map->is_ordered) {
-        if (map->is_fixed && lookup_kind != MP_MAP_LOOKUP) {
-            // can't add/remove from a fixed array
-            return NULL;
-        }
         for (mp_map_elem_t *elem = &map->table[0], *top = &map->table[map->used]; elem < top; elem++) {
             if (elem->key == index || (!compare_only_ptrs && mp_obj_equal(elem->key, index))) {
                 if (MP_UNLIKELY(lookup_kind == MP_MAP_LOOKUP_REMOVE_IF_FOUND)) {
@@ -201,7 +202,14 @@ mp_map_elem_t *mp_map_lookup(mp_map_t *map, mp_obj_t index, mp_map_lookup_kind_t
         }
     }
 
-    mp_uint_t hash = MP_OBJ_SMALL_INT_VALUE(mp_unary_op(MP_UNARY_OP_HASH, index));
+    // get hash of index, with fast path for common case of qstr
+    mp_uint_t hash;
+    if (MP_OBJ_IS_QSTR(index)) {
+        hash = qstr_hash(MP_OBJ_QSTR_VALUE(index));
+    } else {
+        hash = MP_OBJ_SMALL_INT_VALUE(mp_unary_op(MP_UNARY_OP_HASH, index));
+    }
+
     mp_uint_t pos = hash % map->alloc;
     mp_uint_t start_pos = pos;
     mp_map_elem_t *avail_slot = NULL;
@@ -214,12 +222,12 @@ mp_map_elem_t *mp_map_lookup(mp_map_t *map, mp_obj_t index, mp_map_lookup_kind_t
                 if (avail_slot == NULL) {
                     avail_slot = slot;
                 }
-                slot->key = index;
-                slot->value = MP_OBJ_NULL;
+                avail_slot->key = index;
+                avail_slot->value = MP_OBJ_NULL;
                 if (!MP_OBJ_IS_QSTR(index)) {
                     map->all_keys_are_qstrs = 0;
                 }
-                return slot;
+                return avail_slot;
             } else {
                 return NULL;
             }
@@ -306,7 +314,7 @@ mp_obj_t mp_set_lookup(mp_set_t *set, mp_obj_t index, mp_map_lookup_kind_t looku
         if (lookup_kind & MP_MAP_LOOKUP_ADD_IF_NOT_FOUND) {
             mp_set_rehash(set);
         } else {
-            return NULL;
+            return MP_OBJ_NULL;
         }
     }
     mp_uint_t hash = MP_OBJ_SMALL_INT_VALUE(mp_unary_op(MP_UNARY_OP_HASH, index));

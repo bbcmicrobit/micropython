@@ -48,16 +48,16 @@ typedef struct _mp_state_mem_t {
     #endif
 
     byte *gc_alloc_table_start;
-    mp_uint_t gc_alloc_table_byte_len;
+    size_t gc_alloc_table_byte_len;
     #if MICROPY_ENABLE_FINALISER
     byte *gc_finaliser_table_start;
     #endif
-    mp_uint_t *gc_pool_start;
-    mp_uint_t *gc_pool_end;
+    byte *gc_pool_start;
+    byte *gc_pool_end;
 
     int gc_stack_overflow;
-    mp_uint_t gc_stack[MICROPY_ALLOC_GC_STACK_SIZE];
-    mp_uint_t *gc_sp;
+    size_t gc_stack[MICROPY_ALLOC_GC_STACK_SIZE];
+    size_t *gc_sp;
     uint16_t gc_lock_depth;
 
     // This variable controls auto garbage collection.  If set to 0 then the
@@ -65,10 +65,10 @@ typedef struct _mp_state_mem_t {
     // you can still allocate/free memory and also explicitly call gc_collect.
     uint16_t gc_auto_collect_enabled;
 
-    mp_uint_t gc_last_free_atb_index;
+    size_t gc_last_free_atb_index;
 
     #if MICROPY_PY_GC_COLLECT_RETVAL
-    mp_uint_t gc_collected;
+    size_t gc_collected;
     #endif
 } mp_state_mem_t;
 
@@ -100,16 +100,15 @@ typedef struct _mp_state_vm_t {
     #endif
     #endif
 
-    // map with loaded modules
-    // TODO: expose as sys.modules
-    mp_map_t mp_loaded_modules_map;
+    // dictionary with loaded modules (may be exposed as sys.modules)
+    mp_obj_dict_t mp_loaded_modules_dict;
 
     // pending exception object (MP_OBJ_NULL if not pending)
     volatile mp_obj_t mp_pending_exception;
 
     // current exception being handled, for sys.exc_info()
     #if MICROPY_PY_SYS_EXC_INFO
-    mp_obj_t cur_exception;
+    mp_obj_base_t *cur_exception;
     #endif
 
     // dictionary for the __main__ module
@@ -124,6 +123,11 @@ typedef struct _mp_state_vm_t {
     MICROPY_PORT_ROOT_POINTERS
 
     // root pointers for extmod
+
+    #if MICROPY_PY_OS_DUPTERM
+    mp_obj_t term_obj;
+    #endif
+
     #if MICROPY_PY_LWIP_SLIP
     mp_obj_t lwip_slip_stream;
     #endif
@@ -135,8 +139,8 @@ typedef struct _mp_state_vm_t {
     // pointer and sizes to store interned string data
     // (qstr_last_chunk can be root pointer but is also stored in qstr pool)
     byte *qstr_last_chunk;
-    mp_uint_t qstr_last_alloc;
-    mp_uint_t qstr_last_used;
+    size_t qstr_last_alloc;
+    size_t qstr_last_used;
 
     // Stack top at the start of program
     // Note: this entry is used to locate the end of the root pointer section.

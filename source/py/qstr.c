@@ -73,7 +73,7 @@
 #endif
 
 // this must match the equivalent function in makeqstrdata.py
-mp_uint_t qstr_compute_hash(const byte *data, mp_uint_t len) {
+mp_uint_t qstr_compute_hash(const byte *data, size_t len) {
     // djb2 algorithm; see http://www.cse.yorku.ca/~oz/hash.html
     mp_uint_t hash = 5381;
     for (const byte *top = data + len; data < top; data++) {
@@ -137,7 +137,7 @@ STATIC qstr qstr_add(const byte *q_ptr) {
     return MP_STATE_VM(last_pool)->total_prev_len + MP_STATE_VM(last_pool)->len - 1;
 }
 
-qstr qstr_find_strn(const char *str, mp_uint_t str_len) {
+qstr qstr_find_strn(const char *str, size_t str_len) {
     // work out hash of str
     mp_uint_t str_hash = qstr_compute_hash((const byte*)str, str_len);
 
@@ -158,14 +158,14 @@ qstr qstr_from_str(const char *str) {
     return qstr_from_strn(str, strlen(str));
 }
 
-qstr qstr_from_strn(const char *str, mp_uint_t len) {
+qstr qstr_from_strn(const char *str, size_t len) {
     assert(len < (1 << (8 * MICROPY_QSTR_BYTES_IN_LEN)));
     qstr q = qstr_find_strn(str, len);
     if (q == 0) {
         // qstr does not exist in interned pool so need to add it
 
         // compute number of bytes needed to intern this string
-        mp_uint_t n_bytes = MICROPY_QSTR_BYTES_IN_HASH + MICROPY_QSTR_BYTES_IN_LEN + len + 1;
+        size_t n_bytes = MICROPY_QSTR_BYTES_IN_HASH + MICROPY_QSTR_BYTES_IN_LEN + len + 1;
 
         if (MP_STATE_VM(qstr_last_chunk) != NULL && MP_STATE_VM(qstr_last_used) + n_bytes > MP_STATE_VM(qstr_last_alloc)) {
             // not enough room at end of previously interned string so try to grow
@@ -182,7 +182,7 @@ qstr qstr_from_strn(const char *str, mp_uint_t len) {
 
         if (MP_STATE_VM(qstr_last_chunk) == NULL) {
             // no existing memory for the interned string so allocate a new chunk
-            mp_uint_t al = n_bytes;
+            size_t al = n_bytes;
             if (al < MICROPY_ALLOC_QSTR_CHUNK_INIT) {
                 al = MICROPY_ALLOC_QSTR_CHUNK_INIT;
             }
@@ -211,7 +211,7 @@ qstr qstr_from_strn(const char *str, mp_uint_t len) {
     return q;
 }
 
-byte *qstr_build_start(mp_uint_t len, byte **q_ptr) {
+byte *qstr_build_start(size_t len, byte **q_ptr) {
     assert(len < (1 << (8 * MICROPY_QSTR_BYTES_IN_LEN)));
     *q_ptr = m_new(byte, MICROPY_QSTR_BYTES_IN_HASH + MICROPY_QSTR_BYTES_IN_LEN + len + 1);
     Q_SET_LENGTH(*q_ptr, len);
@@ -221,7 +221,7 @@ byte *qstr_build_start(mp_uint_t len, byte **q_ptr) {
 qstr qstr_build_end(byte *q_ptr) {
     qstr q = qstr_find_strn((const char*)Q_GET_DATA(q_ptr), Q_GET_LENGTH(q_ptr));
     if (q == 0) {
-        mp_uint_t len = Q_GET_LENGTH(q_ptr);
+        size_t len = Q_GET_LENGTH(q_ptr);
         mp_uint_t hash = qstr_compute_hash(Q_GET_DATA(q_ptr), len);
         Q_SET_HASH(q_ptr, hash);
         q_ptr[MICROPY_QSTR_BYTES_IN_HASH + MICROPY_QSTR_BYTES_IN_LEN + len] = '\0';
@@ -236,7 +236,7 @@ mp_uint_t qstr_hash(qstr q) {
     return Q_GET_HASH(find_qstr(q));
 }
 
-mp_uint_t qstr_len(qstr q) {
+size_t qstr_len(qstr q) {
     const byte *qd = find_qstr(q);
     return Q_GET_LENGTH(qd);
 }
@@ -247,13 +247,13 @@ const char *qstr_str(qstr q) {
     return (const char*)Q_GET_DATA(qd);
 }
 
-const byte *qstr_data(qstr q, mp_uint_t *len) {
+const byte *qstr_data(qstr q, size_t *len) {
     const byte *qd = find_qstr(q);
     *len = Q_GET_LENGTH(qd);
     return Q_GET_DATA(qd);
 }
 
-void qstr_pool_info(mp_uint_t *n_pool, mp_uint_t *n_qstr, mp_uint_t *n_str_data_bytes, mp_uint_t *n_total_bytes) {
+void qstr_pool_info(size_t *n_pool, size_t *n_qstr, size_t *n_str_data_bytes, size_t *n_total_bytes) {
     *n_pool = 0;
     *n_qstr = 0;
     *n_str_data_bytes = 0;

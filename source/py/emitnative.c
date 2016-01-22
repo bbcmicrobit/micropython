@@ -1344,7 +1344,7 @@ STATIC void emit_native_load_const_str(emit_t *emit, qstr qst) {
     }
 }
 
-STATIC void emit_native_load_const_obj(emit_t *emit, void *obj) {
+STATIC void emit_native_load_const_obj(emit_t *emit, mp_obj_t obj) {
     emit_native_pre(emit);
     need_reg_single(emit, REG_RET, 0);
     ASM_MOV_ALIGNED_IMM_TO_REG(emit->as, (mp_uint_t)obj, REG_RET);
@@ -2061,11 +2061,6 @@ STATIC void emit_native_unary_op(emit_t *emit, mp_unary_op_t op) {
     vtype_kind_t vtype;
     emit_pre_pop_reg(emit, &vtype, REG_ARG_2);
     if (vtype == VTYPE_PYOBJ) {
-        if (op == MP_UNARY_OP_NOT) {
-            // we need to synthesise this operation by converting to bool first
-            emit_call_with_imm_arg(emit, MP_F_UNARY_OP, MP_UNARY_OP_BOOL, REG_ARG_1);
-            ASM_MOV_REG_REG(emit->as, REG_ARG_2, REG_RET);
-        }
         emit_call_with_imm_arg(emit, MP_F_UNARY_OP, op, REG_ARG_1);
         emit_post_push_reg(emit, VTYPE_PYOBJ, REG_RET);
     } else {

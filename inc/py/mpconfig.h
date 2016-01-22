@@ -76,12 +76,31 @@
 
 #define MICROPY_OBJ_REPR_C (2)
 
+// A MicroPython object is a 64-bit word having the following form (called R):
+//  - seeeeeee eeeeffff ffffffff ffffffff ffffffff ffffffff ffffffff ffffffff 64-bit fp, e != 0x7ff
+//  - s1111111 11110000 00000000 00000000 00000000 00000000 00000000 00000000 +/- inf
+//  - 01111111 11111000 00000000 00000000 00000000 00000000 00000000 00000000 normalised nan
+//  - 01111111 11111101 00000000 00000000 iiiiiiii iiiiiiii iiiiiiii iiiiiii1 small int
+//  - 01111111 11111110 00000000 00000000 qqqqqqqq qqqqqqqq qqqqqqqq qqqqqqq1 str
+//  - 01111111 11111100 00000000 00000000 pppppppp pppppppp pppppppp pppppp00 ptr (4 byte alignment)
+// Stored as O = R + 0x8004000000000000, retrieved as R = O - 0x8004000000000000.
+// This makes pointers have all zeros in the top 32 bits.
+// Small-ints and strs have 1 as LSB to make sure they don't look like pointers
+// to the garbage collector.
+#define MICROPY_OBJ_REPR_D (3)
+
 #ifndef MICROPY_OBJ_REPR
 #define MICROPY_OBJ_REPR (MICROPY_OBJ_REPR_A)
 #endif
 
 /*****************************************************************************/
 /* Memory allocation policy                                                  */
+
+// Number of bytes in memory allocation/GC block. Any size allocated will be
+// rounded up to be multiples of this.
+#ifndef MICROPY_BYTES_PER_GC_BLOCK
+#define MICROPY_BYTES_PER_GC_BLOCK (4 * BYTES_PER_WORD)
+#endif
 
 // Number of words allocated (in BSS) to the GC stack (minimum is 1)
 #ifndef MICROPY_ALLOC_GC_STACK_SIZE
@@ -189,6 +208,16 @@
 #define MICROPY_STACKLESS_STRICT (0)
 #endif
 
+// Don't use alloca calls. As alloca() is not part of ANSI C, this
+// workaround option is provided for compilers lacking this de-facto
+// standard function. The way it works is allocating from heap, and
+// relying on garbage collection to free it eventually. This is of
+// course much less optimal than real alloca().
+#if defined(MICROPY_NO_ALLOCA) && MICROPY_NO_ALLOCA
+#undef alloca
+#define alloca(x) m_malloc(x)
+#endif
+
 /*****************************************************************************/
 /* Micro Python emitters                                                     */
 
@@ -248,6 +277,11 @@
 
 /*****************************************************************************/
 /* Compiler configuration                                                    */
+
+// Whether to include the compiler
+#ifndef MICROPY_ENABLE_COMPILER
+#define MICROPY_ENABLE_COMPILER (1)
+#endif
 
 // Whether to enable constant folding; eg 1+2 rewritten as 3
 #ifndef MICROPY_COMP_CONST_FOLDING
@@ -335,6 +369,12 @@
 #   ifndef MICROPY_EMERGENCY_EXCEPTION_BUF_SIZE
 #   define MICROPY_EMERGENCY_EXCEPTION_BUF_SIZE (0)   // 0 - implies dynamic allocation
 #   endif
+#endif
+
+// Prefer to raise KeyboardInterrupt asynchronously (from signal or interrupt
+// handler) - if supported by a particular port.
+#ifndef MICROPY_ASYNC_KBD_INTR
+#define MICROPY_ASYNC_KBD_INTR (0)
 #endif
 
 // Whether to include REPL helper function
@@ -469,6 +509,11 @@ typedef double mp_float_t;
 #define MICROPY_BUILTIN_METHOD_CHECK_SELF_ARG (1)
 #endif
 
+// Support for user-space VFS mount (selected ports)
+#ifndef MICROPY_FSUSERMOUNT
+#define MICROPY_FSUSERMOUNT (0)
+#endif
+
 /*****************************************************************************/
 /* Fine control over Python builtins, classes, modules, etc                  */
 
@@ -556,6 +601,12 @@ typedef double mp_float_t;
 #define MICROPY_PY_BUILTINS_ENUMERATE (1)
 #endif
 
+// Whether to support eval and exec functions
+// By default they are supported if the compiler is enabled
+#ifndef MICROPY_PY_BUILTINS_EVAL_EXEC
+#define MICROPY_PY_BUILTINS_EVAL_EXEC (MICROPY_ENABLE_COMPILER)
+#endif
+
 // Whether to support the Python 2 execfile function
 #ifndef MICROPY_PY_BUILTINS_EXECFILE
 #define MICROPY_PY_BUILTINS_EXECFILE (0)
@@ -574,6 +625,11 @@ typedef double mp_float_t;
 // Whether to define "NotImplemented" special constant
 #ifndef MICROPY_PY_BUILTINS_NOTIMPLEMENTED
 #define MICROPY_PY_BUILTINS_NOTIMPLEMENTED (0)
+#endif
+
+// Whether to support min/max functions
+#ifndef MICROPY_PY_BUILTINS_MIN_MAX
+#define MICROPY_PY_BUILTINS_MIN_MAX (1)
 #endif
 
 // Whether to set __file__ for imported modules
@@ -670,6 +726,11 @@ typedef double mp_float_t;
 #define MICROPY_PY_SYS_MAXSIZE (0)
 #endif
 
+// Whether to provide "sys.modules" dictionary
+#ifndef MICROPY_PY_SYS_MODULES
+#define MICROPY_PY_SYS_MODULES (1)
+#endif
+
 // Whether to provide "sys.exc_info" function
 // Avoid enabling this, this function is Python2 heritage
 #ifndef MICROPY_PY_SYS_EXC_INFO
@@ -720,6 +781,10 @@ typedef double mp_float_t;
 
 #ifndef MICROPY_PY_UBINASCII
 #define MICROPY_PY_UBINASCII (0)
+#endif
+
+#ifndef MICROPY_PY_URANDOM
+#define MICROPY_PY_URANDOM (0)
 #endif
 
 #ifndef MICROPY_PY_MACHINE
@@ -849,10 +914,13 @@ typedef double mp_float_t;
 
 // printf format spec to use for mp_int_t and friends
 #ifndef INT_FMT
-#ifdef __LP64__
+#if defined(__LP64__)
 // Archs where mp_int_t == long, long != int
 #define UINT_FMT "%lu"
 #define INT_FMT "%ld"
+#elif defined(_WIN64)
+#define UINT_FMT "%llu"
+#define INT_FMT "%lld"
 #else
 // Archs where mp_int_t == int
 #define UINT_FMT "%u"

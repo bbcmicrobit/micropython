@@ -52,9 +52,9 @@
 
 // mp_obj_fun_builtin_t defined in obj.h
 
-STATIC mp_obj_t fun_builtin_call(mp_obj_t self_in, mp_uint_t n_args, mp_uint_t n_kw, const mp_obj_t *args) {
+STATIC mp_obj_t fun_builtin_call(mp_obj_t self_in, size_t n_args, size_t n_kw, const mp_obj_t *args) {
     assert(MP_OBJ_IS_TYPE(self_in, &mp_type_fun_builtin));
-    mp_obj_fun_builtin_t *self = self_in;
+    mp_obj_fun_builtin_t *self = MP_OBJ_TO_PTR(self_in);
 
     // check number of arguments
     mp_arg_check_num(n_args, n_kw, self->n_args_min, self->n_args_max, self->is_kw);
@@ -66,7 +66,7 @@ STATIC mp_obj_t fun_builtin_call(mp_obj_t self_in, mp_uint_t n_args, mp_uint_t n
         mp_map_t kw_args;
         mp_map_init_fixed_table(&kw_args, n_kw, args + n_args);
 
-        return ((mp_fun_kw_t)self->fun)(n_args, args, &kw_args);
+        return self->fun.kw(n_args, args, &kw_args);
 
     } else if (self->n_args_min <= 3 && self->n_args_min == self->n_args_max) {
         // function requires a fixed number of arguments
@@ -74,23 +74,23 @@ STATIC mp_obj_t fun_builtin_call(mp_obj_t self_in, mp_uint_t n_args, mp_uint_t n
         // dispatch function call
         switch (self->n_args_min) {
             case 0:
-                return ((mp_fun_0_t)self->fun)();
+                return self->fun._0();
 
             case 1:
-                return ((mp_fun_1_t)self->fun)(args[0]);
+                return self->fun._1(args[0]);
 
             case 2:
-                return ((mp_fun_2_t)self->fun)(args[0], args[1]);
+                return self->fun._2(args[0], args[1]);
 
             case 3:
             default:
-                return ((mp_fun_3_t)self->fun)(args[0], args[1], args[2]);
+                return self->fun._3(args[0], args[1], args[2]);
         }
 
     } else {
         // function takes a variable number of arguments, but no keywords
 
-        return ((mp_fun_var_t)self->fun)(n_args, args);
+        return self->fun.var(n_args, args);
     }
 }
 
@@ -118,7 +118,7 @@ STATIC const mp_obj_type_t mp_type_fun_native;
 #endif
 
 qstr mp_obj_fun_get_name(mp_const_obj_t fun_in) {
-    const mp_obj_fun_bc_t *fun = fun_in;
+    const mp_obj_fun_bc_t *fun = MP_OBJ_TO_PTR(fun_in);
     #if MICROPY_EMIT_NATIVE
     if (fun->base.type == &mp_type_fun_native) {
         // TODO native functions don't have name stored
@@ -139,8 +139,8 @@ qstr mp_obj_fun_get_name(mp_const_obj_t fun_in) {
 #if MICROPY_CPYTHON_COMPAT
 STATIC void fun_bc_print(const mp_print_t *print, mp_obj_t o_in, mp_print_kind_t kind) {
     (void)kind;
-    mp_obj_fun_bc_t *o = o_in;
-    mp_printf(print, "<function %q at 0x%x>", mp_obj_fun_get_name(o), o);
+    mp_obj_fun_bc_t *o = MP_OBJ_TO_PTR(o_in);
+    mp_printf(print, "<function %q at 0x%p>", mp_obj_fun_get_name(o_in), o);
 }
 #endif
 
@@ -165,19 +165,19 @@ STATIC void dump_args(const mp_obj_t *a, mp_uint_t sz) {
 #define VM_DETECT_STACK_OVERFLOW (0)
 
 #if MICROPY_STACKLESS
-mp_code_state *mp_obj_fun_bc_prepare_codestate(mp_obj_t self_in, mp_uint_t n_args, mp_uint_t n_kw, const mp_obj_t *args) {
+mp_code_state *mp_obj_fun_bc_prepare_codestate(mp_obj_t self_in, size_t n_args, size_t n_kw, const mp_obj_t *args) {
     MP_STACK_CHECK();
-    mp_obj_fun_bc_t *self = self_in;
+    mp_obj_fun_bc_t *self = MP_OBJ_TO_PTR(self_in);
 
     // get start of bytecode
     const byte *ip = self->bytecode;
 
     // bytecode prelude: state size and exception stack size
-    mp_uint_t n_state = mp_decode_uint(&ip);
-    mp_uint_t n_exc_stack = mp_decode_uint(&ip);
+    size_t n_state = mp_decode_uint(&ip);
+    size_t n_exc_stack = mp_decode_uint(&ip);
 
     // allocate state for locals and stack
-    mp_uint_t state_size = n_state * sizeof(mp_obj_t) + n_exc_stack * sizeof(mp_exc_stack_t);
+    size_t state_size = n_state * sizeof(mp_obj_t) + n_exc_stack * sizeof(mp_exc_stack_t);
     mp_code_state *code_state;
     code_state = m_new_obj_var_maybe(mp_code_state, byte, state_size);
     if (!code_state) {
@@ -186,7 +186,7 @@ mp_code_state *mp_obj_fun_bc_prepare_codestate(mp_obj_t self_in, mp_uint_t n_arg
 
     code_state->ip = (byte*)(ip - self->bytecode); // offset to after n_state/n_exc_stack
     code_state->n_state = n_state;
-    mp_setup_code_state(code_state, self_in, n_args, n_kw, args);
+    mp_setup_code_state(code_state, self, n_args, n_kw, args);
 
     // execute the byte code with the correct globals context
     code_state->old_globals = mp_globals_get();
@@ -196,7 +196,7 @@ mp_code_state *mp_obj_fun_bc_prepare_codestate(mp_obj_t self_in, mp_uint_t n_arg
 }
 #endif
 
-STATIC mp_obj_t fun_bc_call(mp_obj_t self_in, mp_uint_t n_args, mp_uint_t n_kw, const mp_obj_t *args) {
+STATIC mp_obj_t fun_bc_call(mp_obj_t self_in, size_t n_args, size_t n_kw, const mp_obj_t *args) {
     MP_STACK_CHECK();
 
     DEBUG_printf("Input n_args: " UINT_FMT ", n_kw: " UINT_FMT "\n", n_args, n_kw);
@@ -204,7 +204,7 @@ STATIC mp_obj_t fun_bc_call(mp_obj_t self_in, mp_uint_t n_args, mp_uint_t n_kw, 
     dump_args(args, n_args);
     DEBUG_printf("Input kw args: ");
     dump_args(args + n_args, n_kw * 2);
-    mp_obj_fun_bc_t *self = self_in;
+    mp_obj_fun_bc_t *self = MP_OBJ_TO_PTR(self_in);
     DEBUG_printf("Func n_def_args: %d\n", self->n_def_args);
 
     // get start of bytecode
@@ -231,7 +231,7 @@ STATIC mp_obj_t fun_bc_call(mp_obj_t self_in, mp_uint_t n_args, mp_uint_t n_kw, 
 
     code_state->ip = (byte*)(ip - self->bytecode); // offset to after n_state/n_exc_stack
     code_state->n_state = n_state;
-    mp_setup_code_state(code_state, self_in, n_args, n_kw, args);
+    mp_setup_code_state(code_state, self, n_args, n_kw, args);
 
     // execute the byte code with the correct globals context
     code_state->old_globals = mp_globals_get();
@@ -325,9 +325,9 @@ const mp_obj_type_t mp_type_fun_bc = {
 mp_obj_t mp_obj_new_fun_bc(mp_obj_t def_args_in, mp_obj_t def_kw_args, const byte *code, const mp_uint_t *const_table) {
     mp_uint_t n_def_args = 0;
     mp_uint_t n_extra_args = 0;
-    mp_obj_tuple_t *def_args = def_args_in;
-    if (def_args != MP_OBJ_NULL) {
-        assert(MP_OBJ_IS_TYPE(def_args, &mp_type_tuple));
+    mp_obj_tuple_t *def_args = MP_OBJ_TO_PTR(def_args_in);
+    if (def_args_in != MP_OBJ_NULL) {
+        assert(MP_OBJ_IS_TYPE(def_args_in, &mp_type_tuple));
         n_def_args = def_args->len;
         n_extra_args = def_args->len;
     }
@@ -339,13 +339,13 @@ mp_obj_t mp_obj_new_fun_bc(mp_obj_t def_args_in, mp_obj_t def_kw_args, const byt
     o->globals = mp_globals_get();
     o->bytecode = code;
     o->const_table = const_table;
-    if (def_args != MP_OBJ_NULL) {
+    if (def_args != NULL) {
         memcpy(o->extra_args, def_args->items, n_def_args * sizeof(mp_obj_t));
     }
     if (def_kw_args != MP_OBJ_NULL) {
         o->extra_args[n_def_args] = def_kw_args;
     }
-    return o;
+    return MP_OBJ_FROM_PTR(o);
 }
 
 /******************************************************************************/
@@ -353,7 +353,7 @@ mp_obj_t mp_obj_new_fun_bc(mp_obj_t def_args_in, mp_obj_t def_kw_args, const byt
 
 #if MICROPY_EMIT_NATIVE
 
-STATIC mp_obj_t fun_native_call(mp_obj_t self_in, mp_uint_t n_args, mp_uint_t n_kw, const mp_obj_t *args) {
+STATIC mp_obj_t fun_native_call(mp_obj_t self_in, size_t n_args, size_t n_kw, const mp_obj_t *args) {
     MP_STACK_CHECK();
     mp_obj_fun_bc_t *self = self_in;
     mp_call_fun_t fun = MICROPY_MAKE_POINTER_CALLABLE((void*)self->bytecode);
@@ -393,7 +393,7 @@ typedef mp_uint_t (*viper_fun_2_t)(mp_uint_t, mp_uint_t);
 typedef mp_uint_t (*viper_fun_3_t)(mp_uint_t, mp_uint_t, mp_uint_t);
 typedef mp_uint_t (*viper_fun_4_t)(mp_uint_t, mp_uint_t, mp_uint_t, mp_uint_t);
 
-STATIC mp_obj_t fun_viper_call(mp_obj_t self_in, mp_uint_t n_args, mp_uint_t n_kw, const mp_obj_t *args) {
+STATIC mp_obj_t fun_viper_call(mp_obj_t self_in, size_t n_args, size_t n_kw, const mp_obj_t *args) {
     mp_obj_fun_viper_t *self = self_in;
 
     mp_arg_check_num(n_args, n_kw, self->n_args, self->n_args, false);
@@ -514,7 +514,7 @@ STATIC mp_obj_t convert_val_from_inline_asm(mp_uint_t val) {
     return MP_OBJ_NEW_SMALL_INT(val);
 }
 
-STATIC mp_obj_t fun_asm_call(mp_obj_t self_in, mp_uint_t n_args, mp_uint_t n_kw, const mp_obj_t *args) {
+STATIC mp_obj_t fun_asm_call(mp_obj_t self_in, size_t n_args, size_t n_kw, const mp_obj_t *args) {
     mp_obj_fun_asm_t *self = self_in;
 
     mp_arg_check_num(n_args, n_kw, self->n_args, self->n_args, false);

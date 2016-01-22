@@ -1,9 +1,9 @@
 /*
- * This file is part of the Micro Python project, http://micropython.org/
+ * This file is part of the MicroPython project, http://micropython.org/
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2013, 2014 Damien P. George
+ * Copyright (c) 2015 Paul Sokolovsky
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -25,33 +25,30 @@
  */
 
 #include <stdlib.h>
-#include <assert.h>
 
 #include "py/nlr.h"
-#include "py/obj.h"
-#include "py/runtime0.h"
+#include "py/runtime.h"
 
-/******************************************************************************/
-/* singleton objects defined by Python                                        */
+// This is universal iterator type which calls "iternext" method stored in
+// particular object instance. (So, each instance of this time can have its
+// own iteration behavior.) Having this type saves to define type objects
+// for various internal iterator objects.
 
-typedef struct _mp_obj_singleton_t {
+// Any instance should have these 2 fields at the beginning
+typedef struct _mp_obj_polymorph_iter_t {
     mp_obj_base_t base;
-    qstr name;
-} mp_obj_singleton_t;
+    mp_fun_1_t iternext;
+} mp_obj_polymorph_iter_t;
 
-STATIC void singleton_print(const mp_print_t *print, mp_obj_t self_in, mp_print_kind_t kind) {
-    (void)kind;
-    mp_obj_singleton_t *self = MP_OBJ_TO_PTR(self_in);
-    mp_printf(print, "%q", self->name);
+STATIC mp_obj_t polymorph_it_iternext(mp_obj_t self_in) {
+    mp_obj_polymorph_iter_t *self = MP_OBJ_TO_PTR(self_in);
+    // Redirect call to object instance's iternext method
+    return self->iternext(self_in);
 }
 
-const mp_obj_type_t mp_type_singleton = {
+const mp_obj_type_t mp_type_polymorph_iter = {
     { &mp_type_type },
-    .name = MP_QSTR_,
-    .print = singleton_print,
+    .name = MP_QSTR_iterator,
+    .getiter = mp_identity,
+    .iternext = polymorph_it_iternext,
 };
-
-const mp_obj_singleton_t mp_const_ellipsis_obj = {{&mp_type_singleton}, MP_QSTR_Ellipsis};
-#if MICROPY_PY_BUILTINS_NOTIMPLEMENTED
-const mp_obj_singleton_t mp_const_notimplemented_obj = {{&mp_type_singleton}, MP_QSTR_NotImplemented};
-#endif

@@ -31,6 +31,7 @@
 /** types *******************************************************/
 
 #include <stdbool.h>
+#include <stdint.h>
 #include <stddef.h>
 
 typedef unsigned char byte;
@@ -101,12 +102,11 @@ size_t m_get_peak_bytes_allocated(void);
 #define MP_ARRAY_SIZE(a) (sizeof(a) / sizeof((a)[0]))
 
 // align ptr to the nearest multiple of "alignment"
-#define MP_ALIGN(ptr, alignment) (void*)(((mp_uint_t)(ptr) + ((alignment) - 1)) & ~((alignment) - 1))
+#define MP_ALIGN(ptr, alignment) (void*)(((uintptr_t)(ptr) + ((alignment) - 1)) & ~((alignment) - 1))
 
 /** unichar / UTF-8 *********************************************/
 
 #if MICROPY_PY_BUILTINS_STR_UNICODE
-#include <stdint.h> // only include if we need it
 // with unicode enabled we need a type which can fit chars up to 0x10ffff
 typedef uint32_t unichar;
 #else

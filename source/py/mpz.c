@@ -285,7 +285,11 @@ STATIC mp_uint_t mpn_xor(mpz_dig_t *idig, const mpz_dig_t *jdig, mp_uint_t jlen,
         *idig = *jdig;
     }
 
-    return idig - oidig;
+    // remove trailing zeros
+    for (--idig; idig >= oidig && *idig == 0; --idig) {
+    }
+
+    return idig + 1 - oidig;
 }
 
 /* computes i = i * d1 + d2
@@ -707,7 +711,11 @@ typedef uint32_t mp_float_int_t;
 #endif
     union {
         mp_float_t f;
+        #if MP_ENDIANNESS_LITTLE
         struct { mp_float_int_t frc:MP_FLOAT_FRAC_BITS, exp:MP_FLOAT_EXP_BITS, sgn:1; } p;
+        #else
+        struct { mp_float_int_t sgn:1, exp:MP_FLOAT_EXP_BITS, frc:MP_FLOAT_FRAC_BITS; } p;
+        #endif
     } u = {src};
 
     z->neg = u.p.sgn;

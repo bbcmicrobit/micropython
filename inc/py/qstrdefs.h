@@ -46,6 +46,7 @@ Q(__locals__)
 Q(__main__)
 Q(__module__)
 Q(__name__)
+Q(__dict__)
 Q(__hash__)
 Q(__next__)
 Q(__qualname__)
@@ -232,8 +233,11 @@ Q(len)
 Q(list)
 Q(locals)
 Q(map)
+#if MICROPY_PY_BUILTINS_MIN_MAX
 Q(max)
 Q(min)
+Q(default)
+#endif
 Q(namedtuple)
 Q(next)
 Q(oct)
@@ -474,6 +478,9 @@ Q(implementation)
 #if MICROPY_PY_SYS_MAXSIZE
 Q(maxsize)
 #endif
+#if MICROPY_PY_SYS_MODULES
+Q(modules)
+#endif
 #if MICROPY_PY_SYS_EXC_INFO
 Q(exc_info)
 #endif
@@ -481,9 +488,12 @@ Q(print_exception)
 #endif
 
 #if MICROPY_PY_STRUCT
+Q(struct)
 Q(ustruct)
 Q(pack)
+Q(pack_into)
 Q(unpack)
+Q(unpack_from)
 Q(calcsize)
 #endif
 
@@ -562,6 +572,7 @@ Q(property)
 Q(getter)
 Q(setter)
 Q(deleter)
+Q(doc)
 #endif
 
 #if MICROPY_PY_UZLIB
@@ -607,7 +618,7 @@ Q(b2a_base64)
 #endif
 
 #if MICROPY_PY_MACHINE
-Q(machine)
+Q(umachine)
 Q(mem)
 Q(mem8)
 Q(mem16)
@@ -646,4 +657,25 @@ Q(settimeout)
 Q(slip)
 Q(status)
 #endif
+#endif
+
+#if MICROPY_FSUSERMOUNT
+// for user-mountable block devices
+Q(mount)
+Q(readonly)
+Q(mkfs)
+Q(readblocks)
+Q(writeblocks)
+Q(sync)
+Q(count)
+#endif
+
+#if MICROPY_PY_OS_DUPTERM
+Q(dupterm)
+#endif
+
+#if MICROPY_PY_URANDOM
+Q(urandom)
+Q(getrandbits)
+Q(seed)
 #endif

@@ -164,6 +164,13 @@ STATIC const reg_name_t reg_name_table[] = {
     {15, "pc\0"},
 };
 
+#define MAX_SPECIAL_REGISTER_NAME_LENGTH 7
+typedef struct _special_reg_name_t { byte reg; char name[MAX_SPECIAL_REGISTER_NAME_LENGTH + 1]; } special_reg_name_t;
+STATIC const special_reg_name_t special_reg_name_table[] = {
+    {5, "IPSR"},
+    {17, "BASEPRI"},
+};
+
 // return empty string in case of error, so we can attempt to parse the string
 // without a special check if it was in fact a string
 STATIC const char *get_arg_str(const byte *pn) {
@@ -197,6 +204,20 @@ STATIC mp_uint_t get_arg_reg(emit_inline_asm_t *emit, const char *op, const byte
     emit_inline_thumb_error_exc(emit,
         mp_obj_new_exception_msg_varg(&mp_type_SyntaxError,
             "'%s' expects a register", op));
+    return 0;
+}
+
+STATIC mp_uint_t get_arg_special_reg(emit_inline_asm_t *emit, const char *op, const byte *pn) {
+    const char *reg_str = get_arg_str(pn);
+    for (mp_uint_t i = 0; i < MP_ARRAY_SIZE(special_reg_name_table); i++) {
+        const special_reg_name_t *r = &special_reg_name_table[i];
+        if (strcmp(r->name, reg_str) == 0) {
+            return r->reg;
+        }
+    }
+    emit_inline_thumb_error_exc(emit,
+        mp_obj_new_exception_msg_varg(&mp_type_SyntaxError,
+            "'%s' expects a special register", op));
     return 0;
 }
 
@@ -280,12 +301,13 @@ bad_arg:
     return 0;
 }
 
-STATIC int get_arg_i(emit_inline_asm_t *emit, const char *op, const byte *p, int fit_mask) {
-    if (!pt_is_small_int(p)) {
+STATIC uint32_t get_arg_i(emit_inline_asm_t *emit, const char *op, const byte *pn, uint32_t fit_mask) {
+    mp_obj_t o;
+    if (!mp_parse_node_get_int_maybe(pn, &o)) {
         emit_inline_thumb_error_exc(emit, mp_obj_new_exception_msg_varg(&mp_type_SyntaxError, "'%s' expects an integer", op));
         return 0;
     }
-    int i = pt_small_int_value(p);
+    uint32_t i = mp_obj_get_int_truncated(o);
     if ((i & (~fit_mask)) != 0) {
         emit_inline_thumb_error_exc(emit, mp_obj_new_exception_msg_varg(&mp_type_SyntaxError, "'%s' integer 0x%x does not fit in mask 0x%x", op, i, fit_mask));
         return 0;
@@ -414,7 +436,7 @@ STATIC void emit_inline_thumb_op(emit_inline_asm_t *emit, qstr op, mp_uint_t n_a
     // three_args =
     // "subs", RLO, RLO, I3, asm_thumb_subs_reg_reg_i3
 
-    mp_uint_t op_len;
+    size_t op_len;
     const char *op_str = (const char*)qstr_data(op, &op_len);
 
     #if MICROPY_EMIT_INLINE_THUMB_FLOAT
@@ -635,6 +657,10 @@ STATIC void emit_inline_thumb_op(emit_inline_asm_t *emit, qstr op, mp_uint_t n_a
                 op_code_hi = 0xfa90;
                 op_code = 0xf0a0;
                 goto op_clz_rbit;
+            } else if (ARMV7M && strcmp(op_str, "mrs") == 0){
+                mp_uint_t reg_dest = get_arg_reg(emit, op_str, pn_args[0], 12);
+                mp_uint_t reg_src = get_arg_special_reg(emit, op_str, pn_args[1]);
+                asm_thumb_op32(emit->as, 0xf3ef, 0x8000 | (reg_dest << 8) | reg_src);
             } else {
                 if (strcmp(op_str, "and_") == 0) {
                     op_code = ASM_THUMB_FORMAT_4_AND;
@@ -685,11 +711,10 @@ STATIC void emit_inline_thumb_op(emit_inline_asm_t *emit, qstr op, mp_uint_t n_a
                 goto op_movw_movt;
             } else if (ARMV7M && strcmp(op_str, "movwt") == 0) {
                 // this is a convenience instruction
-                // we clear the MSB since it might be set from extracting the small int value
                 mp_uint_t reg_dest = get_arg_reg(emit, op_str, pn_args[0], 15);
-                int i_src = get_arg_i(emit, op_str, pn_args[1], 0xffffffff);
+                uint32_t i_src = get_arg_i(emit, op_str, pn_args[1], 0xffffffff);
                 asm_thumb_mov_reg_i16(emit->as, ASM_THUMB_OP_MOVW, reg_dest, i_src & 0xffff);
-                asm_thumb_mov_reg_i16(emit->as, ASM_THUMB_OP_MOVT, reg_dest, (i_src >> 16) & 0x7fff);
+                asm_thumb_mov_reg_i16(emit->as, ASM_THUMB_OP_MOVT, reg_dest, (i_src >> 16) & 0xffff);
             } else if (ARMV7M && strcmp(op_str, "ldrex") == 0) {
                 mp_uint_t r_dest = get_arg_reg(emit, op_str, pn_args[0], 15);
                 const byte *pn_base, *pn_offset;

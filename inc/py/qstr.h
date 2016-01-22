@@ -43,13 +43,13 @@ enum {
     MP_QSTR_number_of,
 };
 
-typedef mp_uint_t qstr;
+typedef size_t qstr;
 
 typedef struct _qstr_pool_t {
     struct _qstr_pool_t *prev;
-    mp_uint_t total_prev_len;
-    mp_uint_t alloc;
-    mp_uint_t len;
+    size_t total_prev_len;
+    size_t alloc;
+    size_t len;
     const byte *qstrs[];
 } qstr_pool_t;
 
@@ -57,21 +57,21 @@ typedef struct _qstr_pool_t {
 
 void qstr_init(void);
 
-mp_uint_t qstr_compute_hash(const byte *data, mp_uint_t len);
-qstr qstr_find_strn(const char *str, mp_uint_t str_len); // returns MP_QSTR_NULL if not found
+mp_uint_t qstr_compute_hash(const byte *data, size_t len);
+qstr qstr_find_strn(const char *str, size_t str_len); // returns MP_QSTR_NULL if not found
 
 qstr qstr_from_str(const char *str);
-qstr qstr_from_strn(const char *str, mp_uint_t len);
+qstr qstr_from_strn(const char *str, size_t len);
 
-byte *qstr_build_start(mp_uint_t len, byte **q_ptr);
+byte *qstr_build_start(size_t len, byte **q_ptr);
 qstr qstr_build_end(byte *q_ptr);
 
 mp_uint_t qstr_hash(qstr q);
 const char *qstr_str(qstr q);
-mp_uint_t qstr_len(qstr q);
-const byte *qstr_data(qstr q, mp_uint_t *len);
+size_t qstr_len(qstr q);
+const byte *qstr_data(qstr q, size_t *len);
 
-void qstr_pool_info(mp_uint_t *n_pool, mp_uint_t *n_qstr, mp_uint_t *n_str_data_bytes, mp_uint_t *n_total_bytes);
+void qstr_pool_info(size_t *n_pool, size_t *n_qstr, size_t *n_str_data_bytes, size_t *n_total_bytes);
 void qstr_dump_data(void);
 
 #endif // __MICROPY_INCLUDED_PY_QSTR_H__
