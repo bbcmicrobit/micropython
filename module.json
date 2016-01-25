@@ -8,9 +8,7 @@
   "homepage": "http://micropython.org",
   "dependencies":{
     "mbed-classic": "~0.0.4",
-    "ble": "lancaster-university/BLE_API#v2.1.11",
-    "ble-nrf51822": "lancaster-university/nRF51822#v2.2.5",
-    "microbit-dal":"lancaster-university/microbit-dal#v1.4.6"
+    "microbit-dal":"lancaster-university/microbit-dal#v1.4.9"
   },
   "extraIncludes":[
     "inc",
