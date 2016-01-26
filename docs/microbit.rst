@@ -47,6 +47,11 @@ Functions
     restarted.
 
 
+.. py:function:: temperature()
+
+    Return the temperature of the micro:bit in degrees Celcius.
+
+
 Attributes
 ==========
 

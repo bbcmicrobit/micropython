@@ -9,6 +9,7 @@ Q(reset)
 Q(sleep)
 Q(running_time)
 Q(panic)
+Q(temperature)
 
 Q(this)
 Q(authors)

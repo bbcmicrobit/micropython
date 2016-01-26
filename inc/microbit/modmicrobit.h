@@ -157,6 +157,7 @@ MP_DECLARE_CONST_FUN_OBJ(microbit_reset_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_sleep_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_random_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_running_time_obj);
+MP_DECLARE_CONST_FUN_OBJ(microbit_temperature_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_panic_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_accelerometer_get_x_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_accelerometer_get_y_obj);

@@ -76,6 +76,7 @@ STATIC const mp_doc_t help_table_instances[] = {
     {&microbit_panic_obj, "Put micro:bit in panic() mode and display an unhappy face.\nPress reset button to exit panic() mode.\n"},
     {&microbit_sleep_obj, "Put micro:bit to sleep(time) for some milliseconds (1 second = 1000 ms) of time.\nsleep(2000) gives micro:bit a 2 second nap.\n"},
     {&microbit_running_time_obj, "Return running_time() in milliseconds since micro:bit's last reset.\n"},
+    {&microbit_temperature_obj, "Return micro:bit's temperature in degrees Celcius.\n"},
     // Accelerometer 3D orientation
     {&microbit_accelerometer_obj, "Detect micro:bit's movement in 3D.\nIt measures tilt (X and Y) and up-down (Z) motion.\n"},
     {&microbit_accelerometer_get_x_obj, "Return micro:bit's tilt (X acceleration) in milli-g's.\n"},
