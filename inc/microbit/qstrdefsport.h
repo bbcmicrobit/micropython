@@ -190,6 +190,7 @@ Q(clear_calibration)
 Q(get_x)
 Q(get_y)
 Q(get_z)
+Q(get_field_strength)
 
 Q(MicroBitI2C)
 Q(i2c)
