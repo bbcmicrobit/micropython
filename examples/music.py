@@ -1,7 +1,12 @@
 """
-This demo requires a speaker connected to P0 and GND
+    music.py
+    ~~~~~~~~
+
+    Plays a simple tune using the Micropython music module.
+    This example requires a speaker/buzzer/headphones connected to P0 and GND.
 """
-import microbit
+from microbit import *
+import music
 
 # play Bach Prelude in C.
 notes = [
@@ -19,4 +24,4 @@ notes = [
     'g3', 'b', 'd4', 'g', 'b', 'd', 'g', 'b', 'g3', 'b3', 'd4', 'g', 'b', 'd', 'g', 'b'
 ]
 
-microbit.music.play(notes)
+music.play(notes)

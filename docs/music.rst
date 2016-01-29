@@ -4,8 +4,10 @@ Music
 .. py:module:: music
 
 This is the ``music`` module. You can use it to play simple tunes, provided
-that you connect a speaker to your board.
+that you connect a speaker to your board.      
+Note that the ``music`` module is no longer included in the ``microbit`` module. To use it, it must be imported separately with::
 
+    import music
 
 Musical Notation
 ================
@@ -116,7 +118,7 @@ Built in Melodies
 For the purposes of education and entertainment, the module contains several
 example tunes that are expressed as Python lists. They can be used like this::
 
-    >>> from microbit import music
+    >>> import music
     >>> music.play(music.NYAN)
 
 All the tunes are either out of copyright, composed by Nicholas H.Tollervey and
@@ -146,3 +148,8 @@ They are:
     * ``JUMP_DOWN`` - for use in a game, indicating downward movement.
     * ``POWER_UP`` - a fanfare to indicate an achievement unlocked.
     * ``POWER_DOWN`` - a sad fanfare to indicate an achievement lost.
+
+Example
+--------   
+.. include:: ../examples/music.py
+    :code: python
