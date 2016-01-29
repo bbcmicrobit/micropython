@@ -1,4 +1,3 @@
-
 /*
  * This file is part of the Micro Python project, http://micropython.org/
  *
@@ -37,8 +36,11 @@ extern "C" {
 #define GET_PIXEL(x, y) microbit_display_get_pixel(&microbit_display_obj, x, y)
 #define SET_PIXEL(x, y, v) microbit_display_set_pixel(&microbit_display_obj, x, y, v)
 
+STATIC mp_obj_t antigravity_ascii(void);
+
 void antigravity(uint8_t interval = 200 /* ms */) {
     // move all of the LED's upwards (we can move them in other directions in the future)
+	antigravity_ascii();
 
     for (uint8_t iteration = 0; iteration < 5; iteration++) {
         mp_hal_delay_ms(interval);
@@ -62,6 +64,43 @@ void antigravity(uint8_t interval = 200 /* ms */) {
             continue;
         }
     }
+}
+
+// as best the original antigravity as you're probably going to get
+STATIC mp_obj_t antigravity_ascii(void) {
+    STATIC const char *antigrav =
+"+- xkcd.com/353 ---------------------------------------------------------------+\n"
+"|                                                                              |\n"
+"|                                                              \\0/             |\n"
+"|                                                            /   \\             |\n"
+"|                 You're flying!                        Python!  /|            |\n"
+"|                     How?                                       \\ \\           |\n"
+"|                     /                                                        |\n"
+"|                   0                                                          |\n"
+"|                  /|\\                                                         |\n"
+"|                   |                                                          |\n"
+"|-__-----------____/_\\_______________________________--------------------------|\n"
+"|                                                                              |\n"
+"|                                                                              |\n"
+"+------------------------------------------------------------------------------+\n"
+"+-----------------------+ +-------------------------+ +------------------------+\n"
+"|                       | |    I dunno...       |   | |      I just typed      |\n"
+"|         0             | |  Dynamic typing?   /    | |   import antigravity   |\n"
+"|        _/\\\\_          | |    Whitespace?    /     | |                  |     |\n"
+"|     /     \\//         | |    /             /      | |     That's it?  /      |\n"
+"|   I learned it last   | |   |      Come join us!  | |     /          /       |\n"
+"|   night! Everything   | |   |       Programming   | |    /    ...I also      |\n"
+"|     is so simple!     | |   |      is fun again!  | |   /      sampled       |\n"
+"|            /          | |   |      It's a  whole  | |  |  everything in the  |\n"
+"|           /           | |   |       new  world    | |  |  medicine cabinet   |\n"
+"|     Hello world is    | |   |        up here!     | |  |   for comparison.   |\n"
+"|         just          | |   0                     | |   0         |          |\n"
+"|                       | |  /|\\/                   | |  /|\\    But I think    |\n"
+"| print(\"Hello, world!\")| |   |   \\_ But how are    | |   |     this is the    |\n"
+"|                       | |  / \\     you flying?    | |  / \\      Python.      |\n"
+"+-----------------------+ +-------------------------+ +------------------------+\n";
+    mp_printf(&mp_plat_print, "%s", antigrav);
+    return mp_const_none;
 }
 
 STATIC mp_obj_t antigravity__init__(void) {
