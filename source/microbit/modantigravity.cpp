@@ -102,8 +102,40 @@ STATIC void antigravity_output_x_hyphens(uint8_t reps) {
 	antigravity_output_x_chars('-', reps);
 }
 
-// due to size issues, the strip has been reduced to a load of
-// function calls below.
+/* due to size issues, the strip has been reduced to a load of
+ * function calls below.
+ * here is the original ASCII comic strip:
++-xkcd.com/353-----------------------------------------------------------------+
+|                                                                              |
+|                                                              \0/             |
+|                                                            /   \             |
+|                 You're flying!                        Python!  /|            |
+|                     How?                                       \ \           |
+|                     /                                                        |
+|                   0                                                          |
+|                  /|\                                                         |
+|                   |                                                          |
+|--------------____/_\_______________________________--------------------------|
+|                                                                              |
+|                                                                              |
++------------------------------------------------------------------------------+
++-----------------------+ +-------------------------+ +------------------------+
+|                       | |    I dunno...       |   | |      I just typed      |
+|         0             | |  Dynamic typing?   /    | |   import antigravity   |
+|        _/\\_          | |    Whitespace?    /     | |                  |     |
+|     /     \//         | |    /             /      | |     That's it?  /      |
+|   I learned it last   | |   |      Come join us!  | |     /          /       |
+|   night! Everything   | |   |       Programming   | |    /    ...I also      |
+|     is so simple!     | |   |      is fun again!  | |   /      sampled       |
+|            /          | |   |      It's a  whole  | |  |  everything in the  |
+|           /           | |   |       new  world    | |  |  medicine cabinet   |
+|     Hello world is    | |   |        up here!     | |  |   for comparison.   |
+|         just          | |   0                     | |   0         |          |
+|                       | |  /|\/                   | |  /|\    But I think    |
+| print("Hello, world!")| |   |   \_ But how are    | |   |     this is the    |
+|                       | |  / \     you flying?    | |  / \      Python.      |
++-----------------------+ +-------------------------+ +------------------------+
+*/
 STATIC void antigravity_output_antigravity_ascii() {
 	// first line
 	antigravity_output_str("+-xkcd.com/353", 14);
@@ -256,38 +288,6 @@ STATIC void antigravity_output_antigravity_ascii() {
 	antigravity_output_x_hyphens(24);
 	antigravity_output_str("+\n", 2);
 }
-/* here is the original ASCII comic strip:
-+-xkcd.com/353-----------------------------------------------------------------+
-|                                                                              |
-|                                                              \0/             |
-|                                                            /   \             |
-|                 You're flying!                        Python!  /|            |
-|                     How?                                       \ \           |
-|                     /                                                        |
-|                   0                                                          |
-|                  /|\                                                         |
-|                   |                                                          |
-|--------------____/_\_______________________________--------------------------|
-|                                                                              |
-|                                                                              |
-+------------------------------------------------------------------------------+
-+-----------------------+ +-------------------------+ +------------------------+
-|                       | |    I dunno...       |   | |      I just typed      |
-|         0             | |  Dynamic typing?   /    | |   import antigravity   |
-|        _/\\_          | |    Whitespace?    /     | |                  |     |
-|     /     \//         | |    /             /      | |     That's it?  /      |
-|   I learned it last   | |   |      Come join us!  | |     /          /       |
-|   night! Everything   | |   |       Programming   | |    /    ...I also      |
-|     is so simple!     | |   |      is fun again!  | |   /      sampled       |
-|            /          | |   |      It's a  whole  | |  |  everything in the  |
-|           /           | |   |       new  world    | |  |  medicine cabinet   |
-|     Hello world is    | |   |        up here!     | |  |   for comparison.   |
-|         just          | |   0                     | |   0         |          |
-|                       | |  /|\/                   | |  /|\    But I think    |
-| print("Hello, world!")| |   |   \_ But how are    | |   |     this is the    |
-|                       | |  / \     you flying?    | |  / \      Python.      |
-+-----------------------+ +-------------------------+ +------------------------+
-*/
 
 STATIC mp_obj_t antigravity__init__(void) {
     antigravity();
