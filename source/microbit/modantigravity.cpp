@@ -107,6 +107,11 @@ STATIC void antigravity_output_plus_separators()
 	antigravity_output_str("+ +", 3);
 }
 
+STATIC void antigravity_output_str_len_3(char *str)
+{
+	antigravity_output_str(str, 3);
+}
+
 /* due to size issues, the strip has been reduced to a load of
  * function calls below.
  * here is the original ASCII comic strip (the original comic stip itself can
@@ -146,13 +151,13 @@ STATIC void antigravity_output_antigravity_ascii() {
 	// first line
 	antigravity_output_str("+-xkcd.com/353", 14);
 	antigravity_output_x_hyphens(65);
-	antigravity_output_str("+\n|", 3);
+	antigravity_output_str_len_3("+\n|");
 	// second line
 	antigravity_output_x_spaces(78);
 	antigravity_output_vbar_newline_spacer();
 	// third line
 	antigravity_output_x_spaces(62);
-	antigravity_output_str("\\0/", 3);
+	antigravity_output_str_len_3("\\0/");
 	antigravity_output_x_spaces(13);
 	antigravity_output_vbar_newline_spacer();
 	// fourth line
@@ -171,7 +176,7 @@ STATIC void antigravity_output_antigravity_ascii() {
 	antigravity_output_x_spaces(21);
 	antigravity_output_str("How?", 4);
 	antigravity_output_x_spaces(39);
-	antigravity_output_str("\\ \\", 3);
+	antigravity_output_str_len_3("\\ \\");
 	antigravity_output_x_spaces(11);
 	antigravity_output_vbar_newline_spacer();
 	// seventh line
@@ -186,7 +191,7 @@ STATIC void antigravity_output_antigravity_ascii() {
 	antigravity_output_vbar_newline_spacer();
 	// ninth line
 	antigravity_output_x_spaces(18);
-	antigravity_output_str("/|\\", 3);
+	antigravity_output_str_len_3("/|\\");
 	antigravity_output_x_spaces(57);
 	antigravity_output_vbar_newline_spacer();
 	// tenth line
@@ -205,29 +210,29 @@ STATIC void antigravity_output_antigravity_ascii() {
 	antigravity_output_vbar_newline_spacer();
 	// thirteenth line
 	antigravity_output_x_spaces(78);
-	antigravity_output_str("|\n+", 3);
+	antigravity_output_str_len_3("|\n+");
 	// fourteenth line
 	antigravity_output_x_hyphens(78);
-	antigravity_output_str("+\n+", 3);
+	antigravity_output_str_len_3("+\n+");
 	// fifteenth line
 	antigravity_output_x_hyphens(23);
 	antigravity_output_plus_separators();
 	antigravity_output_x_hyphens(25);
 	antigravity_output_plus_separators();
 	antigravity_output_x_hyphens(24);
-	antigravity_output_str("+\n|", 3);
+	antigravity_output_str_len_3("+\n|");
 	// sixteenth line
 	antigravity_output_x_spaces(23);
 	antigravity_output_vbar_spacer();
-	antigravity_output_str("    I dunno...       |   | |      I just typed", 46);
+	antigravity_output_str("    I dunno...           | |      I just typed", 46);
 	antigravity_output_6_spaces();
 	antigravity_output_vbar_newline_spacer();
 	// seventeenth line
 	antigravity_output_x_spaces(9);
 	antigravity_output_char('0');
 	antigravity_output_x_spaces(13);
-	antigravity_output_str("| |   Dynamic typing?    /    | |   import"
-						   "antigravity   |\n|        _/\\\\_", 72);
+	antigravity_output_str("| |   Dynamic typing?   /     | |   import "
+						   "antigravity  |\n|        _/\\\\_", 72);
 	// eighteenth line
 	antigravity_output_x_spaces(10);
 	antigravity_output_vbar_spacer();
@@ -235,7 +240,7 @@ STATIC void antigravity_output_antigravity_ascii() {
 	antigravity_output_x_spaces(18);
 	// nineteenth line (and a bit of the previous one)
 	antigravity_output_str("|     |\n|     /     \\//", 23);
-	antigravity_output_x_spaces(19);
+	antigravity_output_x_spaces(9);
 	antigravity_output_vbar_spacer();
 	antigravity_output_str("    /", 5);
 	antigravity_output_x_spaces(13);
@@ -258,16 +263,16 @@ STATIC void antigravity_output_antigravity_ascii() {
 	// twenty-second line
 	antigravity_output_str("     is so simple!     ", 23);
 	antigravity_output_vbar_spacer_and_3_spaces();
-	antigravity_output_str("|      is fun again!  ", 20);
+	antigravity_output_str("|      is fun again!  ", 22);
 	antigravity_output_vbar_spacer_and_3_spaces();
-	antigravity_output_str("/      sampled       ", 21);
+	antigravity_output_str("/       sampled       ", 22);
 	antigravity_output_vbar_newline_spacer();
 	// twenty-third line
 	antigravity_output_x_spaces(12);
 	antigravity_output_char('/');
 	antigravity_output_x_spaces(10);
 	antigravity_output_vbar_spacer_and_3_spaces();
-	antigravity_output_str("|      It's a  whole  | |  everything in the  |\n|", 49);
+	antigravity_output_str("|      It's a  whole  | |  |  everything in the  |\n|", 52);
 	// twenty-fourth line
 	antigravity_output_x_spaces(11);
 	antigravity_output_char('/');
