@@ -10,6 +10,4 @@ Developer FAQ
     developers by adding tips, how-tos, and Q&A to this document.
     Thanks!
 
-Where do I get a copy of the DAL? A: Ask Nicholas Toll for details.
-
-
+Where do I get a copy of the DAL? A: Ask Nicholas Tollervey for details.

@@ -9,6 +9,8 @@ BBC micro:bit MicroPython documentation
 Welcome to the project! We hope you enjoy developing for the BBC micro:bit
 using MicroPython.
 
+.. image:: comic.png
+
 To get involved with the community subscribe to the microbit@python.org
 mailing list (https://mail.python.org/mailman/listinfo/microbit).
 
@@ -22,7 +24,6 @@ mailing list (https://mail.python.org/mailman/listinfo/microbit).
    :maxdepth: 2
    :caption: API Reference
 
-   api_design_heuristics.rst
    microbit_micropython_api.rst
    microbit.rst
    pin.rst
@@ -34,6 +35,8 @@ mailing list (https://mail.python.org/mailman/listinfo/microbit).
    display.rst
    i2c.rst
    uart.rst
+   random.rst
+   neopixel.rst
 
 .. toctree::
    :maxdepth: 2
@@ -43,6 +46,7 @@ mailing list (https://mail.python.org/mailman/listinfo/microbit).
    devguide/flashfirmware
    devguide/repl
    devguide/devfaq
+   devguide/contributing
 
 .. toctree::
    :maxdepth: 2
