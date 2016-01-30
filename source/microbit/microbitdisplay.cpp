@@ -127,12 +127,6 @@ static mp_uint_t async_tick = 0;
 static bool async_clear = false;
 static bool async_error = true;
 
-STATIC void wait_for_event() {
-    while (!wakeup_event)
-        __WFI();
-    wakeup_event = false;
-}
-
 STATIC void async_stop(void) {
     async_iterator = NULL;
     async_mode = ASYNC_MODE_STOPPED;
@@ -142,6 +136,18 @@ STATIC void async_stop(void) {
     MP_STATE_PORT(async_data)[0] = NULL;
     MP_STATE_PORT(async_data)[1] = NULL;
     wakeup_event = true;
+}
+
+STATIC void wait_for_event() {
+    while (!wakeup_event) {
+        // allow CTRL-C to stop the animation
+        if (MP_STATE_VM(mp_pending_exception) != MP_OBJ_NULL) {
+            async_stop();
+            return;
+        }
+        __WFI();
+    }
+    wakeup_event = false;
 }
 
 struct DisplayPoint {
