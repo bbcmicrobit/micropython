@@ -162,7 +162,7 @@ STATIC void antigravity_output_antigravity_ascii() {
 	antigravity_output_vbar_newline_spacer();
 	// fourth line
 	antigravity_output_x_spaces(60);
-	antigravity_output_str("/   \\", 4);
+	antigravity_output_str("/   \\", 5);
 	antigravity_output_x_spaces(13);
 	antigravity_output_vbar_newline_spacer();
 	// fifth line
