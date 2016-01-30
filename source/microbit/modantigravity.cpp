@@ -164,10 +164,10 @@ STATIC void antigravity_output_antigravity_ascii() {
 	antigravity_output_vbar_newline_spacer();
 	// twelth line
 	antigravity_output_x_spaces(64);
-	antigravity_output_str("|\n+", 3);
+	antigravity_output_str("|\n+");
 	// thirteenth line
 	antigravity_output_x_hyphens(64);
-	antigravity_output_str("+\n", 3);
+	antigravity_output_str("+\n");
 }
 
 STATIC mp_obj_t antigravity__init__(void) {
