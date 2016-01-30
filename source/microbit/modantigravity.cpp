@@ -107,7 +107,7 @@ STATIC void antigravity_output_plus_separators()
 	antigravity_output_str("+ +", 3);
 }
 
-STATIC void antigravity_output_str_len_3(char *str)
+STATIC void antigravity_output_str_len_3(const char *str)
 {
 	antigravity_output_str(str, 3);
 }
@@ -224,15 +224,15 @@ STATIC void antigravity_output_antigravity_ascii() {
 	// sixteenth line
 	antigravity_output_x_spaces(23);
 	antigravity_output_vbar_spacer();
-	antigravity_output_str("    I dunno...           | |      I just typed", 46);
+	antigravity_output_str("     I dunno...          | |      I just typed", 46);
 	antigravity_output_6_spaces();
 	antigravity_output_vbar_newline_spacer();
 	// seventeenth line
 	antigravity_output_x_spaces(9);
 	antigravity_output_char('0');
 	antigravity_output_x_spaces(13);
-	antigravity_output_str("| |   Dynamic typing?   /     | |   import "
-						   "antigravity  |\n|        _/\\\\_", 72);
+	antigravity_output_str("| |   Dynamic typing?  /    | |   import "
+						   "antigravity   |\n|        _/\\\\_", 71);
 	// eighteenth line
 	antigravity_output_x_spaces(10);
 	antigravity_output_vbar_spacer();
@@ -265,7 +265,7 @@ STATIC void antigravity_output_antigravity_ascii() {
 	antigravity_output_vbar_spacer_and_3_spaces();
 	antigravity_output_str("|      is fun again!  ", 22);
 	antigravity_output_vbar_spacer_and_3_spaces();
-	antigravity_output_str("/       sampled       ", 22);
+	antigravity_output_str("/      sampled       ", 22);
 	antigravity_output_vbar_newline_spacer();
 	// twenty-third line
 	antigravity_output_x_spaces(12);
