@@ -189,7 +189,7 @@ STATIC void antigravity_output_antigravity_ascii() {
 	antigravity_output_char('0');
 	antigravity_output_x_spaces(13);
 	antigravity_output_str("| |   Dynamic typing?    /    | |   import"
-						   "antigravity   |\n|        _/\\\\_", 73);
+						   "antigravity   |\n|        _/\\\\_", 72);
 	// eighteenth line
 	antigravity_output_x_spaces(10);
 	antigravity_output_vbar_spacer();
@@ -205,16 +205,16 @@ STATIC void antigravity_output_antigravity_ascii() {
 	antigravity_output_6_spaces();
 	antigravity_output_vbar_newline_spacer();
 	// twentieth line
-	antigravity_output_str("   I learned it last   ", 17);
+	antigravity_output_str("   I learned it last   ", 23);
 	antigravity_output_vbar_spacer_and_3_spaces();
-	antigravity_output_str("|      Come join us!  | |     /", 30);
+	antigravity_output_str("|      Come join us!  | |     /", 31);
 	antigravity_output_x_spaces(10);
 	antigravity_output_str("/       ", 8);
 	antigravity_output_vbar_newline_spacer();
 	// twenty-first line
-	antigravity_output_str("   night! Everything   ", 7);
+	antigravity_output_str("   night! Everything   ", 23);
 	antigravity_output_vbar_spacer_and_3_spaces();
-	antigravity_output_str("|       Programming   | |    /    ...I also", 40);
+	antigravity_output_str("|       Programming   | |    /    ...I also", 43);
 	antigravity_output_6_spaces();
 	antigravity_output_vbar_newline_spacer();
 	// twenty-second line
