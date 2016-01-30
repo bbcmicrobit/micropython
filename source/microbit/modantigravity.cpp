@@ -229,7 +229,7 @@ STATIC void antigravity_output_antigravity_ascii() {
 	antigravity_output_char('/');
 	antigravity_output_x_spaces(10);
 	antigravity_output_vbar_spacer_and_3_spaces();
-	antigravity_output_str("|      It's a  whole  | |  everything in the  |\n|", 48);
+	antigravity_output_str("|      It's a  whole  | |  everything in the  |\n|", 49);
 	// twenty-fourth line
 	antigravity_output_x_spaces(11);
 	antigravity_output_char('/');
@@ -237,7 +237,7 @@ STATIC void antigravity_output_antigravity_ascii() {
 	antigravity_output_vbar_spacer_and_3_spaces();
 	// a mix-up of lines
 	antigravity_output_str("|       new  world    | |  |  medicine cabinet   |\n|     "
-						   "Hello world is    | |   |        up here!     | |  |   for comparison.   |\n|", 132);
+						   "Hello world is    | |   |        up here!     | |  |   for comparison.   |\n|", 133);
 	antigravity_output_x_spaces(10);
 	antigravity_output_str("just         | |   0", 20);
 	antigravity_output_x_spaces(21);
