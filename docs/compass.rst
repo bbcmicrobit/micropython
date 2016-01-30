@@ -3,8 +3,14 @@ Compass
 
 .. py:module:: microbit.compass
 
-This module lets you access the build-in electronic compass. Before using,
+This module lets you access the built-in electronic compass. Before using,
 the compass should be calibrated, otherwise the readings may be wrong.
+
+.. warning::
+
+    Calibrating the compass will cause your program to pause until calibration
+    is complete. Calibration consists of a little game to draw a circle on the
+    LED display by rotating the device.
 
 
 Functions
@@ -12,20 +18,14 @@ Functions
 
 .. py:function:: calibrate()
 
-    Starts the calibration process. After this is called, the user should
-    lay the board flat on the table and rotate it horizontally, until the
-    process is finished.
+    Starts the calibration process. An instructive message will be scrolled
+    to the user after which they will need to rotate the device in order to
+    draw a circle on the LED display.
 
 .. py:function:: is_calibrated()
 
     Returns ``True`` if the compass has been successfully calibrated, and
     returns ``False`` otherwise.
-
-
-.. py:function:: is_calibrating()
-
-    Returns ``True`` if the calibration process is in progress, and ``False``
-    if it has finished or hasn't been started yet.
 
 
 .. py:function:: clear_calibrarion()
@@ -59,6 +59,12 @@ Functions
     Gives the compass heading, calculated from the above readings, as an
     integer in the range from 0 to 360, representing the angle in degrees,
     clockwise, with north as 0.
+
+
+.. py:function:: get_field_strength()
+
+    Returns an integer indication of the magnitude of the magnetic field around
+    the device.
 
 
 Example
