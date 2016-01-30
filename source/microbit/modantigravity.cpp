@@ -109,7 +109,8 @@ STATIC void antigravity_output_plus_separators()
 
 /* due to size issues, the strip has been reduced to a load of
  * function calls below.
- * here is the original ASCII comic strip:
+ * here is the original ASCII comic strip (the original comic stip itself can
+ * be found at http://xkcd.com/353/):
 +-xkcd.com/353-----------------------------------------------------------------+
 |                                                                              |
 |                                                              \0/             |
