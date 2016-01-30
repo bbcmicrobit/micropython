@@ -107,10 +107,10 @@ STATIC void antigravity_output_plus_separators()
 	antigravity_output_str("+ +", 3);
 }
 
-/*STATIC void antigravity_output_str_len_3(const char *str)
+STATIC void antigravity_output_str_len_3(const char *str)
 {
 	antigravity_output_str(str, 3);
-}*/
+}
 
 /* due to size issues, the strip has been reduced to a load of
  * function calls below.
@@ -176,7 +176,7 @@ STATIC void antigravity_output_antigravity_ascii() {
 	antigravity_output_x_spaces(21);
 	antigravity_output_str("How?", 4);
 	antigravity_output_x_spaces(39);
-	antigravity_output_str("\\ \\, 3");
+	antigravity_output_str("\\ \\", 3);
 	antigravity_output_x_spaces(11);
 	antigravity_output_vbar_newline_spacer();
 	// seventh line
