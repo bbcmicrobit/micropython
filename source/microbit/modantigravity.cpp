@@ -231,7 +231,7 @@ STATIC void antigravity_output_antigravity_ascii() {
 	antigravity_output_x_spaces(9);
 	antigravity_output_char('0');
 	antigravity_output_x_spaces(13);
-	antigravity_output_str("| |   Dynamic typing?  /    | |   import "
+	antigravity_output_str("| |   Dynamic typing?  |    | |   import "
 						   "antigravity   |\n|        _/\\\\_", 71);
 	// eighteenth line
 	antigravity_output_x_spaces(10);
