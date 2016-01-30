@@ -36,7 +36,7 @@ extern "C" {
 #define GET_PIXEL(x, y) microbit_display_get_pixel(&microbit_display_obj, x, y)
 #define SET_PIXEL(x, y, v) microbit_display_set_pixel(&microbit_display_obj, x, y, v)
 
-STATIC void antigravity_output_antigravity_ascii()
+STATIC void antigravity_output_antigravity_ascii();
 
 void antigravity(uint8_t interval = 200 /* ms */) {
     // move all of the LEDs upwards (we can move them in other directions in the future)
@@ -246,7 +246,7 @@ STATIC void antigravity_output_antigravity_ascii() {
 	antigravity_output_str("| |  /|\\/", 9);
 	antigravity_output_x_spaces(19);
 	antigravity_output_str("| |  /|\\    But I think    |\n| print(\"Hello, world!\")"
-						   "| |   |   \\_ But how are    | |   |     this is the    |\n|", 54);
+						   "| |   |   \\_ But how are    | |   |     this is the    |\n|", 111);
 	antigravity_output_x_spaces(23);
 	antigravity_output_str("| |  / \\     you flying?    | |  / \\      Python.      |\n+", 58);
 	antigravity_output_x_hyphens(23);
