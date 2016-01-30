@@ -11,9 +11,12 @@ into your board.
 Functions
 =========
 
-.. py:function:: panic()
+.. py:function:: panic(n)
 
-    Enter a panic mode. Requires restart.
+    Enter a panic mode. Requires restart. Pass in an arbitrary integer to
+    indicate a status::
+
+        microbit.panic(404)
 
 
 .. py:function:: reset()
@@ -29,16 +32,6 @@ Functions
 
     will pause the execution for one second.  ``n`` can be an integer or
     a floating point number.
-
-
-.. py:function:: random(n)
-
-    Generate a pseudo-random number between 0 and ``n``-1. For instance::
-
-        result = microbit.random(6) + 1
-
-    will simulate a roll of a six-sided die, giving numbers from 1 to 6
-    inclusive.
 
 
 .. py:function:: running_time()
@@ -78,7 +71,6 @@ Modules
     :maxdepth: 1
 
     display.rst
-    music.rst
     uart.rst
     i2c.rst
     accelerometer.rst

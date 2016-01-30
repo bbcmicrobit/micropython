@@ -36,6 +36,19 @@ Classes
         Returns ``True`` if the specified button ``button`` is pressed, and
         ``False`` otherwise.
 
+    .. py:method:: was_pressed()
+
+        Returns ``True`` or ``False`` to indicate if the button was pressed
+        since the device started or the last time this method was called.
+
+    .. py:method:: get_presses()
+
+        Returns the running total of button presses.
+
+    .. py:method:: reset_presses()
+
+        Resets the running total of button presses to zero.
+
 Example
 =======
 

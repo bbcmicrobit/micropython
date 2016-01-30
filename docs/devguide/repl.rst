@@ -10,6 +10,11 @@ Accessing the REPL on the micro:bit requires:
     * Determining the communication port identifier for the micro:bit
     * Establishing communication with the correct settings for your computer
 
+If you are a Windows user you'll need to install the correct drivers. The
+instructions for which are found here:
+
+https://developer.mbed.org/handbook/Windows-serial-configuration
+
 Serial communication
 --------------------
 
