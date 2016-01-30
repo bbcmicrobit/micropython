@@ -69,7 +69,8 @@ void antigravity(uint8_t interval = 200 /* ms */) {
 #define antigravity_output_str(s,l) MP_PLAT_PRINT_STRN(s,l)
 
 STATIC void antigravity_output_char(char c) {
-	MP_PLAT_PRINT_STRN((char*) &c, 1);
+	char str[1] = {c};
+	MP_PLAT_PRINT_STRN((char*) &str, 1);
 }
 
 STATIC void antigravity_output_x_chars(char c, uint8_t reps) {
