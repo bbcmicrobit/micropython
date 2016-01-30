@@ -254,7 +254,7 @@ STATIC void antigravity_output_antigravity_ascii() {
 	antigravity_output_x_hyphens(25);
 	antigravity_output_str("+ +", 3);
 	antigravity_output_x_hyphens(24);
-	antigravity_output_str("+\n", 4);
+	antigravity_output_str("+\n", 2);
 }
 /* here is the original ASCII comic strip:
 +-xkcd.com/353-----------------------------------------------------------------+
