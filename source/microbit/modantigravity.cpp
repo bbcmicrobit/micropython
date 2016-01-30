@@ -246,7 +246,7 @@ STATIC void antigravity_output_antigravity_ascii() {
 	antigravity_output_str("| |  /|\\/", 9);
 	antigravity_output_x_spaces(19);
 	antigravity_output_str("| |  /|\\    But I think    |\n| print(\"Hello, world!\")"
-						   "| |   |   \\_ But how are    | |   |     this is the    |\n|", 111);
+						   "| |   |   \\_ But how are    | |   |     this is the    |\n|", 54);
 	antigravity_output_x_spaces(23);
 	antigravity_output_str("| |  / \\     you flying?    | |  / \\      Python.      |\n+", 58);
 	antigravity_output_x_hyphens(23);
