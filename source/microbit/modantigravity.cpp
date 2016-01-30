@@ -102,6 +102,11 @@ STATIC void antigravity_output_x_hyphens(uint8_t reps) {
 	antigravity_output_x_chars('-', reps);
 }
 
+STATIC void antigravity_output_plus_separators()
+{
+	antigravity_output_str("+ +", 3);
+}
+
 /* due to size issues, the strip has been reduced to a load of
  * function calls below.
  * here is the original ASCII comic strip:
@@ -205,9 +210,9 @@ STATIC void antigravity_output_antigravity_ascii() {
 	antigravity_output_str("+\n+", 3);
 	// fifteenth line
 	antigravity_output_x_hyphens(23);
-	antigravity_output_x_chars('+', 2);
+	antigravity_output_plus_separators()
 	antigravity_output_x_hyphens(25);
-	antigravity_output_x_chars('+', 2);
+	antigravity_output_plus_separators()
 	antigravity_output_x_hyphens(24);
 	antigravity_output_str("+\n|", 3);
 	// sixteenth line
@@ -282,9 +287,9 @@ STATIC void antigravity_output_antigravity_ascii() {
 	antigravity_output_x_spaces(23);
 	antigravity_output_str("| |  / \\     you flying?    | |  / \\      Python.      |\n+", 58);
 	antigravity_output_x_hyphens(23);
-	antigravity_output_str("+ +", 3);
+	antigravity_output_plus_separators()
 	antigravity_output_x_hyphens(25);
-	antigravity_output_str("+ +", 3);
+	antigravity_output_plus_separators()
 	antigravity_output_x_hyphens(24);
 	antigravity_output_str("+\n", 2);
 }
