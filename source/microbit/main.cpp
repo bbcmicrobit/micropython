@@ -37,7 +37,7 @@ void app_main() {
     }
 }
 
-static void ticker(void) {
+void ticker(void) {
 
     // increment our real-time counter.
     ticks += FIBER_TICK_PERIOD_MS;

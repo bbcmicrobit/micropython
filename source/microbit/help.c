@@ -93,11 +93,11 @@ STATIC const mp_doc_t help_table_instances[] = {
     {&microbit_compass_obj, "Use micro:bit's compass to detect the direction it is heading in.\nThe compass can detect magnetic fields.\nIt uses the Earth's magnetic field to detect direction.\n"},
     {&microbit_compass_is_calibrated_obj, "If micro:bit's compass is_calibrated() and adjusted for accuracy, return True.\nIf compass hasn't been adjusted for accuracy, return False.\n"},
     {&microbit_compass_calibrate_obj, "If micro:bit is confused, calibrate() the compass to adjust the its accuracy.\nWhen calibrating, lie it flat and spin it horizontally. During calibration,\ntry not to tilt the compass up and down.\n"},
-    {&microbit_compass_is_calibrating_obj, "If micro:bit's compass is_calibrating() its accuracy, it sends True.\nIf it's not busy calibrating things, it sends False.\n"},
     {&microbit_compass_clear_calibration_obj, "Reset micro:bit's compass using clear_calibration() command.\nRun calibrate() to improve accuracy.\n"},
     {&microbit_compass_get_x_obj, "Return magnetic field detected along micro:bit's X axis.\nUsually, the compass returns the earth's magnetic field in micro-Tesla units.\nUnless...a strong magnet is nearby!\n"},
     {&microbit_compass_get_y_obj, "Return magnetic field detected along micro:bit's Y axis.\nUsually, the compass returns the earth's magnetic field in micro-Tesla units.\nUnless...a strong magnet is nearby!\n"},
     {&microbit_compass_get_z_obj, "Return magnetic field detected along micro:bit's Z axis.\nUsually, the compass returns the earth's magnetic field in micro-Tesla units.\nUnless...a strong magnet is nearby!\n"},
+    {&microbit_compass_get_field_strength_obj, "Return strength of magnetic field around micro:bit.\n"},
     // Display 5x5 LED grid
     {&microbit_display_obj, "micro:bit's 5x5 LED display.\n"},
     {&microbit_display_show_obj, "Use show(x) to print the string or images 'x' to the display. Try show('Hi!').\nUse show(s, i) to show string 's', one character at a time with a delay of\n'i' milliseconds.\n"},

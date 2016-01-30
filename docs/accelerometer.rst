@@ -3,7 +3,10 @@ Accelerometer
 
 .. py:module:: microbit.accelerometer
 
-This module gives you access to the on-board accelerometer.
+This object gives you access to the on-board accelerometer. The accelerometer
+also provides convenience functions for detecting gestures. The
+recognised gestures are: ``up``, ``down``, ``left``, ``right``, ``face up``,
+``face down``, ``freefall``, ``3g``, ``6g``, ``8g``, ``shake``.
 
 
 Functions
@@ -29,7 +32,28 @@ Functions
 .. py:function:: get_values()
 
     Get the acceleration measurements in all axes at once, as a three-element
-    tuple of integers.
+    tuple of integers ordered as X, Y, Z.
+
+.. py:function:: current_gesture()
+
+    Return the name of the current gesture.
+
+.. py:function:: is_gesture()
+
+    Return True or False to indicate if the named gesture is currently active.
+
+.. py:function:: was_gesture(name)
+
+    Return True or False to indicate if the named gesture was active since the
+    last call.
+
+.. py:function:: get_gestures()
+
+    Return a tuple of the gesture history. The most recent is listed last.
+
+.. py:function:: reset_gestures()
+
+    Clears the gesture history.
 
 Example
 -------

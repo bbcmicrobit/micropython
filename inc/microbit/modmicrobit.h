@@ -173,6 +173,7 @@ MP_DECLARE_CONST_FUN_OBJ(microbit_compass_clear_calibration_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_compass_get_x_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_compass_get_y_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_compass_get_z_obj);
+MP_DECLARE_CONST_FUN_OBJ(microbit_compass_get_field_strength_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_display_show_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_display_scroll_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_display_clear_obj);
