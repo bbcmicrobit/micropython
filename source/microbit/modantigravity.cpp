@@ -107,10 +107,10 @@ STATIC void antigravity_output_plus_separators()
 	antigravity_output_str("+ +", 3);
 }
 
-STATIC void antigravity_output_str_len_3(const char *str)
+/*STATIC void antigravity_output_str_len_3(const char *str)
 {
 	antigravity_output_str(str, 3);
-}
+}*/
 
 /* due to size issues, the strip has been reduced to a load of
  * function calls below.
@@ -151,13 +151,13 @@ STATIC void antigravity_output_antigravity_ascii() {
 	// first line
 	antigravity_output_str("+-xkcd.com/353", 14);
 	antigravity_output_x_hyphens(65);
-	antigravity_output_str_len_3("+\n|");
+	antigravity_output_str("+\n|", 3);
 	// second line
 	antigravity_output_x_spaces(78);
 	antigravity_output_vbar_newline_spacer();
 	// third line
 	antigravity_output_x_spaces(62);
-	antigravity_output_str_len_3("\\0/");
+	antigravity_output_str("\\0/", 3);
 	antigravity_output_x_spaces(13);
 	antigravity_output_vbar_newline_spacer();
 	// fourth line
@@ -176,7 +176,7 @@ STATIC void antigravity_output_antigravity_ascii() {
 	antigravity_output_x_spaces(21);
 	antigravity_output_str("How?", 4);
 	antigravity_output_x_spaces(39);
-	antigravity_output_str_len_3("\\ \\");
+	antigravity_output_str("\\ \\, 3");
 	antigravity_output_x_spaces(11);
 	antigravity_output_vbar_newline_spacer();
 	// seventh line
@@ -191,7 +191,7 @@ STATIC void antigravity_output_antigravity_ascii() {
 	antigravity_output_vbar_newline_spacer();
 	// ninth line
 	antigravity_output_x_spaces(18);
-	antigravity_output_str_len_3("/|\\");
+	antigravity_output_str("/|\\", 3);
 	antigravity_output_x_spaces(57);
 	antigravity_output_vbar_newline_spacer();
 	// tenth line
@@ -210,17 +210,17 @@ STATIC void antigravity_output_antigravity_ascii() {
 	antigravity_output_vbar_newline_spacer();
 	// thirteenth line
 	antigravity_output_x_spaces(78);
-	antigravity_output_str_len_3("|\n+");
+	antigravity_output_str("|\n+", 3);
 	// fourteenth line
 	antigravity_output_x_hyphens(78);
-	antigravity_output_str_len_3("+\n+");
+	antigravity_output_str("+\n+", 3);
 	// fifteenth line
 	antigravity_output_x_hyphens(23);
 	antigravity_output_plus_separators();
 	antigravity_output_x_hyphens(25);
 	antigravity_output_plus_separators();
 	antigravity_output_x_hyphens(24);
-	antigravity_output_str_len_3("+\n|");
+	antigravity_output_str("+\n|", 3);
 	// sixteenth line
 	antigravity_output_x_spaces(23);
 	antigravity_output_vbar_spacer();
