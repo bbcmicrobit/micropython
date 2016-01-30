@@ -158,8 +158,7 @@ STATIC void antigravity_output_antigravity_ascii() {
 	antigravity_output_vbar_newline_spacer();
 	// eleventh line
 	antigravity_output_x_hyphens(14);
-	antigravity_output_x_chars('_', 4);
-	antigravity_output_str("/_\\", 3);
+	antigravity_output_str("____/_\\", 7);
 	antigravity_output_x_chars('_', 31);
 	antigravity_output_x_hyphens(26);
 	antigravity_output_vbar_newline_spacer();
@@ -167,7 +166,7 @@ STATIC void antigravity_output_antigravity_ascii() {
 	antigravity_output_x_spaces(78);
 	antigravity_output_vbar_newline_spacer();
 	// thirteenth line
-	antigravity_output_x_chars(' ', 78);
+	antigravity_output_x_spaces(78);
 	antigravity_output_str("|\n+", 3);
 	// fourteenth line
 	antigravity_output_x_hyphens(78);
@@ -182,78 +181,55 @@ STATIC void antigravity_output_antigravity_ascii() {
 	// sixteenth line
 	antigravity_output_x_spaces(23);
 	antigravity_output_vbar_spacer();
-	antigravity_output_x_spaces(4);
-	antigravity_output_str("I dunno...", 10);
-	antigravity_output_x_spaces(7);
-	antigravity_output_str("|   | |", 7);
-	antigravity_output_6_spaces();
-	antigravity_output_str("I just typed", 12);
+	antigravity_output_str("    I dunno...       |   | |      I just typed", 46);
 	antigravity_output_6_spaces();
 	antigravity_output_vbar_newline_spacer();
 	// seventeenth line
 	antigravity_output_x_spaces(9);
 	antigravity_output_char('0');
 	antigravity_output_x_spaces(13);
-	antigravity_output_str("| |   Dynamic typing?    /    | |   import antigravity   |\n|", 60);
+	antigravity_output_str("| |   Dynamic typing?    /    | |   import"
+						   "antigravity   |\n|        _/\\\\_", 73);
 	// eighteenth line
-	antigravity_output_x_spaces(8);
-	antigravity_output_str("_/\\\\_", 5);
 	antigravity_output_x_spaces(10);
 	antigravity_output_vbar_spacer();
-	antigravity_output_x_spaces(4);
-	antigravity_output_str("Whitespace?    /     | |", 24);
+	antigravity_output_str("    Whitespace?    /     | |", 28);
 	antigravity_output_x_spaces(18);
 	// nineteenth line (and a bit of the previous one)
 	antigravity_output_str("|     |\n|     /     \\//", 23);
 	antigravity_output_x_spaces(19);
 	antigravity_output_vbar_spacer();
-	antigravity_output_x_spaces(4);
-	antigravity_output_char('/');
+	antigravity_output_str("    /", 5);
 	antigravity_output_x_spaces(13);
-	antigravity_output_char('/');
+	antigravity_output_str("/      | |     That's it?  /", 28);
 	antigravity_output_6_spaces();
-	antigravity_output_str("| |     That's it?  /", 21);
-	antigravity_output_6_spaces();		// candidate for separate function
 	antigravity_output_vbar_newline_spacer();
 	// twentieth line
 	antigravity_output_str("   I learned it last   ", 17);
 	antigravity_output_vbar_spacer_and_3_spaces();
-	antigravity_output_char('|');
-	antigravity_output_6_spaces();
-	antigravity_output_str("Come join us!  | |", 18);
-	antigravity_output_x_spaces(5);
-	antigravity_output_char('/');
+	antigravity_output_str("|      Come join us!  | |     /", 30);
 	antigravity_output_x_spaces(10);
-	antigravity_output_char('/');
-	antigravity_output_x_spaces(7);
+	antigravity_output_str("/       ", 8);
 	antigravity_output_vbar_newline_spacer();
 	// twenty-first line
 	antigravity_output_str("   night! Everything   ", 7);
 	antigravity_output_vbar_spacer_and_3_spaces();
-	antigravity_output_char('|');
-	antigravity_output_x_spaces(7);
-	antigravity_output_str("Programming   ", 11);
-	antigravity_output_str("| |    /    ...I also", 21);
+	antigravity_output_str("|       Programming   | |    /    ...I also", 40);
 	antigravity_output_6_spaces();
 	antigravity_output_vbar_newline_spacer();
 	// twenty-second line
 	antigravity_output_str("     is so simple!     ", 23);
 	antigravity_output_vbar_spacer_and_3_spaces();
-	antigravity_output_char('|');
-	antigravity_output_6_spaces();
-	antigravity_output_str("is fun again!  ", 13);
+	antigravity_output_str("|      is fun again!  ", 20);
 	antigravity_output_vbar_spacer_and_3_spaces();
-	antigravity_output_str("/      sampled", 14);
-	antigravity_output_x_spaces(7);
+	antigravity_output_str("/      sampled       ", 21);
 	antigravity_output_vbar_newline_spacer();
 	// twenty-third line
 	antigravity_output_x_spaces(12);
 	antigravity_output_char('/');
 	antigravity_output_x_spaces(10);
 	antigravity_output_vbar_spacer_and_3_spaces();
-	antigravity_output_char('|');
-	antigravity_output_6_spaces();
-	antigravity_output_str("It's a  whole  | |  everything in the  |\n|", 42);
+	antigravity_output_str("|      It's a  whole  | |  everything in the  |\n|", 48);
 	// twenty-fourth line
 	antigravity_output_x_spaces(11);
 	antigravity_output_char('/');
