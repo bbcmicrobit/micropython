@@ -224,7 +224,7 @@ STATIC void antigravity_output_antigravity_ascii() {
 	// sixteenth line
 	antigravity_output_x_spaces(23);
 	antigravity_output_vbar_spacer();
-	antigravity_output_str("     I dunno...          | |      I just typed", 46);
+	antigravity_output_str("     I dunno...      /   | |      I just typed", 46);
 	antigravity_output_6_spaces();
 	antigravity_output_vbar_newline_spacer();
 	// seventeenth line
