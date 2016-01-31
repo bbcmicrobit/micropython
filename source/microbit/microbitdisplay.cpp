@@ -35,6 +35,7 @@ extern "C" {
 #include "microbitimage.h"
 #include "microbitdisplay.h"
 #include "lib/iters.h"
+#include "lib/ticker.h"
 
 void microbit_display_show(microbit_display_obj_t *display, microbit_image_obj_t *image) {
     mp_int_t w = min(image->width(), 5);
@@ -250,15 +251,35 @@ struct FakeMicroBitDisplay : public MicroBitComponent
 
 Timeout *renderTimer = &((FakeMicroBitDisplay*)(&(uBit.display)))->renderTimer;
 
-void microbit_display_obj_t::renderRow() {
+static const uint16_t new_render_timings[] =
+// The scale is exponential, each step is approx x1.9 greater than the previous.
+{   0, // Brightness, Duration (in ticks)
+    1,   //    1,     1
+    1,   //    2,     2
+    2,   //    3,     4
+    4,   //    4,     8
+    8,   //    5,     16
+    16,  //    6,     32
+    31,  //    7,     63
+    61,  //    8,     124
+//  Always on   9,    ~240
+};
+
+static int32_t callback(void) {
+    return microbit_display_obj.renderRow();
+
+}
+
+int32_t microbit_display_obj_t::renderRow() {
     mp_uint_t brightness = previous_brightness+1;
     setPinsForRow(brightness);
     if (brightness == MAX_BRIGHTNESS) {
-        return;
+        clear_display_callback();
+        return -1;
     }
     previous_brightness = brightness;
     // Attach this function to the timer.
-    renderTimer->attach_us(this, &microbit_display_obj_t::renderRow, render_timings[brightness]);
+    return new_render_timings[brightness];
 }
 
 
@@ -319,7 +340,7 @@ void microbit_display_tick(void) {
     microbit_display_update();
     microbit_display_obj.previous_brightness = 0;
     if (microbit_display_obj.brightnesses & GREYSCALE_MASK) {
-        microbit_display_obj.renderRow();
+        set_display_callback(callback, 80);
     }
 }
 

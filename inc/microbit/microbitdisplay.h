@@ -17,7 +17,7 @@ typedef struct _microbit_display_obj_t {
     uint16_t strobe_mask;
     
     void advanceRow();
-    void renderRow();
+    int32_t renderRow();
     inline void setPinsForRow(uint8_t brightness);
     
 } microbit_display_obj_t;

@@ -26,10 +26,10 @@
 
 #include "MicroBit.h"
 
+extern "C" {
+
 // we need to access this for the compass calibration
 extern void ticker(void);
-
-extern "C" {
 
 #include "py/runtime.h"
 #include "modmicrobit.h"

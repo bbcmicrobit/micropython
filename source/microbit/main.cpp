@@ -4,6 +4,8 @@
 #include "microbitmusic.h"
 
 extern "C" {
+#include "lib/ticker.h"
+
     void mp_run(void);
     
     void microbit_button_init(void);
@@ -37,10 +39,9 @@ void app_main() {
     }
 }
 
-void ticker(void) {
+extern "C" {
 
-    // increment our real-time counter.
-    ticks += FIBER_TICK_PERIOD_MS;
+void ticker(void) {
 
     /** Update compass if it is calibrating, but not if it is still
      *  updating as compass.idleTick() is not reentrant.
@@ -66,8 +67,6 @@ void ticker(void) {
     microbit_music_tick();
 }
 
-extern "C" {
-
 // We need to override this function so that the linker does not pull in
 // unnecessary code and static RAM usage for unused system exit functionality.
 // There can be large static data structures to store the exit functions.
@@ -77,8 +76,10 @@ void __register_exitproc() {
 void microbit_init(void) {
     microbit_display_init();
 
-    // Hijack the DAL system ticker.
-    uBit.systemTicker.attach_us(ticker, MICROBIT_DEFAULT_TICK_PERIOD * 1000);
+    // Start the ticker.
+    uBit.systemTicker.detach();
+    ticker_init();
+    ticker_start();
 }
 
 }
