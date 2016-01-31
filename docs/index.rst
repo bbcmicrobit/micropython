@@ -35,6 +35,7 @@ mailing list (https://mail.python.org/mailman/listinfo/microbit).
    display.rst
    i2c.rst
    uart.rst
+   spi.rst
    random.rst
    neopixel.rst
 
