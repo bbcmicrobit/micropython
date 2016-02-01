@@ -10,11 +10,12 @@
 # or compass could be used to add entropy.
 
 import microbit
+import random
 
 def led_dance(delay):
     dots = [ [0]*5, [0]*5, [0]*5, [0]*5, [0]*5 ]
     while True:
-        dots[microbit.random(5)][microbit.random(5)] = 8
+        dots[random.randrange(5)][random.randrange(5)] = 8
         for i in range(5):
             for j in range(5):
                 microbit.display.set_pixel(i, j, dots[i][j])

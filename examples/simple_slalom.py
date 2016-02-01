@@ -3,6 +3,7 @@
 # This program has been placed into the public domain.
 
 import microbit as m
+import random
 
 p = m.display.show
 
@@ -88,7 +89,7 @@ while True:
             wall_y += 1
             if wall_y == 7:
                 wall_y = -1
-                hole = m.random(5)
+                hole = random.randrange(5)
                 handled_this_wall = False
 
             if wall_y < 5:

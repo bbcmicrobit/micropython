@@ -5,6 +5,7 @@ Press button A or tap the micro:bit to generate a fresh layout.
 '''
 
 import microbit
+import random
 
 arena1 = bytearray(7 * 7)
 arena2 = bytearray(7 * 7)
@@ -46,7 +47,7 @@ while True:
     # randomise the start
     for i in range(5 * 5): # loop over pixels
         i = 8 + (i // 5) * 7 + i % 5
-        arena1[i] = microbit.random(2) # set the pixel randomly
+        arena1[i] = random.randrange(2) # set the pixel randomly
     show()
     microbit.sleep(1) # need to yield to update accelerometer (not ideal...)
 
