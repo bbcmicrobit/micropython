@@ -50,11 +50,11 @@ mp_obj_t microbit_compass_calibrate(mp_obj_t self_in) {
     // can use the display to collect samples for the calibration.
     // It will do the calibration and then return here.
     microbit_compass_obj_t *self = (microbit_compass_obj_t*)self_in;
-    uBit.systemTicker.attach(&uBit, &MicroBit::systemTick, MICROBIT_DISPLAY_REFRESH_PERIOD);
+    uBit.systemTicker.attach_us(&uBit, &MicroBit::systemTick, MICROBIT_DEFAULT_TICK_PERIOD * 1000);
     uBit.display.enable();
     self->compass->calibrateAsync();
     uBit.display.disable();
-    uBit.systemTicker.attach(ticker, MICROBIT_DISPLAY_REFRESH_PERIOD);
+    uBit.systemTicker.attach_us(ticker, MICROBIT_DEFAULT_TICK_PERIOD * 1000);
     return mp_const_none;
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_compass_calibrate_obj, microbit_compass_calibrate);

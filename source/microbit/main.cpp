@@ -78,7 +78,7 @@ void microbit_init(void) {
     microbit_display_init();
 
     // Hijack the DAL system ticker.
-    uBit.systemTicker.attach(ticker, MICROBIT_DISPLAY_REFRESH_PERIOD);
+    uBit.systemTicker.attach_us(ticker, MICROBIT_DEFAULT_TICK_PERIOD * 1000);
 }
 
 }
