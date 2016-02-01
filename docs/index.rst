@@ -40,6 +40,7 @@ Projects related to MicroPython on the BBC micro:bit include:
    display.rst
    i2c.rst
    uart.rst
+   spi.rst
    random.rst
    neopixel.rst
 

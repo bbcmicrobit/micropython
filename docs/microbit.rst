@@ -72,6 +72,7 @@ Modules
 
     display.rst
     uart.rst
+    spi.rst
     i2c.rst
     accelerometer.rst
     compass.rst
