@@ -16,7 +16,7 @@ for three signals:
 Functions
 =========
 
-.. method:: init(baudrate=1000000, bits=8, mode=0, sclk, mosi, miso)
+.. method:: init(baudrate=1000000, bits=8, mode=0, sclk=pin13, mosi=pin15, miso=pin14)
 
     Initialize SPI communication with the specified parameters on the
     specified ``pins``. Note that for correct communication, the parameters
@@ -24,7 +24,8 @@ Functions
 
     The ``baudrate`` defines the speed of communication.
 
-    The ``bits`` defines the size of bytes being transmitted.
+    The ``bits`` defines the size of bytes being transmitted. Currently only
+    ``bits=8`` is supported. However, this may change in the future.
 
     The ``mode`` determines the combination of clock polarity and phase
     according to the following convention, with polarity as the high order bit
@@ -56,4 +57,5 @@ Functions
 .. method:: spi.write_readinto(out, in)
 
    Write the ``out`` buffer to the bus and read any response into the ``in``
-   buffer.
+   buffer. The length of the buffers should be the same. The buggers can be
+   the same object.
