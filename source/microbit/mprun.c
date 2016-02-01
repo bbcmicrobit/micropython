@@ -73,6 +73,7 @@ typedef struct _appended_script_t {
 void mp_run(void) {
     int stack_dummy;
     stack_top = (char*)&stack_dummy;
+    mp_stack_ctrl_init();
     mp_stack_set_limit(1800); // stack is 2k
 
     // allocate the heap statically in the bss

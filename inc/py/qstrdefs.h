@@ -113,6 +113,7 @@ Q(asm_thumb)
 Q(label)
 Q(align)
 Q(data)
+Q(uint)
 #endif
 
 Q(builtins)
@@ -432,6 +433,13 @@ Q(mem_peak)
 #endif
 Q(mem_info)
 Q(qstr_info)
+#if MICROPY_STACK_CHECK
+Q(stack_use)
+#endif
+#endif
+#if MICROPY_ENABLE_GC
+Q(heap_lock)
+Q(heap_unlock)
 #endif
 
 #if MICROPY_ENABLE_EMERGENCY_EXCEPTION_BUF && (MICROPY_EMERGENCY_EXCEPTION_BUF_SIZE == 0)
@@ -607,6 +615,7 @@ Q(uhashlib)
 Q(update)
 Q(digest)
 Q(sha256)
+Q(sha1)
 #endif
 
 #if MICROPY_PY_UBINASCII
@@ -678,4 +687,11 @@ Q(dupterm)
 Q(urandom)
 Q(getrandbits)
 Q(seed)
+#if MICROPY_PY_URANDOM_EXTRA_FUNCS
+Q(randrange)
+Q(randint)
+Q(choice)
+Q(random)
+Q(uniform)
+#endif
 #endif

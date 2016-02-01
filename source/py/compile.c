@@ -3077,7 +3077,7 @@ STATIC void compile_scope_inline_asm(compiler_t *comp, scope_t *scope, pass_kind
     }
 
     if (comp->pass > MP_PASS_SCOPE) {
-        EMIT_INLINE_ASM(end_pass);
+        EMIT_INLINE_ASM_ARG(end_pass, 0);
     }
 
     if (comp->compile_error != MP_OBJ_NULL) {
