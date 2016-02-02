@@ -47,6 +47,7 @@ except AttributeError:
     stdout = sys.stdout
 
 def stdout_write_bytes(b):
+    b = b.replace(b"\x04", b"")
     stdout.write(b)
     stdout.flush()
 
@@ -116,13 +117,32 @@ class TelnetToSerial:
             return n_waiting
 
 class Pyboard:
-    def __init__(self, device, baudrate=115200, user='micro', password='python'):
+    def __init__(self, device, baudrate=115200, user='micro', password='python', wait=0):
         if device and device[0].isdigit() and device[-1].isdigit() and device.count('.') == 3:
             # device looks like an IP address
             self.serial = TelnetToSerial(device, user, password, read_timeout=10)
         else:
             import serial
-            self.serial = serial.Serial(device, baudrate=baudrate, interCharTimeout=1)
+            delayed = False
+            for attempt in range(wait + 1):
+                try:
+                    self.serial = serial.Serial(device, baudrate=baudrate, interCharTimeout=1)
+                    break
+                except (OSError, IOError): # Py2 and Py3 have different errors
+                    if wait == 0:
+                        continue
+                    if attempt == 0:
+                        sys.stdout.write('Waiting {} seconds for pyboard '.format(wait))
+                        delayed = True
+                time.sleep(1)
+                sys.stdout.write('.')
+                sys.stdout.flush()
+            else:
+                if delayed:
+                    print('')
+                raise PyboardError('failed to access device at ' + device)
+            if delayed:
+                print('')
 
     def close(self):
         self.serial.close()
@@ -164,8 +184,14 @@ class Pyboard:
             raise PyboardError('could not enter raw repl')
 
         self.serial.write(b'\x04') # ctrl-D: soft reset
-        data = self.read_until(1, b'soft reboot\r\nraw REPL; CTRL-B to exit\r\n')
-        if not data.endswith(b'soft reboot\r\nraw REPL; CTRL-B to exit\r\n'):
+        data = self.read_until(1, b'soft reboot\r\n')
+        if not data.endswith(b'soft reboot\r\n'):
+            print(data)
+            raise PyboardError('could not enter raw repl')
+        # By splitting this into 2 reads, it allows boot.py to print stuff,
+        # which will show up after the soft reboot and before the raw REPL.
+        data = self.read_until(1, b'raw REPL; CTRL-B to exit\r\n')
+        if not data.endswith(b'raw REPL; CTRL-B to exit\r\n'):
             print(data)
             raise PyboardError('could not enter raw repl')
 
@@ -252,18 +278,18 @@ def main():
     cmd_parser.add_argument('-b', '--baudrate', default=115200, help='the baud rate of the serial device')
     cmd_parser.add_argument('-u', '--user', default='micro', help='the telnet login username')
     cmd_parser.add_argument('-p', '--password', default='python', help='the telnet login password')
+    cmd_parser.add_argument('-c', '--command', help='program passed in as string')
+    cmd_parser.add_argument('-w', '--wait', default=0, type=int, help='seconds to wait for USB connected board to become available')
     cmd_parser.add_argument('--follow', action='store_true', help='follow the output after running the scripts [default if no scripts given]')
     cmd_parser.add_argument('device', nargs=1, help='the serial device or the IP address of the pyboard')
     cmd_parser.add_argument('files', nargs='*', help='input files')
     args = cmd_parser.parse_args()
 
-    for filename in args.files:
+    def execbuffer(buf):
         try:
-            pyb = Pyboard(args.device[0], args.baudrate, args.user, args.password)
+            pyb = Pyboard(args.device[0], args.baudrate, args.user, args.password, args.wait)
             pyb.enter_raw_repl()
-            with open(filename, 'rb') as f:
-                pyfile = f.read()
-            ret, ret_err = pyb.exec_raw(pyfile, timeout=None, data_consumer=stdout_write_bytes)
+            ret, ret_err = pyb.exec_raw(buf, timeout=None, data_consumer=stdout_write_bytes)
             pyb.exit_raw_repl()
             pyb.close()
         except PyboardError as er:
@@ -275,9 +301,17 @@ def main():
             stdout_write_bytes(ret_err)
             sys.exit(1)
 
-    if args.follow or len(args.files) == 0:
+    if args.command is not None:
+        execbuffer(args.command.encode('utf-8'))
+
+    for filename in args.files:
+        with open(filename, 'rb') as f:
+            pyfile = f.read()
+            execbuffer(pyfile)
+
+    if args.follow or (args.command is None and len(args.files) == 0):
         try:
-            pyb = Pyboard(args.device[0], args.baudrate, args.user, args.password)
+            pyb = Pyboard(args.device[0], args.baudrate, args.user, args.password, args.wait)
             ret, ret_err = pyb.follow(timeout=None, data_consumer=stdout_write_bytes)
             pyb.close()
         except PyboardError as er:
