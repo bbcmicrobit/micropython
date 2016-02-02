@@ -110,7 +110,7 @@ to that.
 
 .. note::
     Those classes are not actually available for the user, you can't create
-    new instances of them. You can only use the instaces already provided,
+    new instances of them. You can only use the instances already provided,
     representing the physical pins on your board.
 
 .. py:class:: MicroBitDigitalPin

@@ -28,7 +28,7 @@ Functions
     returns ``False`` otherwise.
 
 
-.. py:function:: clear_calibrarion()
+.. py:function:: clear_calibration()
 
     Undoes the calibration, making the compass uncalibrated again.
 
