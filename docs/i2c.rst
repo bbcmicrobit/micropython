@@ -19,14 +19,14 @@ Functions
 
 .. py:function:: read(addr, n, repeat=False)
 
-    Read ``n`` bytes from the device with address ``addr``. If ``repeat`` is
-    ``True``, no stop bit will be sent.
+    Read ``n`` bytes from the device with 7-bit address ``addr``. If ``repeat``
+    is ``True``, no stop bit will be sent.
 
 
 .. py:function:: write(addr, buf, repeat=False)
 
-    Write bytes from ``buf`` to the device with address ``addr``. If ``repeat``
-    is ``True``, no stop bit will be sent.
+    Write bytes from ``buf`` to the device with 7-bit address ``addr``. If
+    ``repeat`` is ``True``, no stop bit will be sent.
 
 
 Connecting
