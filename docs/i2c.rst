@@ -8,6 +8,11 @@ using the I²C bus protocol. There can be multiple slave devices connected at
 the same time, and each one has its own unique address, that is either fixed
 for the device or configured on it. Your board acts as the I²C master.
 
+We use 7-bit addressing for devices because of the reasons stated
+`here <http://www.totalphase.com/support/articles/200349176-7-bit-8-bit-and-10-bit-I2C-Slave-Addressing>`_.
+
+This may be different to other micro:bit related solutions.
+
 How exactly you should communicate with the devices, that is, what bytes to
 send and how to interpret the responses, depends on the device in question and
 should be described separately in that device's documentation.
