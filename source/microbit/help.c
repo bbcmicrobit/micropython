@@ -156,6 +156,12 @@ STATIC const mp_doc_t help_table_instances[] = {
     {&mp_stream_unbuffered_readline_obj, "Use readline() to read a line that ends with a newline character.\n"},
     {&mp_stream_readinto_obj, "Use readinto(buf) to read bytes into the buffer 'buf'.\nUse readinto(buff, n) to read, at most, 'n' number of bytes into 'buf'.\n"},
     {&mp_stream_write_obj, "Use write(buf) to write the bytes in buffer 'buf' to the connected device.\n"},
+    // SPI
+    {&microbit_spi_obj, "Communicate using a serial peripheral interface (SPI) device connected to\nmicro:bit's I/O pins.\n"},
+    {&microbit_spi_init_obj, "Use init() to set up communication. Override the defaults for baudrate, mode,\nSCLK, MOSI and MISO. The default connections are pin13 for SCLK, pin15 for\nMOSI and pin14 for MISO.\n"},
+    {&microbit_spi_write_obj, "Use write(buf) to write bytes in buffer 'buf' to the connected device.\n"},
+    {&microbit_spi_read_obj, "Use read(n) to read 'n' bytes of data.\n"},
+    {&microbit_spi_write_readinto_obj, "Use write_readinto(out, in) to write the 'out' buffer to the connected device\nand read any response into the 'in' buffer. The length of the buffers should\nbe the same. The buffers can be the same object.\n"},
     // Music module
     {&music_module, "Plug in a speaker with crocodile clips and make micro:bit go bleep and bloop.\n"},
     {&microbit_music_set_tempo_obj, "Use set_tempo(number, bpm) to make a beat last a 'number' of ticks long and\nplayed at 'bpm' beats per minute.\n"},
