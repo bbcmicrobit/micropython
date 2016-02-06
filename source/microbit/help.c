@@ -51,6 +51,7 @@ STATIC const char *help_text =
 "Control commands:\n"
 "  CTRL-C        -- stop a running program\n"
 "  CTRL-D        -- on a blank line, do a soft reset of the micro:bit\n"
+"  CTRL-E        -- enter paste mode, turning off auto-indent\n"
 "\n"
 "Available modules: antigravity, array, collections, gc, love, math,\n"
 "micropython, music, struct, sys, this\n"
