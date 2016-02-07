@@ -342,7 +342,7 @@ void microbit_display_animate(microbit_display_obj_t *self, mp_obj_t iterable, m
 
 void microbit_display_scroll(microbit_display_obj_t *self, const char* str) {
     mp_obj_t iterable = scrolling_string_image_iterable(str, strlen(str), NULL, false);
-    microbit_display_animate(self, iterable, MICROBIT_DEFAULT_SCROLL_SPEED, false, false);
+    microbit_display_animate(self, iterable, MICROBIT_DEFAULT_SCROLL_SPEED, false, true);
 }
 
 
