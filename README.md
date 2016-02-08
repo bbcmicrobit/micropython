@@ -20,7 +20,7 @@ Ubuntu users can install the needed packages using:
 sudo add-apt-repository -y ppa:terry.guo/gcc-arm-embedded
 sudo add-apt-repository -y ppa:pmiller-opensource/ppa
 sudo apt-get update
-sudo apt-get install cmake ninja-build gcc-arm-none-eabi srecord libffi-dev
+sudo apt-get install cmake ninja-build gcc-arm-none-eabi srecord
 pip3 install yotta
 ```
 
