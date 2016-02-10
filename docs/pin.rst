@@ -27,9 +27,9 @@ module:``microbit.pin0`` - ``microbit.pin20``.
 +-----+---------+----------+
 |  3  | Analog  | Column 1 |
 +-----+---------+----------+
-|  4  | Digital | Button A |
+|  4  | Analog  | Column 2 |
 +-----+---------+----------+
-|  5  | Analog  | Column 2 |
+|  5  | Digital | Button A |
 +-----+---------+----------+
 |  6  | Digital | Row 2    |
 +-----+---------+----------+
