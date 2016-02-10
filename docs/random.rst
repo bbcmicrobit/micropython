@@ -6,6 +6,12 @@ Random Number Generation
 This module is based upon the ``random`` module in the Python standard library.
 It contains functions for generating random behaviour.
 
+To access this module you need to::
+
+    import random
+
+We assume you have done this for the examples below.
+
 Functions
 =========
 
