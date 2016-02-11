@@ -7,7 +7,7 @@ The ``Image`` class is used to create images that can be displayed easily on
 the device's LED matrix. Given an image object it's possible to display it via
 the ``device`` API::
 
-    display.show(Image.SMILE)
+    display.show(Image.HAPPY)
 
 .. image:: image-smile.png
 
