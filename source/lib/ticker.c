@@ -27,10 +27,6 @@
 #include "stddef.h"
 #include "lib/ticker.h"
 
-/*************************************
- * 40kHz (25µs cycle time) ticker.
- ************************************/
-
 #define FastTicker NRF_TIMER0
 #define FastTicker_IRQn TIMER0_IRQn
 #define FastTicker_IRQHandler TIMER0_IRQHandler
@@ -124,7 +120,7 @@ void set_ticker_callback(uint32_t index, ticker_callback_ptr func, int32_t initi
     // Use CC[3] as a reference, as that is always up-to-date.
     int32_t cc3 = FastTicker->CC[3];
     int32_t delta = t - cc3;
-    delta = ((delta/MICROSECONDS_PER_TICK)+1);
+    delta = (delta/MICROSECONDS_PER_TICK)+1;
     callbacks[index] = func;
     ticker->INTENSET = masks[index];
     FastTicker->CC[index] = cc3 + (delta+initial_delay)*MICROSECONDS_PER_TICK;

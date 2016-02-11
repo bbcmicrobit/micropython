@@ -1,6 +1,9 @@
 #ifndef __MICROPY_INCLUDED_LIB_TICKER_H__
 #define __MICROPY_INCLUDED_LIB_TICKER_H__
 
+/*************************************
+ * 33.333kHz (30µs cycle time) ticker.
+ ************************************/
 
 #include "nrf.h"
 
@@ -19,8 +22,9 @@ int set_low_priority_callback(callback_ptr callback, int id);
 extern int8_t sound_callback_pending;
 void sound_callback(void);
 
-#define MICROSECONDS_PER_TICK 25
+#define MICROSECONDS_PER_TICK 30
 #define CYCLES_PER_TICK (16*MICROSECONDS_PER_TICK)
+// This must be an integer multiple of MICROSECONDS_PER_TICK
 #define MICROSECONDS_PER_MACRO_TICK 6000
 #define MILLISECONDS_PER_MACRO_TICK 6
 

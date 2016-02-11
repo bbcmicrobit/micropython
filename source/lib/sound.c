@@ -218,15 +218,15 @@ static inline void set_toggle_times(int32_t val) {
     if (val != 0) {
         if (val < 0) {
             timer->CC[0] = FIRST_PHASE_START;
-            timer->CC[2] = FIRST_PHASE_START-2*val;
+            timer->CC[2] = FIRST_PHASE_START-val;
             timer->CC[3] = SECOND_PHASE_START;
-            timer->CC[1] = SECOND_PHASE_START-2*val;
+            timer->CC[1] = SECOND_PHASE_START-val;
             return;
         } else {
             timer->CC[2] = FIRST_PHASE_START;
-            timer->CC[0] = FIRST_PHASE_START+2*val;
+            timer->CC[0] = FIRST_PHASE_START+val;
             timer->CC[1] = SECOND_PHASE_START;
-            timer->CC[3] = SECOND_PHASE_START+2*val;
+            timer->CC[3] = SECOND_PHASE_START+val;
             return;
         }
     }
@@ -240,7 +240,7 @@ static inline void set_toggle_times(int32_t val) {
 static int32_t sound_ticker(void) {
     int32_t next_value = previous_value + delta;
     previous_value = next_value;
-    set_toggle_times(next_value>>2);
+    set_toggle_times(next_value>>1);
     --ticks;
     if (ticks == 0) {
         int32_t buffer_index = (int32_t)sound_buffer_read_index;

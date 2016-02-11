@@ -252,17 +252,18 @@ struct FakeMicroBitDisplay : public MicroBitComponent
 Timeout *renderTimer = &((FakeMicroBitDisplay*)(&(uBit.display)))->renderTimer;
 
 static const uint16_t new_render_timings[] =
-// The scale is exponential, each step is approx x1.9 greater than the previous.
+// The scale is (approximately) exponential,
+// each step is approx x1.8 greater than the previous.
 {   0, // Brightness, Duration (in ticks)
     1,   //    1,     1
     1,   //    2,     2
     2,   //    3,     4
     4,   //    4,     8
-    8,   //    5,     16
-    16,  //    6,     32
-    31,  //    7,     63
-    61,  //    8,     124
-//  Always on   9,    ~240
+    7,   //    5,     15
+    13,  //    6,     28
+    25,  //    7,     53
+    49,  //    8,     102
+//  Always on  9,    ~200
 };
 
 static int32_t callback(void) {
