@@ -267,14 +267,15 @@ static const uint16_t new_render_timings[] =
 
 static int32_t callback(void) {
     return microbit_display_obj.renderRow();
-
 }
+
+#define DISPLAY_TICKER_SLOT 1
 
 int32_t microbit_display_obj_t::renderRow() {
     mp_uint_t brightness = previous_brightness+1;
     setPinsForRow(brightness);
     if (brightness == MAX_BRIGHTNESS) {
-        clear_display_callback();
+        clear_ticker_callback(DISPLAY_TICKER_SLOT);
         return -1;
     }
     previous_brightness = brightness;
@@ -340,7 +341,7 @@ void microbit_display_tick(void) {
     microbit_display_update();
     microbit_display_obj.previous_brightness = 0;
     if (microbit_display_obj.brightnesses & GREYSCALE_MASK) {
-        set_display_callback(callback, 80);
+        set_ticker_callback(DISPLAY_TICKER_SLOT, callback, 80);
     }
 }
 

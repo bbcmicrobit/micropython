@@ -57,19 +57,19 @@ static uint8_t running = 1;
 
 void sound_stop(void) {
     timer_stop();
-    clear_sound_callback();
+    clear_ticker_callback(0);
     running = 0;
     previous_value = 0;
     delta = 0;
     ticks = 1;
 }
 
-static void sound_ticker(void);
+static int32_t sound_ticker(void);
 
 void sound_start(void) {
     timer_start();
     running = 1;
-    set_sound_callback(sound_ticker);
+    set_ticker_callback(0, sound_ticker, 1);
 }
 
 static void pin_init(int pin) {
@@ -171,31 +171,7 @@ int32_t sound_get_rate(void) {
 }
 
 #define FIRST_PHASE_START 40
-#define SECOND_PHASE_START (FIRST_PHASE_START+(CYCLES_PER_TICK/2))
-
-static inline void set_toggle_times(int32_t val) {
-    NRF_TIMER_Type *timer = TheTimer;
-    timer->TASKS_CLEAR = 1;
-    if (val != 0) {
-        if (val < 0) {
-            timer->CC[0] = FIRST_PHASE_START;
-            timer->CC[2] = FIRST_PHASE_START-val;
-            timer->CC[3] = SECOND_PHASE_START;
-            timer->CC[1] = SECOND_PHASE_START-val;
-            return;
-        } else {
-            timer->CC[2] = FIRST_PHASE_START;
-            timer->CC[0] = FIRST_PHASE_START+val;
-            timer->CC[1] = SECOND_PHASE_START;
-            timer->CC[3] = SECOND_PHASE_START+val;
-            return;
-        }
-    }
-    timer->CC[0] = -1;
-    timer->CC[2] = -1;
-    timer->CC[1] = -1;
-    timer->CC[3] = -1;
-}
+#define SECOND_PHASE_START (FIRST_PHASE_START+CYCLES_PER_TICK)
 
 int8_t *sound_buffer_ptr;
 volatile int32_t sound_buffer_read_index;
@@ -236,8 +212,32 @@ static void sound_data_fetcher(void) {
     return;
 }
 
+static inline void set_toggle_times(int32_t val) {
+    NRF_TIMER_Type *timer = TheTimer;
+    timer->TASKS_CLEAR = 1;
+    if (val != 0) {
+        if (val < 0) {
+            timer->CC[0] = FIRST_PHASE_START;
+            timer->CC[2] = FIRST_PHASE_START-2*val;
+            timer->CC[3] = SECOND_PHASE_START;
+            timer->CC[1] = SECOND_PHASE_START-2*val;
+            return;
+        } else {
+            timer->CC[2] = FIRST_PHASE_START;
+            timer->CC[0] = FIRST_PHASE_START+2*val;
+            timer->CC[1] = SECOND_PHASE_START;
+            timer->CC[3] = SECOND_PHASE_START+2*val;
+            return;
+        }
+    }
+    timer->CC[0] = -1;
+    timer->CC[2] = -1;
+    timer->CC[1] = -1;
+    timer->CC[3] = -1;
+}
 
-static void sound_ticker(void) {
+
+static int32_t sound_ticker(void) {
     int32_t next_value = previous_value + delta;
     previous_value = next_value;
     set_toggle_times(next_value>>2);
@@ -254,6 +254,8 @@ static void sound_ticker(void) {
             set_low_priority_callback(sound_data_fetcher, SOUND_CALLBACK_ID);
         }
     }
+    /* Depends on design, 2 for now */
+    return 2;
 }
 
 void sound_play_source(mp_obj_t iter, bool wait) {

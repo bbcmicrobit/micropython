@@ -50,7 +50,7 @@ void ticker_init(void) {
     ticker->TASKS_CLEAR = 1;
     ticker->CC[3] = MICROSECONDS_PER_TICK;
     ticker->MODE = TIMER_MODE_MODE_Timer;
-    ticker->BITMODE = TIMER_BITMODE_BITMODE_16Bit << TIMER_BITMODE_BITMODE_Pos;
+    ticker->BITMODE = TIMER_BITMODE_BITMODE_24Bit << TIMER_BITMODE_BITMODE_Pos;
     ticker->PRESCALER = 4; // 1 tick == i microsecond
     ticker->INTENSET = TIMER_INTENSET_COMPARE3_Msk;
     ticker->SHORTS = 0;
@@ -76,51 +76,63 @@ void ticker_stop(void) {
     *(uint32_t *)0x40008C0C = 0; //for Timer 0
 }
 
-static inline uint32_t timer_clock(void) {
-    FastTicker->TASKS_CAPTURE[2] = 1;
-    uint32_t t = FastTicker->CC[2];
-    return t;
-}
-
-void silent(void) {
-    return;
-}
-
 int32_t noop(void) {
     return -1;
 }
 
-static sound_func_ptr sound = silent;
-static ticker_callback_ptr display_callback = noop;
-static ticker_callback_ptr other_callback = noop;
-static int32_t microticks = 0;
-static int32_t next_display_tick = -1;
-static int32_t next_other_tick = -1;
-static int32_t next_macro_tick = MICROTICKS_PER_MACROTICK;
+extern uint32_t ticks;
 
-extern int32_t ticks;
+static ticker_callback_ptr callbacks[4] = { noop, noop, noop, noop };
 
-void FastTicker_IRQHandler(void)
-{
-    FastTicker->EVENTS_COMPARE[3] = 0;
-    FastTicker->CC[3] += MICROSECONDS_PER_TICK;
-    /* Do sound */
-    sound();
-    int32_t tick = microticks+1;
-    microticks = tick;
-    /* Now display */
-    if (tick == next_display_tick) {
-        next_display_tick = tick + display_callback();
+void FastTicker_IRQHandler(void) {
+    NRF_TIMER_Type *ticker = FastTicker;
+    ticker_callback_ptr *call = callbacks;
+    if (ticker->EVENTS_COMPARE[0]) {
+        ticker->EVENTS_COMPARE[0] = 0;
+        ticker->CC[0] += call[0]()*MICROSECONDS_PER_TICK;
     }
-    /* Now the other registered callback (PWM?) */
-    if (tick == next_other_tick) {
-        next_other_tick = tick + other_callback();
+    if (ticker->EVENTS_COMPARE[1]) {
+        ticker->EVENTS_COMPARE[1] = 0;
+        ticker->CC[1] += call[1]()*MICROSECONDS_PER_TICK;
     }
-    if (tick == next_macro_tick) {
-        next_macro_tick = tick + MICROTICKS_PER_MACROTICK;
+    if (ticker->EVENTS_COMPARE[2]) {
+        ticker->EVENTS_COMPARE[2] = 0;
+        ticker->CC[2] += call[2]()*MICROSECONDS_PER_TICK;
+    }
+    if (ticker->EVENTS_COMPARE[3]) {
+        ticker->EVENTS_COMPARE[3] = 0;
+        ticker->CC[3] += MICROSECONDS_PER_MACRO_TICK;
         ticks += MILLISECONDS_PER_MACRO_TICK;
         NVIC_SetPendingIRQ(SlowTicker_IRQn);
     }
+}
+
+
+static const uint32_t masks[3] = {
+    TIMER_INTENCLR_COMPARE0_Msk,
+    TIMER_INTENCLR_COMPARE1_Msk,
+    TIMER_INTENCLR_COMPARE2_Msk,
+};
+
+void set_ticker_callback(uint32_t index, ticker_callback_ptr func, int32_t initial_delay) {
+    NRF_TIMER_Type *ticker = FastTicker;
+    callbacks[index] = noop;
+    ticker->INTENCLR = masks[index];
+    ticker->TASKS_CAPTURE[index] = 1;
+    uint32_t t = FastTicker->CC[index];
+    // Need to make sure that set tick is aligned to lastest tick
+    // Use CC[3] as a reference, as that is always up-to-date.
+    int32_t cc3 = FastTicker->CC[3];
+    int32_t delta = t - cc3;
+    delta = ((delta/MICROSECONDS_PER_TICK)+1);
+    callbacks[index] = func;
+    ticker->INTENSET = masks[index];
+    FastTicker->CC[index] = cc3 + (delta+initial_delay)*MICROSECONDS_PER_TICK;
+}
+
+void clear_ticker_callback(uint32_t index) {
+    FastTicker->INTENCLR = masks[index];
+    callbacks[index] = noop;
 }
 
 extern void ticker(void);
@@ -131,12 +143,12 @@ void SlowTicker_IRQHandler(void)
 }
 
 #define LOW_PRIORITY_CALLBACK_LIMIT 4
-sound_func_ptr low_priority_callbacks[LOW_PRIORITY_CALLBACK_LIMIT] = { NULL, NULL, NULL, NULL };
+callback_ptr low_priority_callbacks[LOW_PRIORITY_CALLBACK_LIMIT] = { NULL, NULL, NULL, NULL };
 
 void LowPriority_IRQHandler(void)
 {
     for (int id = 0; id < LOW_PRIORITY_CALLBACK_LIMIT; id++) {
-        sound_func_ptr callback = low_priority_callbacks[id];
+        callback_ptr callback = low_priority_callbacks[id];
         if (callback != NULL) {
             low_priority_callbacks[id] = NULL;
             callback();
@@ -144,40 +156,10 @@ void LowPriority_IRQHandler(void)
     }
 }
 
-extern void microbit_display_clear(void);
-
-int set_low_priority_callback(sound_func_ptr callback, int id) {
+int set_low_priority_callback(callback_ptr callback, int id) {
     if (low_priority_callbacks[id] != NULL)
         return -1;
     low_priority_callbacks[id] = callback;
     NVIC_SetPendingIRQ(LowPriority_IRQn);
     return 0;
-}
-
-void set_sound_callback(sound_func_ptr func) {
-    sound = func;
-}
-
-void set_display_callback(ticker_callback_ptr func, int32_t initial_delay) {
-    next_display_tick = microticks-1;
-    display_callback = func;
-    next_display_tick = microticks+initial_delay;
-}
-
-void clear_sound_callback(void) {
-    set_sound_callback(silent);
-}
-
-void clear_display_callback(void) {
-    set_display_callback(noop, -1);
-}
-
-void clear_other_callback(void) {
-    set_other_callback(noop, -1);
-}
-
-void set_other_callback(ticker_callback_ptr func, int32_t initial_delay) {
-    next_other_tick = microticks-1;
-    other_callback = func;
-    next_other_tick = microticks+initial_delay;
 }
