@@ -52,8 +52,8 @@ static inline void timer_start(void) {
 
 static int16_t previous_value = 0;
 static int16_t delta = 0;
-static uint8_t ticks = 1;
 static uint8_t running = 1;
+static bool sample;
 
 void sound_stop(void) {
     timer_stop();
@@ -61,7 +61,6 @@ void sound_stop(void) {
     running = 0;
     previous_value = 0;
     delta = 0;
-    ticks = 1;
 }
 
 static int32_t sound_ticker(void);
@@ -69,6 +68,7 @@ static int32_t sound_ticker(void);
 void sound_start(void) {
     timer_start();
     running = 1;
+    sample = false;
     set_ticker_callback(0, sound_ticker, 1);
 }
 
@@ -129,47 +129,6 @@ void sound_init(void) {
     ppi_init(0, 1);
 }
 
-struct sample_rate {
-    int32_t nomimal;
-    int32_t steps;
-    int32_t factor;
-};
-
-static const struct sample_rate sample_rates[] = {
-    { 13333, 3, 349525 },
-    { 10000, 4, (1<<18) },
-    { 8000,  5, 209715 },
-    { 6667, 6, 174762 },
-    { 5714, 7, 149797 },
-    { 5000, 8, (1<<17) },
-    { 4444, 9, 116508 },
-    { 4000, 10, 104858 },
-};
-
-static struct sample_rate current_rate = { 8000,  5, 209715 };
-
-int sound_set_rate(int32_t rate) {
-    for (unsigned i = 0; i < sizeof(sample_rates)/sizeof(struct sample_rate); i++) {
-        if (sample_rates[i].steps == rate) {
-            /* Need to set steps and factor in the correct order to avoid overflow. */
-            if (rate > current_rate.steps) {
-                current_rate.factor = sample_rates[i].factor;
-                current_rate.steps = rate;
-            } else {
-                current_rate.steps = rate;
-                current_rate.factor = sample_rates[i].factor;
-            }
-            current_rate.nomimal = sample_rates[i].nomimal;
-            return 0;
-        }
-    }
-    return -1;
-}
-
-int32_t sound_get_rate(void) {
-    return current_rate.steps;
-}
-
 #define FIRST_PHASE_START 40
 #define SECOND_PHASE_START (FIRST_PHASE_START+CYCLES_PER_TICK)
 
@@ -212,49 +171,87 @@ static void sound_data_fetcher(void) {
     return;
 }
 
-static inline void set_toggle_times(int32_t val) {
+static inline void set_gpiote_output_pulses(int32_t val1, int32_t val2) {
     NRF_TIMER_Type *timer = TheTimer;
     timer->TASKS_CLEAR = 1;
-    if (val != 0) {
-        if (val < 0) {
+    //Start without output zero; pins 00
+    if (val1 != 0) {
+        if (val1 < 0) {
             timer->CC[0] = FIRST_PHASE_START;
-            timer->CC[2] = FIRST_PHASE_START-val;
-            timer->CC[3] = SECOND_PHASE_START;
-            timer->CC[1] = SECOND_PHASE_START-val;
-            return;
+            // -ve 10
+            timer->CC[2] = FIRST_PHASE_START-val1;
+            // zero 11
         } else {
             timer->CC[2] = FIRST_PHASE_START;
-            timer->CC[0] = FIRST_PHASE_START+val;
+            // +ve 01
+            timer->CC[0] = FIRST_PHASE_START+val1;
+            // zero 11
+        }
+        // Zero; pins 11.
+        if (val2 != 0) {
+            if (val2 < 0) {
+                timer->CC[3] = SECOND_PHASE_START;
+                // -ve 10
+                timer->CC[1] = SECOND_PHASE_START-val2;
+                // zero 00
+            } else {
+                timer->CC[1] = SECOND_PHASE_START;
+                // +ve 01
+                timer->CC[3] = SECOND_PHASE_START+val2;
+                // zero 00
+            }
+        } else {
+            // Pins are 11 and we want to restore them to default state of 00
             timer->CC[1] = SECOND_PHASE_START;
-            timer->CC[3] = SECOND_PHASE_START+val;
-            return;
+            timer->CC[3] = SECOND_PHASE_START;
+            // zero 00
+        }
+    } else {
+        // Zero; pins 00
+        if (val2 != 0) {
+            if (val2 < 0) {
+                timer->CC[2] = -1;
+                timer->CC[0] = SECOND_PHASE_START;
+                // -ve 10
+                timer->CC[1] = SECOND_PHASE_START-val2;
+                // zero 00
+                timer->CC[3] = -1;
+            } else {
+                timer->CC[0] = -1;
+                timer->CC[2] = SECOND_PHASE_START;
+                // +ve 01
+                timer->CC[3] = SECOND_PHASE_START+val2;
+                // zero 00
+                timer->CC[1] = -1;
+            }
+        } else {
+            //All zero, state will remain 00 throughout.
+            timer->CC[0] = -1;
+            timer->CC[2] = -1;
+            timer->CC[1] = -1;
+            timer->CC[3] = -1;
         }
     }
-    timer->CC[0] = -1;
-    timer->CC[2] = -1;
-    timer->CC[1] = -1;
-    timer->CC[3] = -1;
 }
 
-
 static int32_t sound_ticker(void) {
-    int32_t next_value = previous_value + delta;
+    int32_t val1 = previous_value + delta;
+    int32_t next_value = val1 + delta;
     previous_value = next_value;
-    set_toggle_times(next_value>>1);
-    --ticks;
-    if (ticks == 0) {
+    set_gpiote_output_pulses(val1>>1, next_value>>1);
+    if (sample) {
         int32_t buffer_index = (int32_t)sound_buffer_read_index;
-        ticks = current_rate.steps;
         buffer_index = (buffer_index+1)&SOUND_BUFFER_MASK;
         int32_t sample = sound_buffer_ptr[buffer_index]<<2;
         sound_buffer_read_index = buffer_index;
-        delta = ((sample-next_value)*current_rate.factor)>>20;
+        delta = (sample-next_value)>>2;
         if ((buffer_index&(SOUND_CHUNK_SIZE-1)) == 0) {
             sound_buffer_write_index = (buffer_index+SOUND_CHUNK_SIZE)&SOUND_BUFFER_MASK;
             set_low_priority_callback(sound_data_fetcher, SOUND_CALLBACK_ID);
         }
     }
-    /* Depends on design, 2 for now */
+    sample = !sample;
+    /* Need to be triggered every 2 ticks. */
     return 2;
 }
 

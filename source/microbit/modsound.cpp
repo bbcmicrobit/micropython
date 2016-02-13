@@ -55,22 +55,6 @@ STATIC mp_obj_t stop() {
 }
 MP_DEFINE_CONST_FUN_OBJ_0(microbit_sound_stop_obj, stop);
 
-STATIC mp_obj_t set_rate(mp_obj_t rate_in) {
-    mp_int_t rate = mp_obj_get_int(rate_in);
-    int err = sound_set_rate(rate);
-    if (err) {
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "not a legal sample rate"));
-    }
-    return mp_const_none;
-}
-MP_DEFINE_CONST_FUN_OBJ_1(microbit_sound_set_rate_obj, set_rate);
-
-STATIC mp_obj_t get_rate() {
-    mp_int_t rate = sound_get_rate();
-    return  MP_OBJ_NEW_SMALL_INT(rate);
-}
-MP_DEFINE_CONST_FUN_OBJ_0(microbit_sound_get_rate_obj, get_rate);
-
 STATIC mp_obj_t play_source(mp_obj_t src) {
     sound_play_source(mp_getiter(src), false);
     return mp_const_none;
@@ -155,21 +139,11 @@ MP_DEFINE_CONST_FUN_OBJ_1(microbit_sound_from_buffer_obj, from_buffer);
 STATIC const mp_map_elem_t globals_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR___name__), MP_OBJ_NEW_QSTR(MP_QSTR_sound) },
     { MP_OBJ_NEW_QSTR(MP_QSTR___init__), (mp_obj_t)&sound___init___obj },
-    { MP_OBJ_NEW_QSTR(MP_QSTR_get_rate), (mp_obj_t)&microbit_sound_get_rate_obj },
-    { MP_OBJ_NEW_QSTR(MP_QSTR_set_rate), (mp_obj_t)&microbit_sound_set_rate_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_start), (mp_obj_t)&microbit_sound_start_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_stop), (mp_obj_t)&microbit_sound_stop_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_from_buffer), (mp_obj_t)&microbit_sound_from_buffer_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_play_source), (mp_obj_t)&microbit_sound_play_source_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_microbit), (mp_obj_t)&microbit_sound_microbit_sample_obj },
-    { MP_OBJ_NEW_QSTR(MP_QSTR__13_333kHz), MP_OBJ_NEW_SMALL_INT(3) },
-    { MP_OBJ_NEW_QSTR(MP_QSTR__10kHz), MP_OBJ_NEW_SMALL_INT(4) },
-    { MP_OBJ_NEW_QSTR(MP_QSTR__8kHz), MP_OBJ_NEW_SMALL_INT(5) },
-    { MP_OBJ_NEW_QSTR(MP_QSTR__6_667kHz), MP_OBJ_NEW_SMALL_INT(6) },
-    { MP_OBJ_NEW_QSTR(MP_QSTR__5_714kHz), MP_OBJ_NEW_SMALL_INT(7) },
-    { MP_OBJ_NEW_QSTR(MP_QSTR__5kHz), MP_OBJ_NEW_SMALL_INT(8) },
-    { MP_OBJ_NEW_QSTR(MP_QSTR__4_444kHz), MP_OBJ_NEW_SMALL_INT(9) },
-    { MP_OBJ_NEW_QSTR(MP_QSTR__4kHz), MP_OBJ_NEW_SMALL_INT(10) },
 };
 
 STATIC MP_DEFINE_CONST_DICT(module_globals, globals_table);

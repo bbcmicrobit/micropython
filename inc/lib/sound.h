@@ -9,8 +9,6 @@ void play_test_sample(void);
 void sound_init(void);
 void sound_start(void);
 void sound_stop(void);
-int32_t sound_get_rate(void);
-int  sound_set_rate(int32_t rate);
 void reset_buffer(void);
 void sound_play_source(mp_obj_t src, bool wait);
 
