@@ -218,40 +218,7 @@ void microbit_display_obj_t::advanceRow() {
 }
 
 static const uint16_t render_timings[] =
-// The timer precision is only about 32us, so these timing will be rounded.
-// The scale is exponential, each step is approx x1.9 greater than the previous.
-{   0, // Brightness, Duration (approx)
-    35,   //    1,     35
-    32,   //    2,     67
-    61,   //    3,     128
-    115,  //    4,     243
-    219,  //    5,     462
-    417,  //    6,     879
-    791,  //    7,     1670
-    1500, //    8,     3170
-//  Always on   9,    ~6000
-};
-
-
-// Egregious hack to work around paranoia in the DAL API.
-struct FakeMicroBitDisplay : public MicroBitComponent
-{
-    uint8_t width;
-    uint8_t height;
-    uint8_t brightness;
-    uint8_t strobeRow;
-    uint8_t strobeBitMsk;
-    uint8_t rotation;
-    uint8_t mode;
-    uint8_t greyscaleBitMsk;
-    uint8_t timingCount;
     uint8_t errorTimeout;
-    Timeout renderTimer;
-};
-
-Timeout *renderTimer = &((FakeMicroBitDisplay*)(&(uBit.display)))->renderTimer;
-
-static const uint16_t new_render_timings[] =
 // The scale is (approximately) exponential,
 // each step is approx x1.8 greater than the previous.
 {   0, // Brightness, Duration (in ticks)
@@ -266,22 +233,19 @@ static const uint16_t new_render_timings[] =
 //  Always on  9,    ~200
 };
 
-static int32_t callback(void) {
-    return microbit_display_obj.renderRow();
-}
-
 #define DISPLAY_TICKER_SLOT 1
 
-int32_t microbit_display_obj_t::renderRow() {
-    mp_uint_t brightness = previous_brightness+1;
-    setPinsForRow(brightness);
+static int32_t callback(void) {
+    microbit_display_obj_t *display = &microbit_display_obj;
+    mp_uint_t brightness = display->previous_brightness+1;
+    display->setPinsForRow(brightness);
     if (brightness == MAX_BRIGHTNESS) {
         clear_ticker_callback(DISPLAY_TICKER_SLOT);
         return -1;
     }
-    previous_brightness = brightness;
+    display->previous_brightness = brightness;
     // Attach this function to the timer.
-    return new_render_timings[brightness];
+    return render_timings[brightness];
 }
 
 
