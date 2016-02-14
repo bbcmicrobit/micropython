@@ -394,6 +394,7 @@ Q(reset)
 Q(from_buffer)
 Q(play_source)
 Q(SoundBytes)
+Q(set_pins)
 
 Q(samples)
 Q(Sample)

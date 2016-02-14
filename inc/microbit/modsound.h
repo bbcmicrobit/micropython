@@ -9,6 +9,7 @@
 void sound_start(void);
 void sound_stop(void);
 void sound_play_source(mp_obj_t src, bool wait);
+mp_obj_t sound_set_pins(mp_obj_t pin0_obj, mp_obj_t pin1_obj);
 
 #define SOUND_CHUNK_SIZE 32
 #define SOUND_BUFFER_SIZE (SOUND_CHUNK_SIZE*2)

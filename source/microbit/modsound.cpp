@@ -30,6 +30,7 @@
 
 extern "C" {
 
+#include "microbit/modmicrobit.h"
 #include "gpio_api.h"
 #include "device.h"
 
@@ -40,6 +41,7 @@ extern "C" {
 #include "py/objstr.h"
 #include "py/mphal.h"
 #include "microbit/modsound.h"
+#include "microbit/microbitobj.h"
 
 #define TheTimer NRF_TIMER1
 
@@ -210,15 +212,29 @@ void sound_play_source(mp_obj_t iter, bool wait) {
     }
 }
 
-mp_obj_t sound_reset() {
+static PinName pin0 = P0_3;
+static PinName pin1 = P0_2;
+
+static void init_pins(PinName p0, PinName p1) {
     sound_stop();
-    memset(sound_buffer_ptr, 0, SOUND_BUFFER_SIZE);
-    /* TO DO: make it configurable which pins we use */
-    PinName pin0 = P0_3;
-    PinName pin1 = P0_2;
+    pin0 = p0;
+    pin1 = p1;
     gpiote_init(pin0, 0);
     gpiote_init(pin1, 1);
     ppi_init(0, 1);
+}
+
+mp_obj_t sound_set_pins(mp_obj_t pin0_obj, mp_obj_t pin1_obj) {
+    PinName p0 = microbit_obj_get_pin(pin0_obj)->name;
+    PinName p1 = microbit_obj_get_pin(pin1_obj)->name;
+    init_pins(p0, p1);
+    return mp_const_none;
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_2(microbit_sound_set_pins_obj, sound_set_pins);
+
+mp_obj_t sound_reset() {
+    init_pins(pin0, pin1);
+    memset(sound_buffer_ptr, 0, SOUND_BUFFER_SIZE);
     sound_buffer_read_index = sound_buffer_write_index = 0;
     return mp_const_none;
 }
@@ -290,6 +306,7 @@ STATIC const mp_map_elem_t globals_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_stop), (mp_obj_t)&microbit_sound_stop_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_play_source), (mp_obj_t)&microbit_sound_play_source_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_reset), (mp_obj_t)&microbit_sound_reset_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_set_pins), (mp_obj_t)&microbit_sound_set_pins_obj },
 };
 
 STATIC MP_DEFINE_CONST_DICT(module_globals, globals_table);

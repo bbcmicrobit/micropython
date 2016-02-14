@@ -226,5 +226,7 @@ extern const mp_obj_module_t music_module;
 extern const mp_obj_module_t love_module;
 extern const mp_obj_module_t antigravity_module;
 extern const mp_obj_module_t this_module;
+extern const mp_obj_module_t sound_module;
+extern const mp_obj_module_t samples_module;
 
 #endif // __MICROPY_INCLUDED_MICROBIT_MODMICROBIT_H__

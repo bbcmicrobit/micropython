@@ -3,6 +3,7 @@
 
 extern "C" {
 
+#include "microbit/modmicrobit.h"
 #include "py/runtime.h"
 #include "py/obj.h"
 #include "py/mphal.h"
@@ -325,12 +326,12 @@ typedef struct _sample_iter_t {
     uint32_t index;
 } sample_iter_t;
 
-static mp_obj_t sample_next(mp_obj_t o_in) {
+STATIC mp_obj_t sample_next(mp_obj_t o_in) {
     sample_iter_t *iter = (sample_iter_t *)o_in;
-    const int32_t *src = ((const int32_t *)iter->data) + iter->index;
-    int32_t *dest = (int32_t *)iter->buffer->data;
-    if (iter->index + SOUND_CHUNK_SIZE/4 > (iter->len>>2)) {
-        unsigned len = (iter->len>>2)-iter->index;
+    const int8_t *src = iter->data + iter->index;
+    int8_t *dest = iter->buffer->data;
+    if (iter->index + SOUND_CHUNK_SIZE > iter->len) {
+        unsigned len = iter->len-iter->index;
         if (len == 0) {
             return MP_OBJ_STOP_ITERATION;
         }
@@ -338,20 +339,20 @@ static mp_obj_t sample_next(mp_obj_t o_in) {
         for (i = 0; i < len; i++) {
             dest[i] = src[i];
         }
-        for (; i < SOUND_CHUNK_SIZE/4; i++) {
+        for (; i < SOUND_CHUNK_SIZE; i++) {
             dest[i] = 0;
         }
         iter->index += len;
     } else {
-        for (unsigned int i = 0; i < SOUND_CHUNK_SIZE/4; i++) {
+        for (unsigned int i = 0; i < SOUND_CHUNK_SIZE; i++) {
             dest[i] = src[i];
         }
-        iter->index += SOUND_CHUNK_SIZE/4;
+        iter->index += SOUND_CHUNK_SIZE;
     }
     return iter->buffer;
 }
 
-static mp_obj_t sample_get_buffer(mp_obj_t self_in) {
+STATIC mp_obj_t sample_get_buffer(mp_obj_t self_in) {
     sample_iter_t *self = (sample_iter_t *)self_in;
     return self->buffer;
 }
@@ -381,7 +382,7 @@ const mp_obj_type_t microbit_sample_iter_type = {
     .locals_dict = (mp_obj_dict_t*)&local_dict,
 };
 
-static mp_obj_t sample_iter(mp_obj_t o_in) {
+STATIC mp_obj_t sample_iter(mp_obj_t o_in) {
     sample_t *obj = (sample_t *)o_in;
     sample_iter_t *iter = m_new_obj(sample_iter_t);
     iter->base.type = &microbit_sample_iter_type;
@@ -417,11 +418,6 @@ STATIC const sample_t microbit_sample_microbit_sample_obj = {
     .len = sizeof(sample_microbit)
 };
 
-static const int8_t silence[] = {
-0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-};
-
 
 STATIC const mp_map_elem_t globals_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR___name__), MP_OBJ_NEW_QSTR(MP_QSTR_samples) },
@@ -429,12 +425,12 @@ STATIC const mp_map_elem_t globals_table[] = {
 };
 
 
-STATIC MP_DEFINE_CONST_DICT(module_globals, globals_table);
+STATIC MP_DEFINE_CONST_DICT(sample_module_globals, globals_table);
 
 const mp_obj_module_t samples_module = {
     .base = { &mp_type_module },
     .name = MP_QSTR_samples,
-    .globals = (mp_obj_dict_t*)&module_globals,
+    .globals = (mp_obj_dict_t*)&sample_module_globals,
 };
 
 
