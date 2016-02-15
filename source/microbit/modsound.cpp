@@ -80,15 +80,16 @@ static inline void timer_start(void) {
     __NOP();
 }
 
-static int16_t previous_value = 0;
-static int16_t delta = 0;
-static uint8_t running = 1;
+static int32_t previous_value = 0;
+static int32_t delta = 0;
+static bool running = false;
 static bool sample;
+static volatile bool fetcher_ready = true;
 
 void sound_stop(void) {
     timer_stop();
     clear_ticker_callback(0);
-    running = 0;
+    running = false;
     previous_value = 0;
     delta = 0;
 }
@@ -97,22 +98,18 @@ static int32_t sound_ticker(void);
 
 void sound_start(void) {
     timer_start();
-    running = 1;
+    running = true;
     sample = false;
+    fetcher_ready = true;
     set_ticker_callback(0, sound_ticker, 1);
 }
 
-#define FIRST_PHASE_START 40
-#define SECOND_PHASE_START (FIRST_PHASE_START+CYCLES_PER_TICK)
-
-int8_t *sound_buffer_ptr;
 volatile int32_t sound_buffer_read_index;
-int32_t sound_buffer_write_index;
 
 #define SOUND_BUFFER_MASK (SOUND_BUFFER_SIZE-1)
 
-static mp_obj_t buffer_iter = NULL;
-static bool callback_needed_for_data = false;
+#define sound_buffer_ptr (MP_STATE_PORT(async_data)[2])
+#define buffer_iter (MP_STATE_PORT(async_data)[3])
 
 static void sound_data_fetcher(void) {
     if (buffer_iter == NULL)
@@ -131,7 +128,8 @@ static void sound_data_fetcher(void) {
     }
     microbit_sound_bytes_obj_t *buffer = (microbit_sound_bytes_obj_t *)buffer_obj;
     const int32_t *data = (const int32_t*)buffer->data;
-    int32_t *half_buffer = (int32_t*)(sound_buffer_ptr + sound_buffer_write_index);
+    int32_t write_half = ((sound_buffer_read_index>>LOG_SOUND_CHUNK_SIZE)+1)&1;
+    int32_t *half_buffer = (int32_t*)(sound_buffer_ptr + (write_half<<LOG_SOUND_CHUNK_SIZE));
     half_buffer[0] = data[0];
     half_buffer[1] = data[1];
     half_buffer[2] = data[2];
@@ -140,9 +138,12 @@ static void sound_data_fetcher(void) {
     half_buffer[5] = data[5];
     half_buffer[6] = data[6];
     half_buffer[7] = data[7];
-    sound_buffer_write_index = (sound_buffer_write_index+SOUND_CHUNK_SIZE)&SOUND_BUFFER_MASK;
+    fetcher_ready = true;
     return;
 }
+
+#define FIRST_PHASE_START 40
+#define SECOND_PHASE_START (FIRST_PHASE_START+CYCLES_PER_TICK)
 
 static inline void set_gpiote_output_pulses(int32_t val1, int32_t val2) {
     NRF_TIMER_Type *timer = TheTimer;
@@ -182,11 +183,11 @@ static int32_t sound_ticker(void) {
     if (sample) {
         int32_t buffer_index = (int32_t)sound_buffer_read_index;
         buffer_index = (buffer_index+1)&SOUND_BUFFER_MASK;
-        int32_t sample = sound_buffer_ptr[buffer_index]<<2;
+        int32_t sample = ((int32_t)((int8_t *)sound_buffer_ptr)[buffer_index])<<2;
         sound_buffer_read_index = buffer_index;
         delta = (sample-next_value)>>2;
-        if ((buffer_index&(SOUND_CHUNK_SIZE-1)) == 0) {
-            sound_buffer_write_index = (buffer_index+SOUND_CHUNK_SIZE)&SOUND_BUFFER_MASK;
+        if ((buffer_index&(SOUND_CHUNK_SIZE-1)) == 0 && fetcher_ready) {
+            fetcher_ready = false;
             set_low_priority_callback(sound_data_fetcher, SOUND_CALLBACK_ID);
         }
     }
@@ -195,9 +196,8 @@ static int32_t sound_ticker(void) {
     return 2;
 }
 
-void sound_play_source(mp_obj_t iter, bool wait) {
-    buffer_iter = iter;
-    callback_needed_for_data = true;
+void sound_play_source(mp_obj_t src, bool wait) {
+    buffer_iter = mp_getiter(src);
     sound_start();
     if (!wait) {
         return;
@@ -227,33 +227,47 @@ static void init_pins(PinName p0, PinName p1) {
 mp_obj_t sound_set_pins(mp_obj_t pin0_obj, mp_obj_t pin1_obj) {
     PinName p0 = microbit_obj_get_pin(pin0_obj)->name;
     PinName p1 = microbit_obj_get_pin(pin1_obj)->name;
-    init_pins(p0, p1);
+    if (p0 != pin0 || p1 != pin1) {
+        init_pins(p0, p1);
+    }
     return mp_const_none;
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_2(microbit_sound_set_pins_obj, sound_set_pins);
 
-mp_obj_t sound_reset() {
+void sound_mute(void) {
+    clear_ticker_callback(0);
+    buffer_iter = NULL;
+    memset(sound_buffer_ptr, 0, SOUND_BUFFER_SIZE);
+}
+
+mp_obj_t sound_reset(void) {
     init_pins(pin0, pin1);
     memset(sound_buffer_ptr, 0, SOUND_BUFFER_SIZE);
-    sound_buffer_read_index = sound_buffer_write_index = 0;
+    sound_buffer_read_index = 0;
     return mp_const_none;
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_0(microbit_sound_reset_obj, sound_reset);
 
-mp_obj_t sound__init__() {
-    //Allocate buffer
-    sound_buffer_ptr = (int8_t *)malloc(SOUND_BUFFER_SIZE);
-    TheTimer->POWER = 1;
-    NRF_TIMER_Type *timer = TheTimer;
-    timer_stop();
-    timer->TASKS_CLEAR = 1;
-    timer->MODE = TIMER_MODE_MODE_Timer;
-    timer->BITMODE = TIMER_BITMODE_BITMODE_16Bit << TIMER_BITMODE_BITMODE_Pos;
-    timer->PRESCALER = 0; //Full speed
-    timer->SHORTS = 0;
+
+mp_obj_t sound_init(void) {
+    static bool initialised = false;
+    if (!initialised) {
+        buffer_iter = NULL;
+        initialised = true;
+        //Allocate buffer
+        sound_buffer_ptr = (int8_t *)malloc(SOUND_BUFFER_SIZE);
+        TheTimer->POWER = 1;
+        NRF_TIMER_Type *timer = TheTimer;
+        timer_stop();
+        timer->TASKS_CLEAR = 1;
+        timer->MODE = TIMER_MODE_MODE_Timer;
+        timer->BITMODE = TIMER_BITMODE_BITMODE_16Bit << TIMER_BITMODE_BITMODE_Pos;
+        timer->PRESCALER = 0; //Full speed
+        timer->SHORTS = 0;
+    }
     return sound_reset();
 }
-STATIC MP_DEFINE_CONST_FUN_OBJ_0(sound___init___obj, sound__init__);
+STATIC MP_DEFINE_CONST_FUN_OBJ_0(sound___init___obj, sound_init);
 
 
 STATIC mp_obj_t start() {
@@ -269,7 +283,7 @@ STATIC mp_obj_t stop() {
 MP_DEFINE_CONST_FUN_OBJ_0(microbit_sound_stop_obj, stop);
 
 STATIC mp_obj_t play_source(mp_obj_t src) {
-    sound_play_source(mp_getiter(src), false);
+    sound_play_source(src, false);
     return mp_const_none;
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_sound_play_source_obj, play_source);

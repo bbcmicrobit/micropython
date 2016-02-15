@@ -47,7 +47,7 @@ void ticker_init(void) {
     ticker->CC[3] = MICROSECONDS_PER_TICK;
     ticker->MODE = TIMER_MODE_MODE_Timer;
     ticker->BITMODE = TIMER_BITMODE_BITMODE_24Bit << TIMER_BITMODE_BITMODE_Pos;
-    ticker->PRESCALER = 4; // 1 tick == i microsecond
+    ticker->PRESCALER = 4; // 1 tick == 1 microsecond
     ticker->INTENSET = TIMER_INTENSET_COMPARE3_Msk;
     ticker->SHORTS = 0;
     NVIC_SetPriority(FastTicker_IRQn, 1);

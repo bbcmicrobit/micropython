@@ -399,3 +399,5 @@ Q(set_pins)
 Q(samples)
 Q(Sample)
 Q(get_buffer)
+
+Q(Instrument)

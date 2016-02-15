@@ -218,7 +218,6 @@ void microbit_display_obj_t::advanceRow() {
 }
 
 static const uint16_t render_timings[] =
-    uint8_t errorTimeout;
 // The scale is (approximately) exponential,
 // each step is approx x1.8 greater than the previous.
 {   0, // Brightness, Duration (in ticks)
