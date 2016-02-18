@@ -219,17 +219,19 @@ void microbit_display_obj_t::advanceRow() {
 
 static const uint16_t render_timings[] =
 // The scale is (approximately) exponential,
-// each step is approx x1.8 greater than the previous.
-{   0, // Brightness, Duration (in ticks)
-    1,   //    1,     1
-    1,   //    2,     2
-    2,   //    3,     4
-    4,   //    4,     8
-    7,   //    5,     15
-    13,  //    6,     28
-    25,  //    7,     53
-    49,  //    8,     102
-//  Always on  9,    ~200
+// each step is approx x1.9 greater than the previous.
+// All values should be mutliples of 3 to minimise jitter of
+// high speed PWM (sound).
+{   0, // Brightness, Duration (in µs)
+    3,   //    1,     30
+    3,   //    2,     60
+    6,   //    3,     120
+    12,  //    4,     240
+    21,  //    5,     450
+    39,  //    6,     840
+    75,  //    7,     1590
+    147, //    8,     3060
+//  Always on  9,    ~6000
 };
 
 #define DISPLAY_TICKER_SLOT 1
@@ -305,7 +307,7 @@ void microbit_display_tick(void) {
     microbit_display_update();
     microbit_display_obj.previous_brightness = 0;
     if (microbit_display_obj.brightnesses & GREYSCALE_MASK) {
-        set_ticker_callback(DISPLAY_TICKER_SLOT, callback, 80);
+        set_ticker_callback(DISPLAY_TICKER_SLOT, callback, 1800);
     }
 }
 

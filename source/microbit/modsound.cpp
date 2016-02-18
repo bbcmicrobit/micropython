@@ -101,7 +101,7 @@ void sound_start(void) {
     running = true;
     sample = false;
     fetcher_ready = true;
-    set_ticker_callback(0, sound_ticker, 1);
+    set_ticker_callback(0, sound_ticker, 60);
 }
 
 volatile int32_t sound_buffer_read_index;
@@ -129,7 +129,7 @@ static void sound_data_fetcher(void) {
     microbit_sound_bytes_obj_t *buffer = (microbit_sound_bytes_obj_t *)buffer_obj;
     const int32_t *data = (const int32_t*)buffer->data;
     int32_t write_half = ((sound_buffer_read_index>>LOG_SOUND_CHUNK_SIZE)+1)&1;
-    int32_t *half_buffer = (int32_t*)(sound_buffer_ptr + (write_half<<LOG_SOUND_CHUNK_SIZE));
+    int32_t *half_buffer = (int32_t*)(((int8_t *)sound_buffer_ptr) + (write_half<<LOG_SOUND_CHUNK_SIZE));
     half_buffer[0] = data[0];
     half_buffer[1] = data[1];
     half_buffer[2] = data[2];
@@ -143,7 +143,7 @@ static void sound_data_fetcher(void) {
 }
 
 #define FIRST_PHASE_START 40
-#define SECOND_PHASE_START (FIRST_PHASE_START+CYCLES_PER_TICK)
+#define SECOND_PHASE_START (FIRST_PHASE_START+30*16)
 
 static inline void set_gpiote_output_pulses(int32_t val1, int32_t val2) {
     NRF_TIMER_Type *timer = TheTimer;
@@ -192,8 +192,8 @@ static int32_t sound_ticker(void) {
         }
     }
     sample = !sample;
-    /* Need to be triggered every 2 ticks. */
-    return 2;
+    /* Need to be triggered every 60µs. */
+    return 60/MICROSECONDS_PER_TICK;
 }
 
 void sound_play_source(mp_obj_t src, bool wait) {

@@ -44,7 +44,7 @@ void ticker_init(void) {
     __NOP();
     ticker_stop();
     ticker->TASKS_CLEAR = 1;
-    ticker->CC[3] = MICROSECONDS_PER_TICK;
+    ticker->CC[3] = MICROSECONDS_PER_MACRO_TICK;
     ticker->MODE = TIMER_MODE_MODE_Timer;
     ticker->BITMODE = TIMER_BITMODE_BITMODE_24Bit << TIMER_BITMODE_BITMODE_Pos;
     ticker->PRESCALER = 4; // 1 tick == 1 microsecond
@@ -110,7 +110,7 @@ static const uint32_t masks[3] = {
     TIMER_INTENCLR_COMPARE2_Msk,
 };
 
-void set_ticker_callback(uint32_t index, ticker_callback_ptr func, int32_t initial_delay) {
+void set_ticker_callback(uint32_t index, ticker_callback_ptr func, int32_t initial_delay_us) {
     NRF_TIMER_Type *ticker = FastTicker;
     callbacks[index] = noop;
     ticker->INTENCLR = masks[index];
@@ -119,11 +119,11 @@ void set_ticker_callback(uint32_t index, ticker_callback_ptr func, int32_t initi
     // Need to make sure that set tick is aligned to lastest tick
     // Use CC[3] as a reference, as that is always up-to-date.
     int32_t cc3 = FastTicker->CC[3];
-    int32_t delta = t - cc3;
-    delta = (delta/MICROSECONDS_PER_TICK)+1;
+    int32_t delta = t+initial_delay_us-cc3;
+    delta = (delta/MICROSECONDS_PER_TICK+1)*MICROSECONDS_PER_TICK;
     callbacks[index] = func;
     ticker->INTENSET = masks[index];
-    FastTicker->CC[index] = cc3 + (delta+initial_delay)*MICROSECONDS_PER_TICK;
+    FastTicker->CC[index] = cc3 + delta;
 }
 
 void clear_ticker_callback(uint32_t index) {
