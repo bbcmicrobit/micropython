@@ -33,6 +33,7 @@ extern "C" {
 #include "microbit/modmicrobit.h"
 #include "gpio_api.h"
 #include "device.h"
+#include "nrf_gpio.h"
 
 #include "lib/ticker.h"
 #include "lib/sound.h"
@@ -142,6 +143,14 @@ static void sound_data_fetcher(void) {
     return;
 }
 
+static PinName pin0 = P0_3;
+static PinName pin1 = P0_2;
+
+static inline void zero_pins(void) {
+    NRF_GPIOTE->TASKS_OUT[0] = nrf_gpio_pin_read(pin0);
+    NRF_GPIOTE->TASKS_OUT[1] = nrf_gpio_pin_read(pin1);
+}
+
 #define FIRST_PHASE_START 40
 #define SECOND_PHASE_START (FIRST_PHASE_START+30*16)
 
@@ -179,6 +188,7 @@ static int32_t sound_ticker(void) {
     int32_t val1 = previous_value + delta;
     int32_t next_value = val1 + delta;
     previous_value = next_value;
+    zero_pins();
     set_gpiote_output_pulses(val1>>1, next_value>>1);
     if (sample) {
         int32_t buffer_index = (int32_t)sound_buffer_read_index;
@@ -211,9 +221,6 @@ void sound_play_source(mp_obj_t src, bool wait) {
         __WFI();
     }
 }
-
-static PinName pin0 = P0_3;
-static PinName pin1 = P0_2;
 
 static void init_pins(PinName p0, PinName p1) {
     sound_stop();
