@@ -102,7 +102,7 @@ void sound_start(void) {
     running = true;
     sample = false;
     fetcher_ready = true;
-    set_ticker_callback(0, sound_ticker, 60);
+    set_ticker_callback(0, sound_ticker, 80);
 }
 
 volatile int32_t sound_buffer_read_index;
@@ -193,7 +193,7 @@ static int32_t sound_ticker(void) {
     if (sample) {
         int32_t buffer_index = (int32_t)sound_buffer_read_index;
         buffer_index = (buffer_index+1)&SOUND_BUFFER_MASK;
-        int32_t sample = ((int32_t)((int8_t *)sound_buffer_ptr)[buffer_index])<<2;
+        int32_t sample = ((int32_t)((int8_t *)sound_buffer_ptr)[buffer_index])*6;
         sound_buffer_read_index = buffer_index;
         delta = (sample-next_value)>>2;
         if ((buffer_index&(SOUND_CHUNK_SIZE-1)) == 0 && fetcher_ready) {
@@ -202,8 +202,8 @@ static int32_t sound_ticker(void) {
         }
     }
     sample = !sample;
-    /* Need to be triggered every 60µs. */
-    return 60/MICROSECONDS_PER_TICK;
+    /* Need to be triggered every 64µs. */
+    return 64/MICROSECONDS_PER_TICK;
 }
 
 void sound_play_source(mp_obj_t src, bool wait) {
