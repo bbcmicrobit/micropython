@@ -35,6 +35,7 @@ extern "C" {
 #include "microbitimage.h"
 #include "microbitdisplay.h"
 #include "lib/iters.h"
+#include "lib/ticker.h"
 
 void microbit_display_show(microbit_display_obj_t *display, microbit_image_obj_t *image) {
     mp_int_t w = min(image->width(), 5);
@@ -169,96 +170,79 @@ static const DisplayPoint display_map[MICROBIT_DISPLAY_COLUMN_COUNT][MICROBIT_DI
     {{1,2}, {NO_CONN,NO_CONN}, {3,2}}
 };
 
+#define MIN_COLUMN_PIN 4
+#define COLUMN_PINS_MASK 0x1ff0
+#define MIN_ROW_PIN 13
+#define MAX_ROW_PIN 15
+
 inline void microbit_display_obj_t::setPinsForRow(uint8_t brightness) {
-    int column_strobe = 0;
-
-    // Calculate the bitpattern to write.
-    for (int i = 0; i < MICROBIT_DISPLAY_COLUMN_COUNT; i++) {
-        if (row_brightness[i] >= brightness) {
-            column_strobe |= (1 << i);
-        }
+    if (brightness == 0) {
+        nrf_gpio_pins_clear(COLUMN_PINS_MASK & ~this->pins_for_brightness[brightness]);
+    } else {
+        nrf_gpio_pins_set(this->pins_for_brightness[brightness]);
     }
-
-    // Wwrite the new bit pattern.
-    // Set port 0 4-7 and retain lower 4 bits.
-    nrf_gpio_port_write(NRF_GPIO_PORT_SELECT_PORT0, (~column_strobe<<4 & 0xF0) | (nrf_gpio_port_read(NRF_GPIO_PORT_SELECT_PORT0) & 0x0F));
-
-    // Set port 1 8-12 for the current row.
-    nrf_gpio_port_write(NRF_GPIO_PORT_SELECT_PORT1, strobe_mask | (~column_strobe>>4 & 0x1F));
 }
 
 void microbit_display_obj_t::advanceRow() {
     // First, clear the old row.
-
+    nrf_gpio_pins_set(COLUMN_PINS_MASK);
     // Clear the old bit pattern for this row.
-    // Clear port 0 4-7 and retain lower 4 bits.
-    nrf_gpio_port_write(NRF_GPIO_PORT_SELECT_PORT0, 0xF0 | (nrf_gpio_port_read(NRF_GPIO_PORT_SELECT_PORT0) & 0x0F));
-    // Clear port 1 8-12 for the current row.
-    nrf_gpio_port_write(NRF_GPIO_PORT_SELECT_PORT1, strobe_mask | 0x1F);
+    nrf_gpio_pin_clear(strobe_row+MIN_ROW_PIN);
 
     // Move on to the next row.
-    strobe_mask <<= 1;
     strobe_row++;
 
     // Reset the row counts and bit mask when we have hit the max.
     if (strobe_row == MICROBIT_DISPLAY_ROW_COUNT) {
         strobe_row = 0;
-        strobe_mask = 0x20;
     }
 
+    // Set pin for this row.
     // Prepare row for rendering.
+    for (int i = 0; i <= MAX_BRIGHTNESS; i++) {
+        pins_for_brightness[i] = 0;
+    }
     for (int i = 0; i < MICROBIT_DISPLAY_COLUMN_COUNT; i++) {
         int x = display_map[i][strobe_row].x;
         int y = display_map[i][strobe_row].y;
-        row_brightness[i] = microbit_display_obj.image_buffer[x][y];
+        uint8_t brightness = microbit_display_obj.image_buffer[x][y];
+        pins_for_brightness[brightness] |= (1<<(i+MIN_COLUMN_PIN));
     }
-    // Turn on any pixels that are at max.
-    setPinsForRow(MAX_BRIGHTNESS);
+    //Set pin for row
+    nrf_gpio_pin_set(strobe_row+MIN_ROW_PIN);
+    // Turn on any pixels that are at max
+    nrf_gpio_pins_clear(pins_for_brightness[MAX_BRIGHTNESS]);
 }
 
 static const uint16_t render_timings[] =
-// The timer precision is only about 32us, so these timing will be rounded.
-// The scale is exponential, each step is approx x1.9 greater than the previous.
-{   0, // Brightness, Duration (approx)
-    35,   //    1,     35
-    32,   //    2,     67
-    61,   //    3,     128
-    115,  //    4,     243
-    219,  //    5,     462
-    417,  //    6,     879
-    791,  //    7,     1670
-    1500, //    8,     3170
-//  Always on   9,    ~6000
+// The scale is (approximately) exponential,
+// each step is approx x1.9 greater than the previous.
+{   0, // Bright, Ticks Duration, Relative power
+    2,   //   1,   2,     32µs,     inf
+    2,   //   2,   4,     64µs,     200%
+    4,   //   3,   8,     128µs,    200%
+    7,   //   4,   15,    240µs,    187%
+    13,  //   5,   28,    448µs,    187%
+    25,  //   6,   53,    848µs,    189%
+    49,  //   7,   102,   1632µs,   192%
+    97,  //   8,   199,   3184µs,   195%
+// Always on  9,   375,   6000µs,   188%
 };
 
+#define DISPLAY_TICKER_SLOT 1
 
-// Egregious hack to work around paranoia in the DAL API.
-struct FakeMicroBitDisplay : public MicroBitComponent
-{
-    uint8_t width;
-    uint8_t height;
-    uint8_t brightness;
-    uint8_t strobeRow;
-    uint8_t strobeBitMsk;
-    uint8_t rotation;
-    uint8_t mode;
-    uint8_t greyscaleBitMsk;
-    uint8_t timingCount;
-    uint8_t errorTimeout;
-    Timeout renderTimer;
-};
-
-Timeout *renderTimer = &((FakeMicroBitDisplay*)(&(uBit.display)))->renderTimer;
-
-void microbit_display_obj_t::renderRow() {
-    mp_uint_t brightness = previous_brightness+1;
-    setPinsForRow(brightness);
+static int32_t callback(void) {
+    microbit_display_obj_t *display = &microbit_display_obj;
+    mp_uint_t brightness = display->previous_brightness;
+    display->setPinsForRow(brightness);
+    brightness += 1;
     if (brightness == MAX_BRIGHTNESS) {
-        return;
+        clear_ticker_callback(DISPLAY_TICKER_SLOT);
+        return -1;
     }
-    previous_brightness = brightness;
+    display->previous_brightness = brightness;
     // Attach this function to the timer.
-    renderTimer->attach_us(this, &microbit_display_obj_t::renderRow, render_timings[brightness]);
+    return render_timings[brightness];
 }
 
 
@@ -319,7 +303,7 @@ void microbit_display_tick(void) {
     microbit_display_update();
     microbit_display_obj.previous_brightness = 0;
     if (microbit_display_obj.brightnesses & GREYSCALE_MASK) {
-        microbit_display_obj.renderRow();
+        set_ticker_callback(DISPLAY_TICKER_SLOT, callback, 1800);
     }
 }
 
@@ -448,11 +432,10 @@ STATIC const mp_obj_type_t microbit_display_type = {
 microbit_display_obj_t microbit_display_obj = {
     {&microbit_display_type},
     { 0 },
-    .row_brightness = { 0 },
     .previous_brightness = 0,
     .strobe_row = 0,
     .brightnesses = 0,
-    .strobe_mask = 0x20
+    .pins_for_brightness = { 0 },
 };
 
 void microbit_display_init(void) {
