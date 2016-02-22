@@ -47,6 +47,7 @@ Projects related to MicroPython on the BBC micro:bit include:
     lessons/gestures
     lessons/direction
     lessons/network
+    lessons/next
 
 .. toctree::
    :maxdepth: 2
@@ -66,6 +67,7 @@ Projects related to MicroPython on the BBC micro:bit include:
    spi.rst
    random.rst
    neopixel.rst
+   ble.rst
 
 .. toctree::
    :maxdepth: 2

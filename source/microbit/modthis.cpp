@@ -34,7 +34,7 @@ extern "C" {
 
 STATIC mp_obj_t this__init__(void) {
     STATIC const char *this_text =
-"The Zen of MicroPython, by Nicholas H.Tollervey\n"
+"The Zen of MicroPython, by Nicholas H. Tollervey\n"
 "\n"
 "Code,\n"
 "Hack it,\n"
@@ -57,7 +57,10 @@ STATIC mp_obj_t this_authors(void) {
     */
     STATIC const char *authors_text =
 "MicroPython on the micro:bit is brought to you by:\n"
-"Damien P. George, Matthew Else, Abbie Brooks and Nicholas H. Tollervey.\n";
+"Damien P. George, Mark Shannon, Radomir Dopieralski, Matthew Else,\n"
+"Carol Willing, Tom Viner, Alan Jackson, Nick Coghlan, Joseph Haig,\n"
+"Alex Chan, Andrea Grandi, Paul Egan, Piotr Kasprzyk, Andrew Mulholland,\n"
+"Matt Wheeler, Joe Glancy, Abbie Brooks and Nicholas H. Tollervey.\n";
     mp_printf(&mp_plat_print, "%s", authors_text);
     return mp_const_none;
 }

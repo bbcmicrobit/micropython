@@ -13,8 +13,8 @@ Functions
 
 .. py:function:: panic(n)
 
-    Enter a panic mode. Requires restart. Pass in an arbitrary integer to
-    indicate a status::
+    Enter a panic mode. Requires restart. Pass in an arbitrary integer <= 255
+    to indicate a status::
 
         microbit.panic(404)
 
