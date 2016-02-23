@@ -2,7 +2,7 @@
 ### Author: M. Schafer 2016
 # This program has been placed into the public domain.
 
-import microbit
+import microbit, random
 
 # User adjustable values for range of brightness in flames.
 min_brightness = 2
@@ -12,6 +12,8 @@ max_brightness = 8
 #  fixed for the Microbit
 display_width  = 5
 display_height = 5
+
+invert_display = True # flame can be oriented in either direction
 
 # mask to create fire shape. multiplies values %
 Mask = [[ 88, 100, 100, 100, 88 ],
@@ -24,12 +26,12 @@ Mask = [[ 88, 100, 100, 100, 88 ],
 def generate_line(line, start=min_brightness, end=max_brightness):
     "start and end define range of dimmest to brightest 'flames'"
     for i in range(display_width):
-        line[i] = start + microbit.random(end-start)
+        line[i] = start + random.randrange(end-start)
 
 # shift all values in the grid up one row
 def shift_up(grid, newline):
     "Shift up lines in grid, add newline at bottom"
-    for y in range(display_height-1,0,-1):
+    for y in range(display_height-1, 0, -1):
         for x in range(display_width):
             grid[y][x] = grid[y-1][x]
     # lowest line
@@ -43,18 +45,24 @@ def interpolate_frame(screen, pcnt, grid, line):
     """ Interpolate new values by reading from grid and
          writing to the screen """
     # each row interpolates with the one before it
-    for y in range(display_height-1,0,-1):
+    for y in range(display_height-1, 0, -1):
         for x in range(display_width):
             mask = Mask[y][x]
-            newval = mask * ( (100-pcnt) * grid[y][x] + 
-                              pcnt * grid[y-1][x]      ) / 10000.0
-            screen.set_pixel(x, y, int(newval))
+            newval = ((100-pcnt) * grid[y][x] + pcnt * grid[y-1][x] ) / 100.0
+            newval = mask * newval / 100.0
+            if invert_display:
+                screen.set_pixel(x, display_height-y-1, int(newval))
+            else:
+                screen.set_pixel(x, y, int(newval))
     # first row interpolates with the "next" line
     for x in range(display_width):
         mask = Mask[y][x]
-        newval = mask * ( (100-pcnt) * grid[0][x] + 
-                          pcnt * line[x]             ) / 10000.0
-        screen.set_pixel(x, 0, int(newval))
+        newval = ((100-pcnt) * grid[0][x] + pcnt * line[x]) / 100.0
+        newval = mask * newval / 100.0
+        if invert_display:
+            screen.set_pixel(x, display_height-1, int(newval))
+        else:
+            screen.set_pixel(x, 0, int(newval))
 
 ## Setup
 
@@ -72,7 +80,6 @@ grid = [[0 for i in range(display_width)] for i in range(display_height)]
 
 screen = microbit.display
 percent = 0     # counter to see when to re-interpolate
-debounce = 0    # do not detect the buttons too often (>100ms)
 sleeptime = 0   # delay between updates
 percent_increment = 25  # how fast we interpolate fire
 
@@ -87,23 +94,20 @@ while True:
 
     # Check Buttons to see if changing
     # button_a = smoothness
-    if microbit.button_a.is_pressed() and debounce > 100:
+    if microbit.button_a.was_pressed():
         percent_increment += 5
-        debounce = 0
         if percent_increment > 50:
              percent_increment = 1
-        print("percent interpolte=",percent_increment)
+        print("percent interpolate=", percent_increment)
     # button_b = delay
-    if microbit.button_b.is_pressed() and debounce > 100:
+    if microbit.button_b.was_pressed():
         sleeptime += 10
-        debounce = 0
         if sleeptime > 100:
              sleeptime = 0
-        print("sleeptime=",sleeptime)
+        print("sleeptime=", sleeptime)
     # draw frame and sleep
     interpolate_frame(screen, percent, grid, line)
     microbit.sleep(sleeptime)
     # update main counters
     percent += percent_increment
-    debounce += max(sleeptime, 10)
 
