@@ -34,20 +34,20 @@ Projects related to MicroPython on the BBC micro:bit include:
 
 .. toctree::
     :maxdepth: 2
-    :caption: Lessons
+    :caption: Tutorials
 
-    lessons/introduction
-    lessons/hello
-    lessons/images
-    lessons/buttons
-    lessons/io
-    lessons/music
-    lessons/random
-    lessons/movement
-    lessons/gestures
-    lessons/direction
-    lessons/network
-    lessons/next
+    tutorials/introduction
+    tutorials/hello
+    tutorials/images
+    tutorials/buttons
+    tutorials/io
+    tutorials/music
+    tutorials/random
+    tutorials/movement
+    tutorials/gestures
+    tutorials/direction
+    tutorials/network
+    tutorials/next
 
 .. toctree::
    :maxdepth: 2
