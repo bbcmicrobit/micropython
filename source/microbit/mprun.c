@@ -120,6 +120,7 @@ void mp_run(void) {
     mp_hal_stdout_tx_str("soft reboot\r\n");
 
     memset(&MP_STATE_PORT(async_data)[0], 0, sizeof(MP_STATE_PORT(async_data)));
+    MP_STATE_PORT(async_music_data) = NULL;
 
     mp_deinit();
 }

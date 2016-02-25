@@ -68,7 +68,6 @@ static uint32_t async_music_wait_ticks;
 static bool async_music_loop;
 static uint16_t async_music_notes_len;
 static uint16_t async_music_notes_index;
-static mp_obj_t *async_music_notes_items; // XXX should be stored with other root pointers
 static MicroBitPin *async_music_pin;
 
 STATIC uint32_t start_note(const char *note_str, size_t note_len, MicroBitPin *pin);
@@ -99,7 +98,12 @@ void microbit_music_tick(void) {
                 return;
             }
         }
-        mp_obj_t note = async_music_notes_items[async_music_notes_index];
+        mp_obj_t note;
+        if (async_music_notes_len == 1) {
+            note = MP_STATE_PORT(async_music_data);
+        } else {
+            note = ((mp_obj_t*)MP_STATE_PORT(async_music_data))[async_music_notes_index];
+        }
         if (note == mp_const_none) {
             // a rest (is this even used anymore?)
             async_music_pin->setAnalogValue(0);
@@ -308,7 +312,14 @@ STATIC mp_obj_t microbit_music_play(mp_uint_t n_args, const mp_obj_t *pos_args, 
     async_music_loop = args[3].u_bool;
     async_music_notes_len = len;
     async_music_notes_index = 0;
-    async_music_notes_items = items;
+    if (len == 1) {
+        // If a string was passed as a single note then we can't store a pointer
+        // to args[0].u_obj, so instead store the single string directly (also
+        // works if a tuple/list of one element was passed).
+        MP_STATE_PORT(async_music_data) = items[0];
+    } else {
+        MP_STATE_PORT(async_music_data) = items;
+    }
     async_music_pin = pin;
     async_music_state = ASYNC_MUSIC_STATE_NEXT_NOTE;
 
@@ -349,7 +360,7 @@ STATIC mp_obj_t microbit_music_pitch(mp_uint_t n_args, const mp_obj_t *pos_args,
         async_music_loop = false;
         async_music_notes_len = 0;
         async_music_notes_index = 0;
-        async_music_notes_items = NULL;
+        MP_STATE_PORT(async_music_data) = NULL;
         async_music_pin = pin;
         async_music_state = ASYNC_MUSIC_STATE_ARTICULATE;
 
