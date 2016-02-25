@@ -277,8 +277,20 @@ static void microbit_display_update(void) {
             }
             microbit_display_obj_t *display = (microbit_display_obj_t*)MP_STATE_PORT(async_data)[0];
             /* WARNING: We are executing in an interrupt handler.
-             * If an exception is raised here, then a reset is the only way to recover. */
-            mp_obj_t obj = mp_iternext(async_iterator);
+             * If an exception is raised here then we must hand it to the VM. */
+            mp_obj_t obj;
+            nlr_buf_t nlr;
+            if (nlr_push(&nlr) == 0) {
+                obj = mp_iternext_allow_raise(async_iterator);
+                nlr_pop();
+            } else {
+                if (!mp_obj_is_subclass_fast(MP_OBJ_FROM_PTR(((mp_obj_base_t*)nlr.ret_val)->type),
+                    MP_OBJ_FROM_PTR(&mp_type_StopIteration))) {
+                    // an exception other than StopIteration, so set it for the VM to raise later
+                    MP_STATE_VM(mp_pending_exception) = MP_OBJ_FROM_PTR(nlr.ret_val);
+                }
+                obj = MP_OBJ_STOP_ITERATION;
+            }
             if (obj == MP_OBJ_STOP_ITERATION) {
                 if (async_clear) {
                     microbit_display_show(&microbit_display_obj, BLANK_IMAGE);
