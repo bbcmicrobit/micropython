@@ -41,7 +41,7 @@ void app_main() {
 
 extern "C" {
 
-void ticker(void) {
+void microbit_ticker(void) {
 
     /** Update compass if it is calibrating, but not if it is still
      *  updating as compass.idleTick() is not reentrant.
@@ -78,7 +78,7 @@ void microbit_init(void) {
 
     // Start the ticker.
     uBit.systemTicker.detach();
-    ticker_init();
+    ticker_init(microbit_ticker);
     ticker_start();
 }
 

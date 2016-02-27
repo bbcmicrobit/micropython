@@ -37,7 +37,11 @@
 #define LowPriority_IRQn SWI4_IRQn
 #define LowPriority_IRQHandler SWI4_IRQHandler
 
-void ticker_init(void) {
+// Ticker callback function called every MACRO_TICK
+static callback_ptr slow_ticker;
+
+void ticker_init(callback_ptr slow_ticker_callback) {
+    slow_ticker = slow_ticker_callback;
     NRF_TIMER_Type *ticker = FastTicker;
     ticker->POWER = 1;
     __NOP();
@@ -136,11 +140,9 @@ int clear_ticker_callback(uint32_t index) {
     return 0;
 }
 
-extern void ticker(void);
-
 void SlowTicker_IRQHandler(void)
 {
-    ticker();
+    slow_ticker();
 }
 
 #define LOW_PRIORITY_CALLBACK_LIMIT 4

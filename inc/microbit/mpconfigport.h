@@ -126,3 +126,7 @@ extern const struct _mp_obj_module_t random_module;
 #ifndef M_PI
 #define M_PI (3.141592653589793)
 #endif
+
+// The ticker callback function
+extern void microbit_ticker(void);
+
