@@ -31,6 +31,7 @@ extern "C" {
 
 #include "py/runtime.h"
 #include "modmicrobit.h"
+#include "lib/pwm.h"
 
 typedef struct _microbit_pin_obj_t {
     mp_obj_base_t base;
@@ -68,7 +69,7 @@ mp_obj_t microbit_pin_write_analog(mp_obj_t self_in, mp_obj_t value_in) {
     if (set_value < 0 || set_value > MICROBIT_PIN_MAX_OUTPUT) {
         nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "value must be between 0 and 1023"));
     }
-    self->pin->setAnalogValue(set_value);
+    pwm_set_duty_cycle(self->pin->name, set_value);
     return mp_const_none;
 }
 MP_DEFINE_CONST_FUN_OBJ_2(microbit_pin_write_analog_obj, microbit_pin_write_analog);
@@ -83,17 +84,30 @@ MP_DEFINE_CONST_FUN_OBJ_1(microbit_pin_read_analog_obj, microbit_pin_read_analog
 
 mp_obj_t microbit_pin_set_analog_period(mp_obj_t self_in, mp_obj_t period_in) {
     microbit_pin_obj_t *self = (microbit_pin_obj_t*)self_in;
-    self->pin->setAnalogPeriod(mp_obj_get_int(period_in));
+    int err = pwm_set_period_us(mp_obj_get_int(period_in)*1000);
+    if (err) {
+        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "invalid period"));
+    }
     return mp_const_none;
 }
 MP_DEFINE_CONST_FUN_OBJ_2(microbit_pin_set_analog_period_obj, microbit_pin_set_analog_period);
 
 mp_obj_t microbit_pin_set_analog_period_microseconds(mp_obj_t self_in, mp_obj_t period_in) {
     microbit_pin_obj_t *self = (microbit_pin_obj_t*)self_in;
-    self->pin->setAnalogPeriodUs(mp_obj_get_int(period_in));
+    int err = pwm_set_period_us(mp_obj_get_int(period_in));
+    if (err) {
+        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "invalid period"));
+    }
     return mp_const_none;
 }
 MP_DEFINE_CONST_FUN_OBJ_2(microbit_pin_set_analog_period_microseconds_obj, microbit_pin_set_analog_period_microseconds);
+
+mp_obj_t microbit_pin_get_analog_period_microseconds(mp_obj_t self_in) {
+    microbit_pin_obj_t *self = (microbit_pin_obj_t*)self_in;
+    int32_t period = pwm_get_period_us();
+    return mp_obj_new_int(period);
+}
+MP_DEFINE_CONST_FUN_OBJ_1(microbit_pin_get_analog_period_microseconds_obj, microbit_pin_get_analog_period_microseconds);
 
 mp_obj_t microbit_pin_is_touched(mp_obj_t self_in) {
     microbit_pin_obj_t *self = (microbit_pin_obj_t*)self_in;
@@ -104,6 +118,10 @@ MP_DEFINE_CONST_FUN_OBJ_1(microbit_pin_is_touched_obj, microbit_pin_is_touched);
 STATIC const mp_map_elem_t microbit_dig_pin_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_write_digital), (mp_obj_t)&microbit_pin_write_digital_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_read_digital), (mp_obj_t)&microbit_pin_read_digital_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_write_analog), (mp_obj_t)&microbit_pin_write_analog_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_set_analog_period), (mp_obj_t)&microbit_pin_set_analog_period_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_set_analog_period_microseconds), (mp_obj_t)&microbit_pin_set_analog_period_microseconds_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_get_analog_period_microseconds), (mp_obj_t)&microbit_pin_get_analog_period_microseconds_obj },
 };
 
 STATIC const mp_map_elem_t microbit_ann_pin_locals_dict_table[] = {

@@ -5,6 +5,7 @@
 
 extern "C" {
 #include "lib/ticker.h"
+#include "lib/pwm.h"
 
     void mp_run(void);
     
@@ -80,6 +81,7 @@ void microbit_init(void) {
     uBit.systemTicker.detach();
     ticker_init(microbit_ticker);
     ticker_start();
+    pwm_start();
 }
 
 }
