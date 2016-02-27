@@ -116,6 +116,7 @@ extern const struct _mp_obj_module_t os_module;
     mp_obj_t keyboard_interrupt_obj; \
     void *async_data[2]; \
     void *async_music_data; \
+    void *pwm_next_event; \
 
 // We need to provide a declaration/definition of alloca()
 #include <alloca.h>
