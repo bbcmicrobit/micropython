@@ -119,6 +119,7 @@ extern const struct _mp_obj_module_t radio_module;
     void *async_data[2]; \
     void *async_music_data; \
     uint8_t *radio_buf; \
+    void *pwm_next_event; \
 
 // We need to provide a declaration/definition of alloca()
 #include <alloca.h>
