@@ -28,9 +28,7 @@
 
 extern "C" {
 
-// we need to access this for the compass calibration
-extern void ticker(void);
-
+#include "lib/ticker.h"
 #include "py/runtime.h"
 #include "modmicrobit.h"
 
@@ -50,11 +48,13 @@ mp_obj_t microbit_compass_calibrate(mp_obj_t self_in) {
     // can use the display to collect samples for the calibration.
     // It will do the calibration and then return here.
     microbit_compass_obj_t *self = (microbit_compass_obj_t*)self_in;
+    ticker_stop();
     uBit.systemTicker.attach_us(&uBit, &MicroBit::systemTick, MICROBIT_DEFAULT_TICK_PERIOD * 1000);
     uBit.display.enable();
-    self->compass->calibrateAsync();
+    self->compass->calibrate();
     uBit.display.disable();
-    uBit.systemTicker.attach_us(ticker, MICROBIT_DEFAULT_TICK_PERIOD * 1000);
+    uBit.systemTicker.detach();
+    ticker_start();
     return mp_const_none;
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_compass_calibrate_obj, microbit_compass_calibrate);
