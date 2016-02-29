@@ -496,8 +496,8 @@ const mp_obj_type_t microbit_events_type = {
     .iternext = NULL,
     .buffer_p = {NULL},
     .stream_p = NULL,
-    .bases_tuple = MP_OBJ_NULL,
-    MP_OBJ_NULL
+    .bases_tuple = NULL,
+    .locals_dict = NULL,
 };
 
 const mp_obj_type_t microbit_events_iterator_type = {
@@ -514,8 +514,8 @@ const mp_obj_type_t microbit_events_iterator_type = {
     .iternext = microbit_events_iter_next,
     .buffer_p = {NULL},
     .stream_p = NULL,
-    .bases_tuple = MP_OBJ_NULL,
-    MP_OBJ_NULL
+    .bases_tuple = NULL,
+    .locals_dict = NULL,
 };
 
 STATIC mp_obj_t events_events(void) {
