@@ -102,7 +102,7 @@ It's obvious that the main tasks are broken down into sub-tasks that are
 ``Bacon`` and ``Tomatoes`` are obviously related to ``Shopping``. By indenting
 things we make it easy to see, at a glance, how the tasks relate to each other.
 
-This is called *scoping*. We use scoping to define blocks of code like this::
+This is called *nesting*. We use nesting to define blocks of code like this::
 
     from microbit import *
 
