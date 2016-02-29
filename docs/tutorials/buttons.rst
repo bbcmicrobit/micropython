@@ -71,8 +71,9 @@ do this you make it loop around a piece of code that defines how to react to
 certain expected events such as a button press.
 
 To make loops in Python you use the ``while`` keyword. It checks if something
-is ``True``. If it is, it runs its *block of code*. If it isn't, it breaks out
-of the loop and the rest of the program can continue.
+is ``True``. If it is, it runs a *block of code* called the *body* of the loop.
+If it isn't, it breaks out of the loop (ignoring the body) and the rest of the
+program can continue.
 
 Python makes it easy to define blocks of code. Say I have a to-do list written
 on a piece of paper. It probably looks something like this::

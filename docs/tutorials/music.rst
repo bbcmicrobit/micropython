@@ -134,4 +134,4 @@ collection, do some activity with it". Specifically in the example above, it's
 saying, "for each frequency in the specified range of frequencies, play the
 pitch of that frequency for 6 milliseconds". Notice how the thing to do for
 each item in a for loop is indented (as discussed earlier) so Python knows
-the *scope* of the code for handling individual items.
+exactly which code to run to handle the individual items.

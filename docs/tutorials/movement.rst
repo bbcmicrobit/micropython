@@ -30,7 +30,7 @@ If you hold the device flat it should display ``-``; however, rotate it left or
 right and it'll show ``L`` and ``R`` respectively.
 
 We want the device to constantly react to change, so we use an
-infinite ``while`` loop. The first thing to happen *within the scope of the
+infinite ``while`` loop. The first thing to happen *within the body of the
 loop* is a measurement along the X axis which is called ``reading``. Because
 the accelerometer is *so* sensitive I've made level +/-20 in range. It's why
 the ``if`` and ``elif`` conditionals check for ``> 20`` and ``< -20``. The
