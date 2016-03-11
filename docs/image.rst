@@ -174,6 +174,6 @@ each pixel.
 
 .. code::
 
-    image + n
+    image * n
 
 Create a new image by multiplying the brightness of each pixel by ``n``.
