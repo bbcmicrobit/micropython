@@ -63,8 +63,8 @@ easy to turn into a program::
         "Don't count on it"
         "My reply is no",
         "My sources say no",
-        "Outlook not so good"
-        "Very doubtful"
+        "Outlook not so good",
+        "Very doubtful",
     ]
 
     while True:
