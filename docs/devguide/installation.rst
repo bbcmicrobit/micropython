@@ -38,6 +38,18 @@ Installation Scenarios
 Windows
 ~~~~~~~
 
+When installing `Yotta
+<http://yottadocs.mbed.com/>`_, make sure you have these components ticked to install.
+
+- python
+- gcc
+- cMake
+- ninja
+- Yotta
+- git-scm
+- mbed serial driver
+
+
 
 .. _microbit-osx:
 
