@@ -24,16 +24,15 @@
  * THE SOFTWARE.
  */
 
-#include <errno.h>
-
-#include "MicroBit.h"
-
 extern "C" {
 
+#include <errno.h>
+#include "serial_api.h"
 #include "py/runtime.h"
 #include "py/stream.h"
 #include "py/mphal.h"
 #include "modmicrobit.h"
+#include "microbitpin.h"
 #include "microbitobj.h"
 
 // There is only one UART peripheral and it's already used by stdio (and
@@ -71,8 +70,8 @@ STATIC mp_obj_t microbit_uart_init(mp_uint_t n_args, const mp_obj_t *pos_args, m
     if (args[4].u_obj != mp_const_none) {
         mp_obj_t *pins;
         mp_obj_get_array_fixed_n(args[4].u_obj, 2, &pins);
-        p_tx = microbit_obj_get_pin(pins[0])->name;
-        p_rx = microbit_obj_get_pin(pins[1])->name;
+        p_tx = microbit_obj_get_pin_name(pins[0]);
+        p_rx = microbit_obj_get_pin_name(pins[1]);
     }
 
     // initialise the uart

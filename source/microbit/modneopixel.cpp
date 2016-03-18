@@ -24,11 +24,10 @@
  * THE SOFTWARE.
  */
 
-#include <stdio.h>
-#include "MicroBit.h"
-
 extern "C" {
 
+#include <stdio.h>
+#include "gpio_api.h"
 #include "py/runtime0.h"
 #include "py/runtime.h"
 #include "lib/neopixel.h"
@@ -45,7 +44,7 @@ STATIC mp_obj_t neopixel_make_new(const mp_obj_type_t *type_in, mp_uint_t n_args
     (void)type_in;
     mp_arg_check_num(n_args, n_kw, 2, 2, false);
 
-    PinName pin = microbit_obj_get_pin(args[0])->name;
+    PinName pin = microbit_obj_get_pin_name(args[0]);
     mp_int_t num_pixels = mp_obj_get_int(args[1]);
 
     if (num_pixels <= 0) {
