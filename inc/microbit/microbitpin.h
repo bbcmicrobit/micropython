@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Damien P. George
+ * Copyright (c) 2016 Damien P. George
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,22 +23,17 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef __MICROPY_INCLUDED_MICROBIT_MICROBITOBJ_H__
-#define __MICROPY_INCLUDED_MICROBIT_MICROBITOBJ_H__
+#ifndef __MICROPY_INCLUDED_MICROBIT_MICROBITPIN_H__
+#define __MICROPY_INCLUDED_MICROBIT_MICROBITPIN_H__
 
-extern "C" {
+#ifndef MICROBIT_PIN_P0
 
-#include "py/obj.h"
+#define MICROBIT_PIN_P0     (P0_3)
+#define MICROBIT_PIN_P1     (P0_2)
+#define MICROBIT_PIN_P13    (P0_23)
+#define MICROBIT_PIN_P14    (P0_22)
+#define MICROBIT_PIN_P15    (P0_21)
 
-class MicroBitPin *microbit_obj_get_pin(mp_obj_t o);
-PinName microbit_obj_get_pin_name(mp_obj_t o);
+#endif
 
-extern volatile bool compass_up_to_date;
-extern volatile bool compass_updating;
-
-extern volatile bool accelerometer_up_to_date;
-extern volatile bool accelerometer_updating;
-
-}
-
-#endif // __MICROPY_INCLUDED_MICROBIT_MICROBITOBJ_H__
+#endif // __MICROPY_INCLUDED_MICROBIT_MICROBITPIN_H__
