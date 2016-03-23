@@ -51,6 +51,8 @@ STATIC mp_obj_t microbit_uart_init(mp_uint_t n_args, const mp_obj_t *pos_args, m
         { MP_QSTR_parity,   MP_ARG_OBJ, {.u_obj = mp_const_none} },
         { MP_QSTR_stop,     MP_ARG_INT, {.u_int = 1} },
         { MP_QSTR_pins,     MP_ARG_KW_ONLY | MP_ARG_OBJ, {.u_obj = mp_const_none } },
+        { MP_QSTR_tx,       MP_ARG_KW_ONLY | MP_ARG_OBJ, {.u_obj = mp_const_none } },
+        { MP_QSTR_rx,       MP_ARG_KW_ONLY | MP_ARG_OBJ, {.u_obj = mp_const_none } },
     };
 
     // parse args
@@ -65,8 +67,19 @@ STATIC mp_obj_t microbit_uart_init(mp_uint_t n_args, const mp_obj_t *pos_args, m
         parity = (SerialParity)mp_obj_get_int(args[2].u_obj);
     }
 
-    PinName p_tx = MICROBIT_PIN_P0;
-    PinName p_rx = MICROBIT_PIN_P1;
+    // default pins are the internal USB-UART pins
+    PinName p_tx = TGT_TX;
+    PinName p_rx = TGT_RX;
+
+    // set tx/rx pins if they are given
+    if (args[5].u_obj != mp_const_none) {
+        p_tx = microbit_obj_get_pin_name(args[5].u_obj);
+    }
+    if (args[6].u_obj != mp_const_none) {
+        p_rx = microbit_obj_get_pin_name(args[6].u_obj);
+    }
+
+    // support for legacy "pins" argument
     if (args[4].u_obj != mp_const_none) {
         mp_obj_t *pins;
         mp_obj_get_array_fixed_n(args[4].u_obj, 2, &pins);
