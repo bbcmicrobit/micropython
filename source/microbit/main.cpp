@@ -74,6 +74,7 @@ void __register_exitproc() {
 }
 
 void microbit_init(void) {
+    uBit.display.disable();
     microbit_display_init();
 
     // Start the ticker.

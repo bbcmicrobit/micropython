@@ -24,8 +24,9 @@
  * THE SOFTWARE.
  */
 
-#include "MicroBit.h"
+#include <string.h>
 #include "microbitobj.h"
+#include "MicroBitFont.h"
 
 extern "C" {
 
@@ -33,6 +34,9 @@ extern "C" {
 #include "modmicrobit.h"
 #include "microbitimage.h"
 #include "py/runtime0.h"
+
+#define min(a,b) (((a)<(b))?(a):(b))
+#define max(a,b) (((a)>(b))?(a):(b))
 
 const monochrome_5by5_t microbit_blank_image = {
     { &microbit_image_type },
@@ -523,15 +527,17 @@ STATIC const mp_map_elem_t microbit_image_locals_dict_table[] = {
 
 STATIC MP_DEFINE_CONST_DICT(microbit_image_locals_dict, microbit_image_locals_dict_table);
 
+#define THE_FONT MicroBitFont::defaultFont
+
+#define ASCII_START 32
+#define ASCII_END 126
 
 STATIC const unsigned char *get_font_data_from_char(char c) {
-    MicroBitFont font = uBit.display.getFont();
-    if (c < MICROBIT_FONT_ASCII_START || c > font.asciiEnd) {
+    if (c < ASCII_START || c > ASCII_END) {
         c = '?';
     }
-    /* The following logic belongs in MicroBitFont */
-    int offset = (c-MICROBIT_FONT_ASCII_START) * 5;
-    return font.characters + offset;
+    int offset = (c-ASCII_START) * 5;
+    return THE_FONT + offset;
 }
 
 STATIC mp_int_t get_pixel_from_font_data(const unsigned char *data, int x, int y) {

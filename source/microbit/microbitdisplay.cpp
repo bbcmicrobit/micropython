@@ -24,18 +24,19 @@
  * THE SOFTWARE.
  */
 
-#include "MicroBit.h"
+#include <string.h>
 #include "microbitobj.h"
 #include "nrf_gpio.h"
 
 extern "C" {
-
 #include "py/runtime.h"
 #include "modmicrobit.h"
 #include "microbitimage.h"
 #include "microbitdisplay.h"
 #include "lib/iters.h"
 #include "lib/ticker.h"
+
+#define min(a,b) (((a)<(b))?(a):(b))
 
 void microbit_display_show(microbit_display_obj_t *display, microbit_image_obj_t *image) {
     mp_int_t w = min(image->width(), 5);
@@ -61,6 +62,9 @@ void microbit_display_show(microbit_display_obj_t *display, microbit_image_obj_t
     display->brightnesses = brightnesses;
 }
 
+#define DEFAULT_PRINT_SPEED 400
+
+
 mp_obj_t microbit_display_show_func(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
 
     // Cancel any animations.
@@ -69,7 +73,7 @@ mp_obj_t microbit_display_show_func(mp_uint_t n_args, const mp_obj_t *pos_args, 
 
     static const mp_arg_t show_allowed_args[] = {
         { MP_QSTR_image,    MP_ARG_REQUIRED | MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
-        { MP_QSTR_delay,    MP_ARG_INT, {.u_int = MICROBIT_DEFAULT_PRINT_SPEED} },
+        { MP_QSTR_delay,    MP_ARG_INT, {.u_int = DEFAULT_PRINT_SPEED} },
         { MP_QSTR_clear,     MP_ARG_KW_ONLY | MP_ARG_BOOL, {.u_bool = false} },
         { MP_QSTR_wait,     MP_ARG_KW_ONLY | MP_ARG_BOOL, {.u_bool = true} },
         { MP_QSTR_loop,     MP_ARG_KW_ONLY | MP_ARG_BOOL, {.u_bool = false} },
@@ -158,7 +162,10 @@ struct DisplayPoint {
 
 #define NO_CONN 0
 
-static const DisplayPoint display_map[MICROBIT_DISPLAY_COLUMN_COUNT][MICROBIT_DISPLAY_ROW_COUNT] = {
+#define ROW_COUNT 3
+#define COLUMN_COUNT 9
+
+static const DisplayPoint display_map[COLUMN_COUNT][ROW_COUNT] = {
     {{0,0}, {4,2}, {2,4}},
     {{2,0}, {0,2}, {4,4}},
     {{4,0}, {2,2}, {0,4}},
@@ -193,7 +200,7 @@ void microbit_display_obj_t::advanceRow() {
     strobe_row++;
 
     // Reset the row counts and bit mask when we have hit the max.
-    if (strobe_row == MICROBIT_DISPLAY_ROW_COUNT) {
+    if (strobe_row == ROW_COUNT) {
         strobe_row = 0;
     }
 
@@ -202,7 +209,7 @@ void microbit_display_obj_t::advanceRow() {
     for (int i = 0; i <= MAX_BRIGHTNESS; i++) {
         pins_for_brightness[i] = 0;
     }
-    for (int i = 0; i < MICROBIT_DISPLAY_COLUMN_COUNT; i++) {
+    for (int i = 0; i < COLUMN_COUNT; i++) {
         int x = display_map[i][strobe_row].x;
         int y = display_map[i][strobe_row].y;
         uint8_t brightness = microbit_display_obj.image_buffer[x][y];
@@ -247,7 +254,7 @@ static int32_t callback(void) {
 
 
 static void microbit_display_update(void) {
-    async_tick += FIBER_TICK_PERIOD_MS;
+    async_tick += MILLISECONDS_PER_MACRO_TICK;
     if (async_tick < async_delay) {
         return;
     }
@@ -337,16 +344,20 @@ void microbit_display_animate(microbit_display_obj_t *self, mp_obj_t iterable, m
     }
 }
 
+
+// Delay in ms in between moving display one column to the left.
+#define DEFAULT_SCROLL_SPEED       150
+
 void microbit_display_scroll(microbit_display_obj_t *self, const char* str) {
     mp_obj_t iterable = scrolling_string_image_iterable(str, strlen(str), NULL, false);
-    microbit_display_animate(self, iterable, MICROBIT_DEFAULT_SCROLL_SPEED, false, true);
+    microbit_display_animate(self, iterable, DEFAULT_SCROLL_SPEED, false, true);
 }
 
 
 mp_obj_t microbit_display_scroll_func(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
     static const mp_arg_t scroll_allowed_args[] = {
         { MP_QSTR_text, MP_ARG_REQUIRED | MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
-        { MP_QSTR_delay, MP_ARG_INT, {.u_int = MICROBIT_DEFAULT_SCROLL_SPEED} },
+        { MP_QSTR_delay, MP_ARG_INT, {.u_int = DEFAULT_SCROLL_SPEED} },
         { MP_QSTR_wait, MP_ARG_KW_ONLY | MP_ARG_BOOL, {.u_bool = true} },
         { MP_QSTR_monospace, MP_ARG_KW_ONLY | MP_ARG_BOOL, {.u_bool = false} },
         { MP_QSTR_loop, MP_ARG_KW_ONLY | MP_ARG_BOOL, {.u_bool = false} },
@@ -370,7 +381,7 @@ void microbit_display_clear(void) {
     // Reset repeat state, cancel animation and clear screen.
     wakeup_event = false;
     async_mode = ASYNC_MODE_CLEAR;
-    async_tick = async_delay - FIBER_TICK_PERIOD_MS;
+    async_tick = async_delay - MILLISECONDS_PER_MACRO_TICK;
     wait_for_event();
 }
 
@@ -452,9 +463,7 @@ microbit_display_obj_t microbit_display_obj = {
 
 void microbit_display_init(void) {
     //  Set pins as output.
-    nrf_gpio_range_cfg_output(MICROBIT_DISPLAY_COLUMN_START,MICROBIT_DISPLAY_COLUMN_START + MICROBIT_DISPLAY_COLUMN_COUNT + MICROBIT_DISPLAY_ROW_COUNT);
-
-    uBit.display.disable();
+    nrf_gpio_range_cfg_output(MIN_COLUMN_PIN, MIN_COLUMN_PIN + COLUMN_COUNT + ROW_COUNT);
 }
 
 }
