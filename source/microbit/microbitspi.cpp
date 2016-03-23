@@ -24,13 +24,12 @@
  * THE SOFTWARE.
  */
 
-#include "spi_api.h"
-#include "MicroBit.h"
-
 extern "C" {
 
+#include "spi_api.h"
 #include "py/runtime.h"
 #include "modmicrobit.h"
+#include "microbitpin.h"
 #include "microbitobj.h"
 
 typedef struct _microbit_spi_obj_t {
@@ -61,13 +60,13 @@ STATIC mp_obj_t microbit_spi_init(mp_uint_t n_args, const mp_obj_t *pos_args, mp
     PinName p_mosi = MICROBIT_PIN_P15;
     PinName p_miso = MICROBIT_PIN_P14;
     if (args.sclk.u_obj != mp_const_none) {
-        p_sclk = microbit_obj_get_pin(args.sclk.u_obj)->name;
+        p_sclk = microbit_obj_get_pin_name(args.sclk.u_obj);
     }
     if (args.mosi.u_obj != mp_const_none) {
-        p_mosi = microbit_obj_get_pin(args.mosi.u_obj)->name;
+        p_mosi = microbit_obj_get_pin_name(args.mosi.u_obj);
     }
     if (args.miso.u_obj != mp_const_none) {
-        p_miso = microbit_obj_get_pin(args.miso.u_obj)->name;
+        p_miso = microbit_obj_get_pin_name(args.miso.u_obj);
     }
 
     // initialise the SPI
