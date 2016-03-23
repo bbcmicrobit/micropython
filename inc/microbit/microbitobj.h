@@ -29,6 +29,7 @@
 extern "C" {
 
 #include "py/obj.h"
+#include "PinNames.h"
 
 class MicroBitPin *microbit_obj_get_pin(mp_obj_t o);
 PinName microbit_obj_get_pin_name(mp_obj_t o);

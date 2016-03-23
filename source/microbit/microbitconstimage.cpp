@@ -24,7 +24,6 @@
  * THE SOFTWARE.
  */
 
-#include "MicroBit.h"
 #include "microbitobj.h"
 
 extern "C" {
