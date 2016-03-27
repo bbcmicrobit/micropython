@@ -274,14 +274,15 @@ def execfile(filename, device='/dev/ttyACM0', baudrate=115200, user='micro', pas
 
 def main():
     import argparse
-    cmd_parser = argparse.ArgumentParser(description='Run scripts on the pyboard.')
+    cmd_parser = argparse.ArgumentParser(description='Run scripts on the microbit.')
     cmd_parser.add_argument('-b', '--baudrate', default=115200, help='the baud rate of the serial device')
     cmd_parser.add_argument('-u', '--user', default='micro', help='the telnet login username')
     cmd_parser.add_argument('-p', '--password', default='python', help='the telnet login password')
     cmd_parser.add_argument('-c', '--command', help='program passed in as string')
     cmd_parser.add_argument('-w', '--wait', default=0, type=int, help='seconds to wait for USB connected board to become available')
     cmd_parser.add_argument('--follow', action='store_true', help='follow the output after running the scripts [default if no scripts given]')
-    cmd_parser.add_argument('device', nargs=1, help='the serial device or the IP address of the pyboard')
+    cmd_parser.add_argument('--save', action='store_true', help='save the script, ready to be run when the microbit is reset')
+    cmd_parser.add_argument('device', nargs=1, help='the serial device or the IP address of the microbit')
     cmd_parser.add_argument('files', nargs='*', help='input files')
     args = cmd_parser.parse_args()
 
@@ -301,13 +302,42 @@ def main():
             stdout_write_bytes(ret_err)
             sys.exit(1)
 
+    def exec_commands(cmds):
+        try:
+            pyb = Pyboard(args.device[0], args.baudrate, args.user, args.password, args.wait)
+            pyb.enter_raw_repl()
+            for cmd in cmds:
+                ret, ret_err = pyb.exec_raw(cmd, timeout=None, data_consumer=stdout_write_bytes)
+                if ret_err:
+                    break
+            pyb.exit_raw_repl()
+            pyb.close()
+        except PyboardError as er:
+            print(er)
+            sys.exit(1)
+        except KeyboardInterrupt:
+            sys.exit(1)
+        if ret_err:
+            stdout_write_bytes(ret_err)
+            sys.exit(1)
+
+
     if args.command is not None:
         execbuffer(args.command.encode('utf-8'))
 
-    for filename in args.files:
-        with open(filename, 'rb') as f:
+    if args.save:
+        if len(args.files) > 1:
+            print ("Can only save a single file")
+        with open(args.files[0], 'rb') as f:
             pyfile = f.read()
-            execbuffer(pyfile)
+            script = make_save_script(pyfile)
+            print('\n'.join(script))
+            exec_commands(script)
+    else:
+        for filename in args.files:
+            with open(filename, 'rb') as f:
+                pyfile = f.read()
+                execbuffer(pyfile)
 
     if args.follow or (args.command is None and len(args.files) == 0):
         try:
@@ -322,6 +352,27 @@ def main():
         if ret_err:
             stdout_write_bytes(ret_err)
             sys.exit(1)
+
+def make_save_script(pyfile):
+    '''Convert a file into a script that saves that file
+    into the persistent script area on the microbit'''
+    output = [
+        '''
+import persistent
+persistent.script.erase()
+offset = 0
+def f(data):
+    global offset
+    persistent.script.write(offset, data)
+    offset += len(data)
+''',
+    'f(b"MP\\x%02x\\x%02x")' % (len(pyfile)&255, (len(pyfile)>>8)&255),
+    ]
+    while pyfile:
+        line = pyfile[:64]
+        output.append('f(' + repr(line) + ')')
+        pyfile = pyfile[64:]
+    return output
 
 if __name__ == "__main__":
     main()
