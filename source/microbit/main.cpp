@@ -5,6 +5,7 @@
 
 extern "C" {
 #include "lib/ticker.h"
+#include "filesystem.h"
 
     void mp_run(void);
     
@@ -76,11 +77,13 @@ void __register_exitproc() {
 void microbit_init(void) {
     uBit.display.disable();
     microbit_display_init();
+    microbit_filesystem_init();
 
     // Start the ticker.
     uBit.systemTicker.detach();
     ticker_init(microbit_ticker);
     ticker_start();
+
 }
 
 }

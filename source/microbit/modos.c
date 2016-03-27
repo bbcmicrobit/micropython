@@ -25,6 +25,7 @@
  */
 
 #include "py/obj.h"
+#include "filesystem.h"
 #include "py/objtuple.h"
 #include "py/objstr.h"
 #include "genhdr/mpversion.h"
@@ -56,9 +57,15 @@ STATIC mp_obj_t os_uname(void) {
     return (mp_obj_t)&os_uname_info_obj;
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_0(os_uname_obj, os_uname);
+STATIC MP_DEFINE_CONST_FUN_OBJ_1(microbit_remove_obj, microbit_remove);
+STATIC MP_DEFINE_CONST_FUN_OBJ_0(microbit_file_list_obj, microbit_file_list);
+STATIC MP_DEFINE_CONST_FUN_OBJ_1(microbit_file_size_obj, microbit_file_size);
 
 static const mp_map_elem_t _globals_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR___name__), MP_OBJ_NEW_QSTR(MP_QSTR_os) },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_remove), (mp_obj_t)&microbit_remove_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_listdir), (mp_obj_t)&microbit_file_list_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_size), (mp_obj_t)&microbit_file_size_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_uname), (mp_obj_t)&os_uname_obj },
 };
 
