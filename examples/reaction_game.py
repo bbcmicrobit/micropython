@@ -1,4 +1,5 @@
 from microbit import *
+import random
 
 clockwise_images = [
     Image.ARROW_W,
@@ -28,9 +29,9 @@ def countDown(x):
 
 def spin(direction):
     if direction is "b":
-        display.animate(clockwise_images, 100)
+        display.show(clockwise_images, 100)
     if direction is "a":
-        display.animate(anti_clockwise_images, 100)
+        display.show(anti_clockwise_images, 100)
     flash(direction)
 
 def flash(direction):
@@ -49,7 +50,7 @@ def flash(direction):
 
 
 countDown(5)
-howLong = random(7000)
+howLong = random.randrange(7000)
 display.show(Image.SAD)
 sleep(howLong)
 
