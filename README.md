@@ -63,7 +63,8 @@ Then try:
 
     >>> import microbit
     >>> microbit.display.scroll('hello!')
-    >>> microbit.random(100)
+    >>> microbit.button_a.is_pressed()
+    >>> dir(microbit)
 
 Tab completion works and is very useful!
 
