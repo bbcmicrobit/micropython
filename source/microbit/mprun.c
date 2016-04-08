@@ -55,8 +55,16 @@ void do_strn(const char *src, size_t len) {
     } else {
         // uncaught exception
         mp_hal_set_interrupt_char(-1); // disable interrupt
+
+        // print exception to stdout
         mp_obj_print_exception(&mp_plat_print, (mp_obj_t)nlr.ret_val);
-        microbit_display_exception(nlr.ret_val);
+
+        // print exception to the display, but not if it's SystemExit or KeyboardInterrupt
+        mp_obj_type_t *exc_type = mp_obj_get_type((mp_obj_t)nlr.ret_val);
+        if (!mp_obj_is_subclass_fast(exc_type, &mp_type_SystemExit)
+            && !mp_obj_is_subclass_fast(exc_type, &mp_type_KeyboardInterrupt)) {
+            microbit_display_exception(nlr.ret_val);
+        }
     }
 }
 
