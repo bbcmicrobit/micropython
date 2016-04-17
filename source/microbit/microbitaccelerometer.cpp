@@ -169,17 +169,10 @@ mp_obj_t microbit_accelerometer_get_gestures(mp_obj_t self_in) {
         uint gesture = (gesture_list[i >> 1] >> (4 * (i & 1))) & 0x0f;
         o->items[i] = MP_OBJ_NEW_QSTR(gesture_name_map[gesture]);
     }
+    gesture_list_cur = 0;
     return o;
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_accelerometer_get_gestures_obj, microbit_accelerometer_get_gestures);
-
-mp_obj_t microbit_accelerometer_reset_gestures(mp_obj_t self_in) {
-    microbit_accelerometer_obj_t *self = (microbit_accelerometer_obj_t*)self_in;
-    update(self);
-    gesture_list_cur = 0;
-    return mp_const_none;
-}
-MP_DEFINE_CONST_FUN_OBJ_1(microbit_accelerometer_reset_gestures_obj, microbit_accelerometer_reset_gestures);
 
 STATIC const mp_map_elem_t microbit_accelerometer_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_get_x), (mp_obj_t)&microbit_accelerometer_get_x_obj },
@@ -190,7 +183,6 @@ STATIC const mp_map_elem_t microbit_accelerometer_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_is_gesture), (mp_obj_t)&microbit_accelerometer_is_gesture_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_was_gesture), (mp_obj_t)&microbit_accelerometer_was_gesture_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_get_gestures), (mp_obj_t)&microbit_accelerometer_get_gestures_obj },
-    { MP_OBJ_NEW_QSTR(MP_QSTR_reset_gestures), (mp_obj_t)&microbit_accelerometer_reset_gestures_obj },
 };
 
 STATIC MP_DEFINE_CONST_DICT(microbit_accelerometer_locals_dict, microbit_accelerometer_locals_dict_table);

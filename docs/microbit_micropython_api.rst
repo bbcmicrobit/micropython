@@ -234,8 +234,6 @@ The accelerometer is accessed via the ``accelerometer`` object::
     accelerometer.was_gesture(name)
     # return a tuple of the gesture history. The most recent is listed last.
     accelerometer.get_gestures()
-    # clears the gesture history.
-    accelerometer.reset_gestures()
 
 The recognised gestures are: ``up``, ``down``, ``left``, ``right``, ``face up``, ``face down``, ``freefall``, ``3g``, ``6g``, ``8g``, ``shake``.
 

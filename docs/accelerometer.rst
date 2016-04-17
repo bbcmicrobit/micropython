@@ -57,10 +57,7 @@ Functions
 .. py:function:: get_gestures()
 
     Return a tuple of the gesture history. The most recent is listed last.
-
-.. py:function:: reset_gestures()
-
-    Clears the gesture history.
+    Also clears the gesture history before returning.
 
 Examples
 --------
