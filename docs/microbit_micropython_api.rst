@@ -46,10 +46,8 @@ These are both objects and have the following methods::
     # returns True or False to indicate if the button was pressed since the device
     # started or the last time this method was called.
     button.was_pressed()
-    # returns the running total of button presses.
+    # returns the running total of button presses, and resets this counter to zero
     button.get_presses()
-    # resets the running total of button presses to zero.
-    button.reset_presses()
 
 The LED display
 ---------------
@@ -236,8 +234,6 @@ The accelerometer is accessed via the ``accelerometer`` object::
     accelerometer.was_gesture(name)
     # return a tuple of the gesture history. The most recent is listed last.
     accelerometer.get_gestures()
-    # clears the gesture history.
-    accelerometer.reset_gestures()
 
 The recognised gestures are: ``up``, ``down``, ``left``, ``right``, ``face up``, ``face down``, ``freefall``, ``3g``, ``6g``, ``8g``, ``shake``.
 

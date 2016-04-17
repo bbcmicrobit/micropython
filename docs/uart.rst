@@ -10,17 +10,19 @@ a serial interface.
 Functions
 =========
 
-.. method:: init(baudrate=9600, bits=8, parity=None, stop=1, pins=None)
+.. method:: init(baudrate=9600, bits=8, parity=None, stop=1, \*, tx=None, rx=None)
 
     Initialize serial communication with the specified parameters on the
-    specified ``pins``. Note that for correct communication, the parameters
+    specified ``tx`` and ``rx`` pins. Note that for correct communication, the parameters
     have to be the same on both communicating devices.
 
     .. warning::
 
-        Initializing the UART will cause the Python console on USB to become
-        unaccessible, as it uses the same hardware. There is currently no way
-        to bring the console back, without restarting the module.
+        Initializing the UART on external pins will cause the Python console on
+        USB to become unaccessible, as it uses the same hardware. To bring the
+        console back you must reinitialize the UART without passing anything for
+        ``tx'' or ``rx'' (or passing ``None'' to these arguments).  This means
+        that calling ``uart.init(115200)'' is enough to restore the Python console.
 
     The ``baudrate`` defines the speed of communication. Common baud
     rates include:
@@ -39,10 +41,10 @@ Functions
     The ``stop`` parameter tells the number of stop bits, and has to be 1 for
     this board.
 
-    If no ``pins`` are specified, ``microbit.pin0`` is used as the TX pin, and
-    ``microbit.pin1`` as the RX pin. You can also specify which pins you want
-    by passing a tuple of two pins as ``pins``, the first one being TX, and the
-    second one, RX.
+    If ``tx`` and ``rx`` are not specified then the internal USB-UART TX/RX pins
+    are used which connect to the USB serial convertor on the micro:bit, thus
+    connecting the UART to your PC.  You can specify any other pins you want by
+    passing the desired pin objects to the ``tx`` and ``rx`` parameters.
 
     .. note::
 
