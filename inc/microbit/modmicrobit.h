@@ -166,7 +166,6 @@ MP_DECLARE_CONST_FUN_OBJ(microbit_accelerometer_get_z_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_button_is_pressed_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_button_was_pressed_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_button_get_presses_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_button_reset_presses_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_compass_is_calibrated_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_compass_calibrate_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_compass_is_calibrating_obj);

@@ -43,11 +43,8 @@ Classes
 
     .. py:method:: get_presses()
 
-        Returns the running total of button presses.
-
-    .. py:method:: reset_presses()
-
-        Resets the running total of button presses to zero.
+        Returns the running total of button presses, and resets this total
+        to zero before returning.
 
 Example
 =======
