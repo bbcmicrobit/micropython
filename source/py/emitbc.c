@@ -579,7 +579,7 @@ void mp_emit_bc_load_name(emit_t *emit, qstr qst) {
     (void)qst;
     emit_bc_pre(emit, 1);
     emit_write_bytecode_byte_qstr(emit, MP_BC_LOAD_NAME, qst);
-    if (MICROPY_OPT_CACHE_MAP_LOOKUP_IN_BYTECODE) {
+    if (MICROPY_OPT_CACHE_MAP_LOOKUP_IN_BYTECODE_DYNAMIC) {
         emit_write_bytecode_byte(emit, 0);
     }
 }
@@ -588,7 +588,7 @@ void mp_emit_bc_load_global(emit_t *emit, qstr qst) {
     (void)qst;
     emit_bc_pre(emit, 1);
     emit_write_bytecode_byte_qstr(emit, MP_BC_LOAD_GLOBAL, qst);
-    if (MICROPY_OPT_CACHE_MAP_LOOKUP_IN_BYTECODE) {
+    if (MICROPY_OPT_CACHE_MAP_LOOKUP_IN_BYTECODE_DYNAMIC) {
         emit_write_bytecode_byte(emit, 0);
     }
 }
@@ -596,7 +596,7 @@ void mp_emit_bc_load_global(emit_t *emit, qstr qst) {
 void mp_emit_bc_load_attr(emit_t *emit, qstr qst) {
     emit_bc_pre(emit, 0);
     emit_write_bytecode_byte_qstr(emit, MP_BC_LOAD_ATTR, qst);
-    if (MICROPY_OPT_CACHE_MAP_LOOKUP_IN_BYTECODE) {
+    if (MICROPY_OPT_CACHE_MAP_LOOKUP_IN_BYTECODE_DYNAMIC) {
         emit_write_bytecode_byte(emit, 0);
     }
 }
@@ -646,7 +646,7 @@ void mp_emit_bc_store_global(emit_t *emit, qstr qst) {
 void mp_emit_bc_store_attr(emit_t *emit, qstr qst) {
     emit_bc_pre(emit, -2);
     emit_write_bytecode_byte_qstr(emit, MP_BC_STORE_ATTR, qst);
-    if (MICROPY_OPT_CACHE_MAP_LOOKUP_IN_BYTECODE) {
+    if (MICROPY_OPT_CACHE_MAP_LOOKUP_IN_BYTECODE_DYNAMIC) {
         emit_write_bytecode_byte(emit, 0);
     }
 }
@@ -758,7 +758,10 @@ void mp_emit_bc_setup_with(emit_t *emit, mp_uint_t label) {
     emit_write_bytecode_byte_unsigned_label(emit, MP_BC_SETUP_WITH, label);
 }
 
-void mp_emit_bc_with_cleanup(emit_t *emit) {
+void mp_emit_bc_with_cleanup(emit_t *emit, mp_uint_t label) {
+    mp_emit_bc_pop_block(emit);
+    mp_emit_bc_load_const_tok(emit, MP_TOKEN_KW_NONE);
+    mp_emit_bc_label_assign(emit, label);
     emit_bc_pre(emit, -4);
     emit_write_bytecode_byte(emit, MP_BC_WITH_CLEANUP);
 }
