@@ -33,6 +33,7 @@ extern "C" {
 #include "device.h"
 #include "nrf_gpio.h"
 #include "nrf_gpiote.h"
+#include "nrf_delay.h"
 
 #include "lib/ticker.h"
 #include "py/runtime0.h"
@@ -42,31 +43,50 @@ extern "C" {
 #include "py/mphal.h"
 #include "microbit/modaudio.h"
 #include "microbit/microbitobj.h"
+#include "microbit/microbitpin.h"
 
 #define TheTimer NRF_TIMER1
 #define TheTimer_IRQn TIMER1_IRQn
 
+#define DEBUG_AUDIO 0
+#if DEBUG_AUDIO
+#include <stdio.h>
+#define DEBUG(s) printf s
+#else
+#define DEBUG(s) (void)0
+#endif
+
+void disable_gpiote(uint8_t channel)
+{
+    nrf_gpiote_task_configure(channel, 31, NRF_GPIOTE_POLARITY_TOGGLE, NRF_GPIOTE_INITIAL_VALUE_LOW);
+    DEBUG(("GPIOTE disable channel %d\r\n", channel));
+    nrf_gpiote_te_default(channel);
+}
+
 void audio_gpiote_init(PinName pin, uint8_t channel)
 {
+    DEBUG(("GPIOTE init. pin %d, channel %d\r\n", pin, channel));
+    nrf_gpio_pin_clear(pin);
     nrf_gpio_cfg(pin,
                  NRF_GPIO_PIN_DIR_OUTPUT,
                  NRF_GPIO_PIN_INPUT_DISCONNECT,
                  NRF_GPIO_PIN_NOPULL,
                  NRF_GPIO_PIN_H0H1,
                  NRF_GPIO_PIN_NOSENSE);
-    NRF_GPIO->OUTCLR = (1UL << pin);
-
     nrf_gpiote_task_configure(channel, pin, NRF_GPIOTE_POLARITY_TOGGLE, NRF_GPIOTE_INITIAL_VALUE_LOW);
-
     nrf_gpiote_task_enable(channel);
-
 }
 
+static void audio_ppi_disconnect(void) {
+    NRF_PPI->CHEN &= ~30;
+}
 
 /** Initialize the Programmable Peripheral Interconnect peripheral.
  */
 static void audio_ppi_init(uint8_t channel0, uint8_t channel1) {
+    DEBUG(("PPI init. Channels %d, %d\r\n", channel0, channel1));
     NRF_TIMER_Type *timer  = TheTimer;
+    audio_ppi_disconnect();
 
     /* Attach CLOCK[0] and CLOCK[1] to GPIOTE channel0
      * CLOCK[2] and CLOCK[3] to GPIOTE channel1
@@ -82,7 +102,9 @@ static void audio_ppi_init(uint8_t channel0, uint8_t channel1) {
 
     // Enable PPI channels.
     NRF_PPI->CHEN |= 30;
+
 }
+
 
 /* Start and stop timer 1 including workarounds for Anomaly 73 for Timer
 * http://www.nordicsemi.com/eng/content/download/29490/494569/file/nRF51822-PAN%20v3.0.pdf
@@ -103,34 +125,52 @@ static int32_t delta = 0;
 static volatile bool running = false;
 static bool sample = false;
 static volatile bool fetcher_ready = true;
+static bool double_pin = true;
+volatile int32_t audio_buffer_read_index;
+static PinName pin0 = P0_3;
+static PinName pin1 = P0_2;
 
 #define audio_buffer_ptr MP_STATE_PORT(audio_buffer)
 #define audio_source_iter MP_STATE_PORT(audio_source)
 
-void audio_stop(void) {
+static void audio_stop(void) {
     timer_stop();
     audio_source_iter = NULL;
     clear_ticker_callback(0);
     running = false;
     previous_value = 0;
     delta = 0;
+    audio_ppi_disconnect();
+    disable_gpiote(0);
+    nrf_gpio_pin_write(pin0, 0);
+    if (double_pin) {
+        disable_gpiote(1);
+        nrf_gpio_pin_write(pin1, 0);
+    }
 }
 
 static int32_t audio_ticker(void);
 
-volatile int32_t audio_buffer_read_index;
 
 #define AUDIO_BUFFER_MASK (AUDIO_BUFFER_SIZE-1)
 
+static void init_pin(PinName p0) {
+    pin0 = p0;
+    nrf_gpio_pin_write(pin0, 0);
+    audio_gpiote_init(pin0, 0);
+    audio_ppi_init(0, 0);
+    double_pin = false;
+}
 
-void audio_start(void) {
-    timer_start();
-    running = true;
-    sample = false;
-    fetcher_ready = true;
-    audio_buffer_read_index = AUDIO_BUFFER_SIZE-1;
-    memset(audio_buffer_ptr, 0, AUDIO_BUFFER_SIZE);
-    set_ticker_callback(0, audio_ticker, 80);
+static void init_pins(PinName p0, PinName p1) {
+    pin0 = p0;
+    pin1 = p1;
+    nrf_gpio_pin_write(pin0, 0);
+    nrf_gpio_pin_write(pin1, 0);
+    audio_gpiote_init(pin0, 0);
+    audio_gpiote_init(pin1, 1);
+    audio_ppi_init(0, 1);
+    double_pin = true;
 }
 
 static void audio_data_fetcher(void) {
@@ -154,7 +194,7 @@ static void audio_data_fetcher(void) {
         buffer_obj = MP_OBJ_STOP_ITERATION;
     }
     int32_t write_half = ((audio_buffer_read_index>>LOG_AUDIO_CHUNK_SIZE)+1)&1;
-    int32_t *half_buffer = (int32_t*)(((int8_t *)audio_buffer_ptr) + (write_half<<LOG_AUDIO_CHUNK_SIZE));
+    int32_t *half_buffer = (int32_t*)(((uint8_t *)audio_buffer_ptr) + (write_half<<LOG_AUDIO_CHUNK_SIZE));
     if (buffer_obj == MP_OBJ_STOP_ITERATION) {
         audio_source_iter = NULL;
         memset(half_buffer, 0, AUDIO_CHUNK_SIZE);
@@ -164,7 +204,6 @@ static void audio_data_fetcher(void) {
     if (mp_obj_get_type(buffer_obj) != &microbit_audio_frame_type) {
         audio_source_iter = NULL;
         MP_STATE_VM(mp_pending_exception) = mp_obj_new_exception_msg(&mp_type_TypeError, "not an AudioFrame");
-        audio_stop();
         return;
     }
     microbit_audio_frame_obj_t *buffer = (microbit_audio_frame_obj_t *)buffer_obj;
@@ -181,14 +220,6 @@ static void audio_data_fetcher(void) {
     return;
 }
 
-static PinName pin0 = P0_3;
-static PinName pin1 = P0_2;
-
-static inline void zero_pins(void) {
-    NRF_GPIOTE->TASKS_OUT[0] = nrf_gpio_pin_read(pin0);
-    NRF_GPIOTE->TASKS_OUT[1] = nrf_gpio_pin_read(pin1);
-}
-
 #define TICK_PER_SAMPLE (128/MICROSECONDS_PER_TICK)
 
 #define FIRST_PHASE_START 32
@@ -197,45 +228,56 @@ static inline void zero_pins(void) {
 static inline void set_gpiote_output_pulses(int32_t val1, int32_t val2) {
     NRF_TIMER_Type *timer = TheTimer;
     timer->TASKS_CLEAR = 1;
-    //Start with output zero; pins 00
-    if (val1 < 0) {
+    if (double_pin) {
+        //Start with output zero; pins 00
+        if (val1 < 0) {
+            timer->CC[0] = FIRST_PHASE_START;
+            // -ve 10
+            timer->CC[2] = FIRST_PHASE_START-val1;
+            // zero 11
+        } else {
+            timer->CC[2] = FIRST_PHASE_START;
+            // +ve 01
+            timer->CC[0] = FIRST_PHASE_START+val1;
+            // zero 11
+        }
+        // Output zero; pins 11.
+        if (val2 < 0) {
+            timer->CC[3] = SECOND_PHASE_START;
+            // -ve 10
+            timer->CC[1] = SECOND_PHASE_START-val2;
+            // zero 00
+        } else {
+            timer->CC[1] = SECOND_PHASE_START;
+            // +ve 01
+            timer->CC[3] = SECOND_PHASE_START+val2;
+            // zero 00
+        }
+        //End with output zero; pins 00
+    } else {
         timer->CC[0] = FIRST_PHASE_START;
-        // -ve 10
-        timer->CC[2] = FIRST_PHASE_START-val1;
-        // zero 11
-    } else {
-        timer->CC[2] = FIRST_PHASE_START;
-        // +ve 01
-        timer->CC[0] = FIRST_PHASE_START+val1;
-        // zero 11
-    }
-    // Output zero; pins 11.
-    if (val2 < 0) {
-        timer->CC[3] = SECOND_PHASE_START;
-        // -ve 10
-        timer->CC[1] = SECOND_PHASE_START-val2;
-        // zero 00
-    } else {
-        timer->CC[1] = SECOND_PHASE_START;
-        // +ve 01
+        timer->CC[1] = FIRST_PHASE_START+val1;
+        timer->CC[2] = SECOND_PHASE_START;
         timer->CC[3] = SECOND_PHASE_START+val2;
-        // zero 00
     }
-    //End with output zero; pins 00
 }
 
 static int32_t audio_ticker(void) {
     int32_t val1 = previous_value + delta;
     int32_t next_value = val1 + delta;
     previous_value = next_value;
-    zero_pins();
     set_gpiote_output_pulses(val1>>4, next_value>>4);
     if (sample) {
         int32_t buffer_index = (int32_t)audio_buffer_read_index;
         buffer_index = (buffer_index+1)&AUDIO_BUFFER_MASK;
-        // Sample is set to 3 1/2 times the input to scale to output interval of 512 cycles.
-        // Actually mutiplied by 56 to account for divide by 16 when generating pulses.
-        int32_t next_sample = ((int32_t)((int8_t *)audio_buffer_ptr)[buffer_index])*56+8;
+        int32_t next_sample = (int32_t)((uint8_t *)audio_buffer_ptr)[buffer_index];
+        if (double_pin) {
+            // Convert 0 to 255 to -256 to +254
+            next_sample = next_sample*2-256;
+        }
+       // Sample is set to 7/4 times the input to scale to output interval of 512 cycles.
+        // Actually mutiplied by 28 to account for divide by 16 when generating pulses.
+        next_sample = next_sample*28+8;
         audio_buffer_read_index = buffer_index;
         delta = (next_sample-next_value)>>2;
         if ((buffer_index&(AUDIO_CHUNK_SIZE-1)) == 0 && fetcher_ready) {
@@ -248,46 +290,85 @@ static int32_t audio_ticker(void) {
     return TICK_PER_SAMPLE/2;
 }
 
-void audio_play_source(mp_obj_t src, bool wait) {
+static void audio_set_pins(mp_obj_t pin0_obj, mp_obj_t pin1_obj) {
+    PinName p0 = microbit_obj_get_pin_name(pin0_obj);
+    if (pin1_obj == mp_const_none) {
+        init_pin(p0);
+    } else {
+        PinName p1 = microbit_obj_get_pin_name(pin1_obj);
+        init_pins(p0, p1);
+    }
+}
+
+static int32_t pin_read_digital(mp_obj_t pin) {
+    PinName p = microbit_obj_get_pin_name(pin);
+    nrf_gpio_cfg_input(p, NRF_GPIO_PIN_NOPULL);
+    // Allow 1µs to settle.
+    nrf_delay_us(1);
+    return nrf_gpio_pin_read(p);
+}
+
+static const mp_obj_t big_pins[3] = { (mp_obj_t)&microbit_p0_obj, (mp_obj_t)&microbit_p1_obj, (mp_obj_t)&microbit_p2_obj };
+
+static void audio_auto_set_pins(void) {
+    // Test to see if two of the "big" pins are connected by some sort of resistor.
+    uint32_t i, j, count;
+    for (i = 0; i < 2; i++) {
+        mp_obj_t pin1 = big_pins[i];
+        PinName p1 = microbit_obj_get_pin_name(pin1);
+        nrf_gpio_cfg_output(p1);
+        for (j = i+1; j < 3; j++) {
+            mp_obj_t pin2 = (mp_obj_t)big_pins[j];
+            for (count = 0; count < 4; count++) {
+                nrf_gpio_pin_set(p1);
+                if (pin_read_digital(pin2) != 1)
+                    break;
+                nrf_gpio_pin_clear(p1);
+                if (pin_read_digital(pin2) != 0)
+                    break;
+            }
+            DEBUG(("Count: %lu\r\n", count));
+            if (count == 4) {
+                audio_set_pins(pin1, pin2);
+                return;
+            }
+        }
+    }
+    /* Set to default: single pin0 */
+    audio_set_pins((mp_obj_t)&microbit_p0_obj, mp_const_none);
+}
+
+void audio_play_source(mp_obj_t src, mp_obj_t pin1, mp_obj_t pin2, bool wait) {
+    if (running) {
+        audio_stop();
+    }
+    if (pin1 == mp_const_none) {
+        if (pin2 == mp_const_none) {
+            audio_auto_set_pins();
+        } else {
+            nlr_raise(mp_obj_new_exception_msg(&mp_type_TypeError, "Cannot set return_pin without pin"));
+        }
+    } else {
+        audio_set_pins(pin1, pin2);
+    }
     audio_source_iter = mp_getiter(src);
-    audio_start();
+    sample = false;
+    fetcher_ready = true;
+    audio_buffer_read_index = AUDIO_BUFFER_SIZE-1;
+    memset(audio_buffer_ptr, 128, AUDIO_BUFFER_SIZE);
+    timer_start();
+    running = true;
+    set_ticker_callback(0, audio_ticker, 80);
     if (!wait) {
         return;
     }
     while(running) {
         if (MP_STATE_VM(mp_pending_exception) != MP_OBJ_NULL) {
-            audio_stop();
             return;
         }
         __WFE();
     }
 }
-
-static void init_pins(PinName p0, PinName p1) {
-    audio_stop();
-    pin0 = p0;
-    pin1 = p1;
-    audio_gpiote_init(pin0, 0);
-    audio_gpiote_init(pin1, 1);
-    audio_ppi_init(0, 1);
-}
-
-void audio_set_pins(mp_obj_t pin0_obj, mp_obj_t pin1_obj) {
-    PinName p0 = microbit_obj_get_pin_name(pin0_obj);
-    PinName p1 = microbit_obj_get_pin_name(pin1_obj);
-    if (p0 != pin0 || p1 != pin1) {
-        init_pins(p0, p1);
-    }
-}
-STATIC MP_DEFINE_CONST_FUN_OBJ_2(microbit_audio_set_pins_obj, audio_set_pins);
-
-mp_obj_t audio_reset(void) {
-    init_pins(pin0, pin1);
-    memset(audio_buffer_ptr, 0, AUDIO_BUFFER_SIZE);
-    audio_buffer_read_index = AUDIO_BUFFER_SIZE-1;
-    return mp_const_none;
-}
-STATIC MP_DEFINE_CONST_FUN_OBJ_0(microbit_audio_reset_obj, audio_reset);
 
 
 mp_obj_t audio_init(void) {
@@ -296,7 +377,7 @@ mp_obj_t audio_init(void) {
         audio_source_iter = NULL;
         initialised = true;
         //Allocate buffer
-        audio_buffer_ptr = m_new(int8_t, AUDIO_BUFFER_SIZE);
+        audio_buffer_ptr = m_new(uint8_t, AUDIO_BUFFER_SIZE);
         NVIC_DisableIRQ(TheTimer_IRQn);
         TheTimer->POWER = 1;
         NRF_TIMER_Type *timer = TheTimer;
@@ -309,16 +390,9 @@ mp_obj_t audio_init(void) {
                           TIMER_INTENCLR_COMPARE2_Msk | TIMER_INTENCLR_COMPARE3_Msk;
         timer->SHORTS = 0;
     }
-    return audio_reset();
-}
-MP_DEFINE_CONST_FUN_OBJ_0(audio___init___obj, audio_init);
-
-
-STATIC mp_obj_t start() {
-    audio_start();
     return mp_const_none;
 }
-MP_DEFINE_CONST_FUN_OBJ_0(microbit_audio_start_obj, start);
+MP_DEFINE_CONST_FUN_OBJ_0(audio___init___obj, audio_init);
 
 STATIC mp_obj_t stop() {
     audio_stop();
@@ -330,24 +404,25 @@ STATIC mp_obj_t play(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_ar
     static const mp_arg_t allowed_args[] = {
         { MP_QSTR_source, MP_ARG_REQUIRED | MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
         { MP_QSTR_wait,  MP_ARG_BOOL, {.u_bool = true} },
-        { MP_QSTR_pins,   MP_ARG_OBJ, {.u_obj = mp_const_none } },
+        { MP_QSTR_pin,   MP_ARG_OBJ, {.u_obj = mp_const_none } },
+        { MP_QSTR_return_pin,   MP_ARG_OBJ, {.u_obj = mp_const_none } },
     };
     // parse args
     mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
     mp_arg_parse_all(n_args, pos_args, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
     mp_obj_t src = args[0].u_obj;
-    mp_obj_t pins = args[2].u_obj;
-    if (pins == mp_const_none) {
-        audio_set_pins((mp_obj_t)&microbit_p0_obj, (mp_obj_t)&microbit_p1_obj);
-    } else {
-        mp_obj_t *pin_array;
-        mp_obj_get_array_fixed_n(pins, 2, &pin_array);
-        audio_set_pins(pin_array[0], pin_array[1]);
-    }
-    audio_play_source(src, args[1].u_bool);
+    mp_obj_t pin1 = args[2].u_obj;
+    mp_obj_t pin2 = args[3].u_obj;
+    audio_play_source(src, pin1, pin2, args[1].u_bool);
     return mp_const_none;
 }
 MP_DEFINE_CONST_FUN_OBJ_KW(microbit_audio_play_obj, 0, play);
+
+STATIC mp_obj_t is_playing(void) {
+    return mp_obj_new_bool(running);
+}
+MP_DEFINE_CONST_FUN_OBJ_0(microbit_audio_is_playing_obj, is_playing);
+
 
 microbit_audio_frame_obj_t *new_microbit_audio_frame(void);
 
@@ -372,7 +447,7 @@ STATIC mp_obj_t audio_frame_subscr(mp_obj_t self_in, mp_obj_t index_in, mp_obj_t
         return MP_OBJ_NEW_SMALL_INT(self->data[index]);
     } else {
         mp_int_t value = mp_obj_get_int(value_in);
-        if (value < -128 || value >= 128) {
+        if (value < 0 || value > 255) {
             nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "value out of range"));
         }
         self->data[index] = value;
@@ -388,6 +463,15 @@ STATIC mp_obj_t mp_obj_audio_frame_unary_op(mp_uint_t op, mp_obj_t self_in) {
     }
 }
 
+static mp_int_t audio_frame_get_buffer(mp_obj_t self_in, mp_buffer_info_t *bufinfo, mp_uint_t flags) {
+    (void)flags;
+    microbit_audio_frame_obj_t *self = (microbit_audio_frame_obj_t *)self_in;
+    bufinfo->buf = self->data;
+    bufinfo->len = AUDIO_CHUNK_SIZE;
+    bufinfo->typecode = 'b';
+    return 0;
+}
+
 const mp_obj_type_t microbit_audio_frame_type = {
     { &mp_type_type },
     .name = MP_QSTR_AudioFrame,
@@ -400,7 +484,7 @@ const mp_obj_type_t microbit_audio_frame_type = {
     .subscr = audio_frame_subscr,
     .getiter = NULL,
     .iternext = NULL,
-    .buffer_p = {NULL},
+    .buffer_p = { .get_buffer = audio_frame_get_buffer },
     .stream_p = NULL,
     .bases_tuple = NULL,
     .locals_dict = NULL,
@@ -409,6 +493,7 @@ const mp_obj_type_t microbit_audio_frame_type = {
 microbit_audio_frame_obj_t *new_microbit_audio_frame(void) {
     microbit_audio_frame_obj_t *res = m_new_obj(microbit_audio_frame_obj_t);
     res->base.type = &microbit_audio_frame_type;
+    memset(res->data, 128, AUDIO_CHUNK_SIZE);
     return res;
 }
 
@@ -417,7 +502,7 @@ STATIC const mp_map_elem_t audio_globals_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR___init__), (mp_obj_t)&audio___init___obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_stop), (mp_obj_t)&microbit_audio_stop_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_play), (mp_obj_t)&microbit_audio_play_obj },
-    { MP_OBJ_NEW_QSTR(MP_QSTR_reset), (mp_obj_t)&microbit_audio_reset_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_is_playing), (mp_obj_t)&microbit_audio_is_playing_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_AudioFrame), (mp_obj_t)&microbit_audio_frame_type },
 };
 

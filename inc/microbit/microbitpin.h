@@ -34,6 +34,9 @@
 #define MICROBIT_PIN_P14    (P0_22)
 #define MICROBIT_PIN_P15    (P0_21)
 
+mp_obj_t microbit_pin_write_digital(mp_obj_t self_in, mp_obj_t value_in);
+mp_obj_t microbit_pin_read_digital(mp_obj_t self_in);
+
 #endif
 
 #endif // __MICROPY_INCLUDED_MICROBIT_MICROBITPIN_H__
