@@ -6,11 +6,8 @@
 #include "py/obj.h"
 #include "py/runtime.h"
 
-void audio_start(void);
-void audio_stop(void);
 mp_obj_t audio_init(void);
-void audio_play_source(mp_obj_t src, bool wait);
-void audio_set_pins(mp_obj_t pin0_obj, mp_obj_t pin1_obj);
+void audio_play_source(mp_obj_t src, mp_obj_t pin1, mp_obj_t pin2, bool wait);
 
 #define LOG_AUDIO_CHUNK_SIZE 5
 #define AUDIO_CHUNK_SIZE (1<<LOG_AUDIO_CHUNK_SIZE)
@@ -19,7 +16,7 @@ void audio_set_pins(mp_obj_t pin0_obj, mp_obj_t pin1_obj);
 
 typedef struct _microbit_audio_frame_obj_t {
     mp_obj_base_t base;
-    int8_t data[AUDIO_CHUNK_SIZE];
+    uint8_t data[AUDIO_CHUNK_SIZE];
 } microbit_audio_frame_obj_t;
 
 extern const mp_obj_type_t microbit_audio_frame_type;
