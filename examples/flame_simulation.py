@@ -5,7 +5,7 @@
 import microbit, random
 
 # User adjustable values for range of brightness in flames.
-MIN_BRIGHTNESS = 2
+MIN_BRIGHTNESS = 1
 MAX_BRIGHTNESS = 8
 
 
@@ -17,8 +17,8 @@ INVERT_DISPLAY = True # flame can be oriented in either direction
 
 # MASK to create fire shape. multiplies values %
 MASK = [[ 88, 100, 100, 100, 88 ],
-        [ 60,  95, 100,  95, 60 ], 
-        [ 50,  88,  90,  88, 50 ], 
+        [ 60,  95, 100,  95, 60 ],
+        [ 50,  88,  90,  88, 50 ],
         [ 33,  75,  88,  75, 33 ],
         [ 10,  33,  66,  33, 10 ]  ]
 
@@ -64,11 +64,6 @@ def interpolate_frame(screen, pcnt, grid, line):
 
 ## Setup
 line = generate_line()
-#grid = [[0,0,0,0,0],
-#        [0,0,0,0,0],
-#        [0,0,0,0,0],
-#        [0,0,0,0,0],
-#        [0,0,0,0,0] ]
 grid = [[0 for i in range(DISPLAY_WIDTH)] for i in range(DISPLAY_HEIGHT)]
 
 SCREEN = microbit.display
