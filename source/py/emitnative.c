@@ -510,19 +510,19 @@ typedef enum {
     STACK_IMM,
 } stack_info_kind_t;
 
-// these enums must be distinct and the bottom 2 bits
+// these enums must be distinct and the bottom 4 bits
 // must correspond to the correct MP_NATIVE_TYPE_xxx value
 typedef enum {
     VTYPE_PYOBJ = 0x00 | MP_NATIVE_TYPE_OBJ,
     VTYPE_BOOL = 0x00 | MP_NATIVE_TYPE_BOOL,
     VTYPE_INT = 0x00 | MP_NATIVE_TYPE_INT,
     VTYPE_UINT = 0x00 | MP_NATIVE_TYPE_UINT,
+    VTYPE_PTR = 0x00 | MP_NATIVE_TYPE_PTR,
+    VTYPE_PTR8 = 0x00 | MP_NATIVE_TYPE_PTR8,
+    VTYPE_PTR16 = 0x00 | MP_NATIVE_TYPE_PTR16,
+    VTYPE_PTR32 = 0x00 | MP_NATIVE_TYPE_PTR32,
 
-    VTYPE_PTR = 0x10 | MP_NATIVE_TYPE_UINT, // pointer to word sized entity
-    VTYPE_PTR8 = 0x20 | MP_NATIVE_TYPE_UINT,
-    VTYPE_PTR16 = 0x30 | MP_NATIVE_TYPE_UINT,
-    VTYPE_PTR32 = 0x40 | MP_NATIVE_TYPE_UINT,
-    VTYPE_PTR_NONE = 0x50 | MP_NATIVE_TYPE_UINT,
+    VTYPE_PTR_NONE = 0x50 | MP_NATIVE_TYPE_PTR,
 
     VTYPE_UNBOUND = 0x60 | MP_NATIVE_TYPE_OBJ,
     VTYPE_BUILTIN_CAST = 0x70 | MP_NATIVE_TYPE_OBJ,
@@ -882,10 +882,10 @@ STATIC void emit_native_end_pass(emit_t *emit) {
         mp_uint_t f_len = ASM_GET_CODE_SIZE(emit->as);
 
         // compute type signature
-        // note that the lower 2 bits of a vtype are tho correct MP_NATIVE_TYPE_xxx
-        mp_uint_t type_sig = emit->return_vtype & 3;
+        // note that the lower 4 bits of a vtype are tho correct MP_NATIVE_TYPE_xxx
+        mp_uint_t type_sig = emit->return_vtype & 0xf;
         for (mp_uint_t i = 0; i < emit->scope->num_pos_args; i++) {
-            type_sig |= (emit->local_vtype[i] & 3) << (i * 2 + 2);
+            type_sig |= (emit->local_vtype[i] & 0xf) << (i * 4 + 4);
         }
 
         mp_emit_glue_assign_native(emit->scope->raw_code,
@@ -1545,18 +1545,20 @@ STATIC void emit_native_load_subscr(emit_t *emit) {
             int reg_index = REG_ARG_2;
             emit_pre_pop_reg_flexible(emit, &vtype_index, &reg_index, REG_ARG_1, REG_ARG_1);
             emit_pre_pop_reg(emit, &vtype_base, REG_ARG_1);
+            if (vtype_index != VTYPE_INT && vtype_index != VTYPE_UINT) {
+                EMIT_NATIVE_VIPER_TYPE_ERROR(emit,
+                    "can't load with '%q' index", vtype_to_qstr(vtype_index));
+            }
             switch (vtype_base) {
                 case VTYPE_PTR8: {
                     // pointer to 8-bit memory
                     // TODO optimise to use thumb ldrb r1, [r2, r3]
-                    assert(vtype_index == VTYPE_INT);
                     ASM_ADD_REG_REG(emit->as, REG_ARG_1, reg_index); // add index to base
                     ASM_LOAD8_REG_REG(emit->as, REG_RET, REG_ARG_1); // store value to (base+index)
                     break;
                 }
                 case VTYPE_PTR16: {
                     // pointer to 16-bit memory
-                    assert(vtype_index == VTYPE_INT);
                     ASM_ADD_REG_REG(emit->as, REG_ARG_1, reg_index); // add index to base
                     ASM_ADD_REG_REG(emit->as, REG_ARG_1, reg_index); // add index to base
                     ASM_LOAD16_REG_REG(emit->as, REG_RET, REG_ARG_1); // load from (base+2*index)
@@ -1564,7 +1566,6 @@ STATIC void emit_native_load_subscr(emit_t *emit) {
                 }
                 case VTYPE_PTR32: {
                     // pointer to word-size memory
-                    assert(vtype_index == VTYPE_INT);
                     ASM_ADD_REG_REG(emit->as, REG_ARG_1, reg_index); // add index to base
                     ASM_ADD_REG_REG(emit->as, REG_ARG_1, reg_index); // add index to base
                     ASM_ADD_REG_REG(emit->as, REG_ARG_1, reg_index); // add index to base
@@ -1697,6 +1698,10 @@ STATIC void emit_native_store_subscr(emit_t *emit) {
             #else
             emit_pre_pop_reg_flexible(emit, &vtype_value, &reg_value, reg_base, reg_index);
             #endif
+            if (vtype_value != VTYPE_BOOL && vtype_value != VTYPE_INT && vtype_value != VTYPE_UINT) {
+                EMIT_NATIVE_VIPER_TYPE_ERROR(emit,
+                    "can't store '%q'", vtype_to_qstr(vtype_value));
+            }
             switch (vtype_base) {
                 case VTYPE_PTR8: {
                     // pointer to 8-bit memory
@@ -1773,17 +1778,24 @@ STATIC void emit_native_store_subscr(emit_t *emit) {
             int reg_value = REG_ARG_3;
             emit_pre_pop_reg_flexible(emit, &vtype_index, &reg_index, REG_ARG_1, reg_value);
             emit_pre_pop_reg(emit, &vtype_base, REG_ARG_1);
+            if (vtype_index != VTYPE_INT && vtype_index != VTYPE_UINT) {
+                EMIT_NATIVE_VIPER_TYPE_ERROR(emit,
+                    "can't store with '%q' index", vtype_to_qstr(vtype_index));
+            }
             #if N_X86
             // special case: x86 needs byte stores to be from lower 4 regs (REG_ARG_3 is EDX)
             emit_pre_pop_reg(emit, &vtype_value, reg_value);
             #else
             emit_pre_pop_reg_flexible(emit, &vtype_value, &reg_value, REG_ARG_1, reg_index);
             #endif
+            if (vtype_value != VTYPE_BOOL && vtype_value != VTYPE_INT && vtype_value != VTYPE_UINT) {
+                EMIT_NATIVE_VIPER_TYPE_ERROR(emit,
+                    "can't store '%q'", vtype_to_qstr(vtype_value));
+            }
             switch (vtype_base) {
                 case VTYPE_PTR8: {
                     // pointer to 8-bit memory
                     // TODO optimise to use thumb strb r1, [r2, r3]
-                    assert(vtype_index == VTYPE_INT);
                     #if N_ARM
                     asm_arm_strb_reg_reg_reg(emit->as, reg_value, REG_ARG_1, reg_index);
                     break;
@@ -1794,7 +1806,6 @@ STATIC void emit_native_store_subscr(emit_t *emit) {
                 }
                 case VTYPE_PTR16: {
                     // pointer to 16-bit memory
-                    assert(vtype_index == VTYPE_INT);
                     #if N_ARM
                     asm_arm_strh_reg_reg_reg(emit->as, reg_value, REG_ARG_1, reg_index);
                     break;
@@ -1806,7 +1817,6 @@ STATIC void emit_native_store_subscr(emit_t *emit) {
                 }
                 case VTYPE_PTR32: {
                     // pointer to 32-bit memory
-                    assert(vtype_index == VTYPE_INT);
                     #if N_ARM
                     asm_arm_str_reg_reg_reg(emit->as, reg_value, REG_ARG_1, reg_index);
                     break;
@@ -1974,15 +1984,114 @@ STATIC void emit_native_continue_loop(emit_t *emit, mp_uint_t label, mp_uint_t e
 }
 
 STATIC void emit_native_setup_with(emit_t *emit, mp_uint_t label) {
-    // not supported, or could be with runtime call
-    (void)emit;
-    (void)label;
-    assert(0);
+    // the context manager is on the top of the stack
+    // stack: (..., ctx_mgr)
+
+    // get __exit__ method
+    vtype_kind_t vtype;
+    emit_access_stack(emit, 1, &vtype, REG_ARG_1); // arg1 = ctx_mgr
+    assert(vtype == VTYPE_PYOBJ);
+    emit_get_stack_pointer_to_reg_for_push(emit, REG_ARG_3, 2); // arg3 = dest ptr
+    emit_call_with_imm_arg(emit, MP_F_LOAD_METHOD, MP_QSTR___exit__, REG_ARG_2);
+    // stack: (..., ctx_mgr, __exit__, self)
+
+    emit_pre_pop_reg(emit, &vtype, REG_ARG_3); // self
+    emit_pre_pop_reg(emit, &vtype, REG_ARG_2); // __exit__
+    emit_pre_pop_reg(emit, &vtype, REG_ARG_1); // ctx_mgr
+    emit_post_push_reg(emit, vtype, REG_ARG_2); // __exit__
+    emit_post_push_reg(emit, vtype, REG_ARG_3); // self
+    // stack: (..., __exit__, self)
+    // REG_ARG_1=ctx_mgr
+
+    // get __enter__ method
+    emit_get_stack_pointer_to_reg_for_push(emit, REG_ARG_3, 2); // arg3 = dest ptr
+    emit_call_with_imm_arg(emit, MP_F_LOAD_METHOD, MP_QSTR___enter__, REG_ARG_2); // arg2 = method name
+    // stack: (..., __exit__, self, __enter__, self)
+
+    // call __enter__ method
+    emit_get_stack_pointer_to_reg_for_pop(emit, REG_ARG_3, 2); // pointer to items, including meth and self
+    emit_call_with_2_imm_args(emit, MP_F_CALL_METHOD_N_KW, 0, REG_ARG_1, 0, REG_ARG_2);
+    emit_post_push_reg(emit, VTYPE_PYOBJ, REG_RET); // push return value of __enter__
+    // stack: (..., __exit__, self, as_value)
+
+    // need to commit stack because we may jump elsewhere
+    need_stack_settled(emit);
+    emit_get_stack_pointer_to_reg_for_push(emit, REG_ARG_1, sizeof(nlr_buf_t) / sizeof(mp_uint_t)); // arg1 = pointer to nlr buf
+    emit_call(emit, MP_F_NLR_PUSH);
+    ASM_JUMP_IF_REG_NONZERO(emit->as, REG_RET, label);
+
+    emit_access_stack(emit, sizeof(nlr_buf_t) / sizeof(mp_uint_t) + 1, &vtype, REG_RET); // access return value of __enter__
+    emit_post_push_reg(emit, VTYPE_PYOBJ, REG_RET); // push return value of __enter__
+    // stack: (..., __exit__, self, as_value, nlr_buf, as_value)
 }
 
-STATIC void emit_native_with_cleanup(emit_t *emit) {
-    (void)emit;
-    assert(0);
+STATIC void emit_native_with_cleanup(emit_t *emit, mp_uint_t label) {
+    // note: label+1 is available as an auxiliary label
+
+    // stack: (..., __exit__, self, as_value, nlr_buf)
+    emit_native_pre(emit);
+    emit_call(emit, MP_F_NLR_POP);
+    adjust_stack(emit, -(mp_int_t)(sizeof(nlr_buf_t) / sizeof(mp_uint_t)) - 1);
+    // stack: (..., __exit__, self)
+
+    // call __exit__
+    emit_post_push_imm(emit, VTYPE_PYOBJ, (mp_uint_t)mp_const_none);
+    emit_post_push_imm(emit, VTYPE_PYOBJ, (mp_uint_t)mp_const_none);
+    emit_post_push_imm(emit, VTYPE_PYOBJ, (mp_uint_t)mp_const_none);
+    emit_get_stack_pointer_to_reg_for_pop(emit, REG_ARG_3, 5);
+    emit_call_with_2_imm_args(emit, MP_F_CALL_METHOD_N_KW, 3, REG_ARG_1, 0, REG_ARG_2);
+
+    // jump to after with cleanup nlr_catch block
+    adjust_stack(emit, 1); // dummy nlr_buf.prev
+    emit_native_load_const_tok(emit, MP_TOKEN_KW_NONE); // nlr_buf.ret_val = no exception
+    emit_native_jump(emit, label + 1);
+
+    // nlr_catch
+    emit_native_label_assign(emit, label);
+
+    // adjust stack counter for: __exit__, self, as_value
+    adjust_stack(emit, 3);
+    // stack: (..., __exit__, self, as_value, nlr_buf.prev, nlr_buf.ret_val)
+
+    vtype_kind_t vtype;
+    emit_pre_pop_reg(emit, &vtype, REG_ARG_1); // get the thrown value (exc)
+    adjust_stack(emit, -2); // discard nlr_buf.prev and as_value
+    // stack: (..., __exit__, self)
+    // REG_ARG_1=exc
+
+    emit_pre_pop_reg(emit, &vtype, REG_ARG_2); // self
+    emit_pre_pop_reg(emit, &vtype, REG_ARG_3); // __exit__
+    adjust_stack(emit, 1); // dummy nlr_buf.prev
+    emit_post_push_reg(emit, vtype, REG_ARG_1); // push exc to save it for later
+    emit_post_push_reg(emit, vtype, REG_ARG_3); // __exit__
+    emit_post_push_reg(emit, vtype, REG_ARG_2); // self
+    // stack: (..., exc, __exit__, self)
+    // REG_ARG_1=exc
+
+    ASM_LOAD_REG_REG_OFFSET(emit->as, REG_ARG_2, REG_ARG_1, 0); // get type(exc)
+    emit_post_push_reg(emit, VTYPE_PYOBJ, REG_ARG_2); // push type(exc)
+    emit_post_push_reg(emit, VTYPE_PYOBJ, REG_ARG_1); // push exc value
+    emit_post_push_imm(emit, VTYPE_PYOBJ, (mp_uint_t)mp_const_none); // traceback info
+    // stack: (..., exc, __exit__, self, type(exc), exc, traceback)
+
+    // call __exit__ method
+    emit_get_stack_pointer_to_reg_for_pop(emit, REG_ARG_3, 5);
+    emit_call_with_2_imm_args(emit, MP_F_CALL_METHOD_N_KW, 3, REG_ARG_1, 0, REG_ARG_2);
+    // stack: (..., exc)
+
+    // if REG_RET is true then we need to replace top-of-stack with None (swallow exception)
+    if (REG_ARG_1 != REG_RET) {
+        ASM_MOV_REG_REG(emit->as, REG_ARG_1, REG_RET);
+    }
+    emit_call(emit, MP_F_OBJ_IS_TRUE);
+    ASM_JUMP_IF_REG_ZERO(emit->as, REG_RET, label + 1);
+
+    // replace exc with None
+    emit_pre_pop_discard(emit);
+    emit_post_push_imm(emit, VTYPE_PYOBJ, (mp_uint_t)mp_const_none);
+
+    // end of with cleanup nlr_catch block
+    emit_native_label_assign(emit, label + 1);
 }
 
 STATIC void emit_native_setup_except(emit_t *emit, mp_uint_t label) {
@@ -2006,7 +2115,8 @@ STATIC void emit_native_end_finally(emit_t *emit) {
     //   else: raise exc
     // the check if exc is None is done in the MP_F_NATIVE_RAISE stub
     vtype_kind_t vtype;
-    emit_pre_pop_reg(emit, &vtype, REG_ARG_1);
+    emit_pre_pop_reg(emit, &vtype, REG_ARG_1); // get nlr_buf.ret_val
+    emit_pre_pop_discard(emit); // discard nlr_buf.prev
     emit_call(emit, MP_F_NATIVE_RAISE);
     emit_post(emit);
 }
@@ -2043,7 +2153,7 @@ STATIC void emit_native_for_iter_end(emit_t *emit) {
 STATIC void emit_native_pop_block(emit_t *emit) {
     emit_native_pre(emit);
     emit_call(emit, MP_F_NLR_POP);
-    adjust_stack(emit, -(mp_int_t)(sizeof(nlr_buf_t) / sizeof(mp_uint_t)));
+    adjust_stack(emit, -(mp_int_t)(sizeof(nlr_buf_t) / sizeof(mp_uint_t)) + 1);
     emit_post(emit);
 }
 
@@ -2382,7 +2492,7 @@ STATIC void emit_native_call_function(emit_t *emit, mp_uint_t n_positional, mp_u
                 vtype_kind_t vtype;
                 emit_pre_pop_reg(emit, &vtype, REG_ARG_1);
                 emit_pre_pop_discard(emit);
-                emit_call_with_imm_arg(emit, MP_F_CONVERT_OBJ_TO_NATIVE, MP_NATIVE_TYPE_UINT, REG_ARG_2); // arg2 = type
+                emit_call_with_imm_arg(emit, MP_F_CONVERT_OBJ_TO_NATIVE, vtype_cast, REG_ARG_2); // arg2 = type
                 emit_post_push_reg(emit, vtype_cast, REG_RET);
                 break;
             }
@@ -2485,7 +2595,7 @@ STATIC void emit_native_start_except_handler(emit_t *emit) {
     // This instruction follows an nlr_pop, so the stack counter is back to zero, when really
     // it should be up by a whole nlr_buf_t.  We then want to pop the nlr_buf_t here, but save
     // the first 2 elements, so we can get the thrown value.
-    adjust_stack(emit, 2);
+    adjust_stack(emit, 1);
     vtype_kind_t vtype_nlr;
     emit_pre_pop_reg(emit, &vtype_nlr, REG_ARG_1); // get the thrown value
     emit_pre_pop_discard(emit); // discard the linked-list pointer in the nlr_buf
@@ -2493,7 +2603,7 @@ STATIC void emit_native_start_except_handler(emit_t *emit) {
 }
 
 STATIC void emit_native_end_except_handler(emit_t *emit) {
-    adjust_stack(emit, -2);
+    adjust_stack(emit, -1);
 }
 
 const emit_method_table_t EXPORT_FUN(method_table) = {

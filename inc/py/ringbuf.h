@@ -1,9 +1,9 @@
 /*
- * This file is part of the Micro Python project, http://micropython.org/
+ * This file is part of the MicroPython project, http://micropython.org/
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2014 Paul Sokolovsky
+ * Copyright (c) 2016 Paul Sokolovsky
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,43 +23,50 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+#ifndef __MICROPY_INCLUDED_PY_RINGBUF_H__
+#define __MICROPY_INCLUDED_PY_RINGBUF_H__
 
-#include "py/mpstate.h"
-#include "py/nlr.h"
-#include "py/obj.h"
-#include "py/runtime.h"
-#include "py/stackctrl.h"
+typedef struct _ringbuf_t {
+    uint8_t *buf;
+    uint16_t size;
+    uint16_t iget;
+    uint16_t iput;
+} ringbuf_t;
 
-void mp_stack_ctrl_init(void) {
-    volatile int stack_dummy;
-    MP_STATE_VM(stack_top) = (char*)&stack_dummy;
+// Static initalization:
+// byte buf_array[N];
+// ringbuf_t buf = {buf_array, sizeof(buf_array)};
+
+// Dynamic initialization. This creates root pointer!
+#define ringbuf_alloc(r, sz) \
+{ \
+    (r)->buf = m_new(uint8_t, sz); \
+    (r)->size = sz; \
+    (r)->iget = (r)->iput = 0; \
 }
 
-void mp_stack_set_top(void *top) {
-    MP_STATE_VM(stack_top) = top;
-}
-
-mp_uint_t mp_stack_usage(void) {
-    // Assumes descending stack
-    volatile int stack_dummy;
-    return MP_STATE_VM(stack_top) - (char*)&stack_dummy;
-}
-
-#if MICROPY_STACK_CHECK
-
-void mp_stack_set_limit(mp_uint_t limit) {
-    MP_STATE_VM(stack_limit) = limit;
-}
-
-void mp_exc_recursion_depth(void) {
-    nlr_raise(mp_obj_new_exception_arg1(&mp_type_RuntimeError,
-        MP_OBJ_NEW_QSTR(MP_QSTR_maximum_space_recursion_space_depth_space_exceeded)));
-}
-
-void mp_stack_check(void) {
-    if (mp_stack_usage() >= MP_STATE_VM(stack_limit)) {
-        mp_exc_recursion_depth();
+static inline int ringbuf_get(ringbuf_t *r) {
+    if (r->iget == r->iput) {
+        return -1;
     }
+    uint8_t v = r->buf[r->iget++];
+    if (r->iget >= r->size) {
+        r->iget = 0;
+    }
+    return v;
 }
 
-#endif // MICROPY_STACK_CHECK
+static inline int ringbuf_put(ringbuf_t *r, uint8_t v) {
+    uint32_t iput_new = r->iput + 1;
+    if (iput_new >= r->size) {
+        iput_new = 0;
+    }
+    if (iput_new == r->iget) {
+        return -1;
+    }
+    r->buf[r->iput] = v;
+    r->iput = iput_new;
+    return 0;
+}
+
+#endif // __MICROPY_INCLUDED_PY_RINGBUF_H__

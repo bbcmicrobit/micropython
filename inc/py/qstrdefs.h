@@ -114,6 +114,50 @@ Q(label)
 Q(align)
 Q(data)
 Q(uint)
+Q(nop)
+Q(mov)
+Q(and_)
+Q(cmp)
+Q(add)
+Q(sub)
+Q(lsl)
+Q(lsr)
+Q(asr)
+Q(ldr)
+Q(ldrb)
+Q(ldrh)
+Q(str)
+Q(strb)
+Q(strh)
+Q(b)
+Q(bl)
+Q(bx)
+Q(push)
+Q(pop)
+Q(cpsid)
+Q(cpsie)
+Q(wfi)
+Q(clz)
+Q(rbit)
+Q(movw)
+Q(movt)
+Q(movwt)
+Q(mrs)
+Q(sdiv)
+Q(udiv)
+Q(ldrex)
+Q(strex)
+#if MICROPY_EMIT_INLINE_THUMB_FLOAT
+Q(vcmp)
+Q(vneg)
+Q(vcvt_f32_s32)
+Q(vcvt_s32_f32)
+Q(vsqrt)
+Q(vmov)
+Q(vmrs)
+Q(vldr)
+Q(vstr)
+#endif
 #endif
 
 Q(builtins)
@@ -563,6 +607,9 @@ Q(file)
 Q(mode)
 Q(r)
 Q(encoding)
+#if MICROPY_PY_IO_BUFFEREDWRITER
+Q(BufferedWriter)
+#endif
 #endif
 
 #if MICROPY_PY_GC
@@ -650,6 +697,8 @@ Q(AF_INET6)
 Q(SOCK_STREAM)
 Q(SOCK_DGRAM)
 Q(SOCK_RAW)
+Q(SOL_SOCKET)
+Q(SO_REUSEADDR)
 // for lwip.socket
 Q(close)
 Q(bind)
@@ -661,6 +710,8 @@ Q(recv)
 Q(sendto)
 Q(recvfrom)
 Q(settimeout)
+Q(setsockopt)
+Q(makefile)
 #if MICROPY_PY_LWIP_SLIP
 // for lwip.slip
 Q(slip)
@@ -671,10 +722,16 @@ Q(status)
 #if MICROPY_FSUSERMOUNT
 // for user-mountable block devices
 Q(mount)
+Q(umount)
 Q(readonly)
 Q(mkfs)
+Q(listdir)
+Q(mkdir)
+Q(remove)
+Q(rename)
 Q(readblocks)
 Q(writeblocks)
+Q(ioctl)
 Q(sync)
 Q(count)
 #endif
@@ -694,4 +751,13 @@ Q(choice)
 Q(random)
 Q(uniform)
 #endif
+#endif
+
+#if MICROPY_VFS_FAT
+Q(VfsFat)
+Q(flush)
+#endif
+
+#if MICROPY_PY_WEBSOCKET
+Q(websocket)
 #endif
