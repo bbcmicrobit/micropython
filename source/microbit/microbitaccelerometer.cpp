@@ -114,6 +114,13 @@ mp_obj_t microbit_accelerometer_get_strength(mp_obj_t self_in) {
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_accelerometer_get_strength_obj, microbit_accelerometer_get_strength);
 
+mp_obj_t microbit_accelerometer_set_range(mp_obj_t self_in, mp_obj_t g) {
+    (void)self_in;
+    ubit_accelerometer->setRange(mp_obj_get_int(g));
+    return mp_const_none;
+}
+MP_DEFINE_CONST_FUN_OBJ_2(microbit_accelerometer_set_range_obj, microbit_accelerometer_set_range);
+
 STATIC const qstr gesture_name_map[] = {
     [MICROBIT_ACCELEROMETER_EVT_NONE] = MP_QSTR_NULL,
     [MICROBIT_ACCELEROMETER_EVT_TILT_UP] = MP_QSTR_up,
@@ -191,6 +198,7 @@ STATIC const mp_map_elem_t microbit_accelerometer_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_is_gesture), (mp_obj_t)&microbit_accelerometer_is_gesture_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_was_gesture), (mp_obj_t)&microbit_accelerometer_was_gesture_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_get_gestures), (mp_obj_t)&microbit_accelerometer_get_gestures_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_set_range), (mp_obj_t)&microbit_accelerometer_set_range_obj },
 };
 
 STATIC MP_DEFINE_CONST_DICT(microbit_accelerometer_locals_dict, microbit_accelerometer_locals_dict_table);

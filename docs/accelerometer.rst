@@ -81,6 +81,12 @@ Functions
     calls to some accelerometer method to do the gesture detection. Usually 
     gestures can be detected using a loop with a small :func:`microbit.sleep` delay.
 
+.. py:function:: set_range(value)
+
+    Set the accelerometer sensitivity range, in g (standard gravity), to the
+    closest values supported by the hardware, so it rounds to either ``1``,
+    ``2``, ``4``, or ``8`` g.
+
 Examples
 --------
 
