@@ -24,7 +24,7 @@ Start the build with either yotta::
 
   make all
 
-The result is a microbit-micropython hex file (i.e. ``firmware.hex``)
+The result is a microbit-micropython hex file (i.e. ``microbit-micropython.hex``)
 found in the build/bbc-microbit-classic-gcc-nosd/source from the root of the
 repository.
 
