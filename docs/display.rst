@@ -32,7 +32,7 @@ Functions
     Display the ``image``.
 
 
-.. py:function:: show(iterable, delay, wait=True, loop=False, clear=False)
+.. py:function:: show(iterable, delay=400, \*, wait=True, loop=False, clear=False)
 
     Display images or letters from the ``iterable`` in sequence, with ``delay``
     milliseconds between them.
@@ -44,9 +44,32 @@ Functions
 
     If ``clear`` is ``True``, the display will be cleared after the iterable has finished.
 
+    Note that the ``wait``, ``loop`` and ``clear`` arguments must be specified
+    using their keyword.
 
-.. py:function:: scroll(string, delay=400)
+.. py:function:: scroll(string, delay=150, \*, wait=True, loop=False, monospace=False)
 
     Similar to ``show``, but scrolls the ``string`` horizontally instead. The
-    ``delay`` parameter controls how fast the text is scrolling. This function
-    blocks until it is finished.
+    ``delay`` parameter controls how fast the text is scrolling.
+
+    If ``wait`` is ``True``, this function will block until the animation is
+    finished, otherwise the animation will happen in the background.
+
+    If ``loop`` is ``True``, the animation will repeat forever.
+
+    If ``monospace`` is ``True``, the characters will all take up 5 pixel-columns
+    in width, otherwise there will be exactly 1 blank pixel-column between each
+    character as they scroll.
+
+    Note that the ``wait``, ``loop`` and ``monospace`` arguments must be specified
+    using their keyword.
+
+Example
+=======
+
+To continuously scroll a string across the display, and do it in the background,
+you can use::
+
+    import microbit
+
+    microbit.display.scroll('Hello!', wait=False, loop=True)
