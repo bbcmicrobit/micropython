@@ -105,12 +105,16 @@ void mp_run(void) {
     readline_init0();
     microbit_init();
 
-    if (APPENDED_SCRIPT->header[0] == 'M' && APPENDED_SCRIPT->header[1] == 'P') {
-        // run appended script
-        do_strn(APPENDED_SCRIPT->str, APPENDED_SCRIPT->len);
-    } else if (pyexec_mode_kind == PYEXEC_MODE_FRIENDLY_REPL) {
-        // from microbit import *
-        mp_import_all(mp_import_name(MP_QSTR_microbit, mp_const_empty_tuple, MP_OBJ_NEW_SMALL_INT(0)));
+    // Only run initial script (or import from microbit) if we are in "friendly REPL"
+    // mode.  If we are in "raw REPL" mode then this will be skipped.
+    if (pyexec_mode_kind == PYEXEC_MODE_FRIENDLY_REPL) {
+        if (APPENDED_SCRIPT->header[0] == 'M' && APPENDED_SCRIPT->header[1] == 'P') {
+            // run appended script
+            do_strn(APPENDED_SCRIPT->str, APPENDED_SCRIPT->len);
+        } else {
+            // from microbit import *
+            mp_import_all(mp_import_name(MP_QSTR_microbit, mp_const_empty_tuple, MP_OBJ_NEW_SMALL_INT(0)));
+        }
     }
 
     for (;;) {
