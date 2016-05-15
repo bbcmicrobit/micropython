@@ -2,6 +2,8 @@
 #include "microbitobj.h"
 #include "microbitdisplay.h"
 #include "microbitmusic.h"
+#include "microbitevents.h"
+#include "modmicrobit.h"
 
 extern "C" {
 #include "lib/ticker.h"
@@ -59,6 +61,12 @@ void microbit_ticker(void) {
             uBit.systemTickComponents[i]->systemTick();
         }
     }
+
+    /** Update the events.  This must come before the display is updated
+     * (otherwise the display may flicker), and after the buttons are updated
+     * (otherwise we'll miss any recent button events).
+     */
+    microbit_events_tick();
 
     // Update the display.
     microbit_display_tick();
