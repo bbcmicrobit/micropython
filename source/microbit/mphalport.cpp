@@ -103,9 +103,9 @@ void mp_hal_stdout_tx_strn_cooked(const char *str, size_t len) {
     }
 }
 
-STATIC void mp_hal_print_many(const char chrs[8], uint total) {
+STATIC void mp_hal_print_many(const char chrs[8], unsigned int total) {
     while (total > 0) {
-        uint n = total;
+        unsigned int n = total;
         if (n > 8) {
             n = 8;
         }
@@ -114,11 +114,11 @@ STATIC void mp_hal_print_many(const char chrs[8], uint total) {
     }
 }
 
-void mp_hal_move_cursor_back(uint pos) {
+void mp_hal_move_cursor_back(unsigned int pos) {
     mp_hal_print_many("\b\b\b\b\b\b\b\b", pos);
 }
 
-void mp_hal_erase_line_from_cursor(uint n_chars) {
+void mp_hal_erase_line_from_cursor(unsigned int n_chars) {
     mp_hal_print_many("        ", n_chars);
     mp_hal_move_cursor_back(n_chars);
 }
