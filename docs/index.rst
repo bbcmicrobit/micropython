@@ -46,6 +46,7 @@ Projects related to MicroPython on the BBC micro:bit include:
     tutorials/movement
     tutorials/gestures
     tutorials/direction
+    tutorials/storage
     tutorials/network
     tutorials/next
 
@@ -65,6 +66,8 @@ Projects related to MicroPython on the BBC micro:bit include:
    i2c.rst
    uart.rst
    spi.rst
+   filesystem.rst
+   os.rst
    random.rst
    neopixel.rst
    ble.rst

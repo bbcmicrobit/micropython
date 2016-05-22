@@ -14,6 +14,7 @@ Introduction
     movement
     gestures
     direction
+    storage
     network
     next
 
