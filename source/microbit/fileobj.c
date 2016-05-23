@@ -52,7 +52,7 @@ STATIC mp_obj_t file___exit__(size_t n_args, const mp_obj_t *args) {
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(file___exit___obj, 4, 4, file___exit__);
 
-static const mp_map_elem_t microbit_bytesio_locals_dict_table[] = {
+static const mp_map_elem_t microbit_file_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_close), (mp_obj_t)&microbit_file_close_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_name), (mp_obj_t)&microbit_file_name_obj },
     { MP_ROM_QSTR(MP_QSTR___enter__), (mp_obj_t)&mp_identity_obj },
@@ -60,11 +60,11 @@ static const mp_map_elem_t microbit_bytesio_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_writable), (mp_obj_t)&microbit_file_writable_obj },
     /* Stream methods */
     { MP_OBJ_NEW_QSTR(MP_QSTR_read), (mp_obj_t)&mp_stream_read_obj },
-    { MP_OBJ_NEW_QSTR(MP_QSTR_readall), (mp_obj_t)&mp_stream_readall_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_readinto), (mp_obj_t)&mp_stream_readinto_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_readline), (mp_obj_t)&mp_stream_unbuffered_readline_obj},
     { MP_OBJ_NEW_QSTR(MP_QSTR_write), (mp_obj_t)&mp_stream_write_obj },
 };
-static MP_DEFINE_CONST_DICT(microbit_bytesio_locals_dict, microbit_bytesio_locals_dict_table);
+static MP_DEFINE_CONST_DICT(microbit_file_locals_dict, microbit_file_locals_dict_table);
 
 STATIC const mp_stream_p_t bytesio_stream_p = {
     .read = microbit_file_read,
@@ -86,23 +86,8 @@ const mp_obj_type_t microbit_bytesio_type = {
     .buffer_p = {NULL},
     .stream_p = &bytesio_stream_p,
     .bases_tuple = NULL,
-    .locals_dict = (mp_obj_dict_t*)&microbit_bytesio_locals_dict,
+    .locals_dict = (mp_obj_dict_t*)&microbit_file_locals_dict,
 };
-
-static const mp_map_elem_t microbit_textio_locals_dict_table[] = {
-    { MP_OBJ_NEW_QSTR(MP_QSTR_close), (mp_obj_t)&microbit_file_close_obj },
-    { MP_OBJ_NEW_QSTR(MP_QSTR_name), (mp_obj_t)&microbit_file_name_obj },
-    { MP_ROM_QSTR(MP_QSTR___enter__), (mp_obj_t)&mp_identity_obj },
-    { MP_ROM_QSTR(MP_QSTR___exit__), (mp_obj_t)&file___exit___obj },
-    { MP_OBJ_NEW_QSTR(MP_QSTR_writable), (mp_obj_t)&microbit_file_writable_obj },
-    /* Stream methods */
-    { MP_OBJ_NEW_QSTR(MP_QSTR_read), (mp_obj_t)&mp_stream_read_obj },
-    { MP_OBJ_NEW_QSTR(MP_QSTR_readall), (mp_obj_t)&mp_stream_readall_obj },
-    { MP_OBJ_NEW_QSTR(MP_QSTR_readline), (mp_obj_t)&mp_stream_unbuffered_readline_obj},
-    { MP_OBJ_NEW_QSTR(MP_QSTR_write), (mp_obj_t)&mp_stream_write_obj },
-};
-static MP_DEFINE_CONST_DICT(microbit_textio_locals_dict, microbit_textio_locals_dict_table);
-
 
 STATIC const mp_stream_p_t textio_stream_p = {
     .read = microbit_file_read,
@@ -125,7 +110,7 @@ const mp_obj_type_t microbit_textio_type = {
     .buffer_p = {NULL},
     .stream_p = &textio_stream_p,
     .bases_tuple = NULL,
-    .locals_dict = (mp_obj_dict_t*)&microbit_textio_locals_dict,
+    .locals_dict = (mp_obj_dict_t*)&microbit_file_locals_dict,
 };
 
 
