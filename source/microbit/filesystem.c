@@ -326,6 +326,12 @@ mp_obj_t microbit_remove(mp_obj_t filename) {
     return mp_const_none;
 }
 
+static void check_file_open(file_descriptor_obj *self) {
+    if (!self->open) {
+        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "I/O operation on closed file"));
+    }
+}
+
 static int advance(file_descriptor_obj *self, uint32_t n, bool write) {
     DEBUG(("FILE DEBUG: Advancing from chunk %d, offset %d.\r\n", self->seek_chunk, self->seek_offset));
     self->seek_offset += n;
@@ -350,7 +356,8 @@ static int advance(file_descriptor_obj *self, uint32_t n, bool write) {
 
 mp_uint_t microbit_file_read(mp_obj_t obj, void *buf, mp_uint_t size, int *errcode) {
     file_descriptor_obj *self = (file_descriptor_obj *)obj;
-    if (!self->open || self->writable || file_system_chunks[self->start_chunk].marker == FREED_CHUNK) {
+    check_file_open(self);
+    if (self->writable || file_system_chunks[self->start_chunk].marker == FREED_CHUNK) {
         *errcode = EBADF;
         return MP_STREAM_ERROR;
     }
@@ -379,7 +386,8 @@ mp_uint_t microbit_file_read(mp_obj_t obj, void *buf, mp_uint_t size, int *errco
 
 mp_uint_t microbit_file_write(mp_obj_t obj, const void *buf, mp_uint_t size, int *errcode) {
     file_descriptor_obj *self = (file_descriptor_obj *)obj;
-    if (!self->open || !self->writable || file_system_chunks[self->start_chunk].marker == FREED_CHUNK) {
+    check_file_open(self);
+    if (!self->writable || file_system_chunks[self->start_chunk].marker == FREED_CHUNK) {
         *errcode = EBADF;
         return MP_STREAM_ERROR;
     }
