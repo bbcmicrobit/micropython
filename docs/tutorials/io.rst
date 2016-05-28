@@ -45,10 +45,10 @@ when you plug in circuits and other devices via the pins.
 Bleeps and Bloops
 +++++++++++++++++
 
-The simplest thing we can attach to the device is a Piezo speaker. We're going
+The simplest thing we can attach to the device is a Piezo buzzer. We're going
 to use it for output.
 
-.. image:: piezo.jpg
+.. image:: piezo_buzzer.jpg
 
 These small devices play a high-pitched bleep when connected to a circuit. To
 attach one to your BBC micro:bit you should attach crocodile clips to pin 0 and
@@ -56,10 +56,10 @@ GND (as shown below).
 
 .. image:: pin0-gnd.png
 
-The wire from pin 0 should be attached to the positive connector on the speaker
+The wire from pin 0 should be attached to the positive connector on the buzzer
 and the wire from GND to the negative connector.
 
-The following program will cause the speaker to make a sound::
+The following program will cause the buzzer to make a sound::
 
     from microbit import *
 
@@ -80,7 +80,7 @@ Can you work out how this script works? Remember that ``1`` is "on" and ``0``
 is "off" in the digital world.
 
 The device is put into an infinite loop and immediately switches pin 0 on. This
-causes the speaker to emit a beep. While the speaker is beeping, the device
+causes the buzzer to emit a beep. While the buzzer is beeping, the device
 sleeps for twenty milliseconds and then switches pin 0 off. This gives the
 effect of a short bleep. Finally, the device sleeps for 480 milliseconds before
 looping back and starting all over again. This means you'll get two bleeps per
@@ -88,4 +88,4 @@ second (one every 500 milliseconds).
 
 We've made a very simple metronome!
 
-.. footer:: The image of the pizeo speaker is CC BY-NC-SA 3.0 from https://www.sparkfun.com/products/7950
+.. footer:: The image of the pizeo buzzer is CC BY-NC-SA 3.0 from https://www.flickr.com/photos/tronixstuff/4821350094

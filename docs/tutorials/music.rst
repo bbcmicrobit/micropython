@@ -11,7 +11,7 @@ connected to the speaker.
 
 .. note::
 
-    Do not attempt this with a Piezo speaker - such speakers are only able to
+    Do not attempt this with a Piezo buzzer - such buzzers are only able to
     play a single tone.
 
 Let's play some music::
