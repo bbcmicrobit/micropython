@@ -33,7 +33,7 @@ extern "C" {
 #include "py/runtime.h"
 #include "microbitobj.h"
 
-static uint8_t *buf_start = NULL; // XXX root pointer
+static uint8_t *buf_start = NULL; // NULL when radio is disabled.
 static uint8_t *buf_end = NULL;
 static uint8_t *rx_buf = NULL;
 
@@ -70,20 +70,26 @@ void RADIO_IRQHandler(void) {
     }
 }
 
+static void ensure_enabled(void) {
+    if (buf_start == NULL) {
+        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "radio is not enabled"));
+    }
+}
+
 static void radio_disable(void) {
     NVIC_DisableIRQ(RADIO_IRQn);
     NRF_RADIO->EVENTS_DISABLED = 0;
     NRF_RADIO->TASKS_DISABLE = 1;
     while (NRF_RADIO->EVENTS_DISABLED == 0);
+    // free any old buffers
+    if (buf_start != NULL) {
+        m_del(uint8_t, buf_start, buf_end - buf_start);
+        buf_start = NULL;
+    }
 }
 
 static void radio_enable(size_t max_payload, size_t queue_len) {
     radio_disable();
-
-    // free any old buffers
-    if (buf_start != NULL) {
-        m_del(uint8_t, buf_start, buf_end - buf_start);
-    }
 
     // allocate tx and rx buffers
     queue_len += 1; // one extra for tx buffer
@@ -154,6 +160,7 @@ static void radio_enable(size_t max_payload, size_t queue_len) {
 }
 
 void radio_send(const uint8_t *buf, size_t len) {
+    ensure_enabled();
     // construct the packet
     // note: we must send from RAM
     size_t max_len = NRF_RADIO->PCNF1 & 0xff;
@@ -230,6 +237,7 @@ STATIC mp_obj_t mod_radio_send(mp_obj_t buf_in) {
 MP_DEFINE_CONST_FUN_OBJ_1(mod_radio_send_obj, mod_radio_send);
 
 STATIC mp_obj_t mod_radio_recv(void) {
+    ensure_enabled();
     NVIC_DisableIRQ(RADIO_IRQn);
     uint8_t *buf = buf_start + (NRF_RADIO->PCNF1 & 0xff) + 1; // skip tx buf
     if (rx_buf == buf) {
