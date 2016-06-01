@@ -55,15 +55,15 @@ void RADIO_IRQHandler(void) {
 
         //printf("radio end pos=%d len=%d [%d %d %d %d]\r\n", rx_buf - buf_start, len, rx_buf[0], rx_buf[1], rx_buf[2], rx_buf[3]);
 
-        /*
+        // if the CRC was valid then accept the packet
         if (NRF_RADIO->CRCSTATUS == 1) {
-            printf("rssi: %d\r\n", -NRF_RADIO->RSSISAMPLE);
-        }
-        */
+            //printf("rssi: %d\r\n", -NRF_RADIO->RSSISAMPLE);
 
-        if (rx_buf + 1 + len + 1 + max_len <= buf_end) {
-            rx_buf += 1 + len;
-            NRF_RADIO->PACKETPTR = (uint32_t)rx_buf;
+            // only move the rx_buf pointer if there is enough room for another full packet
+            if (rx_buf + 1 + len + 1 + max_len <= buf_end) {
+                rx_buf += 1 + len;
+                NRF_RADIO->PACKETPTR = (uint32_t)rx_buf;
+            }
         }
 
         NRF_RADIO->TASKS_START = 1;
