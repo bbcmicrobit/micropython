@@ -64,3 +64,9 @@ change the scroll method's argument.
     in a way that MicroPython can't understand. Check you're not missing any
     special characters like ``"`` or ``:``. It's like putting. a full stop in
     the middle of a sentence. It's hard to understand exactly what you mean.
+
+    Your microbit may stop responding: you cannot flash new code to it or
+    enter commands into the REPL. If this happens, try power cycling it. That
+    is, unplug the USB cable (and battery cable if it's connected), then plug
+    the cable back in again. You may also need to quit and re-start your code
+    editor application.

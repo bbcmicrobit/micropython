@@ -223,7 +223,7 @@ The accelerometer is accessed via the ``accelerometer`` object::
     accelerometer.get_y()
     # read the Z axis of the device. Measured in milli-g.
     accelerometer.get_z()
-    # get all three X, Y and Z readings (listed in that order).
+    # get tuple of all three X, Y and Z readings (listed in that order).
     accelerometer.get_values()
     # return the name of the current gesture.
     accelerometer.current_gesture()

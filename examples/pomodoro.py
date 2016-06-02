@@ -41,7 +41,7 @@ def run_timer(seconds, LED_state):
         if time - timer >= interval:
             timer = time
             x, y = index_to_xy(intervals_remaining - 1)
-            display.image.set_pixel(x, y, LED_state)
+            display.set_pixel(x, y, LED_state)
             intervals_remaining -= 1
 
 
@@ -65,4 +65,3 @@ display.show(Image.NO)
 
 print("finished\n")
 print("Press the reset button to restart timer.")
-
