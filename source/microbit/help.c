@@ -105,6 +105,9 @@ STATIC const mp_doc_t help_table_instances[] = {
     {&microbit_display_clear_obj, "Use clear() to clear micro:bit's display.\n"},
     {&microbit_display_get_pixel_obj, "Use get_pixel(x, y) to return the display's brightness at LED pixel (x,y).\nBrightness can be from 0 (LED is off) to 9 (maximum LED brightness).\n"},
     {&microbit_display_set_pixel_obj, "Use set_pixel(x, y, b) to set the display at LED pixel (x,y) to brightness 'b'\nwhich can be set between 0 (off) to 9 (full brightness).\n"},
+    {&microbit_display_on_obj, "Use on() to turn on the display.\n"},
+    {&microbit_display_off_obj, "Use off() to turn off the display.\n"},
+    {&microbit_display_is_on_obj, "Use is_on() to query if the micro:bit's display is on (True) or off (False).\n"},
     // Pins
     {&microbit_p0_obj, "micro:bit's pin 0 on the gold edge connector.\n"},
     {&microbit_p1_obj, "micro:bit's pin 1 on the gold edge connector.\n"},
