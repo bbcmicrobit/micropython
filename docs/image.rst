@@ -86,6 +86,11 @@ Classes
 
         Same as ``image.shift_up(-n)``.
 
+    .. py:method:: crop(x, y, w, h)
+
+        Return a new image by cropping the picture to a width of ``w`` and a
+	height of ``h``, starting with the pixel at column ``x`` and row ``y``.
+
 
 Attributes
 ==========
