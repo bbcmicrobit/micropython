@@ -17,14 +17,16 @@ with an ARM compiler toolchain (eg arm-none-eabi-gcc and friends).
 
 Ubuntu users can install the needed packages using:
 ```
-sudo add-apt-repository -y ppa:terry.guo/gcc-arm-embedded
+sudo add-apt-repository -y ppa:team-gcc-arm-embedded
 sudo add-apt-repository -y ppa:pmiller-opensource/ppa
 sudo apt-get update
-sudo apt-get install cmake ninja-build gcc-arm-none-eabi srecord
+sudo apt-get install cmake ninja-build gcc-arm-none-eabi srecord libssl-dev
 pip3 install yotta
 ```
 
-Once all packages are installed, use yotta to build.
+Once all packages are installed, use yotta to build.  You will need an ARM
+mbed account to complete the first command, and will be prompted to create one
+as a part of the process.
 
 - Use target bbc-microbit-classic-gcc-nosd:
 
