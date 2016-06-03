@@ -36,9 +36,15 @@ typedef struct _microbit_i2c_obj_t {
     MicroBitI2C *i2c;
 } microbit_i2c_obj_t;
 
-STATIC mp_obj_t microbit_i2c_set_frequency(mp_obj_t self_in, mp_obj_t frequency_in) {
-    microbit_i2c_obj_t *self = (microbit_i2c_obj_t*)self_in;
-    int frequency = mp_obj_get_int(frequency_in);
+STATIC mp_obj_t microbit_i2c_init(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
+    static const mp_arg_t allowed_args[] = {
+        { MP_QSTR_frequency, MP_ARG_INT, {.u_int = 100000} },
+    };
+
+    microbit_i2c_obj_t *self = (microbit_i2c_obj_t*)pos_args[0];
+    mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
+    mp_arg_parse_all(n_args - 1, pos_args + 1, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
+    int frequency = args[0].u_int;
 
     /* Workaround: This is built with knowledge from
      * mbed-classic/targets/hal/TARGET_NORDIC/TARGET_MCU_NRF51822/i2c_api.c
@@ -63,7 +69,7 @@ STATIC mp_obj_t microbit_i2c_set_frequency(mp_obj_t self_in, mp_obj_t frequency_
     self->i2c->frequency(frequency);
     return mp_const_none;
 }
-MP_DEFINE_CONST_FUN_OBJ_2(microbit_i2c_set_frequency_obj, microbit_i2c_set_frequency);
+MP_DEFINE_CONST_FUN_OBJ_KW(microbit_i2c_init_obj, 1, microbit_i2c_init);
 
 STATIC mp_obj_t microbit_i2c_read(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
     static const mp_arg_t allowed_args[] = {
@@ -114,7 +120,7 @@ STATIC mp_obj_t microbit_i2c_write(mp_uint_t n_args, const mp_obj_t *pos_args, m
 MP_DEFINE_CONST_FUN_OBJ_KW(microbit_i2c_write_obj, 1, microbit_i2c_write);
 
 STATIC const mp_map_elem_t microbit_i2c_locals_dict_table[] = {
-    { MP_OBJ_NEW_QSTR(MP_QSTR_set_frequency), (mp_obj_t)&microbit_i2c_set_frequency_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_init), (mp_obj_t)&microbit_i2c_init_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_read), (mp_obj_t)&microbit_i2c_read_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_write), (mp_obj_t)&microbit_i2c_write_obj },
 };
