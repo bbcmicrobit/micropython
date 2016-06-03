@@ -22,6 +22,9 @@ You will need:
 Depending on your operating system, the installation instructions vary. Use
 the installation scenario that best suits your system.
 
+Yotta will require an ARM mbed account.  It will walk you through signing up
+if you are not registered.
+
 Installation Scenarios
 ----------------------
 
@@ -74,10 +77,10 @@ Debian and Ubuntu
 
 ::
 
-  sudo add-apt-repository -y ppa:terry.guo/gcc-arm-embedded
+  sudo add-apt-repository -y ppa:team-gcc-arm-embedded
   sudo add-apt-repository -y ppa:pmiller-opensource/ppa
   sudo apt-get update
-  sudo apt-get install cmake ninja-build gcc-arm-none-eabi srecord
+  sudo apt-get install cmake ninja-build gcc-arm-none-eabi srecord libssl-dev
   pip3 install yotta
 
 
