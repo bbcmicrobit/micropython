@@ -132,6 +132,8 @@ STATIC const mp_doc_t help_table_instances[] = {
     {&microbit_pin_is_touched_obj, "If pin is_touched() on micro:bit, return True. If nothing is touching the pin,\nreturn False.\n"},
     // I2C
     {&microbit_i2c_obj, "Communicate with one or more named devices connected to micro:bit. Each named\ndevice has an 'address', communicates using I2C, and connects to the I/O pins.\n"},
+    {&microbit_i2c_set_frequency_obj, "Use set_frequency(f) to set the I2C bus frequency.\n"},
+    {&microbit_i2c_get_frequency_obj, "Use get_frequency() to get the I2C bus frequency.\n"},
     {&microbit_i2c_read_obj, "Use read(address, n) to read 'n' bytes from the device with this address.\n"},
     {&microbit_i2c_write_obj, "Use write(address, buffer) to write to the 'buffer' of the device at this 'address'.\n"},
     // Image
