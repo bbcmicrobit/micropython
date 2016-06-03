@@ -125,7 +125,7 @@ void mp_run(void) {
         if (APPENDED_SCRIPT->header[0] == 'M' && APPENDED_SCRIPT->header[1] == 'P') {
             // run appended script
             do_strn(APPENDED_SCRIPT->str, APPENDED_SCRIPT->len);
-        } else if (main_module = microbit_file_open("main.py", 7, false, false)) {
+        } else if ((main_module = microbit_file_open("main.py", 7, false, false)) != NULL) {
             do_file(main_module);
         } else {
             // from microbit import *
