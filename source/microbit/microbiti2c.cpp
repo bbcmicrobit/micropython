@@ -141,7 +141,7 @@ const mp_obj_type_t microbit_i2c_type = {
 
 const microbit_i2c_obj_t microbit_i2c_obj = {
     {&microbit_i2c_type},
-    .i2c = &uBit.i2c,
+    .i2c = &uBit.i2c
 };
 
 }
