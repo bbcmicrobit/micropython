@@ -9,6 +9,7 @@ typedef struct _microbit_display_obj_t {
     mp_obj_base_t base;
     uint8_t image_buffer[5][5];
     uint8_t previous_brightness;
+    bool    active;
     /* Current row for strobing */
     uint8_t strobe_row;
     /* boolean histogram of brightness in buffer */

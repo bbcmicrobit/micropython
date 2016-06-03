@@ -181,6 +181,7 @@ static const DisplayPoint display_map[COLUMN_COUNT][ROW_COUNT] = {
 #define COLUMN_PINS_MASK 0x1ff0
 #define MIN_ROW_PIN 13
 #define MAX_ROW_PIN 15
+#define ROW_PINS_MASK 0xe000
 
 inline void microbit_display_obj_t::setPinsForRow(uint8_t brightness) {
     if (brightness == 0) {
@@ -190,13 +191,39 @@ inline void microbit_display_obj_t::setPinsForRow(uint8_t brightness) {
     }
 }
 
+/* This is the primary PWM driver/display driver.  It will operate on one row
+ * (9 pins) per invocation.  It will turn on LEDs with maximum brightness,
+ * then let the "callback" callback turn off the LEDs as appropriate for the
+ * required brightness level.
+ *
+ * For each row
+ *   Turn off all the LEDs in the previous row
+ *     Set the column bits high (off)
+ *     Set the row strobe low (off)
+ *   Turn on all the LEDs in the current row that have maximum brightness
+ *     Set the row strobe high (on)
+ *     Set some/all column bits low (on)
+ *   Register the PWM callback
+ *   For each callback start with brightness 0
+ *     If brightness 0
+ *       Turn off the LEDs specified at this level
+ *     Else
+ *       Turn on the LEDs specified at this level
+ *     If brightness max
+ *       Disable the PWM callback
+ *     Else
+ *       Re-queue the PWM callback after the appropriate delay
+ */
 void microbit_display_obj_t::advanceRow() {
-    // First, clear the old row.
+    /* Clear all of the column bits */
     nrf_gpio_pins_set(COLUMN_PINS_MASK);
-    // Clear the old bit pattern for this row.
+    /* Clear the strobe bit for this row */
     nrf_gpio_pin_clear(strobe_row+MIN_ROW_PIN);
 
-    // Move on to the next row.
+    /* Move to the next row.  Before this, "this row" refers to the row
+     * manipulated by the previous invocation of this function.  After this,
+     * "this row" refers to the row manipulated by the current invocation of
+     * this function. */
     strobe_row++;
 
     // Reset the row counts and bit mask when we have hit the max.
@@ -215,9 +242,9 @@ void microbit_display_obj_t::advanceRow() {
         uint8_t brightness = microbit_display_obj.image_buffer[x][y];
         pins_for_brightness[brightness] |= (1<<(i+MIN_COLUMN_PIN));
     }
-    //Set pin for row
+    /* Enable the strobe bit for this row */
     nrf_gpio_pin_set(strobe_row+MIN_ROW_PIN);
-    // Turn on any pixels that are at max
+    /* Enable the column bits for all pins that need to be on. */
     nrf_gpio_pins_clear(pins_for_brightness[MAX_BRIGHTNESS]);
 }
 
@@ -238,6 +265,8 @@ static const uint16_t render_timings[] =
 
 #define DISPLAY_TICKER_SLOT 1
 
+/* This is the PWM callback.  It is registered by the animation callback and
+ * will unregister itself when all of the brightness steps are complete. */
 static int32_t callback(void) {
     microbit_display_obj_t *display = &microbit_display_obj;
     mp_uint_t brightness = display->previous_brightness;
@@ -315,7 +344,13 @@ static void microbit_display_update(void) {
 
 #define GREYSCALE_MASK ((1<<MAX_BRIGHTNESS)-2)
 
+/* This is the top-level animation/display callback.  It is not a registered
+ * callback. */
 void microbit_display_tick(void) {
+    /* Do nothing if the display is not active. */
+    if (!microbit_display_obj.active) {
+        return;
+    }
 
     microbit_display_obj.advanceRow();
 
@@ -377,6 +412,40 @@ mp_obj_t microbit_display_scroll_func(mp_uint_t n_args, const mp_obj_t *pos_args
 }
 MP_DEFINE_CONST_FUN_OBJ_KW(microbit_display_scroll_obj, 1, microbit_display_scroll_func);
 
+mp_obj_t microbit_display_on_func(mp_obj_t obj) {
+    microbit_display_obj_t *self = (microbit_display_obj_t*)obj;
+    /* Re-enable the display loop.  This will resume any animations in
+     * progress and display any static image. */
+    self->active = true;
+    return mp_const_none;
+}
+MP_DEFINE_CONST_FUN_OBJ_1(microbit_display_on_obj, microbit_display_on_func);
+
+mp_obj_t microbit_display_off_func(mp_obj_t obj) {
+    microbit_display_obj_t *self = (microbit_display_obj_t*)obj;
+    /* Disable the display loop.  This will pause any animations in progress.
+     * It will not prevent a user from attempting to modify the state, but
+     * modifications will not appear to have any effect until the display loop
+     * is re-enabled. */
+    self->active = false;
+    /* Disable the row strobes, allowing the columns to be used freely for
+     * GPIO. */
+    nrf_gpio_pins_clear(ROW_PINS_MASK);
+    return mp_const_none;
+}
+MP_DEFINE_CONST_FUN_OBJ_1(microbit_display_off_obj, microbit_display_off_func);
+
+mp_obj_t microbit_display_is_on_func(mp_obj_t obj) {
+    microbit_display_obj_t *self = (microbit_display_obj_t*)obj;
+    if (self->active) {
+        return mp_const_true;
+    }
+    else {
+        return mp_const_false;
+    }
+}
+MP_DEFINE_CONST_FUN_OBJ_1(microbit_display_is_on_obj, microbit_display_is_on_func);
+
 void microbit_display_clear(void) {
     // Reset repeat state, cancel animation and clear screen.
     wakeup_event = false;
@@ -430,6 +499,9 @@ STATIC const mp_map_elem_t microbit_display_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_show), (mp_obj_t)&microbit_display_show_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_scroll), (mp_obj_t)&microbit_display_scroll_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_clear), (mp_obj_t)&microbit_display_clear_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_on),  (mp_obj_t)&microbit_display_on_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_off),  (mp_obj_t)&microbit_display_off_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_is_on),  (mp_obj_t)&microbit_display_is_on_obj },
 };
 
 STATIC MP_DEFINE_CONST_DICT(microbit_display_locals_dict, microbit_display_locals_dict_table);
@@ -456,6 +528,7 @@ microbit_display_obj_t microbit_display_obj = {
     {&microbit_display_type},
     { 0 },
     .previous_brightness = 0,
+    .active = 1,
     .strobe_row = 0,
     .brightnesses = 0,
     .pins_for_brightness = { 0 },
