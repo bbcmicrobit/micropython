@@ -150,7 +150,7 @@ extern struct _microbit_display_obj_t microbit_display_obj;
 extern struct _microbit_button_obj_t microbit_button_a_obj;
 extern struct _microbit_button_obj_t microbit_button_b_obj;
 extern const struct _microbit_compass_obj_t microbit_compass_obj;
-extern struct _microbit_i2c_obj_t microbit_i2c_obj;
+extern const struct _microbit_i2c_obj_t microbit_i2c_obj;
 extern struct _microbit_uart_obj_t microbit_uart_obj;
 extern struct _microbit_spi_obj_t microbit_spi_obj;
 
@@ -187,7 +187,6 @@ MP_DECLARE_CONST_FUN_OBJ(microbit_pin_is_touched_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_pin_set_analog_period_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_pin_set_analog_period_microseconds_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_i2c_set_frequency_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_i2c_get_frequency_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_i2c_read_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_i2c_write_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_image_width_obj);

@@ -34,7 +34,6 @@ extern "C" {
 typedef struct _microbit_i2c_obj_t {
     mp_obj_base_t base;
     MicroBitI2C *i2c;
-    int frequency; /* This could be a short using KHz if 2 bytes are needed */
 } microbit_i2c_obj_t;
 
 STATIC mp_obj_t microbit_i2c_set_frequency(mp_obj_t self_in, mp_obj_t frequency_in) {
@@ -47,7 +46,7 @@ STATIC mp_obj_t microbit_i2c_set_frequency(mp_obj_t self_in, mp_obj_t frequency_
      * API doesn't support return values and DAL doesn't support getting the
      * frequency (it's protected with no getter).  We prefer to raise a
      * ValueError when the frequency isn't one of the supported frequencies
-     * instead of clamping it silently, and to support getting the frequency.
+     * instead of clamping it silently.
      *
      * Note: If the default frequency changes, please update the initialized
      * value at the bottom of this file.
@@ -61,18 +60,10 @@ STATIC mp_obj_t microbit_i2c_set_frequency(mp_obj_t self_in, mp_obj_t frequency_
         nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "Invalid frequency"));
     }
 
-    self->frequency = frequency;
     self->i2c->frequency(frequency);
     return mp_const_none;
 }
 MP_DEFINE_CONST_FUN_OBJ_2(microbit_i2c_set_frequency_obj, microbit_i2c_set_frequency);
-
-STATIC mp_obj_t microbit_i2c_get_frequency(mp_obj_t self_in) {
-    microbit_i2c_obj_t *self = (microbit_i2c_obj_t*)self_in;
-
-    return mp_obj_new_int(self->frequency);
-}
-MP_DEFINE_CONST_FUN_OBJ_1(microbit_i2c_get_frequency_obj, microbit_i2c_get_frequency);
 
 STATIC mp_obj_t microbit_i2c_read(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
     static const mp_arg_t allowed_args[] = {
@@ -124,7 +115,6 @@ MP_DEFINE_CONST_FUN_OBJ_KW(microbit_i2c_write_obj, 1, microbit_i2c_write);
 
 STATIC const mp_map_elem_t microbit_i2c_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_set_frequency), (mp_obj_t)&microbit_i2c_set_frequency_obj },
-    { MP_OBJ_NEW_QSTR(MP_QSTR_get_frequency), (mp_obj_t)&microbit_i2c_get_frequency_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_read), (mp_obj_t)&microbit_i2c_read_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_write), (mp_obj_t)&microbit_i2c_write_obj },
 };
@@ -149,10 +139,9 @@ const mp_obj_type_t microbit_i2c_type = {
     .locals_dict = (mp_obj_dict_t*)&microbit_i2c_locals_dict,
 };
 
-microbit_i2c_obj_t microbit_i2c_obj = {
+const microbit_i2c_obj_t microbit_i2c_obj = {
     {&microbit_i2c_type},
     .i2c = &uBit.i2c,
-    .frequency = 100000, /* 100 KHz */
 };
 
 }
