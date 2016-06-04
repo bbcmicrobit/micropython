@@ -17,12 +17,16 @@ It can also tell you the direction of North like this::
         needle = ((15 - compass.heading()) // 30) % 12
         display.show(Image.ALL_CLOCKS[needle])
 
-**You must calibrate the compass before taking readings.** Failure to do so
-will just produce garbage results. The ``calibration`` method runs a fun little
-game to help the device work out where it is in relation to the Earth's
-magnetic field.
+.. note:: 
+
+    **You must calibrate the compass before taking readings.** Failure to do so
+    will produce garbage results. The ``calibration`` method runs a fun little
+    game to help the device work out where it is in relation to the Earth's
+    magnetic field.
+
+    To calibrate the compass, tilt the micro:bit around until a circle of pixels is
+    drawn on the outside edges of the display.
 
 The program takes the ``compass.heading`` and, using some simple yet
-cunning maths (floor division ``//`` and modulo ``%`` ~ look up what these
-mean), works out the number of the clock hand to use to display on the screen
+cunning maths, `floor division <https://en.wikipedia.org/wiki/Floor_and_ceiling_functions>`_ ``//`` and `modulo <https://en.wikipedia.org/wiki/Modulo_operation>`_ ``%``, works out the number of the clock hand to use to display on the screen
 so that it is pointing roughly North.
