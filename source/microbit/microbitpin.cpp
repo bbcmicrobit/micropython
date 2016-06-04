@@ -26,6 +26,7 @@
 
 #include "MicroBit.h"
 #include "microbitobj.h"
+#include "nrf_gpio.h"
 
 extern "C" {
 
@@ -101,6 +102,29 @@ mp_obj_t microbit_pin_is_touched(mp_obj_t self_in) {
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_pin_is_touched_obj, microbit_pin_is_touched);
 
+mp_obj_t microbit_pin_set_pull(mp_obj_t self_in, mp_obj_t pull_in) {
+    microbit_pin_obj_t *self = (microbit_pin_obj_t*)self_in;
+    nrf_gpio_pin_pull_t pull_config;
+    
+    if (!(self->pin->isInput() && self->pin->isDigital()))
+        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError,
+					   "pin is not a digital input"));
+    pull_config = (nrf_gpio_pin_pull_t)mp_obj_get_int(pull_in);
+    
+    switch(pull_config) {
+    case NRF_GPIO_PIN_PULLDOWN:
+    case NRF_GPIO_PIN_NOPULL:
+    case NRF_GPIO_PIN_PULLUP:
+        break;
+    default:
+        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError,
+					   "invalid pull direction"));
+    }
+    nrf_gpio_cfg_input((uint32_t)microbit_obj_get_pin_name(self_in), pull_config);
+    return mp_const_none;
+}
+MP_DEFINE_CONST_FUN_OBJ_2(microbit_pin_set_pull_obj, microbit_pin_set_pull);
+ 
 STATIC const mp_map_elem_t microbit_dig_pin_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_write_digital), (mp_obj_t)&microbit_pin_write_digital_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_read_digital), (mp_obj_t)&microbit_pin_read_digital_obj },
@@ -123,6 +147,10 @@ STATIC const mp_map_elem_t microbit_touch_pin_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_set_analog_period), (mp_obj_t)&microbit_pin_set_analog_period_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_set_analog_period_microseconds), (mp_obj_t)&microbit_pin_set_analog_period_microseconds_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_is_touched), (mp_obj_t)&microbit_pin_is_touched_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_set_pull), (mp_obj_t)&microbit_pin_set_pull_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_PULL_DOWN), MP_OBJ_NEW_SMALL_INT(NRF_GPIO_PIN_PULLDOWN) },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_NO_PULL), MP_OBJ_NEW_SMALL_INT(NRF_GPIO_PIN_NOPULL) },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_PULL_UP), MP_OBJ_NEW_SMALL_INT(NRF_GPIO_PIN_PULLUP) },
 };
 
 STATIC MP_DEFINE_CONST_DICT(microbit_dig_pin_locals_dict, microbit_dig_pin_locals_dict_table);
