@@ -1,50 +1,46 @@
 from microbit import *
 import random
 
-class simpleTetris():
+class SimpleTetris():
     
     def __init__(self):
-        self.screen = [[0 for i in range(5)] for j in range(5)]
+        l = "0"*5
+        self.screen = Image(":".join(l for i in range(5)))
         self.movingDot = None
         self.points = 0
         self.gameOver = False
         
-    def getImageStr(self):
-        return ":".join("".join(str(v) for v in l) for l in self.screen) 
-        
     def addDot(self,i):
-        if self.screen[0][i] == 9:
+        if self.screen.get_pixel(i, 0) == 9:
             self.gameOver = True
         else:
-            self.movingDot = (0,i)
-            self.screen[0][i] = 9
+            self.movingDot = (i,0)
+            self.screen.set_pixel(i,0,9)
     
     def stepDown(self):
         x,y = self.movingDot
-        if x+1 < 5 and self.screen[x+1][y] == 0:
-            self.screen[x][y] = 0
-            self.screen[x+1][y] = 9
-            self.movingDot = (x+1,y)
+        if y+1 < 5 and self.screen.get_pixel(x,y+1) == 0:
+            self.screen.set_pixel(x,y,0)
+            self.screen.set_pixel(x,y+1,9)
+            self.movingDot = (x,y+1)
         else:
             self.movingDot = None
             
     def move(self,v):
         x,y = self.movingDot
-        if y+v >= 0 and y+v < 5 and self.screen[x][y+v] == 0:
-            self.screen[x][y] = 0
-            self.screen[x][y+v] = 9
-            self.movingDot = (x,y+v)
+        if x+v >= 0 and x+v < 5 and self.screen.get_pixel(x+v,y) == 0:
+            self.screen.set_pixel(x,y,0)
+            self.screen.set_pixel(x+v,y,9)
+            self.movingDot = (x+v,y)
     
     def hasMovingDot(self):
         return self.movingDot != None
     
     def screenDown(self):
-        for l in range(4,0,-1):
-            self.screen[l] = self.screen[l-1]
-        self.screen[0] = [0 for i in range(5)]
+        self.screen = self.screen.shift_down(1)
     
     def checkLine(self):
-        if all(v == 9 for v in self.screen[-1]):
+        if all(self.screen.get_pixel(i,4) == 9 for i in range(5)):
             self.points+=1
             self.screenDown()
             return True
@@ -55,11 +51,11 @@ while True:
     SPEED = 500
     SPEED2 = 200
     STEP = 10
-    tetris = simpleTetris()
+    tetris = SimpleTetris()
     while not tetris.gameOver:
         if not tetris.hasMovingDot():
             tetris.addDot(random.randint(0,4))
-        display.show(Image(tetris.getImageStr()))
+        display.show(tetris.screen)
         if not tetris.gameOver:
             t0 = running_time()
             while running_time() - t0 < SPEED:
@@ -68,7 +64,7 @@ while True:
                     tetris.move(1)
                 elif reading < -20:
                     tetris.move(-1)
-                display.show(Image(tetris.getImageStr()))
+                display.show(tetris.screen)
                 sleep(SPEED2)
             tetris.stepDown()
             if tetris.checkLine():
