@@ -4,8 +4,7 @@ import random
 class SimpleTetris():
     
     def __init__(self):
-        l = "0"*5
-        self.screen = Image(":".join(l for i in range(5)))
+        self.screen = Image(5,5)
         self.movingDot = None
         self.points = 0
         self.gameOver = False
