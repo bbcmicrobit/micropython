@@ -10,7 +10,7 @@ to work with such file systems.
 However, since the micro:bit is a limited device in terms of both hardware and
 storage capacity MicroPython provides a small subset of the functions needed
 to persist data on the device. Because of memory constraints **there is
-approximately 30k of storage available** on the filesystem.
+approximately 30k of storage available** on the file system.
 
 .. warning::
 
@@ -63,7 +63,8 @@ An example session in the MicroPython REPL may look something like this::
     (for reading and writing bytes). If these are not specified then ``'t'``
     (text mode) is assumed. When in text mode the file object will be an
     instance of ``TextIO``. When in binary mode the file object will be an
-    instance of ``BytesIO``.
+    instance of ``BytesIO``. For example, use ``'rb'`` to read binary data from
+    a file.
 
 
 .. py:class::
