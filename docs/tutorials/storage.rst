@@ -219,6 +219,24 @@ for something to do. However, if you copy a special file called ``main.py``
 onto the file system, upon restarting the device, MicroPython will run the
 contents of the ``main.py`` file.
 
+Furthermore, if you copy other Python files onto the file system then you can
+``import`` them as you would any other Python module. For example, if you had
+a ``hello.py`` file that contained the following simple code::
+
+    def say_hello(name="World"):
+        return "Hello, {}!".format(name)
+
+...you could import and use the ``say_hello`` function like this::
+
+    from microbit import display
+    from hello import say_hello
+
+    display.scroll(say_hello())
+
+Of course, it results in the text "Hello, World!" scrolling across the
+display. The important point is that such an example is split between two
+Python modules and the ``import`` statement is used to share code.
+
 .. note::
     If you have flashed a script onto the device in addition to the MicroPython
     runtime, then MicroPython will ignore ``main.py`` and run your embedded
