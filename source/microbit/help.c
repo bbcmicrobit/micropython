@@ -90,9 +90,10 @@ STATIC const mp_doc_t help_table_instances[] = {
     {&microbit_button_was_pressed_obj, "Use was_pressed() to learn if the button was pressed since the last time\nwas_pressed() was called. Returns True or False.\n"},
     {&microbit_button_get_presses_obj, "Use get_presses() to get the running total of button presses, and also\nreset this counter to zero.\n"},
     // Compass 3D direction heading
+    {&microbit_compass_heading_obj, "Gives a compass heading between 0-360 with 0 as north.\n"},
     {&microbit_compass_obj, "Use micro:bit's compass to detect the direction it is heading in.\nThe compass can detect magnetic fields.\nIt uses the Earth's magnetic field to detect direction.\n"},
     {&microbit_compass_is_calibrated_obj, "If micro:bit's compass is_calibrated() and adjusted for accuracy, return True.\nIf compass hasn't been adjusted for accuracy, return False.\n"},
-    {&microbit_compass_calibrate_obj, "If micro:bit is confused, calibrate() the compass to adjust the its accuracy.\nWhen calibrating, lie it flat and spin it horizontally. During calibration,\ntry not to tilt the compass up and down.\n"},
+    {&microbit_compass_calibrate_obj, "If micro:bit is confused, calibrate() the compass to adjust the its accuracy.\nIt will ask you to rotate the device to draw a circle on the display.\n"},
     {&microbit_compass_clear_calibration_obj, "Reset micro:bit's compass using clear_calibration() command.\nRun calibrate() to improve accuracy.\n"},
     {&microbit_compass_get_x_obj, "Return magnetic field detected along micro:bit's X axis.\nUsually, the compass returns the earth's magnetic field in micro-Tesla units.\nUnless...a strong magnet is nearby!\n"},
     {&microbit_compass_get_y_obj, "Return magnetic field detected along micro:bit's Y axis.\nUsually, the compass returns the earth's magnetic field in micro-Tesla units.\nUnless...a strong magnet is nearby!\n"},
