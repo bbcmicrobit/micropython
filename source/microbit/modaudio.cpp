@@ -41,6 +41,7 @@ extern "C" {
 #include "py/obj.h"
 #include "py/objstr.h"
 #include "py/mphal.h"
+#include "py/gc.h"
 #include "microbit/modaudio.h"
 #include "microbit/microbitobj.h"
 #include "microbit/microbitpin.h"
@@ -126,7 +127,7 @@ static volatile bool running = false;
 static bool sample = false;
 static volatile bool fetcher_ready = true;
 static bool double_pin = true;
-volatile int32_t audio_buffer_read_index;
+static volatile int32_t audio_buffer_read_index;
 static PinName pin0 = P0_3;
 static PinName pin1 = P0_2;
 
@@ -181,14 +182,24 @@ static void audio_data_fetcher(void) {
     /* WARNING: We are executing in an interrupt handler.
      * If an exception is raised here then we must hand it to the VM. */
     mp_obj_t buffer_obj;
+    gc_lock();
     nlr_buf_t nlr;
     if (nlr_push(&nlr) == 0) {
         buffer_obj = mp_iternext_allow_raise(audio_source_iter);
         nlr_pop();
+        gc_unlock();
     } else {
+        gc_unlock();
         if (!mp_obj_is_subclass_fast(MP_OBJ_FROM_PTR(((mp_obj_base_t*)nlr.ret_val)->type),
             MP_OBJ_FROM_PTR(&mp_type_StopIteration))) {
             // an exception other than StopIteration, so set it for the VM to raise later
+            //If memory error, add appropriate message.
+            mp_obj_exception_t *ex = (mp_obj_exception_t *)nlr.ret_val;
+            if (mp_obj_get_type(nlr.ret_val) == &mp_type_MemoryError) {
+                ex->args = (mp_obj_tuple_t *)mp_obj_new_tuple(1, NULL);
+                ex->args->items[0] = mp_obj_new_str("Allocation in interrupt handler",
+                                                    strlen("Allocation in interrupt handler"), false);
+            }
             MP_STATE_VM(mp_pending_exception) = MP_OBJ_FROM_PTR(nlr.ret_val);
         }
         buffer_obj = MP_OBJ_STOP_ITERATION;
@@ -455,7 +466,7 @@ STATIC mp_obj_t audio_frame_subscr(mp_obj_t self_in, mp_obj_t index_in, mp_obj_t
     }
 }
 
-STATIC mp_obj_t mp_obj_audio_frame_unary_op(mp_uint_t op, mp_obj_t self_in) {
+static mp_obj_t audio_frame_unary_op(mp_uint_t op, mp_obj_t self_in) {
     (void)self_in;
     switch (op) {
         case MP_UNARY_OP_LEN: return MP_OBJ_NEW_SMALL_INT(32);
@@ -472,14 +483,115 @@ static mp_int_t audio_frame_get_buffer(mp_obj_t self_in, mp_buffer_info_t *bufin
     return 0;
 }
 
+static void add_into(microbit_audio_frame_obj_t *self, microbit_audio_frame_obj_t *other, bool add) {
+    int mult = add ? 1 : -1;
+    for (int i = 0; i < AUDIO_CHUNK_SIZE; i++) {
+        unsigned val = (int)self->data[i] + mult*(other->data[i]-128);
+        // Clamp to 0-255
+        if (val > 255) {
+            val = (1-(val>>31))*255;
+        }
+        self->data[i] = val;
+    }
+}
+
+static microbit_audio_frame_obj_t *copy(microbit_audio_frame_obj_t *self) {
+    microbit_audio_frame_obj_t *result = new_microbit_audio_frame();
+    for (int i = 0; i < AUDIO_CHUNK_SIZE; i++) {
+        result->data[i] = self->data[i];
+    }
+    return result;
+}
+
+mp_obj_t copyfrom(mp_obj_t self_in, mp_obj_t other) {
+    microbit_audio_frame_obj_t *self = (microbit_audio_frame_obj_t *)self_in;
+    if (mp_obj_get_type(other) != &microbit_audio_frame_type) {
+        nlr_raise(mp_obj_new_exception_msg(&mp_type_TypeError, "Must be an AudioBuffer"));
+    }
+    for (int i = 0; i < AUDIO_CHUNK_SIZE; i++) {
+        self->data[i] = ((microbit_audio_frame_obj_t *)other)->data[i];
+    }
+   return mp_const_none;
+}
+MP_DEFINE_CONST_FUN_OBJ_2(copyfrom_obj, copyfrom);
+
+union _i2f {
+    int32_t bits;
+    float value;
+};
+
+/* Convert a small float to a fixed-point number */
+int32_t float_to_fixed(float f, uint32_t scale) {
+    union _i2f x;
+    x.value = f;
+    int32_t sign = 1-((x.bits>>30)&2);
+    /* Subtract 127 from exponent for IEEE-754 and 23 for mantissa scaling */
+    int32_t exponent = ((x.bits>>23)&255)-150;
+    /* Mantissa scaled by 2**23, including implicit 1 */
+    int32_t mantissa = (1<<23) | ((x.bits)&((1<<23)-1));
+    int32_t shift = scale+exponent;
+    int32_t result;
+    if (shift > 0) {
+        result = sign*(mantissa<<shift);
+    } else if (shift < -31) {
+        result = 0;
+    } else {
+        result = sign*(mantissa>>(-shift));
+    }
+    // printf("Float %f: %d %d %x (scale %d) => %d\n", f, sign, exponent, mantissa, scale, result);
+    return result;
+}
+
+static void mult(microbit_audio_frame_obj_t *self, float f) {
+    int scaled = float_to_fixed(f, 15);
+    for (int i = 0; i < AUDIO_CHUNK_SIZE; i++) {
+        unsigned val = ((((int)self->data[i]-128) * scaled) >> 15)+128;
+        if (val > 255) {
+            val = (1-(val>>31))*255;
+        }
+        self->data[i] = val;
+    }
+}
+
+STATIC mp_obj_t audio_frame_binary_op(mp_uint_t op, mp_obj_t lhs_in, mp_obj_t rhs_in) {
+    if (mp_obj_get_type(lhs_in) != &microbit_audio_frame_type) {
+        return MP_OBJ_NULL; // op not supported
+    }
+    microbit_audio_frame_obj_t *lhs = (microbit_audio_frame_obj_t *)lhs_in;
+    switch(op) {
+    case MP_BINARY_OP_ADD:
+    case MP_BINARY_OP_SUBTRACT:
+        lhs = copy(lhs);
+    case MP_BINARY_OP_INPLACE_ADD:
+    case MP_BINARY_OP_INPLACE_SUBTRACT:
+        if (mp_obj_get_type(rhs_in) != &microbit_audio_frame_type) {
+            return MP_OBJ_NULL; // op not supported
+        }
+        add_into(lhs, (microbit_audio_frame_obj_t *)rhs_in, op==MP_BINARY_OP_ADD||op==MP_BINARY_OP_INPLACE_ADD);
+        return lhs;
+    case MP_BINARY_OP_MULTIPLY:
+        lhs = copy(lhs);
+    case MP_BINARY_OP_INPLACE_MULTIPLY:
+        mult(lhs, mp_obj_get_float(rhs_in));
+        return lhs;
+    }
+    return MP_OBJ_NULL; // op not supported
+}
+
+STATIC const mp_map_elem_t microbit_audio_frame_locals_dict_table[] = {
+    { MP_OBJ_NEW_QSTR(MP_QSTR_copyfrom), (mp_obj_t)&copyfrom_obj },
+};
+STATIC MP_DEFINE_CONST_DICT(microbit_audio_frame_locals_dict, microbit_audio_frame_locals_dict_table);
+
+
 const mp_obj_type_t microbit_audio_frame_type = {
     { &mp_type_type },
     .name = MP_QSTR_AudioFrame,
     .print = NULL,
     .make_new = microbit_audio_frame_new,
     .call = NULL,
-    .unary_op = mp_obj_audio_frame_unary_op,
-    .binary_op = NULL,
+    .unary_op = audio_frame_unary_op,
+    .binary_op = audio_frame_binary_op,
     .attr = NULL,
     .subscr = audio_frame_subscr,
     .getiter = NULL,
@@ -487,7 +599,7 @@ const mp_obj_type_t microbit_audio_frame_type = {
     .buffer_p = { .get_buffer = audio_frame_get_buffer },
     .stream_p = NULL,
     .bases_tuple = NULL,
-    .locals_dict = NULL,
+    .locals_dict = (mp_obj_dict_t*)&microbit_audio_frame_locals_dict_table,
 };
 
 microbit_audio_frame_obj_t *new_microbit_audio_frame(void) {

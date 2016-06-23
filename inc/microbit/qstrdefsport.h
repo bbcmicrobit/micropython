@@ -395,6 +395,7 @@ Q(AudioFrame)
 Q(pin)
 Q(return_pin)
 Q(source)
+Q(copyfrom)
 
 Q(name)
 
