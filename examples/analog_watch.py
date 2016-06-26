@@ -30,7 +30,6 @@ def ticks():
             on = not on
 
 #Run a clock speeded up 60 times, so we can watch the animation.
-display.show(ticks(), 1000)
-
-
-
+for tick in ticks():
+    display.show(tick)
+    sleep(1000)

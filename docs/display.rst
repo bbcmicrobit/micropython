@@ -47,6 +47,12 @@ Functions
     Note that the ``wait``, ``loop`` and ``clear`` arguments must be specified
     using their keyword.
 
+.. note::
+
+    If using a generator as the ``iterable``, then take care not to allocate any memory
+    in the generator as allocating memory in an interrupt is prohibited and will raise a
+    ``MemoryError``.
+
 .. py:function:: scroll(string, delay=150, \*, wait=True, loop=False, monospace=False)
 
     Similar to ``show``, but scrolls the ``string`` horizontally instead. The

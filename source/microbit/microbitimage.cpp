@@ -142,30 +142,49 @@ greyscale_t *microbit_image_obj_t::invert() {
     return result;
 }
 
+/** Internal method, does no error checking. Result is undefined if n < 0 or n > width */
+void greyscale_t::shiftLeftInplace(mp_int_t n) {
+    mp_int_t w = this->width;
+    mp_int_t h = this->height;
+    for (mp_int_t x = n; x < w; ++x) {
+        for (mp_int_t y = 0; y < h; y++) {
+             this->setPixelValue(x-n, y, this->getPixelValue(x, y));
+        }
+    }
+    for (mp_int_t x = w-n; x < w; ++x) {
+        for (mp_int_t y = 0; y < h; y++) {
+            this->setPixelValue(x, y, 0);
+        }
+    }
+}
+
+/** Internal method, does no error checking. Result is undefined if n < 0 or n > width */
+void greyscale_t::shiftRightInplace(mp_int_t n) {
+    if (n < 0)
+        return;
+    mp_int_t w = this->width;
+    mp_int_t h = this->height;
+    for (mp_int_t x = w-1; x >= n; --x) {
+        for (mp_int_t y = 0; y < h; y++) {
+             this->setPixelValue(x, y, this->getPixelValue(x-n, y));
+        }
+    }
+    for (mp_int_t x = 0; x < n; ++x) {
+        for (mp_int_t y = 0; y < h; y++) {
+            this->setPixelValue(x, y, 0);
+        }
+    }
+}
+
 greyscale_t *microbit_image_obj_t::shiftLeft(mp_int_t n) {
     mp_int_t w = this->width();
-    mp_int_t h = this->height();
-    n = max(n, -w);
-    n = min(n, w);
-    mp_int_t src_start = max(n, 0);
-    mp_int_t src_end = min(w+n,w);
-    mp_int_t dest = max(0,-n);
-    greyscale_t *result = greyscale_new(w, h);
-    for (mp_int_t x = 0; x < dest; ++x) {
-        for (mp_int_t y = 0; y < h; y++) {
-            result->setPixelValue(x, y, 0);
-        }
-    }
-    for (mp_int_t x = src_start; x < src_end; ++x) {
-        for (mp_int_t y = 0; y < h; y++) {
-             result->setPixelValue(dest, y, this->getPixelValue(x, y));
-        }
-        ++dest;
-    }
-    for (mp_int_t x = dest; x < w; ++x) {
-        for (mp_int_t y = 0; y < h; y++) {
-            result->setPixelValue(x, y, 0);
-        }
+    if (n <= -w || n >= w)
+        return greyscale_new(w, this->height());
+    greyscale_t *result = this->copy();
+    if (n >= 0) {
+        result->shiftLeftInplace(n);
+    } else {
+        result->shiftRightInplace(-n);
     }
     return result;
 }
@@ -643,7 +662,7 @@ typedef struct _scrolling_string_t {
 typedef struct _scrolling_string_iterator_t {
     mp_obj_base_t base; 
     mp_obj_t ref;
-    microbit_image_obj_t *img;
+    greyscale_t *img;
     char const *next_char;
     char const *end;
     uint8_t offset;
@@ -689,7 +708,7 @@ STATIC mp_obj_t get_microbit_scrolling_string_iter(mp_obj_t o_in) {
     scrolling_string_t *str = (scrolling_string_t *)o_in;
     scrolling_string_iterator_t *result = m_new_obj(scrolling_string_iterator_t);
     result->base.type = &microbit_scrolling_string_iterator_type;
-    result->img = BLANK_IMAGE;
+    result->img = greyscale_new(5,5);
     result->offset = 0;
     result->next_char = str->str;
     result->ref = str->ref;
@@ -714,14 +733,13 @@ STATIC mp_obj_t microbit_scrolling_string_iter_next(mp_obj_t o_in) {
     if (iter->next_char == iter->end && iter->offset == 5) {
         return MP_OBJ_STOP_ITERATION;
     }
-    greyscale_t *result = iter->img->shiftLeft(1);
-    iter->img = (microbit_image_obj_t*)result;
+    iter->img->shiftLeftInplace(1);
     const unsigned char *font_data;
     if (iter->offset < iter->offset_limit) {
         font_data = get_font_data_from_char(iter->right);
         for (int y = 0; y < 5; ++y) {
             int pix = get_pixel_from_font_data(font_data, iter->offset, y)*MAX_BRIGHTNESS;
-            result->setPixelValue(4, y, pix);
+            iter->img->setPixelValue(4, y, pix);
         }
     } else if (iter->offset == iter->offset_limit) {
         ++iter->next_char;
@@ -742,7 +760,7 @@ STATIC mp_obj_t microbit_scrolling_string_iter_next(mp_obj_t o_in) {
         }
     }
     ++iter->offset;
-    return result;
+    return iter->img;
 }
 
 const mp_obj_type_t microbit_scrolling_string_type = {
