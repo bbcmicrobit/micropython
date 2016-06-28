@@ -51,7 +51,11 @@ unsigned char trans(unsigned char mem39212, unsigned char mem39213);
 extern int bufferpos;
 extern char *buffer;
 
-
+/** Scaling c64 rate to sample rate */
+// Rate for 22.05kHz
+// #define SCALE_RATE(x) (((x)*1310)>>16)
+// Rate for 7.8125KHz
+#define SCALE_RATE(x) (((x)*464)>>16)
 
 //timetable for more accurate c64 simulation
 int timetable[5][5] =
@@ -71,7 +75,7 @@ void Output(int index, unsigned char A)
 	oldtimetableindex = index;
 	// write a little bit in advance
 	for(k=0; k<5; k++)
-		buffer[bufferpos/50 + k] = (A & 15)*16;
+		buffer[SCALE_RATE(bufferpos) + k] = (A & 15)*16;
 }
 
 
@@ -869,59 +873,7 @@ pos48159:
 		// the sample for the phoneme.
 		RenderSample(&mem66);
 		goto pos48159;
-	} //while
-
-
-    // The following code is never reached. It's left over from when
-    // the voiced sample code was part of this loop, instead of part
-    // of RenderSample();
-
-	//pos48315:
-	int tempA;
-	phase1 = A ^ 255;
-	Y = mem66;
-	do
-	{
-		//pos48321:
-
-		mem56 = 8;
-		A = Read(mem47, Y);
-
-		//pos48327:
-		do
-		{
-			//48327: ASL A
-			//48328: BCC 48337
-			tempA = A;
-			A = A << 1;
-			if ((tempA & 128) != 0)
-			{
-				X = 26;
-				// mem[54296] = X;
-				bufferpos += 150;
-				buffer[bufferpos/50] = (X & 15)*16;
-			} else
-			{
-				//mem[54296] = 6;
-				X=6; 
-				bufferpos += 150;
-				buffer[bufferpos/50] = (X & 15)*16;
-			}
-
-			for(X = wait2; X>0; X--); //wait
-			mem56--;
-		} while(mem56 != 0);
-
-		Y++;
-		phase1++;
-
-	} while (phase1 != 0);
-	//	if (phase1 != 0) goto pos48321;
-	A = 1;
-	mem44 = 1;
-	mem66 = Y;
-	Y = mem49;
-	return;
+	}
 }
 
 
