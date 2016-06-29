@@ -49,16 +49,9 @@ unsigned char trans(unsigned char mem39212, unsigned char mem39213);
 
 // contains the final soundbuffer
 extern int bufferpos;
-extern char *buffer;
-
-/** Scaling c64 rate to sample rate */
-// Rate for 22.05kHz
-// #define SCALE_RATE(x) (((x)*1310)>>16)
-// Rate for 7.8125KHz
-#define SCALE_RATE(x) (((x)*464)>>16)
 
 //timetable for more accurate c64 simulation
-int timetable[5][5] =
+const int timetable[5][5] =
 {
 	{162, 167, 167, 127, 128},
 	{226, 60, 60, 0, 0},
@@ -67,20 +60,15 @@ int timetable[5][5] =
 	{199, 0, 0, 54, 54}
 };
 
+extern void SamOutputByte(unsigned int pos, unsigned char b);
+
 void Output(int index, unsigned char A)
 {
-	static unsigned oldtimetableindex = 0;
-	int k;
-	bufferpos += timetable[oldtimetableindex][index];
-	oldtimetableindex = index;
-	// write a little bit in advance
-	for(k=0; k<5; k++)
-		buffer[SCALE_RATE(bufferpos) + k] = (A & 15)*16;
+    static unsigned oldtimetableindex = 0;
+    bufferpos += timetable[oldtimetableindex][index];
+    oldtimetableindex = index;
+    SamOutputByte(bufferpos, (A & 15)*16);
 }
-
-
-
-
 
 
 
@@ -677,9 +665,9 @@ do
 			// ML : Code47503 is division with remainder, and mem50 gets the sign
 			
 			// calculate change per frame
-			mem50 = (((char)(mem53) < 0) ? 128 : 0);
-			mem51 = abs((char)mem53) % mem40;
-			mem53 = (unsigned char)((char)(mem53) / mem40);
+			mem50 = (((signed char)(mem53) < 0) ? 128 : 0);
+			mem51 = abs((signed char)mem53) % mem40;
+			mem53 = (unsigned char)((signed char)(mem53) / mem40);
 
             // interpolation range
 			X = mem40; // number of frames to interpolate over
