@@ -439,4 +439,11 @@ Q(is_playing)
 
 Q(speech)
 Q(say)
+Q(words)
+Q(phonetic)
+Q(sing)
+Q(pitch)
+Q(speed)
+Q(mouth)
+Q(throat)
 

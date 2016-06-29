@@ -24,7 +24,6 @@
  * THE SOFTWARE.
  */
 
-#include "microbitobj.h"
 #include "py/obj.h"
 #include "filesystem.h"
 #include "py/objtuple.h"
@@ -146,7 +145,7 @@ static mp_obj_t say(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_arg
         { MP_QSTR_speed,    MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = 72} },
         { MP_QSTR_mouth,    MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = 128} },
         { MP_QSTR_throat,   MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = 128} },
-    }
+    };
     // parse args
     mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
     mp_arg_parse_all(n_args, pos_args, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
