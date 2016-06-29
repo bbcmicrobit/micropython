@@ -57,6 +57,7 @@ void SetPitch(unsigned char _pitch) {pitch = _pitch;};
 void SetMouth(unsigned char _mouth) {mouth = _mouth;};
 void SetThroat(unsigned char _throat) {throat = _throat;};
 void EnableSingmode() {singmode = 1;};
+void DisableSingmode() {singmode = 0;};
 char* GetBuffer(){return buffer;};
 int GetBufferLength(){return bufferpos;};
 

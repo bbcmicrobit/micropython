@@ -17,6 +17,8 @@ int sam_main(const char *words, bool phonetic, bool sing, int pitch, int speed, 
 
     if(sing) {
         EnableSingmode();
+    } else {
+        DisableSingmode();
     }
     SetPitch(pitch);
     SetSpeed(speed);
