@@ -5,9 +5,6 @@
 #include "render.h"
 #include "RenderTabs.h"
 
-#include "debug.h"
-extern int debug;
-
 unsigned char wait1 = 7;
 unsigned char wait2 = 6;
 
@@ -763,10 +760,6 @@ do
 	X = A;
 	mem38 = A - (A>>2);     // 3/4*A ???
 
-if (debug)
-{
-	PrintOutput(sampledConsonantFlag, frequency1, frequency2, frequency3, amplitude1, amplitude2, amplitude3, pitches);
-}
 
 // PROCESS THE FRAMES
 //

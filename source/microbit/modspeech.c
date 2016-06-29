@@ -24,6 +24,7 @@
  * THE SOFTWARE.
  */
 
+#include "microbitobj.h"
 #include "py/obj.h"
 #include "filesystem.h"
 #include "py/objtuple.h"
@@ -31,7 +32,32 @@
 #include "microbit/modaudio.h"
 #include "lib/sam/render.h"
 
-extern int sam_main(int argc, char **argv);
+#define DEFAULT_PHONETIC false
+#define DEFAULT_SING     false
+#define DEFAULT_PITCH    64
+#define DEFAULT_SPEED    72
+#define DEFAULT_MOUTH    128
+#define DEFAULT_THROAT   128
+
+typedef struct _speech_state_t {
+    bool phonetic;
+    bool sing;
+    int pitch;
+    int speed;
+    int mouth;
+    int throat;
+} speech_state_t;
+
+static speech_state_t speech_state = {
+    .phonetic = DEFAULT_PHONETIC,
+    .sing = DEFAULT_SING,
+    .pitch = DEFAULT_PITCH,
+    .speed = DEFAULT_SPEED,
+    .mouth = DEFAULT_MOUTH,
+    .throat = DEFAULT_THROAT,
+};
+
+extern int sam_main(const char *words, bool phonetic, bool sing, int pitch, int speed, int mouth, int throat);
 
 /** Called by SAM to output byte `b` at `pos` */
 
@@ -110,26 +136,48 @@ static mp_obj_t make_speech_iter(void) {
     return result;
 }
 
-static mp_obj_t say(mp_obj_t words) {
+static mp_obj_t say(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
+
+    static const mp_arg_t allowed_args[] = {
+        { MP_QSTR_words,    MP_ARG_REQUIRED | MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
+        { MP_QSTR_phonetic, MP_ARG_BOOL, {.u_bool = false} },
+        { MP_QSTR_sing,     MP_ARG_BOOL, {.u_bool = false} },
+        { MP_QSTR_pitch,    MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = 64} },
+        { MP_QSTR_speed,    MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = 72} },
+        { MP_QSTR_mouth,    MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = 128} },
+        { MP_QSTR_throat,   MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = 128} },
+    }
+    // parse args
+    mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
+    mp_arg_parse_all(n_args, pos_args, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
+
+    const char *in  = mp_obj_str_get_str(args[0].u_obj);
+    bool phonetic   = args[1].u_bool;
+    bool sing       = args[2].u_bool;
+    mp_int_t pitch  = args[3].u_int;
+    mp_int_t speed  = args[4].u_int;
+    mp_int_t mouth  = args[5].u_int;
+    mp_int_t throat = args[6].u_int;
+
+    // prepare audio
     audio_init();
     empty = new_microbit_audio_frame();
     buf = new_microbit_audio_frame();
     buf_start_pos = 0;
-    const char *in = mp_obj_str_get_str(words);
     mp_obj_t src = make_speech_iter();
     /* We need to wait for reciter to do its job */
     rendering = false;
     exhausted = false;
     audio_play_source(src, mp_const_none, mp_const_none, false);
-    char *args[2];
-    args[0] = "SAM";
-    args[1] = in;
-    sam_main(2, args);
+
+    // args
+    sam_main(in, phonetic, sing, pitch, speed, mouth, throat);
     last_frame = true;
     /* Wait for audio finish before returning */
     while (microbit_audio_is_playing());
     return mp_const_none;
-}MP_DEFINE_CONST_FUN_OBJ_1(say_obj, say);
+}
+MP_DEFINE_CONST_FUN_OBJ_KW(say_obj, 0, say);
 
 static const mp_map_elem_t _globals_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR___name__), MP_OBJ_NEW_QSTR(MP_QSTR_speech) },
