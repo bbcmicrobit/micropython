@@ -60,7 +60,6 @@ int sam_main(int argc, char **argv)
 	int i;
 	int phonetic = 0;
 
-	char* wavfilename = NULL;
 	char input[256];
 	
 	for(i=0; i<256; i++) input[i] = 0;
@@ -80,11 +79,6 @@ int sam_main(int argc, char **argv)
 			strncat(input, " ", 256);
 		} else
 		{
-			if (strcmp(&argv[i][1], "wav")==0)
-			{
-				wavfilename = argv[i+1];
-				i++;
-			} else
 			if (strcmp(&argv[i][1], "sing")==0)
 			{
 				EnableSingmode();

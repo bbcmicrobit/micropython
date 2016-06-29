@@ -419,6 +419,10 @@ Q(machine)
 Q(size)
 
 Q(is_playing)
+
+Q(speech)
+Q(say)
+
 Q(radio)
 Q(reset)
 Q(config)
