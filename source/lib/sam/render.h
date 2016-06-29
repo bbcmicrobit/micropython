@@ -4,4 +4,10 @@
 void Render();
 void SetMouthThroat(unsigned char mouth, unsigned char throat);
 
+/** Scaling c64 rate to sample rate */
+// Rate for 22.05kHz
+// #define SCALE_RATE(x) (((x)*1310)>>16)
+// Rate for 7.8125KHz
+#define SCALE_RATE(x) (((x)*420)>>16)
+
 #endif

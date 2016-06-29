@@ -21,6 +21,8 @@ typedef struct _microbit_audio_frame_obj_t {
 
 extern const mp_obj_type_t microbit_audio_frame_type;
 
+bool microbit_audio_is_playing(void);
+
 microbit_audio_frame_obj_t *new_microbit_audio_frame(void);
 
 #endif // __MICROPY_INCLUDED_MICROBIT_AUDIO_H__
