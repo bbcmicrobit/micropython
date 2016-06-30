@@ -157,25 +157,14 @@ static mp_obj_t say(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_arg
     // parse args
     mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
     mp_arg_parse_all(n_args, pos_args, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
-
     const char *in  = mp_obj_str_get_str(args[0].u_obj);
-    /*
-    HERE BE DRAGONS - not sure if/how to check for boolean with the phonetic
-    and/or sing arguments.
-
-    It appears that any boolean value evaluates as truthy and only a reset()
-    will make things false again. :-/
-    */
     if (args[1].u_obj != MP_OBJ_NULL) {
-        phonetic = args[1].u_bool;
+        phonetic = mp_obj_is_true(args[1].u_obj);
         speech_state.phonetic = phonetic;
-    }
-    if (args[2].u_obj != MP_OBJ_NULL) {
-        sing = args[2].u_bool;
+    } else if (args[2].u_obj != MP_OBJ_NULL) {
+        sing = mp_obj_is_true(args[2].u_obj);
         speech_state.sing = sing;
-    }
-    // The following is a bit less smelly, but probably not idiomatic.
-    if (args[3].u_int > 0) {
+    } else if (args[3].u_int > 0) {
         pitch = args[3].u_int;
         speech_state.pitch = pitch;
     } else if (args[4].u_int > 0) {
