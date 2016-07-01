@@ -161,19 +161,24 @@ static mp_obj_t say(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_arg
     if (args[1].u_obj != MP_OBJ_NULL) {
         phonetic = mp_obj_is_true(args[1].u_obj);
         speech_state.phonetic = phonetic;
-    } else if (args[2].u_obj != MP_OBJ_NULL) {
+    }
+    if (args[2].u_obj != MP_OBJ_NULL) {
         sing = mp_obj_is_true(args[2].u_obj);
         speech_state.sing = sing;
-    } else if (args[3].u_int > 0) {
+    }
+    if (args[3].u_int > 0) {
         pitch = args[3].u_int;
         speech_state.pitch = pitch;
-    } else if (args[4].u_int > 0) {
+    }
+    if (args[4].u_int > 0) {
         speed = args[4].u_int;
         speech_state.speed = speed;
-    } else if (args[5].u_int > 0) {
+    }
+    if (args[5].u_int > 0) {
         mouth = args[5].u_int;
         speech_state.mouth = mouth;
-    } else if (args[6].u_int > 0) {
+    }
+    if (args[6].u_int > 0) {
         throat = args[6].u_int;
         speech_state.throat = throat;
     }
