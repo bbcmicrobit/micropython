@@ -125,7 +125,8 @@ extern const struct _mp_obj_module_t speech_module;
     uint8_t *radio_buf; \
     void *pwm_next_event; \
     void *audio_buffer; \
-    void *audio_source;
+    void *audio_source; \
+    void *speech_data;
 
 // We need to provide a declaration/definition of alloca()
 #include <alloca.h>
