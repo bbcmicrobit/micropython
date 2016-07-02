@@ -31,16 +31,12 @@
 #include "microbit/modaudio.h"
 #include "lib/sam/render.h"
 
-#define DEFAULT_PHONETIC false
-#define DEFAULT_SING     false
 #define DEFAULT_PITCH    64
 #define DEFAULT_SPEED    72
 #define DEFAULT_MOUTH    128
 #define DEFAULT_THROAT   128
 
 typedef struct _speech_state_t {
-    bool phonetic;
-    bool sing;
     int pitch;
     int speed;
     int mouth;
@@ -48,8 +44,6 @@ typedef struct _speech_state_t {
 } speech_state_t;
 
 static speech_state_t speech_state = {
-    .phonetic = DEFAULT_PHONETIC,
-    .sing = DEFAULT_SING,
     .pitch = DEFAULT_PITCH,
     .speed = DEFAULT_SPEED,
     .mouth = DEFAULT_MOUTH,
@@ -135,52 +129,27 @@ static mp_obj_t make_speech_iter(void) {
     return result;
 }
 
-static mp_obj_t say(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
-
-    static const mp_arg_t allowed_args[] = {
-        { MP_QSTR_words,    MP_ARG_REQUIRED | MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
-        { MP_QSTR_phonetic, MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
-        { MP_QSTR_sing,     MP_ARG_KW_ONLY | MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
-        { MP_QSTR_pitch,    MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = -1} },
-        { MP_QSTR_speed,    MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = -1} },
-        { MP_QSTR_mouth,    MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = -1} },
-        { MP_QSTR_throat,   MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = -1} },
-    };
-    // set the current saved speech state
-    bool phonetic   = speech_state.phonetic;
-    bool sing       = speech_state.sing;
-    mp_int_t pitch  = speech_state.pitch;
-    mp_int_t speed  = speech_state.speed;
-    mp_int_t mouth  = speech_state.mouth;
-    mp_int_t throat = speech_state.throat;
-
+static mp_obj_t emit(const char *in, bool phonetic, bool sing, int pitch, int speed, int mouth, int throat) {
     // parse args
-    mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
-    mp_arg_parse_all(n_args, pos_args, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
-    const char *in  = mp_obj_str_get_str(args[0].u_obj);
-    if (args[1].u_obj != MP_OBJ_NULL) {
-        phonetic = mp_obj_is_true(args[1].u_obj);
-        speech_state.phonetic = phonetic;
-    }
-    if (args[2].u_obj != MP_OBJ_NULL) {
-        sing = mp_obj_is_true(args[2].u_obj);
-        speech_state.sing = sing;
-    }
-    if (args[3].u_int > 0) {
-        pitch = args[3].u_int;
+    if (pitch > 0) {
         speech_state.pitch = pitch;
+    } else {
+        pitch = speech_state.pitch;
     }
-    if (args[4].u_int > 0) {
-        speed = args[4].u_int;
+    if (speed > 0) {
         speech_state.speed = speed;
+    } else {
+        speed = speech_state.speed;
     }
-    if (args[5].u_int > 0) {
-        mouth = args[5].u_int;
+    if (mouth > 0) {
         speech_state.mouth = mouth;
+    } else {
+        mouth = speech_state.mouth;
     }
-    if (args[6].u_int > 0) {
-        throat = args[6].u_int;
+    if (throat > 0) {
         speech_state.throat = throat;
+    } else {
+        throat = speech_state.throat;
     }
 
     // prepare audio
@@ -201,11 +170,63 @@ static mp_obj_t say(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_arg
     while (microbit_audio_is_playing());
     return mp_const_none;
 }
+
+
+static mp_obj_t say(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
+
+    static const mp_arg_t allowed_args[] = {
+        { MP_QSTR_words,    MP_ARG_REQUIRED | MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
+        { MP_QSTR_pitch,    MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = -1} },
+        { MP_QSTR_speed,    MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = -1} },
+        { MP_QSTR_mouth,    MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = -1} },
+        { MP_QSTR_throat,   MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = -1} },
+    };
+    // parse args
+    mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
+    mp_arg_parse_all(n_args, pos_args, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
+    const char *in  = mp_obj_str_get_str(args[0].u_obj);
+    return emit(in, false, false, args[1].u_int, args[2].u_int, args[3].u_int,
+                args[4].u_int);
+}
 MP_DEFINE_CONST_FUN_OBJ_KW(say_obj, 0, say);
 
+static mp_obj_t pronounce(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
+
+    static const mp_arg_t allowed_args[] = {
+        { MP_QSTR_words,    MP_ARG_REQUIRED | MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
+        { MP_QSTR_pitch,    MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = -1} },
+        { MP_QSTR_speed,    MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = -1} },
+        { MP_QSTR_mouth,    MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = -1} },
+        { MP_QSTR_throat,   MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = -1} },
+    };
+    // parse args
+    mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
+    mp_arg_parse_all(n_args, pos_args, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
+    const char *in  = mp_obj_str_get_str(args[0].u_obj);
+    return emit(in, true, false, args[1].u_int, args[2].u_int, args[3].u_int,
+                args[4].u_int);
+}
+MP_DEFINE_CONST_FUN_OBJ_KW(pronounce_obj, 0, pronounce);
+
+static mp_obj_t sing(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
+
+    static const mp_arg_t allowed_args[] = {
+        { MP_QSTR_words,    MP_ARG_REQUIRED | MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
+        { MP_QSTR_pitch,    MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = -1} },
+        { MP_QSTR_speed,    MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = -1} },
+        { MP_QSTR_mouth,    MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = -1} },
+        { MP_QSTR_throat,   MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = -1} },
+    };
+    // parse args
+    mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
+    mp_arg_parse_all(n_args, pos_args, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
+    const char *in  = mp_obj_str_get_str(args[0].u_obj);
+    return emit(in, true, true, args[1].u_int, args[2].u_int, args[3].u_int,
+                args[4].u_int);
+}
+MP_DEFINE_CONST_FUN_OBJ_KW(sing_obj, 0, sing);
+
 STATIC mp_obj_t speech_reset(void) {
-    speech_state.phonetic = DEFAULT_PHONETIC;
-    speech_state.sing = DEFAULT_SING;
     speech_state.pitch = DEFAULT_PITCH;
     speech_state.speed = DEFAULT_SPEED;
     speech_state.mouth = DEFAULT_MOUTH;
@@ -217,6 +238,8 @@ MP_DEFINE_CONST_FUN_OBJ_0(speech_reset_obj, speech_reset);
 static const mp_map_elem_t _globals_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR___name__), MP_OBJ_NEW_QSTR(MP_QSTR_speech) },
     { MP_OBJ_NEW_QSTR(MP_QSTR_say), (mp_obj_t)&say_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_pronounce), (mp_obj_t)&pronounce_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_sing), (mp_obj_t)&sing_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_reset), (mp_obj_t)&speech_reset_obj },
 };
 
