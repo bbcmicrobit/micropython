@@ -35,6 +35,5 @@ int sam_main(const char *words, bool phonetic, bool sing, int pitch, int speed, 
 	} else strncat(input, "\x9b", 256);
 
 	SetInput(input);
-    SAMMain();
-	return 0;
+    return SAMMain();
 }

@@ -164,10 +164,14 @@ static mp_obj_t emit(const char *in, bool phonetic, bool sing, int pitch, int sp
     audio_play_source(src, mp_const_none, mp_const_none, false);
 
     // args
-    sam_main(in, phonetic, sing, pitch, speed, mouth, throat);
-    last_frame = true;
-    /* Wait for audio finish before returning */
-    while (microbit_audio_is_playing());
+    if(sam_main(in, phonetic, sing, pitch, speed, mouth, throat)) {
+        last_frame = true;
+        /* Wait for audio finish before returning */
+        while (microbit_audio_is_playing());
+    } else {
+        /* Raise a ValueError */
+        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "unable to parse input."));
+    }
     return mp_const_none;
 }
 
