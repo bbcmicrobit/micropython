@@ -25,7 +25,7 @@ unsigned char mem51;
 unsigned char mem53;
 unsigned char mem56;
 
-unsigned char mem59=0;
+const unsigned char mem59=0;
 
 unsigned char A, X, Y;
 
@@ -42,13 +42,11 @@ unsigned char phonemeLengthOutput[60]; //tab47416
 
 // contains the final soundbuffer
 int bufferpos=0;
-char *buffer = NULL;
 
 
-void SetInput(char *_input)
+void SetInput(char *_input, unsigned int l)
 {
-	int i, l;
-	l = strlen(_input);
+	int i;
 	if (l > 254) l = 254;
 	for(i=0; i<l; i++)
 		input[i] = _input[i];
@@ -60,7 +58,6 @@ void SetPitch(unsigned char _pitch) {pitch = _pitch;};
 void SetMouth(unsigned char _mouth) {mouth = _mouth;};
 void SetThroat(unsigned char _throat) {throat = _throat;};
 void EnableSingmode() {singmode = 1;};
-char* GetBuffer(){return buffer;};
 int GetBufferLength(){return bufferpos;};
 
 void Init();
@@ -91,8 +88,6 @@ void Init()
 	SetMouthThroat( mouth, throat);
 
 	bufferpos = 0;
-	// TODO, check for free the memory, 10 seconds of output should be more than enough
-	buffer = malloc(22050*10); 
 
 	/*
 	freq2data = &mem[45136];
@@ -414,8 +409,8 @@ int Parser1()
 	{
         // GET THE FIRST CHARACTER FROM THE PHONEME BUFFER
 		sign1 = input[X];
-		// TEST FOR 155 (›) END OF LINE MARKER
-		if (sign1 == 155)
+		// TEST FOR 0 -- END OF STRING MARKER
+		if (sign1 == 0)
 		{
            // MARK ENDPOINT AND RETURN
 			phonemeindex[position] = 255;      //mark endpoint

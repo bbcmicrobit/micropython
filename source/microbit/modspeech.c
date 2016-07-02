@@ -30,6 +30,12 @@
 #include "py/objstr.h"
 #include "microbit/modaudio.h"
 #include "lib/sam/render.h"
+#include "lib/sam/reciter.h"
+#include "lib/sam/sam.h"
+
+extern unsigned char speed;
+extern unsigned char pitch;
+
 
 extern int sam_main(int argc, char **argv);
 
@@ -110,30 +116,92 @@ static mp_obj_t make_speech_iter(void) {
     return result;
 }
 
-static mp_obj_t say(mp_obj_t words) {
+static mp_obj_t pronounce(mp_obj_t words) {
+    unsigned char *input;
+    mp_uint_t len, outlen;
+    reciter_memory *mem = m_new(reciter_memory, 1);
+    MP_STATE_PORT(speech_data) = mem;
+    const char *txt = mp_obj_str_get_data(words, &len);
+    if (len > 254) {
+        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "text too long."));
+    }
+    for (mp_uint_t i = 0; i < len; i++) {
+        mem->input[i] = txt[i];
+    }
+    mem->input[len] = '[';
+    if (!TextToPhonemes(mem)) {
+        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "could not parse input."));
+    }
+    for (outlen = 0; outlen < 255; outlen++) {
+        if (mem->input[outlen] == 155) {
+            break;
+        }
+    }
+    mp_obj_t res = mp_obj_new_str_of_type(&mp_type_str, mem->input, outlen);
+    // Prevent input becoming invisible to GC due to tail-call optimisation.
+    MP_STATE_PORT(speech_data) = NULL;
+    return res;
+}MP_DEFINE_CONST_FUN_OBJ_1(pronounce_obj, pronounce);
+
+#define DEFAULT_SING     false
+#define DEFAULT_PITCH    64
+#define DEFAULT_SPEED    72
+#define DEFAULT_MOUTH    128
+#define DEFAULT_THROAT   128
+
+static mp_obj_t say(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
+
+    static const mp_arg_t allowed_args[] = {
+        { MP_QSTR_sing,     MP_ARG_KW_ONLY | MP_ARG_BOOL, {.u_bool = DEFAULT_SING} },
+        { MP_QSTR_pitch,    MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = DEFAULT_PITCH} },
+        { MP_QSTR_speed,    MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = DEFAULT_SPEED} },
+        { MP_QSTR_mouth,    MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = DEFAULT_MOUTH} },
+        { MP_QSTR_throat,   MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = DEFAULT_THROAT} },
+    };
+
+    // parse args
+    mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
+    mp_arg_parse_all(n_args-1, pos_args+1, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
+
+     // set the current saved speech state
+    bool sing = args[0].u_bool;
+    pitch  = args[1].u_int;
+    speed  = args[2].u_int;
+    mp_int_t mouth  = args[3].u_int;
+    mp_int_t throat = args[4].u_int;
+    SetMouthThroat(mouth, throat);
+
+    mp_uint_t len;
+    const char *input = mp_obj_str_get_data(pos_args[0], &len);
+    // prepare audio
     audio_init();
     empty = new_microbit_audio_frame();
     buf = new_microbit_audio_frame();
     buf_start_pos = 0;
-    const char *in = mp_obj_str_get_str(words);
     mp_obj_t src = make_speech_iter();
     /* We need to wait for reciter to do its job */
     rendering = false;
     exhausted = false;
     audio_play_source(src, mp_const_none, mp_const_none, false);
-    char *args[2];
-    args[0] = "SAM";
-    args[1] = in;
-    sam_main(2, args);
+
+
+    SetInput(input, len);
+    if (!SAMMain())
+    {
+        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "SAM error"));
+    }
+
     last_frame = true;
     /* Wait for audio finish before returning */
     while (microbit_audio_is_playing());
     return mp_const_none;
-}MP_DEFINE_CONST_FUN_OBJ_1(say_obj, say);
+}
+MP_DEFINE_CONST_FUN_OBJ_KW(say_obj, 1, say);
 
 static const mp_map_elem_t _globals_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR___name__), MP_OBJ_NEW_QSTR(MP_QSTR_speech) },
     { MP_OBJ_NEW_QSTR(MP_QSTR_say), (mp_obj_t)&say_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_pronounce), (mp_obj_t)&pronounce_obj },
 };
 
 static MP_DEFINE_CONST_DICT(_globals, _globals_table);

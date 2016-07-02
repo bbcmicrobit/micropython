@@ -60,9 +60,9 @@ int sam_main(int argc, char **argv)
 	int i;
 	int phonetic = 0;
 
-	char input[256];
+	reciter_memory rec_mem;
 	
-	for(i=0; i<256; i++) input[i] = 0;
+	for(i=0; i<256; i++) rec_mem.input[i] = 0;
 
 	if (argc <= 1)
 	{
@@ -75,8 +75,8 @@ int sam_main(int argc, char **argv)
 	{
 		if (argv[i][0] != '-')
 		{
-			strncat(input, argv[i], 256);
-			strncat(input, " ", 256);
+			strncat(rec_mem.input, argv[i], 256);
+			strncat(rec_mem.input, " ", 256);
 		} else
 		{
 			if (strcmp(&argv[i][1], "sing")==0)
@@ -120,24 +120,24 @@ int sam_main(int argc, char **argv)
 		i++;
 	} //while
 
-	for(i=0; input[i] != 0; i++)
-		input[i] = toupper((int)input[i]);
+	for(i=0; rec_mem.input[i] != 0; i++)
+		rec_mem.input[i] = toupper((int)rec_mem.input[i]);
 
 	if (debug)
 	{
-		if (phonetic) printf("phonetic input: %s\n", input);
-		else printf("text input: %s\n", input); 
+		if (phonetic) printf("phonetic input: %s\n", rec_mem.input);
+		else printf("text input: %s\n", rec_mem.input);
 	}
 	
 	if (!phonetic)
 	{
-		strncat(input, "[", 256);
-		if (!TextToPhonemes(input)) return 1;
+		strncat(rec_mem.input, "[", 256);
+		if (!TextToPhonemes(&rec_mem)) return 1;
 		if (debug)
-			printf("phonetic input: %s\n", input);
-	} else strncat(input, "\x9b", 256);
+			printf("phonetic input: %s\n", rec_mem.input);
+	} else strncat(rec_mem.input, "\x9b", 256);
 
-	SetInput(input);
+	SetInput(rec_mem.input, strlen(rec_mem.input));
 	if (!SAMMain())
 	{
 		PrintUsage();

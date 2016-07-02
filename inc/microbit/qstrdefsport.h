@@ -421,7 +421,12 @@ Q(is_playing)
 
 Q(speech)
 Q(say)
-
+Q(pronounce)
+Q(sing)
+Q(pitch)
+Q(throat)
+Q(mouth)
+Q(speed)
 Q(radio)
 Q(reset)
 Q(config)

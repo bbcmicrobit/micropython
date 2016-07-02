@@ -7,25 +7,24 @@
 unsigned char A, X, Y;
 extern int debug;
 
-static unsigned char inputtemp[256];   // secure copy of input tab36096
-
-void Code37055(unsigned char mem59)
+void Code37055(reciter_memory* mem, unsigned char mem59)
 {
 	X = mem59;
 	X--;
-	A = inputtemp[X];
+	A = mem->inputtemp[X];
 	Y = A;
 	A = tab36376[Y];
-	return;
+	//return A;
 }
 
-void Code37066(unsigned char mem58)
+void Code37066(reciter_memory* mem, unsigned char mem58)
 {
 	X = mem58;
 	X++;
-	A = inputtemp[X];
+	A = mem->inputtemp[X];
 	Y = A;
 	A = tab36376[Y];
+    //return A
 }
 
 unsigned char GetRuleByte(unsigned short mem62, unsigned char Y)
@@ -41,7 +40,7 @@ unsigned char GetRuleByte(unsigned short mem62, unsigned char Y)
 	return rules[address+Y];
 }
 
-int TextToPhonemes(char *input) // Code36484
+int TextToPhonemes(reciter_memory* mem) // Code36484
 {
 	//unsigned char *tab39445 = &mem[39445];   //input and output
 	//unsigned char mem29;
@@ -58,7 +57,7 @@ int TextToPhonemes(char *input) // Code36484
 	unsigned char mem66;     // position of '('
 	unsigned char mem36653;
 
-	inputtemp[0] = 32;
+	mem->inputtemp[0] = 32;
 
 	// secure copy of input
 	// because input will be overwritten by phonemes
@@ -67,18 +66,18 @@ int TextToPhonemes(char *input) // Code36484
 	do
 	{
 		//pos36499:
-		A = input[Y] & 127;
+		A = mem->input[Y] & 127;
 		if ( A >= 112) A = A & 95;
 		else if ( A >= 96) A = A & 79;
 		
-		inputtemp[X] = A;
+		mem->inputtemp[X] = A;
 		X++;
 		Y++;
 	} while (Y != 255);
 
 
 	X = 255;
-	inputtemp[X] = 27;
+	mem->inputtemp[X] = 27;
 	mem61 = 255;
 
 
@@ -92,14 +91,14 @@ pos36554:
 	{
 		mem61++;
 		X = mem61;
-		A = inputtemp[X];
+		A = mem->inputtemp[X];
 		mem64 = A;
 		if (A == '[')
 		{
 			mem56++;
 			X = mem56;
 			A = 155;
-			input[X] = 155;
+			mem->input[X] = 155;
 			//goto pos36542;
 			//			Code39771(); 	//Code39777();
 			return 1;
@@ -108,13 +107,13 @@ pos36554:
 		//pos36579:
 		if (A != '.') break;
 		X++;
-		Y = inputtemp[X];
+		Y = mem->inputtemp[X];
 		A = tab36376[Y] & 1;
 		if(A != 0) break;
 		mem56++;
 		X = mem56;
 		A = '.';
-		input[X] = '.';
+		mem->input[X] = '.';
 	} //while
 
 
@@ -133,11 +132,11 @@ pos36554:
 	A = mem57;
 	if(A != 0) goto pos36677;
 	A = 32;
-	inputtemp[X] = ' ';
+	mem->inputtemp[X] = ' ';
 	mem56++;
 	X = mem56;
 	if (X > 120) goto pos36654;
-	input[X] = A;
+	mem->input[X] = A;
 	goto pos36554;
 
 	// -----
@@ -145,7 +144,7 @@ pos36554:
 	//36653 is unknown. Contains position
 
 pos36654:
-	input[X] = 155;
+	mem->input[X] = 155;
 	A = mem61;
 	mem36653 = A;
 	//	mem29 = A; // not used
@@ -221,7 +220,7 @@ pos36700:
 	//pos36759:
 	while(1)
 	{
-		mem57 = inputtemp[X];
+		mem57 = mem->inputtemp[X];
 		A = GetRuleByte(mem62, Y);
 		if (A != mem57) goto pos36700;
 		Y++;
@@ -249,7 +248,7 @@ pos36791:
 		A = tab36376[X] & 128;
 		if (A == 0) break;
 		X = mem59-1;
-		A = inputtemp[X];
+		A = mem->inputtemp[X];
 		if (A != mem57) goto pos36700;
 		mem59 = X;
 	}
@@ -271,7 +270,7 @@ pos36791:
 	// --------------
 
 pos36895:
-	Code37055(mem59);
+	Code37055(mem, mem59);
 	A = A & 128;
 	if(A != 0) goto pos36700;
 pos36905:
@@ -281,7 +280,7 @@ pos36905:
 	// --------------
 
 pos36910:
-	Code37055(mem59);
+	Code37055(mem, mem59);
 	A = A & 64;
 	if(A != 0) goto pos36905;
 	goto pos36700;
@@ -290,7 +289,7 @@ pos36910:
 
 
 pos36920:
-	Code37055(mem59);
+	Code37055(mem, mem59);
 	A = A & 8;
 	if(A == 0) goto pos36700;
 pos36930:
@@ -300,23 +299,23 @@ pos36930:
 	// --------------
 
 pos36935:
-	Code37055(mem59);
+	Code37055(mem, mem59);
 	A = A & 16;
 	if(A != 0) goto pos36930;
-	A = inputtemp[X];
+	A = mem->inputtemp[X];
 	if (A != 72) goto pos36700;
 	X--;
-	A = inputtemp[X];
+	A = mem->inputtemp[X];
 	if ((A == 67) || (A == 83)) goto pos36930;
 	goto pos36700;
 
 	// --------------
 
 pos36967:
-	Code37055(mem59);
+	Code37055(mem, mem59);
 	A = A & 4;
 	if(A != 0) goto pos36930;
-	A = inputtemp[X];
+	A = mem->inputtemp[X];
 	if (A != 72) goto pos36700;
 	if ((A != 84) && (A != 67) && (A != 83)) goto pos36700;
 	mem59 = X;
@@ -326,7 +325,7 @@ pos36967:
 
 
 pos37004:
-	Code37055(mem59);
+	Code37055(mem, mem59);
 	A = A & 32;
 	if(A == 0) goto pos36700;
 
@@ -339,13 +338,13 @@ pos37014:
 pos37019:
 	X = mem59;
 	X--;
-	A = inputtemp[X];
+	A = mem->inputtemp[X];
 	if ((A == 'E') || (A == 'I') || (A == 'Y')) goto pos37014;
 	goto pos36700;
 	// --------------
 
 pos37040:
-	Code37055(mem59);
+	Code37055(mem, mem59);
 	A = A & 32;
 	if(A == 0) goto pos36791;
 	mem59 = X;
@@ -356,15 +355,15 @@ pos37040:
 
 pos37077:
 	X = mem58+1;
-	A = inputtemp[X];
+	A = mem->inputtemp[X];
 	if (A != 'E') goto pos37157;
 	X++;
-	Y = inputtemp[X];
+	Y = mem->inputtemp[X];
 	X--;
 	A = tab36376[Y] & 128;
 	if(A == 0) goto pos37108;
 	X++;
-	A = inputtemp[X];
+	A = mem->inputtemp[X];
 	if (A != 'R') goto pos37113;
 pos37108:
 	mem58 = X;
@@ -373,27 +372,27 @@ pos37113:
 	if ((A == 83) || (A == 68)) goto pos37108;  // 'S' 'D'
 	if (A != 76) goto pos37135; // 'L'
 	X++;
-	A = inputtemp[X];
+	A = mem->inputtemp[X];
 	if (A != 89) goto pos36700;
 	goto pos37108;
 	
 pos37135:
 	if (A != 70) goto pos36700;
 	X++;
-	A = inputtemp[X];
+	A = mem->inputtemp[X];
 	if (A != 85) goto pos36700;
 	X++;
-	A = inputtemp[X];
+	A = mem->inputtemp[X];
 	if (A == 76) goto pos37108;
 	goto pos36700;
 
 pos37157:
 	if (A != 73) goto pos36700;
 	X++;
-	A = inputtemp[X];
+	A = mem->inputtemp[X];
 	if (A != 78) goto pos36700;
 	X++;
-	A = inputtemp[X];
+	A = mem->inputtemp[X];
 	if (A == 71) goto pos37108;
 	//pos37177:
 	goto pos36700;
@@ -419,7 +418,7 @@ pos37184:
 	A = tab36376[X] & 128;
 	if(A == 0) goto pos37226;
 	X = mem58+1;
-	A = inputtemp[X];
+	A = mem->inputtemp[X];
 	if (A != mem57) goto pos36700;
 	mem58 = X;
 	goto pos37184;
@@ -441,7 +440,7 @@ pos37226:
 
 	// --------------
 pos37295:
-	Code37066(mem58);
+	Code37066(mem, mem58);
 	A = A & 128;
 	if(A != 0) goto pos36700;
 pos37305:
@@ -451,7 +450,7 @@ pos37305:
 	// --------------
 
 pos37310:
-	Code37066(mem58);
+	Code37066(mem, mem58);
 	A = A & 64;
 	if(A != 0) goto pos37305;
 	goto pos36700;
@@ -460,7 +459,7 @@ pos37310:
 
 
 pos37320:
-	Code37066(mem58);
+	Code37066(mem, mem58);
 	A = A & 8;
 	if(A == 0) goto pos36700;
 
@@ -471,13 +470,13 @@ pos37330:
 	// --------------
 
 pos37335:
-	Code37066(mem58);
+	Code37066(mem, mem58);
 	A = A & 16;
 	if(A != 0) goto pos37330;
-	A = inputtemp[X];
+	A = mem->inputtemp[X];
 	if (A != 72) goto pos36700;
 	X++;
-	A = inputtemp[X];
+	A = mem->inputtemp[X];
 	if ((A == 67) || (A == 83)) goto pos37330;
 	goto pos36700;
 
@@ -485,10 +484,10 @@ pos37335:
 
 
 pos37367:
-	Code37066(mem58);
+	Code37066(mem, mem58);
 	A = A & 4;
 	if(A != 0) goto pos37330;
-	A = inputtemp[X];
+	A = mem->inputtemp[X];
 	if (A != 72) goto pos36700;
 	if ((A != 84) && (A != 67) && (A != 83)) goto pos36700;
 	mem58 = X;
@@ -497,7 +496,7 @@ pos37367:
 	// --------------
 
 pos37404:
-	Code37066(mem58);
+	Code37066(mem, mem58);
 	A = A & 32;
 	if(A == 0) goto pos36700;
 pos37414:
@@ -509,7 +508,7 @@ pos37414:
 pos37419:
 	X = mem58;
 	X++;
-	A = inputtemp[X];
+	A = mem->inputtemp[X];
 	if ((A == 69) || (A == 73) || (A == 89)) goto pos37414;
 	goto pos36700;
 
@@ -517,7 +516,7 @@ pos37419:
 
 pos37440:
 
-	Code37066(mem58);
+	Code37066(mem, mem58);
 	A = A & 32;
 	if(A == 0) goto pos37184;
 	mem58 = X;
@@ -538,7 +537,7 @@ pos37461:
 	{
 		mem56++;
 		X = mem56;
-		input[X] = A;
+		mem->input[X] = A;
 	}
 
 	//37478: BIT 57
