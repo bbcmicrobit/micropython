@@ -33,16 +33,9 @@
 #include "lib/sam/reciter.h"
 #include "lib/sam/sam.h"
 
-extern unsigned char speed;
-extern unsigned char pitch;
-
-
-extern int sam_main(int argc, char **argv);
-
 /** Called by SAM to output byte `b` at `pos` */
 
 static microbit_audio_frame_obj_t *buf;
-static microbit_audio_frame_obj_t *empty;
 static volatile unsigned int buf_start_pos = 0;
 static volatile unsigned char previous = 128;
 volatile bool rendering = false;
@@ -68,13 +61,18 @@ void SamOutputByte(unsigned int pos, unsigned char b) {
     return;
 }
 
+typedef struct _speech_iterator_t {
+    mp_obj_base_t base;
+    microbit_audio_frame_obj_t *buf;
+    microbit_audio_frame_obj_t *empty;
+} speech_iterator_t;
+
 /** This iterator assumes that the speech renderer can generate samples
  * at least as fast as we can consume them */
 static mp_obj_t next(mp_obj_t iter) {
-    (void)iter;
     // May need to wait for reciter to do its job before renderer generate samples.
     if (!rendering) {
-        return empty;
+        return ((speech_iterator_t *)iter)->empty;
     }
     if (exhausted) {
         return MP_OBJ_STOP_ITERATION;
@@ -105,19 +103,15 @@ const mp_obj_type_t speech_iterator_type = {
     .locals_dict = NULL,
 };
 
-
-typedef struct _speech_iterator_t {
-    mp_obj_base_t base;
-} speech_iterator_t;
-
 static mp_obj_t make_speech_iter(void) {
     speech_iterator_t *result = m_new_obj(speech_iterator_t);
     result->base.type = &speech_iterator_type;
+    result->empty = new_microbit_audio_frame();
+    result->buf = new_microbit_audio_frame();
     return result;
 }
 
 static mp_obj_t pronounce(mp_obj_t words) {
-    unsigned char *input;
     mp_uint_t len, outlen;
     reciter_memory *mem = m_new(reciter_memory, 1);
     MP_STATE_PORT(speech_data) = mem;
@@ -143,12 +137,6 @@ static mp_obj_t pronounce(mp_obj_t words) {
     return res;
 }MP_DEFINE_CONST_FUN_OBJ_1(pronounce_obj, pronounce);
 
-#define DEFAULT_SING     false
-#define DEFAULT_PITCH    64
-#define DEFAULT_SPEED    72
-#define DEFAULT_MOUTH    128
-#define DEFAULT_THROAT   128
-
 static mp_obj_t say(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
 
     static const mp_arg_t allowed_args[] = {
@@ -163,30 +151,30 @@ static mp_obj_t say(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_arg
     mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
     mp_arg_parse_all(n_args-1, pos_args+1, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
 
+    sam_memory *sam = m_new(sam_memory, 1);
+    MP_STATE_PORT(speech_data) = sam;
+
      // set the current saved speech state
-    bool sing = args[0].u_bool;
-    pitch  = args[1].u_int;
-    speed  = args[2].u_int;
-    mp_int_t mouth  = args[3].u_int;
-    mp_int_t throat = args[4].u_int;
-    SetMouthThroat(mouth, throat);
+    sam->common.singmode = args[0].u_bool;
+    sam->common.pitch  = args[1].u_int;
+    sam->common.speed  = args[2].u_int;
+    sam->common.mouth  = args[3].u_int;
+    sam->common.throat = args[4].u_int;
 
     mp_uint_t len;
     const char *input = mp_obj_str_get_data(pos_args[0], &len);
     // prepare audio
     audio_init();
-    empty = new_microbit_audio_frame();
-    buf = new_microbit_audio_frame();
     buf_start_pos = 0;
-    mp_obj_t src = make_speech_iter();
+    speech_iterator_t *src = make_speech_iter();
+    buf = src->buf;
     /* We need to wait for reciter to do its job */
     rendering = false;
     exhausted = false;
     audio_play_source(src, mp_const_none, mp_const_none, false);
 
-
-    SetInput(input, len);
-    if (!SAMMain())
+    SetInput(sam, input, len);
+    if (!SAMMain(sam))
     {
         nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "SAM error"));
     }
@@ -194,6 +182,7 @@ static mp_obj_t say(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_arg
     last_frame = true;
     /* Wait for audio finish before returning */
     while (microbit_audio_is_playing());
+    MP_STATE_PORT(speech_data) = NULL;
     return mp_const_none;
 }
 MP_DEFINE_CONST_FUN_OBJ_KW(say_obj, 1, say);

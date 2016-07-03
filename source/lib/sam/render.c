@@ -6,44 +6,16 @@
 #include "RenderTabs.h"
 
 #include "debug.h"
+#include "sam.h"
 extern int debug;
 
 unsigned char wait1 = 7;
 unsigned char wait2 = 6;
 
 extern unsigned char A, X, Y;
-extern unsigned char mem44;
-extern unsigned char mem47;
-extern unsigned char mem49;
-extern unsigned char mem39;
-extern unsigned char mem50;
-extern unsigned char mem51;
-extern unsigned char mem53;
-extern unsigned char mem56;
-
-extern unsigned char speed;
-extern unsigned char pitch;
-extern int singmode;
 
 
-extern unsigned char phonemeIndexOutput[60]; //tab47296
-extern unsigned char stressOutput[60]; //tab47365
-extern unsigned char phonemeLengthOutput[60]; //tab47416
-
-unsigned char pitches[256]; // tab43008
-
-unsigned char frequency1[256];
-unsigned char frequency2[256];
-unsigned char frequency3[256];
-
-unsigned char amplitude1[256];
-unsigned char amplitude2[256];
-unsigned char amplitude3[256];
-
-unsigned char sampledConsonantFlag[256]; // tab44800
-
-
-void AddInflection(unsigned char mem48, unsigned char phase1);
+void AddInflection(sam_memory* sam, unsigned char mem48, unsigned char phase1);
 unsigned char trans(unsigned char mem39212, unsigned char mem39213);
 
 
@@ -81,34 +53,34 @@ void Output(int index, unsigned char A)
 // 172=amplitude1
 // 173=amplitude2
 // 174=amplitude3
-unsigned char Read(unsigned char p, unsigned char Y)
+unsigned char Read(sam_memory* sam, unsigned char p, unsigned char Y)
 {
 	switch(p)
 	{
-	case 168: return pitches[Y];
-	case 169: return frequency1[Y];
-	case 170: return frequency2[Y];
-	case 171: return frequency3[Y];
-	case 172: return amplitude1[Y];
-	case 173: return amplitude2[Y];
-	case 174: return amplitude3[Y];
+	case 168: return sam->render.pitches[Y];
+	case 169: return sam->render.frequency1[Y];
+	case 170: return sam->render.frequency2[Y];
+	case 171: return sam->render.frequency3[Y];
+	case 172: return sam->render.amplitude1[Y];
+	case 173: return sam->render.amplitude2[Y];
+	case 174: return sam->render.amplitude3[Y];
 	}
 	printf("Error reading to tables");
 	return 0;
 }
 
-void Write(unsigned char p, unsigned char Y, unsigned char value)
+void Write(sam_memory* sam, unsigned char p, unsigned char Y, unsigned char value)
 {
 
 	switch(p)
 	{
-	case 168: pitches[Y] = value; return;
-	case 169: frequency1[Y] = value;  return;
-	case 170: frequency2[Y] = value;  return;
-	case 171: frequency3[Y] = value;  return;
-	case 172: amplitude1[Y] = value;  return;
-	case 173: amplitude2[Y] = value;  return;
-	case 174: amplitude3[Y] = value;  return;
+	case 168: sam->render.pitches[Y] = value; return;
+	case 169: sam->render.frequency1[Y] = value;  return;
+	case 170: sam->render.frequency2[Y] = value;  return;
+	case 171: sam->render.frequency3[Y] = value;  return;
+	case 172: sam->render.amplitude1[Y] = value;  return;
+	case 173: sam->render.amplitude2[Y] = value;  return;
+	case 174: sam->render.amplitude3[Y] = value;  return;
 	}
 	printf("Error writing to tables\n");
 }
@@ -171,15 +143,18 @@ void Write(unsigned char p, unsigned char Y, unsigned char value)
 
 
 // Code48227()
-void RenderSample(unsigned char *mem66)
+void RenderSample(sam_memory* sam, unsigned char *mem66, unsigned sample)
 {     
 	int tempA;
 	// current phoneme's index
-	mem49 = Y;
+    unsigned char mem47;
+    unsigned char mem49 = Y;
+    unsigned char mem53;
+    unsigned char mem56;
 
 	// mask low three bits and subtract 1 get value to 
 	// convert 0 bits on unvoiced samples.
-	A = mem39&7;
+	A = sample&7;
 	X = A-1;
 
     // store the result
@@ -197,12 +172,12 @@ void RenderSample(unsigned char *mem66)
 	mem47 = X;      //46016+mem[56]*256
 	
 	// voiced sample?
-	A = mem39 & 248;
+	A = sample & 248;
 	if(A == 0)
 	{
         // voiced phoneme: Z*, ZH, V*, DH
 		Y = mem49;
-		A = pitches[mem49] >> 4;
+		A = sam->render.pitches[mem49] >> 4;
 		
 		// jump to voiced portion
 		goto pos48315;
@@ -255,7 +230,6 @@ pos48296:
 	if (Y != 0) goto pos48274;
 	
 	// restore values and return
-	mem44 = 1;
 	Y = mem49;
 	return;
 
@@ -275,7 +249,7 @@ pos48315:
 
         // shift through all 8 bits
 		mem56 = 8;
-		//A = Read(mem47, Y);
+		//A = Read(sam, mem47, Y);
 		
 		// fetch value from table
 		A = sampleTable[mem47*256+Y];
@@ -317,7 +291,6 @@ pos48315:
 	
 	// restore values and return
 	A = 1;
-	mem44 = 1;
 	*mem66 = Y;
 	Y = mem49;
 	return;
@@ -342,24 +315,30 @@ pos48315:
 
 
 //void Code47574()
-void Render()
+void Render(sam_memory* sam)
 {
 	unsigned char phase1 = 0;  //mem43
 	unsigned char phase2;
 	unsigned char phase3;
 	unsigned char mem66;
-	unsigned char mem38;
+    unsigned char mem38;
+    unsigned char sample;
 	unsigned char mem40;
 	unsigned char speedcounter; //mem45
-	unsigned char mem48;
+    unsigned char mem47;
+    unsigned char mem48;
+    unsigned char mem49;
+    unsigned char mem50;
+    unsigned char mem51;
+    unsigned char mem53;
+    unsigned char mem56;
+    unsigned char mem44 = 0;
 	int i;
 	int carry;
-	if (phonemeIndexOutput[0] == 255) return; //exit if no data
+	if (sam->common.phonemeIndexOutput[0] == 255) return; //exit if no data
 
 	A = 0;
 	X = 0;
-	mem44 = 0;
-
 
 // CREATE FRAMES
 //
@@ -376,7 +355,7 @@ do
     // get the index
 	Y = mem44;
 	// get the phoneme at the index
-	A = phonemeIndexOutput[mem44];
+	A = sam->common.phonemeIndexOutput[mem44];
 	mem56 = A;
 	
 	// if terminal phoneme, exit the loop
@@ -389,44 +368,46 @@ do
 		A = 1;
 		mem48 = 1;
 		//goto pos48376;
-		AddInflection(mem48, phase1);
+		AddInflection(sam, mem48, phase1);
 	}
 	/*
 	if (A == 2) goto pos48372;
 	*/
-	
+
 	// question mark phoneme?
 	if (A == 2)
 	{
         // create falling inflection
 		mem48 = 255;
-		AddInflection(mem48, phase1);
+		AddInflection(sam, mem48, phase1);
 	}
 	//	pos47615:
 
     // get the stress amount (more stress = higher pitch)
-	phase1 = tab47492[stressOutput[Y] + 1];
+	phase1 = tab47492[sam->common.stressOutput[Y] + 1];
 	
     // get number of frames to write
-	phase2 = phonemeLengthOutput[Y];
+	phase2 = sam->common.phonemeLengthOutput[Y];
 	Y = mem56;
-	
+
 	// copy from the source to the frames list
 	do
 	{
-		frequency1[X] = freq1data[Y];     // F1 frequency
-		frequency2[X] = freq2data[Y];     // F2 frequency
-		frequency3[X] = freq3data[Y];     // F3 frequency
-		amplitude1[X] = ampl1data[Y];     // F1 amplitude
-		amplitude2[X] = ampl2data[Y];     // F2 amplitude
-		amplitude3[X] = ampl3data[Y];     // F3 amplitude
-		sampledConsonantFlag[X] = sampledConsonantFlags[Y];        // phoneme data for sampled consonants
-		pitches[X] = pitch + phase1;      // pitch
+		sam->render.frequency1[X] = freq1data[Y];     // F1 frequency
+		sam->render.frequency2[X] = freq2data[Y];     // F2 frequency
+		sam->render.frequency3[X] = freq3data[Y];     // F3 frequency
+		sam->render.amplitude1[X] = ampl1data[Y];     // F1 amplitude
+		sam->render.amplitude2[X] = ampl2data[Y];     // F2 amplitude
+		sam->render.amplitude3[X] = ampl3data[Y];     // F3 amplitude
+		sam->render.sampledConsonantFlag[X] = sampledConsonantFlags[Y];        // phoneme data for sampled consonants
+		sam->render.pitches[X] = sam->common.pitch + phase1;      // pitch
 		X++;
 		phase2--;
 	} while(phase2 != 0);
 	mem44++;
 } while(mem44 != 0);
+
+
 // -------------------
 //pos47694:
 
@@ -565,10 +546,9 @@ do
 	X = 0;
 	while(1) //while No. 1
 	{
- 
-        // get the current and following phoneme
-		Y = phonemeIndexOutput[X];
-		A = phonemeIndexOutput[X+1];
+         // get the current and following phoneme
+		Y = sam->common.phonemeIndexOutput[X];
+		A = sam->common.phonemeIndexOutput[X+1];
 		X++;
 
 		// exit loop at end token
@@ -601,7 +581,7 @@ do
 		}
 
 		Y = mem44;
-		A = mem49 + phonemeLengthOutput[mem44]; // A is mem49 + length
+		A = mem49 + sam->common.phonemeLengthOutput[mem44]; // A is mem49 + length
 		mem49 = A; // mem49 now holds length + position
 		A = A + phase2; //Maybe Problem because of carry flag
 
@@ -639,30 +619,28 @@ do
                       
 				unsigned char mem36, mem37;
 				// half the width of the current phoneme
-				mem36 = phonemeLengthOutput[mem44] >> 1;
+				mem36 = sam->common.phonemeLengthOutput[mem44] >> 1;
 				// half the width of the next phoneme
-				mem37 = phonemeLengthOutput[mem44+1] >> 1;
+				mem37 = sam->common.phonemeLengthOutput[mem44+1] >> 1;
 				// sum the values
 				mem40 = mem36 + mem37; // length of both halves
 				mem37 += mem49; // center of next phoneme
 				mem36 = mem49 - mem36; // center index of current phoneme
-				A = Read(mem47, mem37); // value at center of next phoneme - end interpolation value
+				A = Read(sam, mem47, mem37); // value at center of next phoneme - end interpolation value
 				//A = mem[address];
 				
 				Y = mem36; // start index of interpolation
-				mem53 = A - Read(mem47, mem36); // value to center of current phoneme
+				mem53 = A - Read(sam, mem47, mem36); // value to center of current phoneme
 			} else
 			{
                 // value to interpolate to
-				A = Read(mem47, speedcounter);
+				A = Read(sam, mem47, speedcounter);
 				// position to start interpolation from
 				Y = phase3;
 				// value to interpolate from
-				mem53 = A - Read(mem47, phase3);
+				mem53 = A - Read(sam, mem47, phase3);
 			}
 			
-			//Code47503(mem40);
-			// ML : Code47503 is division with remainder, and mem50 gets the sign
 			
 			// calculate change per frame
 			mem50 = (((signed char)(mem53) < 0) ? 128 : 0);
@@ -681,7 +659,7 @@ do
 			//pos47908:
 			while(1)     //while No. 3
 			{
-				A = Read(mem47, Y) + mem53; //carry alway cleared
+				A = Read(sam, mem47, Y) + mem53; //carry alway cleared
 
 				mem48 = A;
 				Y++;
@@ -701,7 +679,7 @@ do
 					} else mem48--;
 				}
 				//pos47945:
-				Write(mem47, Y, mem48);
+				Write(sam, mem47, Y, mem48);
 			} //while No. 3
 
 			//pos47952:
@@ -717,7 +695,7 @@ do
 	//pos47970:
 
     // add the length of this phoneme
-	mem48 = mem49 + phonemeLengthOutput[mem44];
+	mem48 = mem49 + sam->common.phonemeLengthOutput[mem44];
 	
 
 // ASSIGN PITCH CONTOUR
@@ -728,13 +706,13 @@ do
 
 	
 	// don't adjust pitch if in sing mode
-	if (!singmode)
+	if (!sam->common.singmode)
 	{
         // iterate through the buffer
 		for(i=0; i<256; i++) {
             // subtract half the frequency of the formant 1.
             // this adds variety to the voice
-    		pitches[i] -= (frequency1[i] >> 1);
+    		sam->render.pitches[i] -= (sam->render.frequency1[i] >> 1);
         }
 	}
 
@@ -752,20 +730,20 @@ do
 	//amplitude rescaling
 	for(i=255; i>=0; i--)
 	{
-		amplitude1[i] = amplitudeRescale[amplitude1[i]];
-		amplitude2[i] = amplitudeRescale[amplitude2[i]];
-		amplitude3[i] = amplitudeRescale[amplitude3[i]];
+		sam->render.amplitude1[i] = amplitudeRescale[sam->render.amplitude1[i]];
+		sam->render.amplitude2[i] = amplitudeRescale[sam->render.amplitude2[i]];
+		sam->render.amplitude3[i] = amplitudeRescale[sam->render.amplitude3[i]];
 	}
 
 	Y = 0;
-	A = pitches[0];
+	A = sam->render.pitches[0];
 	mem44 = A;
 	X = A;
 	mem38 = A - (A>>2);     // 3/4*A ???
 
 if (debug)
 {
-	PrintOutput(sampledConsonantFlag, frequency1, frequency2, frequency3, amplitude1, amplitude2, amplitude3, pitches);
+	PrintOutput(sam->render.sampledConsonantFlag, sam->render.frequency1, sam->render.frequency2, sam->render.frequency3, sam->render.amplitude1, sam->render.amplitude2, sam->render.amplitude3, sam->render.pitches);
 }
 
 // PROCESS THE FRAMES
@@ -782,15 +760,15 @@ if (debug)
 	while(1)
 	{
         // get the sampled information on the phoneme
-		A = sampledConsonantFlag[Y];
-		mem39 = A;
+		A = sam->render.sampledConsonantFlag[Y];
+		sample = A;
 		
 		// unvoiced sampled phoneme?
 		A = A & 248;
 		if(A != 0)
 		{
             // render the sample for the phoneme
-			RenderSample(&mem66);
+			RenderSample(sam, &mem66, sample);
 			
 			// skip ahead two in the phoneme buffer
 			Y += 2;
@@ -798,12 +776,12 @@ if (debug)
 		} else
 		{
             // simulate the glottal pulse and formants
-			mem56 = multtable[sinus[phase1] | amplitude1[Y]];
+			mem56 = multtable[sinus[phase1] | sam->render.amplitude1[Y]];
 
 			carry = 0;
-			if ((mem56+multtable[sinus[phase2] | amplitude2[Y]] ) > 255) carry = 1;
-			mem56 += multtable[sinus[phase2] | amplitude2[Y]];
-			A = mem56 + multtable[rectangle[phase3] | amplitude3[Y]] + (carry?1:0);
+			if ((mem56+multtable[sinus[phase2] | sam->render.amplitude2[Y]] ) > 255) carry = 1;
+			mem56 += multtable[sinus[phase2] | sam->render.amplitude2[Y]];
+			A = mem56 + multtable[rectangle[phase3] | sam->render.amplitude3[Y]] + (carry?1:0);
 			A = ((A + 136) & 255) >> 4; //there must be also a carry
 			//mem[54296] = A;
 			
@@ -819,7 +797,7 @@ if (debug)
 		
 		// if the frame count is zero, exit the loop
 		if(mem48 == 0) 	return;
-		speedcounter = speed;
+		speedcounter = sam->common.speed;
 pos48155:
          
         // decrement the remaining length of the glottal pulse
@@ -830,7 +808,7 @@ pos48155:
 		{
 pos48159:
             // fetch the next glottal pulse length
-			A = pitches[Y];
+			A = sam->render.pitches[Y];
 			mem44 = A;
 			A = A - (A>>2);
 			mem38 = A;
@@ -847,19 +825,19 @@ pos48159:
 		mem38--;
 		
 		// is the count non-zero and the sampled flag is zero?
-		if((mem38 != 0) || (mem39 == 0))
+		if((mem38 != 0) || (sample == 0))
 		{
             // reset the phase of the formants to match the pulse
-			phase1 += frequency1[Y];
-			phase2 += frequency2[Y];
-			phase3 += frequency3[Y];
+			phase1 += sam->render.frequency1[Y];
+			phase2 += sam->render.frequency2[Y];
+			phase3 += sam->render.frequency3[Y];
 			continue;
 		}
 		
 		// voiced sampled phonemes interleave the sample with the
 		// glottal pulse. The sample flag is non-zero, so render
 		// the sample for the phoneme.
-		RenderSample(&mem66);
+		RenderSample(sam, &mem66, sample);
 		goto pos48159;
 	}
 }
@@ -869,14 +847,14 @@ pos48159:
 // index X. A rising inflection is used for questions, and 
 // a falling inflection is used for statements.
 
-void AddInflection(unsigned char mem48, unsigned char phase1)
+void AddInflection(sam_memory* sam, unsigned char mem48, unsigned char phase1)
 {
 	//pos48372:
 	//	mem48 = 255;
 //pos48376:
            
     // store the location of the punctuation
-	mem49 = X;
+	unsigned char mem49 = X;
 	A = X;
 	int Atemp = A;
 	
@@ -888,7 +866,7 @@ void AddInflection(unsigned char mem48, unsigned char phase1)
 
 	// FIXME: Explain this fix better, it's not obvious
 	// ML : A =, fixes a problem with invalid pitch with '.'
-	while( (A=pitches[X]) == 127) X++;
+	while( (A=sam->render.pitches[X]) == 127) X++;
 
 
 pos48398:
@@ -900,7 +878,7 @@ pos48398:
 	phase1 = A;
 	
 	// set the inflection
-	pitches[X] = A;
+	sam->render.pitches[X] = A;
 pos48406:
          
     // increment the position
@@ -908,7 +886,7 @@ pos48406:
 	
 	// exit if the punctuation has been reached
 	if (X == mem49) return; //goto pos47615;
-	if (pitches[X] == 255) goto pos48406;
+	if (sam->render.pitches[X] == 255) goto pos48406;
 	A = phase1;
 	goto pos48398;
 }

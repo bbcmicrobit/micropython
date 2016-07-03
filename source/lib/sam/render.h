@@ -1,7 +1,9 @@
 #ifndef RENDER_H
 #define RENDER_H
 
-void Render();
+#include "sam.h"
+
+void Render(sam_memory* sam);
 void SetMouthThroat(unsigned char mouth, unsigned char throat);
 
 /** Scaling c64 rate to sample rate */
