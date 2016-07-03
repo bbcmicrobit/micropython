@@ -16,7 +16,6 @@ extern unsigned char A, X, Y;
 
 
 void AddInflection(sam_memory* sam, unsigned char mem48, unsigned char phase1);
-unsigned char trans(unsigned char mem39212, unsigned char mem39213);
 
 
 // contains the final soundbuffer
@@ -393,8 +392,8 @@ do
 	// copy from the source to the frames list
 	do
 	{
-		sam->render.frequency1[X] = freq1data[Y];     // F1 frequency
-		sam->render.frequency2[X] = freq2data[Y];     // F2 frequency
+		sam->render.frequency1[X] = get_freq1(Y, sam->common.mouth);     // F1 frequency
+		sam->render.frequency2[X] = get_freq2(Y, sam->common.throat);     // F2 frequency
 		sam->render.frequency3[X] = freq3data[Y];     // F3 frequency
 		sam->render.amplitude1[X] = ampl1data[Y];     // F1 amplitude
 		sam->render.amplitude2[X] = ampl2data[Y];     // F2 amplitude
@@ -891,117 +890,59 @@ pos48406:
 	goto pos48398;
 }
 
+static inline unsigned char trans(unsigned char mem39212, unsigned char mem39213) {
+    return (mem39212*mem39213) >> 7;
+}
+
 /*
     SAM's voice can be altered by changing the frequencies of the
     mouth formant (F1) and the throat formant (F2). Only the voiced
     phonemes (5-29 and 48-53) are altered.
 */
-void SetMouthThroat(unsigned char mouth, unsigned char throat)
-{
-	unsigned char initialFrequency;
-	unsigned char newFrequency = 0;
-	//unsigned char mouth; //mem38880
-	//unsigned char throat; //mem38881
 
-	// mouth formants (F1) 5..29
-	unsigned char mouthFormants5_29[30] = {
-		0, 0, 0, 0, 0, 10,
-		14, 19, 24, 27, 23, 21, 16, 20, 14, 18, 14, 18, 18,
-		16, 13, 15, 11, 18, 14, 11, 9, 6, 6, 6};
+static const unsigned char recalculate[] = {
+        0, 0, 0, 0, 0, 1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+        1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 1, 1,
+        1, 1, 1, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0
+};
 
-	// throat formants (F2) 5..29
-	unsigned char throatFormants5_29[30] = {
-	255, 255,
-	255, 255, 255, 84, 73, 67, 63, 40, 44, 31, 37, 45, 73, 49,
-	36, 30, 51, 37, 29, 69, 24, 50, 30, 24, 83, 46, 54, 86};
+static const unsigned char mouth_formants[] = {
+    0, 0, 0, 0, 0, 10, 14, 19, 24, 27,
+    23, 21, 16, 20, 14, 18, 14, 18, 18, 16,
+    13, 15, 11, 18, 14, 11, 9, 6, 6, 6,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 19, 27,
+    21, 27, 18, 13, 0,
+};
 
-	// there must be no zeros in this 2 tables
-	// formant 1 frequencies (mouth) 48..53
-	unsigned char mouthFormants48_53[6] = {19, 27, 21, 27, 18, 13};
-       
-	// formant 2 frequencies (throat) 48..53
-	unsigned char throatFormants48_53[6] = {72, 39, 31, 43, 30, 34};
 
-	unsigned char pos = 5; //mem39216
-//pos38942:
-	// recalculate formant frequencies 5..29 for the mouth (F1) and throat (F2)
-	while(pos != 30)
-	{
-		// recalculate mouth frequency
-		initialFrequency = mouthFormants5_29[pos];
-		if (initialFrequency != 0) newFrequency = trans(mouth, initialFrequency);
-		freq1data[pos] = newFrequency;
-               
-		// recalculate throat frequency
-		initialFrequency = throatFormants5_29[pos];
-		if(initialFrequency != 0) newFrequency = trans(throat, initialFrequency);
-		freq2data[pos] = newFrequency;
-		pos++;
-	}
-
-//pos39059:
-	// recalculate formant frequencies 48..53
-	pos = 48;
-	Y = 0;
-    while(pos != 54)
-    {
-		// recalculate F1 (mouth formant)
-		initialFrequency = mouthFormants48_53[Y];
-		newFrequency = trans(mouth, initialFrequency);
-		freq1data[pos] = newFrequency;
-           
-		// recalculate F2 (throat formant)
-		initialFrequency = throatFormants48_53[Y];
-		newFrequency = trans(throat, initialFrequency);
-		freq2data[pos] = newFrequency;
-		Y++;
-		pos++;
-	}
+unsigned char get_freq1(unsigned char pos, unsigned char mouth) {
+    if (recalculate[pos]) {
+        return trans(mouth, mouth_formants[pos]);
+    } else {
+        return freq1data[pos];
+    }
 }
 
+static const unsigned char throat_formants[] = {
+    0, 0, 0, 0, 0, 84, 73, 67, 63, 40,
+    44, 31, 37, 45, 73, 49, 36, 30, 51, 37,
+    29, 69, 24, 50, 30, 24, 83, 46, 54, 86,
+    0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+    0, 0, 0, 0, 0, 0, 0, 0, 72, 39,
+    31, 43, 30, 34, 0,
+};
 
-//return = (mem39212*mem39213) >> 1
-unsigned char trans(unsigned char mem39212, unsigned char mem39213)
-{
-	//pos39008:
-	unsigned char carry;
-	int temp;
-	unsigned char mem39214, mem39215;
-	A = 0;
-	mem39215 = 0;
-	mem39214 = 0;
-	X = 8;
-	do
-	{
-		carry = mem39212 & 1;
-		mem39212 = mem39212 >> 1;
-		if (carry != 0)
-		{
-			/*
-						39018: LSR 39212
-						39021: BCC 39033
-						*/
-			carry = 0;
-			A = mem39215;
-			temp = (int)A + (int)mem39213;
-			A = A + mem39213;
-			if (temp > 255) carry = 1;
-			mem39215 = A;
-		}
-		temp = mem39215 & 1;
-		mem39215 = (mem39215 >> 1) | (carry?128:0);
-		carry = temp;
-		//39033: ROR 39215
-		X--;
-	} while (X != 0);
-	temp = mem39214 & 128;
-	mem39214 = (mem39214 << 1) | (carry?1:0);
-	carry = temp;
-	temp = mem39215 & 128;
-	mem39215 = (mem39215 << 1) | (carry?1:0);
-	carry = temp;
-
-	return mem39215;
+unsigned char get_freq2(unsigned char pos, unsigned char throat) {
+    if (recalculate[pos]) {
+        return trans(throat, throat_formants[pos]);
+    } else {
+        return freq2data[pos];
+    }
 }
-
-
