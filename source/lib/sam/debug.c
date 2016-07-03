@@ -1,9 +1,10 @@
 #include<stdio.h>
+#include "sam.h"
 
 extern unsigned char signInputTable1[];
 extern unsigned char signInputTable2[];
 
-void PrintPhonemes(unsigned char *phonemeindex, unsigned char *phonemeLength, unsigned char *stress)
+void PrintPhonemes(phoneme_t *phonemes)
 {
 	int i = 0;
 	printf("===========================================\n");
@@ -12,20 +13,20 @@ void PrintPhonemes(unsigned char *phonemeindex, unsigned char *phonemeLength, un
 	printf(" idx    phoneme  length  stress\n");
 	printf("------------------------------\n");
 
-	while((phonemeindex[i] != 255) && (i < 255))
+	while((phonemes[i].index != PHONEME_END) && (i < 255))
 	{
-		if (phonemeindex[i] < 81)
+		if (phonemes[i].index < 81)
 		{
 			printf(" %3i      %c%c      %3i       %i\n",
-			phonemeindex[i],
-			signInputTable1[phonemeindex[i]],
-			signInputTable2[phonemeindex[i]],
-			phonemeLength[i],
-			stress[i]
+			phonemes[i].index,
+			signInputTable1[phonemes[i].index],
+			signInputTable2[phonemes[i].index],
+			phonemes[i].length,
+			phonemes[i].stress
 			);
 		} else
 		{
-			printf(" %3i      ??      %3i       %i\n", phonemeindex[i], phonemeLength[i], stress[i]);
+			printf(" %3i      ??      %3i       %i\n", phonemes[i].index, phonemes[i].length, phonemes[i].stress);
 		}
 		i++;
 	}

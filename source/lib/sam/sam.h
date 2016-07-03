@@ -7,11 +7,21 @@
 #define DEFAULT_MOUTH    128
 #define DEFAULT_THROAT   128
 
+typedef struct _phoneme_t {
+    uint16_t index:7;
+    uint16_t length:5;
+    uint16_t stress:4; //numbers from 0 to 8
+} phoneme_t;
+
+enum {
+    PHONEME_IGNORE=0,
+    PHONEME_END=127,
+    PHONEME_END_BREATH=126
+};
+
 typedef struct _prepare_memory {
     char input[256];
-    unsigned char stress[256]; //numbers from 0 to 8
-    unsigned char phonemeLength[256];
-    unsigned char phonemeindex[256];
+    phoneme_t phoneme_input[256];
 } prepare_memory;
 
 typedef struct _common_memory {
@@ -20,9 +30,7 @@ typedef struct _common_memory {
     unsigned char mouth;
     unsigned char throat;
     int singmode;
-    unsigned char phonemeIndexOutput[60];
-    unsigned char stressOutput[60];
-    unsigned char phonemeLengthOutput[60];
+    phoneme_t phoneme_output[60];
 } common_memory;
 
 typedef struct _render_memory {

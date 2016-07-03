@@ -1,7 +1,9 @@
 #ifndef DEBUG_H
 #define DEBUG_H
 
-void PrintPhonemes(unsigned char *phonemeindex, unsigned char *phonemeLength, unsigned char *stress);
+#include "sam.h"
+
+void PrintPhonemes(phoneme_t *phonemes);
 void PrintOutput(
 	unsigned char *flag, 
 	unsigned char *f1, 

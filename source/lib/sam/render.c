@@ -335,7 +335,7 @@ void Render(sam_memory* sam)
     unsigned char mem44 = 0;
 	int i;
 	int carry;
-	if (sam->common.phonemeIndexOutput[0] == 255) return; //exit if no data
+	if (sam->common.phoneme_output[0].index == PHONEME_END) return; //exit if no data
 
 	A = 0;
 	X = 0;
@@ -355,11 +355,11 @@ do
     // get the index
 	Y = mem44;
 	// get the phoneme at the index
-	A = sam->common.phonemeIndexOutput[mem44];
+	A = sam->common.phoneme_output[mem44].index;
 	mem56 = A;
 	
 	// if terminal phoneme, exit the loop
-	if (A == 255) break;
+	if (A == PHONEME_END) break;
 	
 	// period phoneme *.
 	if (A == 1)
@@ -384,10 +384,10 @@ do
 	//	pos47615:
 
     // get the stress amount (more stress = higher pitch)
-	phase1 = tab47492[sam->common.stressOutput[Y] + 1];
+	phase1 = tab47492[sam->common.phoneme_output[Y].stress + 1];
 	
     // get number of frames to write
-	phase2 = sam->common.phonemeLengthOutput[Y];
+	phase2 = sam->common.phoneme_output[Y].length;
 	Y = mem56;
 
 	// copy from the source to the frames list
@@ -547,12 +547,12 @@ do
 	while(1) //while No. 1
 	{
          // get the current and following phoneme
-		Y = sam->common.phonemeIndexOutput[X];
-		A = sam->common.phonemeIndexOutput[X+1];
+		Y = sam->common.phoneme_output[X].index;
+		A = sam->common.phoneme_output[X+1].index;
 		X++;
 
 		// exit loop at end token
-		if (A == 255) break;//goto pos47970;
+		if (A == PHONEME_END) break;//goto pos47970;
 
 
         // get the ranking of each phoneme
@@ -581,7 +581,7 @@ do
 		}
 
 		Y = mem44;
-		A = mem49 + sam->common.phonemeLengthOutput[mem44]; // A is mem49 + length
+		A = mem49 + sam->common.phoneme_output[mem44].length; // A is mem49 + length
 		mem49 = A; // mem49 now holds length + position
 		A = A + phase2; //Maybe Problem because of carry flag
 
@@ -619,9 +619,9 @@ do
                       
 				unsigned char mem36, mem37;
 				// half the width of the current phoneme
-				mem36 = sam->common.phonemeLengthOutput[mem44] >> 1;
+				mem36 = sam->common.phoneme_output[mem44].length >> 1;
 				// half the width of the next phoneme
-				mem37 = sam->common.phonemeLengthOutput[mem44+1] >> 1;
+				mem37 = sam->common.phoneme_output[mem44+1].length >> 1;
 				// sum the values
 				mem40 = mem36 + mem37; // length of both halves
 				mem37 += mem49; // center of next phoneme
@@ -695,7 +695,7 @@ do
 	//pos47970:
 
     // add the length of this phoneme
-	mem48 = mem49 + sam->common.phonemeLengthOutput[mem44];
+	mem48 = mem49 + sam->common.phoneme_output[mem44].length;
 	
 
 // ASSIGN PITCH CONTOUR
