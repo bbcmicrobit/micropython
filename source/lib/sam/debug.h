@@ -4,15 +4,7 @@
 #include "sam.h"
 
 void PrintPhonemes(phoneme_t *phonemes);
-void PrintOutput(
-	unsigned char *flag, 
-	unsigned char *f1, 
-	unsigned char *f2, 
-	unsigned char *f3,
-	unsigned char *a1, 
-	unsigned char *a2, 
-	unsigned char *a3,
-	unsigned char *p);
+void PrintOutput(unsigned char *flags, render_freq_amp_t *frames, unsigned char *pitches);
 
 void PrintRule(int offset);
 

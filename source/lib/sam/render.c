@@ -56,13 +56,13 @@ unsigned char Read(sam_memory* sam, unsigned char p, unsigned char Y)
 {
 	switch(p)
 	{
-	case 168: return sam->render.pitches[Y];
-	case 169: return sam->render.frequency1[Y];
-	case 170: return sam->render.frequency2[Y];
-	case 171: return sam->render.frequency3[Y];
-	case 172: return sam->render.amplitude1[Y];
-	case 173: return sam->render.amplitude2[Y];
-	case 174: return sam->render.amplitude3[Y];
+	case 168: return sam->render.pitch[Y];
+	case 169: return sam->render.freq_amp[Y].freq1;
+	case 170: return sam->render.freq_amp[Y].freq2;
+	case 171: return sam->render.freq_amp[Y].freq3;
+	case 172: return sam->render.freq_amp[Y].amp1;
+	case 173: return sam->render.freq_amp[Y].amp2;
+	case 174: return sam->render.freq_amp[Y].amp3;
 	}
 	printf("Error reading to tables");
 	return 0;
@@ -73,13 +73,13 @@ void Write(sam_memory* sam, unsigned char p, unsigned char Y, unsigned char valu
 
 	switch(p)
 	{
-	case 168: sam->render.pitches[Y] = value; return;
-	case 169: sam->render.frequency1[Y] = value;  return;
-	case 170: sam->render.frequency2[Y] = value;  return;
-	case 171: sam->render.frequency3[Y] = value;  return;
-	case 172: sam->render.amplitude1[Y] = value;  return;
-	case 173: sam->render.amplitude2[Y] = value;  return;
-	case 174: sam->render.amplitude3[Y] = value;  return;
+	case 168: sam->render.pitch[Y] = value; return;
+	case 169: sam->render.freq_amp[Y].freq1 = value;  return;
+	case 170: sam->render.freq_amp[Y].freq2 = value;  return;
+	case 171: sam->render.freq_amp[Y].freq3 = value;  return;
+	case 172: sam->render.freq_amp[Y].amp1 = value;  return;
+	case 173: sam->render.freq_amp[Y].amp2 = value;  return;
+	case 174: sam->render.freq_amp[Y].amp3 = value;  return;
 	}
 	printf("Error writing to tables\n");
 }
@@ -176,7 +176,7 @@ void RenderSample(sam_memory* sam, unsigned char *mem66, unsigned sample)
 	{
         // voiced phoneme: Z*, ZH, V*, DH
 		Y = mem49;
-		A = sam->render.pitches[mem49] >> 4;
+		A = sam->render.pitch[9] >> 4;
 		
 		// jump to voiced portion
 		goto pos48315;
@@ -392,14 +392,14 @@ do
 	// copy from the source to the frames list
 	do
 	{
-		sam->render.frequency1[X] = get_freq1(Y, sam->common.mouth);     // F1 frequency
-		sam->render.frequency2[X] = get_freq2(Y, sam->common.throat);     // F2 frequency
-		sam->render.frequency3[X] = freq3data[Y];     // F3 frequency
-		sam->render.amplitude1[X] = ampl1data[Y];     // F1 amplitude
-		sam->render.amplitude2[X] = ampl2data[Y];     // F2 amplitude
-		sam->render.amplitude3[X] = ampl3data[Y];     // F3 amplitude
-		sam->render.sampledConsonantFlag[X] = sampledConsonantFlags[Y];        // phoneme data for sampled consonants
-		sam->render.pitches[X] = sam->common.pitch + phase1;      // pitch
+		sam->render.freq_amp[X].freq1 = get_freq1(Y, sam->common.mouth);     // F1 frequency
+		sam->render.freq_amp[X].freq2 = get_freq2(Y, sam->common.throat);     // F2 frequency
+		sam->render.freq_amp[X].freq3 = freq3data[Y];     // F3 frequency
+		sam->render.freq_amp[X].amp1 = ampl1data[Y];     // F1 amplitude
+		sam->render.freq_amp[X].amp2 = ampl2data[Y];     // F2 amplitude
+		sam->render.freq_amp[X].amp3 = ampl3data[Y];     // F3 amplitude
+		sam->render.flags[X] = sampledConsonantFlags[Y];        // phoneme data for sampled consonants
+		sam->render.pitch[X] = sam->common.pitch + phase1;      // pitch
 		X++;
 		phase2--;
 	} while(phase2 != 0);
@@ -711,7 +711,7 @@ do
 		for(i=0; i<256; i++) {
             // subtract half the frequency of the formant 1.
             // this adds variety to the voice
-    		sam->render.pitches[i] -= (sam->render.frequency1[i] >> 1);
+    		sam->render.pitch[i] -= (sam->render.freq_amp[i].freq1 >> 1);
         }
 	}
 
@@ -729,20 +729,20 @@ do
 	//amplitude rescaling
 	for(i=255; i>=0; i--)
 	{
-		sam->render.amplitude1[i] = amplitudeRescale[sam->render.amplitude1[i]];
-		sam->render.amplitude2[i] = amplitudeRescale[sam->render.amplitude2[i]];
-		sam->render.amplitude3[i] = amplitudeRescale[sam->render.amplitude3[i]];
+		sam->render.freq_amp[i].amp1 = amplitudeRescale[sam->render.freq_amp[i].amp1];
+		sam->render.freq_amp[i].amp2 = amplitudeRescale[sam->render.freq_amp[i].amp2];
+		sam->render.freq_amp[i].amp3 = amplitudeRescale[sam->render.freq_amp[i].amp3];
 	}
 
 	Y = 0;
-	A = sam->render.pitches[0];
+	A = sam->render.pitch[0];
 	mem44 = A;
 	X = A;
 	mem38 = A - (A>>2);     // 3/4*A ???
 
 if (debug)
 {
-	PrintOutput(sam->render.sampledConsonantFlag, sam->render.frequency1, sam->render.frequency2, sam->render.frequency3, sam->render.amplitude1, sam->render.amplitude2, sam->render.amplitude3, sam->render.pitches);
+	PrintOutput(sam->render.flags, sam->render.freq_amp, sam->render.pitch);
 }
 
 // PROCESS THE FRAMES
@@ -759,7 +759,7 @@ if (debug)
 	while(1)
 	{
         // get the sampled information on the phoneme
-		A = sam->render.sampledConsonantFlag[Y];
+		A = sam->render.flags[Y];
 		sample = A;
 		
 		// unvoiced sampled phoneme?
@@ -775,12 +775,12 @@ if (debug)
 		} else
 		{
             // simulate the glottal pulse and formants
-			mem56 = multtable[sinus[phase1] | sam->render.amplitude1[Y]];
+			mem56 = multtable[sinus[phase1] | sam->render.freq_amp[Y].amp1];
 
 			carry = 0;
-			if ((mem56+multtable[sinus[phase2] | sam->render.amplitude2[Y]] ) > 255) carry = 1;
-			mem56 += multtable[sinus[phase2] | sam->render.amplitude2[Y]];
-			A = mem56 + multtable[rectangle[phase3] | sam->render.amplitude3[Y]] + (carry?1:0);
+			if ((mem56+multtable[sinus[phase2] | sam->render.freq_amp[Y].amp2] ) > 255) carry = 1;
+			mem56 += multtable[sinus[phase2] | sam->render.freq_amp[Y].amp2];
+			A = mem56 + multtable[rectangle[phase3] | sam->render.freq_amp[Y].amp3] + (carry?1:0);
 			A = ((A + 136) & 255) >> 4; //there must be also a carry
 			//mem[54296] = A;
 			
@@ -807,7 +807,7 @@ pos48155:
 		{
 pos48159:
             // fetch the next glottal pulse length
-			A = sam->render.pitches[Y];
+			A = sam->render.pitch[Y];
 			mem44 = A;
 			A = A - (A>>2);
 			mem38 = A;
@@ -827,9 +827,9 @@ pos48159:
 		if((mem38 != 0) || (sample == 0))
 		{
             // reset the phase of the formants to match the pulse
-			phase1 += sam->render.frequency1[Y];
-			phase2 += sam->render.frequency2[Y];
-			phase3 += sam->render.frequency3[Y];
+			phase1 += sam->render.freq_amp[Y].freq1;
+			phase2 += sam->render.freq_amp[Y].freq2;
+			phase3 += sam->render.freq_amp[Y].freq3;
 			continue;
 		}
 		
@@ -865,7 +865,7 @@ void AddInflection(sam_memory* sam, unsigned char mem48, unsigned char phase1)
 
 	// FIXME: Explain this fix better, it's not obvious
 	// ML : A =, fixes a problem with invalid pitch with '.'
-	while( (A=sam->render.pitches[X]) == 127) X++;
+	while( (A=sam->render.pitch[X]) == 127) X++;
 
 
 pos48398:
@@ -877,7 +877,7 @@ pos48398:
 	phase1 = A;
 	
 	// set the inflection
-	sam->render.pitches[X] = A;
+	sam->render.pitch[X] = A;
 pos48406:
          
     // increment the position
@@ -885,7 +885,7 @@ pos48406:
 	
 	// exit if the punctuation has been reached
 	if (X == mem49) return; //goto pos47615;
-	if (sam->render.pitches[X] == 255) goto pos48406;
+	if (sam->render.pitch[X] == 255) goto pos48406;
 	A = phase1;
 	goto pos48398;
 }

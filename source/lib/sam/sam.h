@@ -33,17 +33,20 @@ typedef struct _common_memory {
     phoneme_t phoneme_output[60];
 } common_memory;
 
-typedef struct _render_memory {
-    unsigned char pitches[256];
-    unsigned char frequency1[256];
-    unsigned char frequency2[256];
-    unsigned char frequency3[256];
-    unsigned char amplitude1[256];
-    unsigned char amplitude2[256];
-    unsigned char amplitude3[256];
-    unsigned char sampledConsonantFlag[256];
-} render_memory;
+typedef struct _render_freq_amp_t {
+    unsigned int freq1:6;
+    unsigned int freq2:7;
+    unsigned int freq3:7;
+    unsigned int amp1:4;
+    unsigned int amp2:4;
+    unsigned int amp3:4;
+} render_freq_amp_t;
 
+typedef struct _render_memory {
+    render_freq_amp_t freq_amp[256];
+    unsigned char pitch[256];
+    unsigned char flags[256];
+} render_memory;
 
 typedef struct _sam_memory {
     common_memory common;
