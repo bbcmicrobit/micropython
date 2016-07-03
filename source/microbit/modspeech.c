@@ -70,10 +70,6 @@ typedef struct _speech_iterator_t {
 /** This iterator assumes that the speech renderer can generate samples
  * at least as fast as we can consume them */
 static mp_obj_t next(mp_obj_t iter) {
-    // May need to wait for reciter to do its job before renderer generate samples.
-    if (!rendering) {
-        return ((speech_iterator_t *)iter)->empty;
-    }
     if (exhausted) {
         return MP_OBJ_STOP_ITERATION;
     }
@@ -81,8 +77,13 @@ static mp_obj_t next(mp_obj_t iter) {
         exhausted = true;
         last_frame = false;
     }
-    buf_start_pos += 32;
-    return buf;
+    // May need to wait for reciter to do its job before renderer generate samples.
+    if (rendering) {
+        buf_start_pos += 32;
+        return buf;
+    } else {
+        return ((speech_iterator_t *)iter)->empty;
+    }
 }
 
 const mp_obj_type_t speech_iterator_type = {
