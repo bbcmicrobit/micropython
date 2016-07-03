@@ -34,15 +34,7 @@ void PrintPhonemes(phoneme_t *phonemes)
 	printf("\n");
 }
 
-void PrintOutput(
-	unsigned char *flag, 
-	unsigned char *f1, 
-	unsigned char *f2, 
-	unsigned char *f3,
-	unsigned char *a1, 
-	unsigned char *a2, 
-	unsigned char *a3,
-	unsigned char *p)
+void PrintOutput(unsigned char *flags, render_freq_amp_t *frames, unsigned char *pitches)
 {
 	printf("===========================================\n");
 	printf("Final data for speech output:\n\n");
@@ -51,7 +43,8 @@ void PrintOutput(
 	printf("------------------------------------------------\n");
 	while(i < 255)
 	{
-		printf("%5i %5i %5i %5i %5i %5i %5i %5i\n", flag[i], a1[i], f1[i], a2[i], f2[i], a3[i], f3[i], p[i]);
+        render_freq_amp_t frame = frames[i];
+		printf("%5i %5i %5i %5i %5i %5i %5i %5i\n", flags[i], frame.amp1, frame.freq1, frame.amp2, frame.freq2, frame.amp3, frame.freq3, pitches[i]);
 		i++;
 	}
 	printf("===========================================\n");

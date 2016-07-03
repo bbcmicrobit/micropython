@@ -114,17 +114,18 @@ static mp_obj_t make_speech_iter(void) {
 
 static mp_obj_t pronounce(mp_obj_t words) {
     mp_uint_t len, outlen;
-    reciter_memory *mem = m_new(reciter_memory, 1);
-    MP_STATE_PORT(speech_data) = mem;
     const char *txt = mp_obj_str_get_data(words, &len);
     if (len > 254) {
         nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "text too long."));
     }
+    reciter_memory *mem = m_new(reciter_memory, 1);
+    MP_STATE_PORT(speech_data) = mem;
     for (mp_uint_t i = 0; i < len; i++) {
         mem->input[i] = txt[i];
     }
     mem->input[len] = '[';
     if (!TextToPhonemes(mem)) {
+        MP_STATE_PORT(speech_data) = NULL;
         nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "could not parse input."));
     }
     for (outlen = 0; outlen < 255; outlen++) {
@@ -132,7 +133,7 @@ static mp_obj_t pronounce(mp_obj_t words) {
             break;
         }
     }
-    mp_obj_t res = mp_obj_new_str_of_type(&mp_type_str, mem->input, outlen);
+    mp_obj_t res = mp_obj_new_str_of_type(&mp_type_str, (byte *)mem->input, outlen);
     // Prevent input becoming invisible to GC due to tail-call optimisation.
     MP_STATE_PORT(speech_data) = NULL;
     return res;
@@ -177,6 +178,7 @@ static mp_obj_t say(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_arg
     SetInput(sam, input, len);
     if (!SAMMain(sam))
     {
+        MP_STATE_PORT(speech_data) = NULL;
         nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "SAM error"));
     }
 
