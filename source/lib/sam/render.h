@@ -5,6 +5,7 @@
 
 void Render(sam_memory* sam);
 void SetMouthThroat(unsigned char mouth, unsigned char throat);
+void OutputFrames(sam_memory *sam, unsigned char frame_count);
 
 /** Scaling c64 rate to sample rate */
 // Rate for 22.05kHz

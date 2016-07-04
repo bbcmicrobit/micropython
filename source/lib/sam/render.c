@@ -317,9 +317,7 @@ void Render(sam_memory* sam)
 	unsigned char phase1 = 0;  //mem43
 	unsigned char phase2;
 	unsigned char phase3;
-	unsigned char mem66;
     unsigned char mem38;
-    unsigned char sample;
 	unsigned char mem40;
 	unsigned char speedcounter; //mem45
     unsigned char mem47;
@@ -331,7 +329,6 @@ void Render(sam_memory* sam)
     unsigned char mem56;
     unsigned char mem44 = 0;
 	int i;
-	int carry;
 	if (sam->common.phoneme_output[0].index == PHONEME_END) return; //exit if no data
 
 	A = 0;
@@ -346,63 +343,62 @@ void Render(sam_memory* sam)
 // The parameters are copied from the phoneme to the frame verbatim.
 
 
-// pos47587:
-do
-{
-    // get the index
-	Y = mem44;
-	// get the phoneme at the index
-	A = sam->common.phoneme_output[mem44].index;
-	mem56 = A;
-	
-	// if terminal phoneme, exit the loop
-	if (A == PHONEME_END) break;
-	
-	// period phoneme *.
-	if (A == 1)
-	{
-       // add rising inflection
-		A = 1;
-		mem48 = 1;
-		//goto pos48376;
-		AddInflection(sam, mem48, phase1);
-	}
-	/*
-	if (A == 2) goto pos48372;
-	*/
+    do
+    {
+        // get the index
+        Y = mem44;
+        // get the phoneme at the index
+        A = sam->common.phoneme_output[mem44].index;
+        mem56 = A;
 
-	// question mark phoneme?
-	if (A == 2)
-	{
-        // create falling inflection
-		mem48 = 255;
-		AddInflection(sam, mem48, phase1);
-	}
-	//	pos47615:
+        // if terminal phoneme, exit the loop
+        if (A == PHONEME_END) break;
 
-    // get the stress amount (more stress = higher pitch)
-	phase1 = tab47492[sam->common.phoneme_output[Y].stress + 1];
-	
-    // get number of frames to write
-	phase2 = sam->common.phoneme_output[Y].length;
-	Y = mem56;
+        // period phoneme *.
+        if (A == 1)
+        {
+        // add rising inflection
+            A = 1;
+            mem48 = 1;
+            //goto pos48376;
+            AddInflection(sam, mem48, phase1);
+        }
+        /*
+        if (A == 2) goto pos48372;
+        */
 
-	// copy from the source to the frames list
-	do
-	{
-		sam->render.freq_amp[X].freq1 = get_freq1(Y, sam->common.mouth);     // F1 frequency
-		sam->render.freq_amp[X].freq2 = get_freq2(Y, sam->common.throat);     // F2 frequency
-		sam->render.freq_amp[X].freq3 = freq3data[Y];     // F3 frequency
-		sam->render.freq_amp[X].amp1 = ampl1data[Y];     // F1 amplitude
-		sam->render.freq_amp[X].amp2 = ampl2data[Y];     // F2 amplitude
-		sam->render.freq_amp[X].amp3 = ampl3data[Y];     // F3 amplitude
-		sam->render.flags[X] = sampledConsonantFlags[Y];        // phoneme data for sampled consonants
-		sam->render.pitch[X] = sam->common.pitch + phase1;      // pitch
-		X++;
-		phase2--;
-	} while(phase2 != 0);
-	mem44++;
-} while(mem44 != RENDER_FRAMES);
+        // question mark phoneme?
+        if (A == 2)
+        {
+            // create falling inflection
+            mem48 = 255;
+            AddInflection(sam, mem48, phase1);
+        }
+        //	pos47615:
+
+        // get the stress amount (more stress = higher pitch)
+        phase1 = tab47492[sam->common.phoneme_output[Y].stress + 1];
+
+        // get number of frames to write
+        phase2 = sam->common.phoneme_output[Y].length;
+        Y = mem56;
+
+        // copy from the source to the frames list
+        do
+        {
+            sam->render.freq_amp[X].freq1 = get_freq1(Y, sam->common.mouth);     // F1 frequency
+            sam->render.freq_amp[X].freq2 = get_freq2(Y, sam->common.throat);     // F2 frequency
+            sam->render.freq_amp[X].freq3 = freq3data[Y];     // F3 frequency
+            sam->render.freq_amp[X].amp1 = ampl1data[Y];     // F1 amplitude
+            sam->render.freq_amp[X].amp2 = ampl2data[Y];     // F2 amplitude
+            sam->render.freq_amp[X].amp3 = ampl3data[Y];     // F3 amplitude
+            sam->render.flags[X] = sampledConsonantFlags[Y];        // phoneme data for sampled consonants
+            sam->render.pitch[X] = sam->common.pitch + phase1;      // pitch
+            X++;
+            phase2--;
+        } while(phase2 != 0);
+        mem44++;
+    } while(mem44 != OUTPUT_PHONEMES);
 
 
 // -------------------
@@ -712,20 +708,23 @@ do
     		sam->render.pitch[i] -= (sam->render.freq_amp[i].freq1 >> 1);
         }
 	}
+    OutputFrames(sam, mem48);
+}
 
-	phase1 = 0;
-	phase2 = 0;
-	phase3 = 0;
-	mem49 = 0;
-	speedcounter = 72; //sam standard speed
+void OutputFrames(sam_memory *sam, unsigned char frame_count) {
 
-// RESCALE AMPLITUDE
-//
-// Rescale volume from a linear scale to decibels.
-//
+	unsigned char phase1 = 0;
+	unsigned char phase2 = 0;
+	unsigned char phase3 = 0;
+	unsigned char speedcounter = 72; //sam standard speed
+    unsigned char count;
+    unsigned char glottal_pulse;
+    unsigned char sample;
+    unsigned char mem66 = 0;
 
-	//amplitude rescaling
-	for(i=RENDER_FRAMES-1; i>=0; i--)
+    // RESCALE AMPLITUDE
+    // Rescale volume from a linear scale to decibels.
+	for(int i=RENDER_FRAMES-1; i>=0; i--)
 	{
 		sam->render.freq_amp[i].amp1 = amplitudeRescale[sam->render.freq_amp[i].amp1];
 		sam->render.freq_amp[i].amp2 = amplitudeRescale[sam->render.freq_amp[i].amp2];
@@ -734,14 +733,14 @@ do
 
 	Y = 0;
 	A = sam->render.pitch[0];
-	mem44 = A;
+	glottal_pulse = A;
 	X = A;
-	mem38 = A - (A>>2);     // 3/4*A ???
+	count = A - (A>>2);     // 3/4*A ???
 
-if (debug)
-{
-	PrintOutput(sam->render.flags, sam->render.freq_amp, sam->render.pitch, mem48);
-}
+    if (debug)
+    {
+        PrintOutput(sam->render.flags, sam->render.freq_amp, sam->render.pitch, frame_count);
+    }
 
 // PROCESS THE FRAMES
 //
@@ -767,18 +766,18 @@ if (debug)
             // render the sample for the phoneme
 			RenderSample(sam, &mem66, sample);
 			
-			// skip ahead two in the phoneme buffer
+			// skip ahead two in the fram ebuffer
 			Y += 2;
-			mem48 -= 2;
+			frame_count -= 2;
 		} else
 		{
             // simulate the glottal pulse and formants
-			mem56 = multtable[sinus[phase1] | sam->render.freq_amp[Y].amp1];
+			unsigned char accum = multtable[sinus[phase1] | sam->render.freq_amp[Y].amp1];
 
-			carry = 0;
-			if ((mem56+multtable[sinus[phase2] | sam->render.freq_amp[Y].amp2] ) > 255) carry = 1;
-			mem56 += multtable[sinus[phase2] | sam->render.freq_amp[Y].amp2];
-			A = mem56 + multtable[rectangle[phase3] | sam->render.freq_amp[Y].amp3] + (carry?1:0);
+			int carry = 0;
+			if ((accum+multtable[sinus[phase2] | sam->render.freq_amp[Y].amp2] ) > 255) carry = 1;
+			accum += multtable[sinus[phase2] | sam->render.freq_amp[Y].amp2];
+			A = accum + multtable[rectangle[phase3] | sam->render.freq_amp[Y].amp3] + (carry?1:0);
 			A = ((A + 136) & 255) >> 4; //there must be also a carry
 			//mem[54296] = A;
 			
@@ -789,26 +788,26 @@ if (debug)
 			Y++; //go to next amplitude
 			
 			// decrement the frame count
-			mem48--;
+			frame_count--;
 		}
 		
 		// if the frame count is zero, exit the loop
-		if(mem48 == 0) 	return;
+		if(frame_count == 0) 	return;
 		speedcounter = sam->common.speed;
 pos48155:
          
         // decrement the remaining length of the glottal pulse
-		mem44--;
+		glottal_pulse--;
 		
 		// finished with a glottal pulse?
-		if(mem44 == 0)
+		if(glottal_pulse == 0)
 		{
 pos48159:
             // fetch the next glottal pulse length
 			A = sam->render.pitch[Y];
-			mem44 = A;
+			glottal_pulse = A;
 			A = A - (A>>2);
-			mem38 = A;
+			count = A;
 			
 			// reset the formant wave generators to keep them in 
 			// sync with the glottal pulse
@@ -819,11 +818,10 @@ pos48159:
 		}
 		
 		// decrement the count
-		mem38--;
+		count--;
 		
 		// is the count non-zero and the sampled flag is zero?
-		if((mem38 != 0) || (sample == 0))
-		{
+		if((count != 0) || (sample == 0)) {
             // reset the phase of the formants to match the pulse
 			phase1 += sam->render.freq_amp[Y].freq1;
 			phase2 += sam->render.freq_amp[Y].freq2;
@@ -846,12 +844,9 @@ pos48159:
 
 void AddInflection(sam_memory* sam, unsigned char mem48, unsigned char phase1)
 {
-	//pos48372:
-	//	mem48 = 255;
-//pos48376:
            
     // store the location of the punctuation
-	unsigned char mem49 = X;
+	unsigned char punctuation = X;
 	A = X;
 	int Atemp = A;
 	
@@ -866,26 +861,24 @@ void AddInflection(sam_memory* sam, unsigned char mem48, unsigned char phase1)
 	while( (A=sam->render.pitch[X]) == 127) X++;
 
 
-pos48398:
-	//48398: CLC
-	//48399: ADC 48
-	
-	// add the inflection direction
-	A += mem48;
-	phase1 = A;
-	
-	// set the inflection
-	sam->render.pitch[X] = A;
-pos48406:
-         
-    // increment the position
-	X++;
-	
-	// exit if the punctuation has been reached
-	if (X == mem49) return; //goto pos47615;
-	if (sam->render.pitch[X] == 255) goto pos48406;
-	A = phase1;
-	goto pos48398;
+    while(1) {
+
+        // add the inflection direction
+        A += mem48;
+        phase1 = A;
+
+        // set the inflection
+        sam->render.pitch[X] = A;
+        do {
+
+            // increment the position
+            X++;
+
+            // exit if the punctuation has been reached
+            if (X == punctuation) return; //goto pos47615;
+        } while (sam->render.pitch[X] == 255);
+        A = phase1;
+    }
 }
 
 static inline unsigned char trans(unsigned char mem39212, unsigned char mem39213) {
