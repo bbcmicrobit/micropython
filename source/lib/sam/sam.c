@@ -1323,7 +1323,7 @@ pos48644:
 //DEBUG: printf("phoneme %d (%c%c) length %d\n", X, signInputTable1[sam->prepare.phoneme_input[X].index], signInputTable2[sam->prepare.phoneme_input[X].index], sam->prepare.phoneme_input[X].length);
 //DEBUG: printf("phoneme %d (%c%c) length %d\n", X-1, signInputTable1[sam->prepare.phoneme_input[X-1].index], signInputTable2[sam->prepare.phoneme_input[X-1].index], sam->prepare.phoneme_input[X-1].length);
 // X gets overwritten, so hold prior X value for debug statement
-int debugX = X;
+// int debugX = X;
             // shorten the prior phoneme length to (length/2 + 1)
             sam->prepare.phoneme_input[X].length = (sam->prepare.phoneme_input[X].length >> 1) + 1;
             X = loopIndex;
