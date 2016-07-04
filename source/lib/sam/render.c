@@ -64,7 +64,6 @@ unsigned char Read(sam_memory* sam, unsigned char p, unsigned char Y)
 	case 173: return sam->render.freq_amp[Y].amp2;
 	case 174: return sam->render.freq_amp[Y].amp3;
 	}
-	printf("Error reading to tables");
 	return 0;
 }
 
@@ -81,7 +80,6 @@ void Write(sam_memory* sam, unsigned char p, unsigned char Y, unsigned char valu
 	case 173: sam->render.freq_amp[Y].amp2 = value;  return;
 	case 174: sam->render.freq_amp[Y].amp3 = value;  return;
 	}
-	printf("Error writing to tables\n");
 }
 
 
