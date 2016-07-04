@@ -523,8 +523,8 @@ pos37455:
 	Y = mem64;
 	mem61 = mem60;
 
-	if (debug)
-		PrintRule(mem62);
+	//if (debug)
+	//	PrintRule(mem62);
 
 pos37461:
 	//37461: LDA (62),y
