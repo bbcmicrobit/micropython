@@ -19,10 +19,17 @@ enum {
     PHONEME_END_BREATH=126
 };
 
+#define RENDER_FRAMES 224
+
+#define INPUT_PHONEMES 128
+#define OUTPUT_PHONEMES (RENDER_FRAMES/4)
+
 typedef struct _prepare_memory {
-    char input[256];
-    phoneme_t phoneme_input[256];
+    const char *input;
+    unsigned int input_length;
+    phoneme_t phoneme_input[INPUT_PHONEMES];
 } prepare_memory;
+
 
 typedef struct _common_memory {
     unsigned char speed;
@@ -30,7 +37,7 @@ typedef struct _common_memory {
     unsigned char mouth;
     unsigned char throat;
     int singmode;
-    phoneme_t phoneme_output[60];
+    phoneme_t phoneme_output[OUTPUT_PHONEMES];
 } common_memory;
 
 typedef struct _render_freq_amp_t {
@@ -43,9 +50,9 @@ typedef struct _render_freq_amp_t {
 } render_freq_amp_t;
 
 typedef struct _render_memory {
-    render_freq_amp_t freq_amp[256];
-    unsigned char pitch[256];
-    unsigned char flags[256];
+    render_freq_amp_t freq_amp[RENDER_FRAMES];
+    unsigned char pitch[RENDER_FRAMES];
+    unsigned char flags[RENDER_FRAMES];
 } render_memory;
 
 typedef struct _sam_memory {

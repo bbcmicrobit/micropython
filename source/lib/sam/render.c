@@ -404,7 +404,7 @@ do
 		phase2--;
 	} while(phase2 != 0);
 	mem44++;
-} while(mem44 != 0);
+} while(mem44 != RENDER_FRAMES);
 
 
 // -------------------
@@ -708,7 +708,7 @@ do
 	if (!sam->common.singmode)
 	{
         // iterate through the buffer
-		for(i=0; i<256; i++) {
+		for(i=0; i<RENDER_FRAMES; i++) {
             // subtract half the frequency of the formant 1.
             // this adds variety to the voice
     		sam->render.pitch[i] -= (sam->render.freq_amp[i].freq1 >> 1);
@@ -727,7 +727,7 @@ do
 //
 
 	//amplitude rescaling
-	for(i=255; i>=0; i--)
+	for(i=RENDER_FRAMES-1; i>=0; i--)
 	{
 		sam->render.freq_amp[i].amp1 = amplitudeRescale[sam->render.freq_amp[i].amp1];
 		sam->render.freq_amp[i].amp2 = amplitudeRescale[sam->render.freq_amp[i].amp2];
@@ -742,7 +742,7 @@ do
 
 if (debug)
 {
-	PrintOutput(sam->render.flags, sam->render.freq_amp, sam->render.pitch);
+	PrintOutput(sam->render.flags, sam->render.freq_amp, sam->render.pitch, mem48);
 }
 
 // PROCESS THE FRAMES

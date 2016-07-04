@@ -115,7 +115,9 @@ static mp_obj_t make_speech_iter(void) {
 static mp_obj_t pronounce(mp_obj_t words) {
     mp_uint_t len, outlen;
     const char *txt = mp_obj_str_get_data(words, &len);
-    if (len > 254) {
+    // Reciter truncates *output* at about 120 characters.
+    // So to avoid that we must disallow any input that will exceed that.
+    if (len > 80) {
         nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "text too long."));
     }
     reciter_memory *mem = m_new(reciter_memory, 1);
@@ -139,6 +141,8 @@ static mp_obj_t pronounce(mp_obj_t words) {
     return res;
 }MP_DEFINE_CONST_FUN_OBJ_1(pronounce_obj, pronounce);
 
+extern int debug;
+
 static mp_obj_t say(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
 
     static const mp_arg_t allowed_args[] = {
@@ -147,6 +151,7 @@ static mp_obj_t say(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_arg
         { MP_QSTR_speed,    MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = DEFAULT_SPEED} },
         { MP_QSTR_mouth,    MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = DEFAULT_MOUTH} },
         { MP_QSTR_throat,   MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = DEFAULT_THROAT} },
+        { MP_QSTR_debug,   MP_ARG_KW_ONLY | MP_ARG_BOOL, {.u_bool = false} },
     };
 
     // parse args
@@ -162,6 +167,7 @@ static mp_obj_t say(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_arg
     sam->common.speed  = args[2].u_int;
     sam->common.mouth  = args[3].u_int;
     sam->common.throat = args[4].u_int;
+    debug = args[5].u_bool;
 
     mp_uint_t len;
     const char *input = mp_obj_str_get_data(pos_args[0], &len);
