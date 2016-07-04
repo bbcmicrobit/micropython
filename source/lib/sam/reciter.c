@@ -73,17 +73,15 @@ int TextToPhonemes(reciter_memory* mem) // Code36484
 		mem->inputtemp[X] = A;
 		X++;
 		Y++;
-	} while (Y != 255);
+	} while (Y != INPUT_PHONEMES-1);
 
-
-	X = 255;
-	mem->inputtemp[X] = 27;
-	mem61 = 255;
+	mem->inputtemp[INPUT_PHONEMES-1] = 27;
+	mem61 = 255; // -1
 
 
 pos36550:
 	A = 255;
-	mem56 = 255;
+	mem56 = 255; // -1
 
 
 pos36554:

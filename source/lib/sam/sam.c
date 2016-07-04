@@ -6,7 +6,6 @@
 #include "render.h"
 #include "SamTabs.h"
 
-//standard sam sound
 extern int debug;
 
 const unsigned char mem59=0;
@@ -19,11 +18,8 @@ int bufferpos=0;
 
 void SetInput(sam_memory* sam, const char *_input, unsigned int l)
 {
-	int i;
-	if (l > 254) l = 254;
-	for(i=0; i<l; i++)
-		sam->prepare.input[i] = _input[i];
-	sam->prepare.input[l] = 0;
+    sam->prepare.input = _input;
+    sam->prepare.input_length = l;
 }
 
 void Init(sam_memory* sam);
@@ -76,19 +72,19 @@ void Init(sam_memory* sam)
 	ampl3data = &mem[45456];
 	*/
 
-	for(i=0; i<256; i++)
+	for(i=0; i<INPUT_PHONEMES; i++)
 	{
 		sam->prepare.phoneme_input[i].stress = 0;
 		sam->prepare.phoneme_input[i].length = 0;
 	}
 	
-	for(i=0; i<60; i++)
+	for(i=0; i<OUTPUT_PHONEMES; i++)
 	{
 		sam->common.phoneme_output[i].index = 0;
 		sam->common.phoneme_output[i].stress = 0;
 		sam->common.phoneme_output[i].length = 0;
 	}
-	sam->prepare.phoneme_input[255].index = PHONEME_END; //to prevent buffer overflow // ML : changed from 32 to 255 to stop freezing with long inputs
+	sam->prepare.phoneme_input[INPUT_PHONEMES-1].index = PHONEME_END; //to prevent buffer overflow // ML : changed from 32 to 255 to stop freezing with long inputs
 
 }
 
@@ -194,9 +190,9 @@ void InsertBreath(sam_memory* sam)
 		if (index == PHONEME_END) return;
 		mem55 += sam->prepare.phoneme_input[X].length;
 
-		if (mem55 < 232)
+		if (mem55 < RENDER_FRAMES-24)
 		{
-			if (index != 254) // ML : Prevents an index out of bounds problem		
+			if (index != PHONEME_END_BREATH) // ML : Prevents an index out of bounds problem
 			{
 				A = flags2[index]&1;
 				if(A != 0)
@@ -287,11 +283,9 @@ void CopyStress(sam_memory* sam)
 void Insert(sam_memory* sam, unsigned char position/*var57*/, unsigned char index, unsigned char length, unsigned char stress)
 {
 	int i;
-	for(i=253; i >= position; i--) // ML : always keep last safe-guarding 255	
+	for(i=INPUT_PHONEMES-3; i >= position; i--) // ML : always keep last safe-guarding.
 	{
-		sam->prepare.phoneme_input[i+1].index = sam->prepare.phoneme_input[i].index;
-		sam->prepare.phoneme_input[i+1].length = sam->prepare.phoneme_input[i].length;
-		sam->prepare.phoneme_input[i+1].stress = sam->prepare.phoneme_input[i].stress;
+        sam->prepare.phoneme_input[i] = sam->prepare.phoneme_input[i];
 	}
 
 	sam->prepare.phoneme_input[position].index = index;
@@ -362,27 +356,38 @@ int Parser1(sam_memory* sam)
 	Y = 0;
 	
 	// CLEAR THE STRESS TABLE
-	for(i=0; i<256; i++)
+	for(i=0; i<INPUT_PHONEMES; i++)
 		sam->prepare.phoneme_input[i].stress = 0;
 
   // THIS CODE MATCHES THE PHONEME LETTERS TO THE TABLE
 	// pos41078:
 	while(1)
 	{
-        // GET THE FIRST CHARACTER FROM THE PHONEME BUFFER
-		sign1 = sam->prepare.input[X];
-		// TEST FOR 0 -- END OF STRING MARKER
-		if (sign1 == 0)
+        if (position >= INPUT_PHONEMES) {
+            // Run out of space for phonemes -- This won't happen with a string from the reciter,
+            // but can happen with manually created phonetic input.
+            return 0;
+        }
+		// TEST FOR END OF STRING
+		if (X >= sam->prepare.input_length)
 		{
            // MARK ENDPOINT AND RETURN
 			sam->prepare.phoneme_input[position].index = PHONEME_END;      //mark endpoint
 			// REACHED END OF PHONEMES, SO EXIT
 			return 1;       //all ok
 		}
-		
+
+        // GET THE FIRST CHARACTER FROM THE PHONEME BUFFER
+        sign1 = sam->prepare.input[X];
+
 		// GET THE NEXT CHARACTER FROM THE BUFFER
 		X++;
-		sign2 = sam->prepare.input[X];
+        if (X == sam->prepare.input_length)
+        {
+            sign2 = 0;
+        } else {
+            sign2 = sam->prepare.input[X];
+        }
 		
 		// NOW sign1 = FIRST CHARACTER OF PHONEME, AND sign2 = SECOND CHARACTER OF PHONEME
 
