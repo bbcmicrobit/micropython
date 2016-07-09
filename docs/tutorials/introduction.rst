@@ -15,6 +15,7 @@ Introduction
     gestures
     direction
     storage
+    speech
     network
     radio
     next

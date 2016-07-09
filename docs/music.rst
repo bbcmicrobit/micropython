@@ -29,6 +29,10 @@ ticks (a tick is an arbitrary length of time defined by a tempo setting
 function - see below). If the note name ``R`` is used then it is treated as a
 rest (silence).
 
+Accidentals (flats and sharps) are denoted by the ``b`` (flat - a lower case b)
+and ``#`` (sharp - a hash symbol). For example, ``Ab`` is A-flat and ``C#`` is
+C-sharp.
+
 **Note names are case-insensitive.**
 
 The ``octave`` and ``duration`` parameters are states that carry over to
