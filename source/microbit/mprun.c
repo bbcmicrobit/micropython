@@ -119,6 +119,9 @@ void mp_run(void) {
     readline_init0();
     microbit_init();
 
+    // clear the radio state
+    MP_STATE_PORT(radio_buf) = NULL;
+
     // Only run initial script (or import from microbit) if we are in "friendly REPL"
     // mode.  If we are in "raw REPL" mode then this will be skipped.
     if (pyexec_mode_kind == PYEXEC_MODE_FRIENDLY_REPL) {
