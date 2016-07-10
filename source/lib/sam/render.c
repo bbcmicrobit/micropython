@@ -9,13 +9,7 @@
 #include "sam.h"
 extern int debug;
 
-unsigned char wait1 = 7;
-unsigned char wait2 = 6;
-
-extern unsigned char A, X, Y;
-
-
-void AddInflection(sam_memory* sam, unsigned char mem48, unsigned char phase1);
+void AddInflection(sam_memory* sam, unsigned char mem48, unsigned char phase1, unsigned char punctuation);
 
 
 // contains the final soundbuffer
@@ -54,6 +48,10 @@ void Output(int index, unsigned char A)
 // 174=amplitude3
 unsigned char Read(sam_memory* sam, unsigned char p, unsigned char Y)
 {
+    if (p > RENDER_FRAMES) {
+        sam_error = "Out-of-buffer read";
+        return 0;
+    }
 	switch(p)
 	{
 	case 168: return sam->render.pitch[Y];
@@ -64,12 +62,16 @@ unsigned char Read(sam_memory* sam, unsigned char p, unsigned char Y)
 	case 173: return sam->render.freq_amp[Y].amp2;
 	case 174: return sam->render.freq_amp[Y].amp3;
 	}
+	sam_error = "Read error";
 	return 0;
 }
 
 void Write(sam_memory* sam, unsigned char p, unsigned char Y, unsigned char value)
 {
-
+    if (p > RENDER_FRAMES) {
+        sam_error = "Out-of-buffer write";
+        return;
+    }
 	switch(p)
 	{
 	case 168: sam->render.pitch[Y] = value; return;
@@ -80,8 +82,8 @@ void Write(sam_memory* sam, unsigned char p, unsigned char Y, unsigned char valu
 	case 173: sam->render.freq_amp[Y].amp2 = value;  return;
 	case 174: sam->render.freq_amp[Y].amp3 = value;  return;
 	}
+    sam_error = "Write error";
 }
-
 
 
 // -------------------------------------------------------------------------
@@ -140,19 +142,19 @@ void Write(sam_memory* sam, unsigned char p, unsigned char Y, unsigned char valu
 
 
 // Code48227()
-void RenderSample(sam_memory* sam, unsigned char *mem66, unsigned sample)
+unsigned char RenderSample(sam_memory* sam, unsigned char *mem66, unsigned sample, unsigned char pos)
 {     
 	int tempA;
 	// current phoneme's index
     unsigned char mem47;
-    unsigned char mem49 = Y;
+    unsigned char mem49 = pos;
     unsigned char mem53;
     unsigned char mem56;
 
 	// mask low three bits and subtract 1 get value to 
 	// convert 0 bits on unvoiced samples.
-	A = sample&7;
-	X = A-1;
+	unsigned char A = sample&7;
+	unsigned char X = A-1;
 
     // store the result
 	mem56 = X;
@@ -165,6 +167,8 @@ void RenderSample(sam_memory* sam, unsigned char *mem66, unsigned sample)
 	// /X                     4          0x17
 
     // get value from the table
+    if (X >= sizeof(tab48426))
+        sam_error = "Out-of-buffer read";
 	mem53 = tab48426[X];
 	mem47 = X;      //46016+mem[56]*256
 	
@@ -173,14 +177,14 @@ void RenderSample(sam_memory* sam, unsigned char *mem66, unsigned sample)
 	if(A == 0)
 	{
         // voiced phoneme: Z*, ZH, V*, DH
-		Y = mem49;
+		pos = mem49;
 		A = sam->render.pitch[9] >> 4;
 		
 		// jump to voiced portion
 		goto pos48315;
 	}
 	
-	Y = A ^ 255;
+	pos = A ^ 255;
 pos48274:
          
     // step through the 8 bits in the sample
@@ -188,7 +192,7 @@ pos48274:
 	
 	// get the next sample from the table
     // mem47*256 = offset to start of samples
-	A = sampleTable[mem47*256+Y];
+	A = sampleTable[mem47*256+pos];
 pos48280:
 
     // left shift to get the high bit
@@ -223,12 +227,12 @@ pos48296:
 	if (mem56 != 0) goto pos48280;
 	
 	// increment position
-	Y++;
-	if (Y != 0) goto pos48274;
+	pos++;
+	if (pos != 0) goto pos48274;
 	
 	// restore values and return
-	Y = mem49;
-	return;
+	pos = mem49;
+	return pos;
 
 
 	unsigned char phase1;
@@ -239,17 +243,17 @@ pos48315:
    // number of samples?
 	phase1 = A ^ 255;
 
-	Y = *mem66;
+	pos = *mem66;
 	do
 	{
 		//pos48321:
 
         // shift through all 8 bits
 		mem56 = 8;
-		//A = Read(sam, mem47, Y);
+		//A = Read(sam, mem47, pos);
 		
 		// fetch value from table
-		A = sampleTable[mem47*256+Y];
+		A = sampleTable[mem47*256+pos];
 
         // loop 8 times
 		//pos48327:
@@ -278,7 +282,7 @@ pos48315:
 		} while(mem56 != 0);
 
         // move ahead in the table
-		Y++;
+		pos++;
 		
 		// continue until counter done
 		phase1++;
@@ -288,9 +292,9 @@ pos48315:
 	
 	// restore values and return
 	A = 1;
-	*mem66 = Y;
-	Y = mem49;
-	return;
+	*mem66 = pos;
+	pos = mem49;
+	return pos;
 }
 
 
@@ -331,8 +335,8 @@ void Render(sam_memory* sam)
 	int i;
 	if (sam->common.phoneme_output[0].index == PHONEME_END) return; //exit if no data
 
-	A = 0;
-	X = 0;
+	unsigned char A = 0;
+	unsigned char X = 0;
 
 // CREATE FRAMES
 //
@@ -346,7 +350,7 @@ void Render(sam_memory* sam)
     do
     {
         // get the index
-        Y = mem44;
+        unsigned char Y = mem44;
         // get the phoneme at the index
         A = sam->common.phoneme_output[mem44].index;
         mem56 = A;
@@ -361,7 +365,7 @@ void Render(sam_memory* sam)
             A = 1;
             mem48 = 1;
             //goto pos48376;
-            AddInflection(sam, mem48, phase1);
+            AddInflection(sam, mem48, phase1, X);
         }
         /*
         if (A == 2) goto pos48372;
@@ -372,7 +376,7 @@ void Render(sam_memory* sam)
         {
             // create falling inflection
             mem48 = 255;
-            AddInflection(sam, mem48, phase1);
+            AddInflection(sam, mem48, phase1, X);
         }
         //	pos47615:
 
@@ -540,7 +544,7 @@ void Render(sam_memory* sam)
 	while(1) //while No. 1
 	{
          // get the current and following phoneme
-		Y = sam->common.phoneme_output[X].index;
+		unsigned char Y = sam->common.phoneme_output[X].index;
 		A = sam->common.phoneme_output[X+1].index;
 		X++;
 
@@ -717,13 +721,10 @@ void OutputFrames(sam_memory *sam, unsigned char frame_count) {
 	unsigned char phase2 = 0;
 	unsigned char phase3 = 0;
 	unsigned char speedcounter = 72; //sam standard speed
-    unsigned char count;
-    unsigned char glottal_pulse;
-    unsigned char sample;
     unsigned char mem66 = 0;
 
     // RESCALE AMPLITUDE
-    // Rescale volume from a linear scale to decibels.
+    // Rescale volume from decibels to a linear scale.
 	for(int i=RENDER_FRAMES-1; i>=0; i--)
 	{
 		sam->render.freq_amp[i].amp1 = amplitudeRescale[sam->render.freq_amp[i].amp1];
@@ -731,11 +732,10 @@ void OutputFrames(sam_memory *sam, unsigned char frame_count) {
 		sam->render.freq_amp[i].amp3 = amplitudeRescale[sam->render.freq_amp[i].amp3];
 	}
 
-	Y = 0;
-	A = sam->render.pitch[0];
-	glottal_pulse = A;
-	X = A;
-	count = A - (A>>2);     // 3/4*A ???
+	unsigned char Y = 0;
+	unsigned char A = sam->render.pitch[0];
+	unsigned char glottal_pulse = A;
+	unsigned char count = A - (A>>2);     // 3/4*A ???
 
     if (debug)
     {
@@ -757,16 +757,16 @@ void OutputFrames(sam_memory *sam, unsigned char frame_count) {
 	{
         // get the sampled information on the phoneme
 		A = sam->render.flags[Y];
-		sample = A;
+		unsigned char sample = A;
 		
 		// unvoiced sampled phoneme?
 		A = A & 248;
 		if(A != 0)
 		{
             // render the sample for the phoneme
-			RenderSample(sam, &mem66, sample);
+			Y = RenderSample(sam, &mem66, sample, Y);
 			
-			// skip ahead two in the fram ebuffer
+			// skip ahead two in the frame buffer
 			Y += 2;
 			frame_count -= 2;
 		} else
@@ -832,7 +832,7 @@ pos48159:
 		// voiced sampled phonemes interleave the sample with the
 		// glottal pulse. The sample flag is non-zero, so render
 		// the sample for the phoneme.
-		RenderSample(sam, &mem66, sample);
+		Y = RenderSample(sam, &mem66, sample, Y);
 		goto pos48159;
 	}
 }
@@ -842,19 +842,16 @@ pos48159:
 // index X. A rising inflection is used for questions, and 
 // a falling inflection is used for statements.
 
-void AddInflection(sam_memory* sam, unsigned char mem48, unsigned char phase1)
+void AddInflection(sam_memory* sam, unsigned char mem48, unsigned char phase1, unsigned char punctuation)
 {
-           
-    // store the location of the punctuation
-	unsigned char punctuation = X;
-	A = X;
+	unsigned char A = punctuation;
 	int Atemp = A;
 	
 	// backup 30 frames
 	A = A - 30; 
 	// if index is before buffer, point to start of buffer
 	if (Atemp <= 30) A=0;
-	X = A;
+	unsigned char X = A;
 
 	// FIXME: Explain this fix better, it's not obvious
 	// ML : A =, fixes a problem with invalid pitch with '.'

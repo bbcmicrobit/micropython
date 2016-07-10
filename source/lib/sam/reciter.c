@@ -4,7 +4,7 @@
 #include "ReciterTabs.h"
 #include "debug.h"
 
-unsigned char A, X, Y;
+static unsigned char A, X, Y;
 extern int debug;
 
 void Code37055(reciter_memory* mem, unsigned char mem59)
@@ -158,6 +158,7 @@ pos36677:
 	if(A == 0)
 	{
 		//36683: BRK
+        sam_error = "Err 36683";
 		return 0;
 	}
 
@@ -263,6 +264,7 @@ pos36791:
 	if (A == ':') goto pos37040;
 	//	Code42041();    //Error
 	//36894: BRK
+    sam_error = "Err 36894";
 	return 0;
 
 	// --------------
@@ -434,6 +436,7 @@ pos37226:
 	//pos37291:
 	//	Code42041(); //Error
 	//37294: BRK
+	sam_error = "Err 36894";
 	return 0;
 
 	// --------------

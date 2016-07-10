@@ -99,7 +99,7 @@ void mp_run(void) {
     mp_stack_set_limit(1800); // stack is 2k
 
     // allocate the heap statically in the bss
-    static uint32_t heap[9772 / 4];
+    static uint32_t heap[9692 / 4];
     gc_init(heap, (uint8_t*)heap + sizeof(heap));
 
     /*

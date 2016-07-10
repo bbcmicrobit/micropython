@@ -37,14 +37,19 @@
 
 static microbit_audio_frame_obj_t *buf;
 static volatile unsigned int buf_start_pos = 0;
-static volatile unsigned char previous = 128;
+static volatile unsigned int last_pos = 0;
 volatile bool rendering = false;
 volatile bool last_frame = false;
 volatile bool exhausted = false;
+static unsigned int glitches;
 
 void SamOutputByte(unsigned int pos, unsigned char b) {
     //printf("%d, %d, %d\r\n", pos, SCALE_RATE(pos), b);
     unsigned int actual_pos = SCALE_RATE(pos);
+    if (buf_start_pos > actual_pos) {
+        glitches++;
+        buf_start_pos -= 32;
+    }
     while ((actual_pos & (-32)) > buf_start_pos) {
         // We have filled buffer
         rendering = true;
@@ -57,7 +62,7 @@ void SamOutputByte(unsigned int pos, unsigned char b) {
         buf->data[offset] = b;
         offset++;
     }
-    previous = b;
+    last_pos = actual_pos;
     return;
 }
 
@@ -143,10 +148,9 @@ static mp_obj_t pronounce(mp_obj_t words) {
 
 extern int debug;
 
-static mp_obj_t say(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
+static mp_obj_t articulate(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args, bool sing) {
 
     static const mp_arg_t allowed_args[] = {
-        { MP_QSTR_sing,     MP_ARG_KW_ONLY | MP_ARG_BOOL, {.u_bool = DEFAULT_SING} },
         { MP_QSTR_pitch,    MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = DEFAULT_PITCH} },
         { MP_QSTR_speed,    MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = DEFAULT_SPEED} },
         { MP_QSTR_mouth,    MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = DEFAULT_MOUTH} },
@@ -162,46 +166,56 @@ static mp_obj_t say(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_arg
     MP_STATE_PORT(speech_data) = sam;
 
      // set the current saved speech state
-    sam->common.singmode = args[0].u_bool;
-    sam->common.pitch  = args[1].u_int;
-    sam->common.speed  = args[2].u_int;
-    sam->common.mouth  = args[3].u_int;
-    sam->common.throat = args[4].u_int;
-    debug = args[5].u_bool;
+    sam->common.singmode = sing;
+    sam->common.pitch  = args[0].u_int;
+    sam->common.speed  = args[1].u_int;
+    sam->common.mouth  = args[2].u_int;
+    sam->common.throat = args[3].u_int;
+    debug = args[4].u_bool;
 
     mp_uint_t len;
     const char *input = mp_obj_str_get_data(pos_args[0], &len);
-    // prepare audio
-    audio_init();
     buf_start_pos = 0;
     speech_iterator_t *src = make_speech_iter();
     buf = src->buf;
     /* We need to wait for reciter to do its job */
     rendering = false;
     exhausted = false;
+    glitches = 0;
     audio_play_source(src, mp_const_none, mp_const_none, false);
 
     SetInput(sam, input, len);
     if (!SAMMain(sam))
     {
         MP_STATE_PORT(speech_data) = NULL;
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "SAM error"));
+        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, sam_error));
     }
 
     last_frame = true;
     /* Wait for audio finish before returning */
     while (microbit_audio_is_playing());
     MP_STATE_PORT(speech_data) = NULL;
+    printf("Last position: %d\r\n", last_pos);
+    printf("Glitches: %d\r\n", glitches);
     return mp_const_none;
 }
+
+static mp_obj_t say(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
+    return articulate(n_args, pos_args, kw_args, false);
+}
 MP_DEFINE_CONST_FUN_OBJ_KW(say_obj, 1, say);
+
+static mp_obj_t sing(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
+    return articulate(n_args, pos_args, kw_args, true);
+}
+MP_DEFINE_CONST_FUN_OBJ_KW(sing_obj, 1, sing);
 
 static const mp_map_elem_t _globals_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR___name__), MP_OBJ_NEW_QSTR(MP_QSTR_speech) },
     { MP_OBJ_NEW_QSTR(MP_QSTR_say), (mp_obj_t)&say_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_sing), (mp_obj_t)&sing_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_pronounce), (mp_obj_t)&pronounce_obj },
 };
-
 static MP_DEFINE_CONST_DICT(_globals, _globals_table);
 
 const mp_obj_module_t speech_module = {
