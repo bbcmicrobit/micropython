@@ -65,6 +65,8 @@ void SetInput(sam_memory* mem, const char *_input, unsigned int len);
 
 int SAMMain(sam_memory* mem);
 
+extern char *sam_error;
+
 char* GetBuffer();
 int GetBufferLength();
 
