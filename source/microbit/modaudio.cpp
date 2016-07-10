@@ -174,7 +174,9 @@ static void init_pins(PinName p0, PinName p1) {
     double_pin = true;
 }
 
-static void audio_data_fetcher(void) {
+
+
+static void audio_data_fetcher(bool lock) {
     if (audio_source_iter == NULL) {
         audio_stop();
         return;
@@ -182,14 +184,17 @@ static void audio_data_fetcher(void) {
     /* WARNING: We are executing in an interrupt handler.
      * If an exception is raised here then we must hand it to the VM. */
     mp_obj_t buffer_obj;
-    gc_lock();
+    if (lock)
+        gc_lock();
     nlr_buf_t nlr;
     if (nlr_push(&nlr) == 0) {
         buffer_obj = mp_iternext_allow_raise(audio_source_iter);
         nlr_pop();
-        gc_unlock();
+        if (lock)
+            gc_unlock();
     } else {
-        gc_unlock();
+        if (lock)
+            gc_unlock();
         if (!mp_obj_is_subclass_fast(MP_OBJ_FROM_PTR(((mp_obj_base_t*)nlr.ret_val)->type),
             MP_OBJ_FROM_PTR(&mp_type_StopIteration))) {
             // an exception other than StopIteration, so set it for the VM to raise later
@@ -229,6 +234,14 @@ static void audio_data_fetcher(void) {
     half_buffer[7] = data[7];
     fetcher_ready = true;
     return;
+}
+
+static void audio_data_fetcher_no_gc(void) {
+    audio_data_fetcher(true);
+}
+
+static void audio_data_fetcher_allow_gc(void) {
+    audio_data_fetcher(false);
 }
 
 #define TICK_PER_SAMPLE (128/MICROSECONDS_PER_TICK)
@@ -293,7 +306,7 @@ static int32_t audio_ticker(void) {
         delta = (next_sample-next_value)>>2;
         if ((buffer_index&(AUDIO_CHUNK_SIZE-1)) == 0 && fetcher_ready) {
             fetcher_ready = false;
-            set_low_priority_callback(audio_data_fetcher, AUDIO_CALLBACK_ID);
+            set_low_priority_callback(audio_data_fetcher_no_gc, AUDIO_CALLBACK_ID);
         }
     }
     sample = !sample;
@@ -367,6 +380,7 @@ void audio_play_source(mp_obj_t src, mp_obj_t pin1, mp_obj_t pin2, bool wait) {
     fetcher_ready = true;
     audio_buffer_read_index = AUDIO_BUFFER_SIZE-1;
     memset(audio_buffer_ptr, 128, AUDIO_BUFFER_SIZE);
+    audio_data_fetcher_allow_gc();
     timer_start();
     running = true;
     set_ticker_callback(0, audio_ticker, 80);

@@ -20,7 +20,7 @@ def show_wave(name, frame, duration=1500):
 frame = audio.AudioFrame()
 
 for i in range(len(frame)):
-    frame[i] = int(math.sin(math.pi*i/16)*124+0.5)
+    frame[i] = int(math.sin(math.pi*i/16)*124+128.5)
 show_wave("Sine", frame)
 
 triangle = audio.AudioFrame()
@@ -28,22 +28,22 @@ triangle = audio.AudioFrame()
 QUARTER = len(triangle)//4
 for i in range(QUARTER):
     triangle[i] = i*15
-    triangle[i+QUARTER] = 120-i*15
-    triangle[i+QUARTER*2] = -i*15
-    triangle[i+QUARTER*3] = i*15-120
+    triangle[i+QUARTER] = 248-i*15
+    triangle[i+QUARTER*2] = 128-i*15
+    triangle[i+QUARTER*3] = i*15+8
 show_wave("Triangle", triangle)
 
 square = audio.AudioFrame()
 
 HALF = len(square)//2
 for i in range(HALF):
-    square[i] = -120
-    square[i+HALF] = 120
+    square[i] = 8
+    square[i+HALF] = 248
 show_wave("Square", square)
 sleep(1000)
 
 for i in range(len(frame)):
-    frame[i] = 124-i*8
+    frame[i] = 252-i*8
 show_wave("Sawtooth", frame)
 
 del frame
