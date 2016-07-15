@@ -113,7 +113,11 @@ static void audio_ppi_init(uint8_t channel0, uint8_t channel1) {
 static inline void timer_stop(void) {
     TheTimer->TASKS_STOP = 1;
     *(uint32_t *)0x40009C0C = 0; //for Timer 1
-
+    TheTimer->TASKS_CLEAR = 1;
+    TheTimer->CC[0] = 0xfffc;
+    TheTimer->CC[1] = 0xfffc;
+    TheTimer->CC[2] = 0xfffc;
+    TheTimer->CC[3] = 0xfffc;
 }
 
 static inline void timer_start(void) {
@@ -148,6 +152,7 @@ static void audio_stop(void) {
         disable_gpiote(1);
         nrf_gpio_pin_write(pin1, 0);
     }
+    //NRF_CLOCK->TASKS_HFCLKSTOP = 1;
 }
 
 static int32_t audio_ticker(void);
@@ -246,12 +251,11 @@ static void audio_data_fetcher_allow_gc(void) {
 
 #define TICK_PER_SAMPLE (128/MICROSECONDS_PER_TICK)
 
-#define FIRST_PHASE_START 32
-#define SECOND_PHASE_START ((CYCLES_PER_TICK*TICK_PER_SAMPLE/4)+32)
+#define FIRST_PHASE_START 4
+#define SECOND_PHASE_START ((CYCLES_PER_TICK*TICK_PER_SAMPLE/4)+FIRST_PHASE_START)
 
 static inline void set_gpiote_output_pulses(int32_t val1, int32_t val2) {
     NRF_TIMER_Type *timer = TheTimer;
-    timer->TASKS_CLEAR = 1;
     if (double_pin) {
         //Start with output zero; pins 00
         if (val1 < 0) {
@@ -284,6 +288,7 @@ static inline void set_gpiote_output_pulses(int32_t val1, int32_t val2) {
         timer->CC[2] = SECOND_PHASE_START;
         timer->CC[3] = SECOND_PHASE_START+val2;
     }
+    timer->TASKS_CLEAR = 1;
 }
 
 static int32_t audio_ticker(void) {
@@ -362,10 +367,32 @@ static void audio_auto_set_pins(void) {
     audio_set_pins((mp_obj_t)&microbit_p0_obj, mp_const_none);
 }
 
+static void audio_init(void) {
+    static bool initialised = false;
+    if (!initialised) {
+        audio_source_iter = NULL;
+        initialised = true;
+        //Allocate buffer
+        audio_buffer_ptr = m_new(uint8_t, AUDIO_BUFFER_SIZE);
+    }
+    //NRF_CLOCK->TASKS_HFCLKSTART = 1;
+    NVIC_DisableIRQ(TheTimer_IRQn);
+    TheTimer->POWER = 1;
+    NRF_TIMER_Type *timer = TheTimer;
+    timer_stop();
+    timer->MODE = TIMER_MODE_MODE_Timer;
+    timer->BITMODE = TIMER_BITMODE_BITMODE_16Bit << TIMER_BITMODE_BITMODE_Pos;
+    timer->PRESCALER = 0; //Full speed
+    timer->INTENCLR = TIMER_INTENCLR_COMPARE0_Msk | TIMER_INTENCLR_COMPARE1_Msk |
+                        TIMER_INTENCLR_COMPARE2_Msk | TIMER_INTENCLR_COMPARE3_Msk;
+    timer->SHORTS = 0;
+}
+
 void audio_play_source(mp_obj_t src, mp_obj_t pin1, mp_obj_t pin2, bool wait) {
     if (running) {
         audio_stop();
     }
+    audio_init();
     if (pin1 == mp_const_none) {
         if (pin2 == mp_const_none) {
             audio_auto_set_pins();
@@ -394,30 +421,6 @@ void audio_play_source(mp_obj_t src, mp_obj_t pin1, mp_obj_t pin2, bool wait) {
         __WFE();
     }
 }
-
-
-mp_obj_t audio_init(void) {
-    static bool initialised = false;
-    if (!initialised) {
-        audio_source_iter = NULL;
-        initialised = true;
-        //Allocate buffer
-        audio_buffer_ptr = m_new(uint8_t, AUDIO_BUFFER_SIZE);
-        NVIC_DisableIRQ(TheTimer_IRQn);
-        TheTimer->POWER = 1;
-        NRF_TIMER_Type *timer = TheTimer;
-        timer_stop();
-        timer->TASKS_CLEAR = 1;
-        timer->MODE = TIMER_MODE_MODE_Timer;
-        timer->BITMODE = TIMER_BITMODE_BITMODE_16Bit << TIMER_BITMODE_BITMODE_Pos;
-        timer->PRESCALER = 0; //Full speed
-        timer->INTENCLR = TIMER_INTENCLR_COMPARE0_Msk | TIMER_INTENCLR_COMPARE1_Msk |
-                          TIMER_INTENCLR_COMPARE2_Msk | TIMER_INTENCLR_COMPARE3_Msk;
-        timer->SHORTS = 0;
-    }
-    return mp_const_none;
-}
-MP_DEFINE_CONST_FUN_OBJ_0(audio___init___obj, audio_init);
 
 STATIC mp_obj_t stop() {
     audio_stop();
@@ -625,7 +628,6 @@ microbit_audio_frame_obj_t *new_microbit_audio_frame(void) {
 
 STATIC const mp_map_elem_t audio_globals_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR___name__), MP_OBJ_NEW_QSTR(MP_QSTR_audio) },
-    { MP_OBJ_NEW_QSTR(MP_QSTR___init__), (mp_obj_t)&audio___init___obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_stop), (mp_obj_t)&microbit_audio_stop_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_play), (mp_obj_t)&microbit_audio_play_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_is_playing), (mp_obj_t)&microbit_audio_is_playing_obj },

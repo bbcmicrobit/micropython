@@ -6,7 +6,6 @@
 #include "py/obj.h"
 #include "py/runtime.h"
 
-mp_obj_t audio_init(void);
 void audio_play_source(mp_obj_t src, mp_obj_t pin1, mp_obj_t pin2, bool wait);
 
 #define LOG_AUDIO_CHUNK_SIZE 5
