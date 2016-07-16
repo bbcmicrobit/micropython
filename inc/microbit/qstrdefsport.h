@@ -429,6 +429,8 @@ Q(throat)
 Q(mouth)
 Q(speed)
 Q(debug)
+Q(translate)
+
 Q(radio)
 Q(reset)
 Q(config)

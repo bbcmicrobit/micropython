@@ -118,7 +118,7 @@ static mp_obj_t make_speech_iter(void) {
     return result;
 }
 
-static mp_obj_t pronounce(mp_obj_t words) {
+static mp_obj_t translate(mp_obj_t words) {
     mp_uint_t len, outlen;
     const char *txt = mp_obj_str_get_data(words, &len);
     // Reciter truncates *output* at about 120 characters.
@@ -145,11 +145,11 @@ static mp_obj_t pronounce(mp_obj_t words) {
     // Prevent input becoming invisible to GC due to tail-call optimisation.
     MP_STATE_PORT(speech_data) = NULL;
     return res;
-}MP_DEFINE_CONST_FUN_OBJ_1(pronounce_obj, pronounce);
+}MP_DEFINE_CONST_FUN_OBJ_1(translate_obj, translate);
 
 extern int debug;
 
-static mp_obj_t articulate(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args, bool sing) {
+static mp_obj_t articulate(mp_obj_t phonemes, mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args, bool sing) {
 
     static const mp_arg_t allowed_args[] = {
         { MP_QSTR_pitch,    MP_ARG_KW_ONLY | MP_ARG_INT, {.u_int = DEFAULT_PITCH} },
@@ -161,7 +161,7 @@ static mp_obj_t articulate(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t 
 
     // parse args
     mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
-    mp_arg_parse_all(n_args-1, pos_args+1, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
+    mp_arg_parse_all(n_args, pos_args, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
 
     sam_memory *sam = m_new(sam_memory, 1);
     MP_STATE_PORT(speech_data) = sam;
@@ -175,7 +175,7 @@ static mp_obj_t articulate(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t 
     debug = args[4].u_bool;
 
     mp_uint_t len;
-    const char *input = mp_obj_str_get_data(pos_args[0], &len);
+    const char *input = mp_obj_str_get_data(phonemes, &len);
     buf_start_pos = 0;
     speech_iterator_t *src = make_speech_iter();
     buf = src->buf;
@@ -203,12 +203,18 @@ static mp_obj_t articulate(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t 
 }
 
 static mp_obj_t say(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
-    return articulate(n_args, pos_args, kw_args, false);
+    mp_obj_t phonemes = translate(pos_args[0]);
+    return articulate(phonemes, n_args-1, pos_args+1, kw_args, false);
 }
 MP_DEFINE_CONST_FUN_OBJ_KW(say_obj, 1, say);
 
+static mp_obj_t pronounce(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
+    return articulate(pos_args[0], n_args-1, pos_args+1, kw_args, false);
+}
+MP_DEFINE_CONST_FUN_OBJ_KW(pronounce_obj, 1, pronounce);
+
 static mp_obj_t sing(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
-    return articulate(n_args, pos_args, kw_args, true);
+    return articulate(pos_args[0], n_args-1, pos_args+1, kw_args, true);
 }
 MP_DEFINE_CONST_FUN_OBJ_KW(sing_obj, 1, sing);
 
@@ -217,6 +223,7 @@ static const mp_map_elem_t _globals_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_say), (mp_obj_t)&say_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_sing), (mp_obj_t)&sing_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_pronounce), (mp_obj_t)&pronounce_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_translate), (mp_obj_t)&translate_obj },
 };
 static MP_DEFINE_CONST_DICT(_globals, _globals_table);
 
