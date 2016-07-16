@@ -28,7 +28,7 @@ void CopyStress(sam_memory* sam);
 void SetPhonemeLength(sam_memory* sam);
 void AdjustLengths(sam_memory* sam);
 void Code41240(sam_memory* sam);
-void Insert(sam_memory* sam, unsigned char position, unsigned char index, unsigned char length, unsigned char stress);
+void Insert(sam_memory* sam, unsigned char position, unsigned char index, unsigned char length, unsigned char stress, unsigned char pitch);
 void InsertBreath(sam_memory* sam);
 void PrepareOutput(sam_memory* sam);
 
@@ -80,7 +80,8 @@ void Init(sam_memory* sam)
 	{
 		sam->common.phoneme_output[i].index = 0;
 		sam->common.phoneme_output[i].stress = 0;
-		sam->common.phoneme_output[i].length = 0;
+        sam->common.phoneme_output[i].length = 0;
+        sam->common.phoneme_output[i].pitch = 0;
 	}
 	sam->prepare.phoneme_input[INPUT_PHONEMES-1].index = PHONEME_END; //to prevent buffer overflow // ML : changed from 32 to 255 to stop freezing with long inputs
 
@@ -99,22 +100,13 @@ int SAMMain(sam_memory* sam)
     ClearInput(sam);
     if (err) return 0;
 
-	if (debug)
-		PrintPhonemes(sam->prepare.phoneme_input);
-    if (debug)
-        printf("Parser 2\r\n");
-	Parser2(sam);
-    if (debug)
-        printf("Copy Stress\r\n");
-	CopyStress(sam);
-    if (debug)
-        printf("Set Phoneme Lengths\r\n");
-	SetPhonemeLength(sam);
-    if (debug)
-        printf("Adjust Lengths\r\n");
-	AdjustLengths(sam);
-    if (debug)
-        printf("Code 41420\r\n");
+	if (debug) {
+		PrintPhonemes("Input phonemes", sam->prepare.phoneme_input);
+    }
+    Parser2(sam);
+    CopyStress(sam);
+    SetPhonemeLength(sam);
+    AdjustLengths(sam);
 	Code41240(sam);
     unsigned char X = 0;
 	do
@@ -124,10 +116,8 @@ int SAMMain(sam_memory* sam)
 		{
             if (A == PHONEME_END)
                 break;
-            sam_error = "Illegal phoneme index";
+            sam_error = "INTERNAL ERROR: Illegal phoneme index";
             return 0;
-			//sam->prepare.phoneme_input[X].index = PHONEME_END;
-			//break; // error: delete all behind it
 		}
 		X++;
 	} while (X < INPUT_PHONEMES);
@@ -136,14 +126,10 @@ int SAMMain(sam_memory* sam)
         printf("Insert Breadth\r\n");
 	InsertBreath(sam);
 
-	//mem[40158] = 255;
-	if (debug)
-	{
-		PrintPhonemes(sam->prepare.phoneme_input);
-	}
+    if (debug) {
+        PrintPhonemes("Processed phonemes", sam->prepare.phoneme_input);
+    }
 
-    if (debug)
-        printf("Prepare Output\r\n");
 	PrepareOutput(sam);
     if (strcmp(sam_error, "OK"))
         return 0;
@@ -189,7 +175,8 @@ void PrepareOutput(sam_memory* sam)
 
 		sam->common.phoneme_output[Y].index = A;
 		sam->common.phoneme_output[Y].length = sam->prepare.phoneme_input[X].length;
-		sam->common.phoneme_output[Y].stress = sam->prepare.phoneme_input[X].stress;
+        sam->common.phoneme_output[Y].stress = sam->prepare.phoneme_input[X].stress;
+        sam->common.phoneme_output[Y].pitch = sam->prepare.phoneme_input[X].pitch;
 		X++;
 		Y++;
 	}
@@ -204,21 +191,21 @@ void InsertBreath(sam_memory* sam)
 		unsigned char phoneme_id = sam->prepare.phoneme_input[index].index;
 		if (phoneme_id == PHONEME_END)
             return;
-		frames += sam->prepare.phoneme_input[index].length;
-		if (frames >= RENDER_FRAMES-24)
+        frames += sam->prepare.phoneme_input[index].length;
+		if (frames >= RENDER_FRAMES-16)
 		{
             index++;
-            Insert(sam, index, 0, 0, 0);
+            Insert(sam, index, 0, 0, 0, 0);
             frames = 0;
             index++;
-            Insert(sam, index, PHONEME_END_BREATH, 0, 0);
+            Insert(sam, index, PHONEME_END_BREATH, 0, 0, 0);
             frames = 0;
         }
         // If phoneme is punctuation, then insert a breath after it.
         else if (phoneme_id < PHONEME_END_BREATH && (flags2[phoneme_id]&1))
         {
             index++;
-            Insert(sam, index, PHONEME_END_BREATH, 0, 0);
+            Insert(sam, index, PHONEME_END_BREATH, 0, 0, 0);
             frames = 0;
         }
         index++;
@@ -284,7 +271,7 @@ void CopyStress(sam_memory* sam)
 
 
 //void Code41014()
-void Insert(sam_memory* sam, unsigned char position/*var57*/, unsigned char index, unsigned char length, unsigned char stress)
+void Insert(sam_memory* sam, unsigned char position/*var57*/, unsigned char index, unsigned char length, unsigned char stress, unsigned char pitch)
 {
 	int i;
 	for(i=INPUT_PHONEMES-3; i >= position; i--) // ML : always keep last safe-guarding.
@@ -294,7 +281,8 @@ void Insert(sam_memory* sam, unsigned char position/*var57*/, unsigned char inde
 
 	sam->prepare.phoneme_input[position].index = index;
 	sam->prepare.phoneme_input[position].length = length;
-	sam->prepare.phoneme_input[position].stress = stress;
+    sam->prepare.phoneme_input[position].stress = stress;
+    sam->prepare.phoneme_input[position].pitch = pitch;
 	return;
 }
 
@@ -400,6 +388,26 @@ int Parser1(sam_memory* sam)
         if (sign2 > 96)
             sign2 -= 32;
 
+        if (sign1 == '#') {
+            unsigned pitch = sign2 - '0';
+            if (pitch > 9) {
+                sam_error = "Illegal pitch";
+                return 0;
+            }
+            X++;
+            while (X < sam->prepare.input_length && ((unsigned)(sam->prepare.input[X] - '0')) < 10) {
+                pitch *= 10;
+                pitch += sam->prepare.input[X] - '0';
+                X++;
+            }
+            if (pitch > 255) {
+                sam_error = "Illegal pitch";
+                return 0;
+            }
+            sam->common.pitch = pitch;
+            continue;
+        }
+
 		// NOW sign1 = FIRST CHARACTER OF PHONEME, AND sign2 = SECOND CHARACTER OF PHONEME
 
        // TRY TO MATCH PHONEMES ON TWO TWO-CHARACTER NAME
@@ -422,8 +430,9 @@ pos41095:
 			if ((A != '*') && (A == sign2))
 			{
                // STORE THE INDEX OF THE PHONEME INTO THE phomeneIndexTable
-				sam->prepare.phoneme_input[position].index = Y;
-				
+                sam->prepare.phoneme_input[position].index = Y;
+                sam->prepare.phoneme_input[position].pitch = sam->common.pitch;
+
 				// ADVANCE THE POINTER TO THE phonemeIndexTable
 				position++;
 				// ADVANCE THE POINTER TO THE phonemeInputBuffer
@@ -455,6 +464,7 @@ pos41134:
 			{
                 // SAVE THE POSITION AND MOVE AHEAD
 				sam->prepare.phoneme_input[position].index = Y;
+                sam->prepare.phoneme_input[position].pitch = sam->common.pitch;
 				
 				// ADVANCE THE POINTER
 				position++;
@@ -504,17 +514,17 @@ void SetPhonemeLength(sam_memory* sam)
 	int position = 0;
 	while(sam->prepare.phoneme_input[position].index != PHONEME_END )
 	{
-		A = sam->prepare.phoneme_input[position].stress;
-		//41218: BMI 41229
-		if ((A == 0) || ((A&128) != 0))
-		{
-			sam->prepare.phoneme_input[position].length = phonemeLengthTable[sam->prepare.phoneme_input[position].index];
-		} else
-		{
-			sam->prepare.phoneme_input[position].length = phonemeStressedLengthTable[sam->prepare.phoneme_input[position].index];
-		}
-		position++;
-	}
+        A = sam->prepare.phoneme_input[position].stress;
+        //41218: BMI 41229
+        if ((A == 0) || ((A&128) != 0))
+        {
+            sam->prepare.phoneme_input[position].length = phonemeLengthTable[sam->prepare.phoneme_input[position].index];
+        } else
+        {
+            sam->prepare.phoneme_input[position].length = phonemeStressedLengthTable[sam->prepare.phoneme_input[position].index];
+        }
+        position++;
+    }
 }
 
 
@@ -534,8 +544,8 @@ void Code41240(sam_memory* sam)
 		} else
 		if ((flags[index]&1) == 0)
 		{
-			Insert(sam, pos+1, index+1, phonemeLengthTable[index+1], sam->prepare.phoneme_input[pos].stress);
-			Insert(sam, pos+2, index+2, phonemeLengthTable[index+2], sam->prepare.phoneme_input[pos].stress);
+			Insert(sam, pos+1, index+1, phonemeLengthTable[index+1], sam->prepare.phoneme_input[pos].stress, sam->prepare.phoneme_input[pos].pitch);
+			Insert(sam, pos+2, index+2, phonemeLengthTable[index+2], sam->prepare.phoneme_input[pos].stress, sam->prepare.phoneme_input[pos].pitch);
 			pos += 3;
 			continue;
 		}
@@ -552,8 +562,8 @@ void Code41240(sam_memory* sam)
 			if ((A == 36) || (A == 37)) {pos++; continue;} // '/H' '/X'
 		}
 
-		Insert(sam, pos+1, index+1, phonemeLengthTable[index+1], sam->prepare.phoneme_input[pos].stress);
-		Insert(sam, pos+2, index+2, phonemeLengthTable[index+2], sam->prepare.phoneme_input[pos].stress);
+		Insert(sam, pos+1, index+1, phonemeLengthTable[index+1], sam->prepare.phoneme_input[pos].stress, sam->prepare.phoneme_input[pos].pitch);
+		Insert(sam, pos+2, index+2, phonemeLengthTable[index+2], sam->prepare.phoneme_input[pos].stress, sam->prepare.phoneme_input[pos].pitch);
 		pos += 3;
 	};
 
@@ -602,7 +612,7 @@ void Parser2(sam_memory* sam)
 // DEBUG: Print phoneme and index
 // DEBUG:		if (debug && A != PHONEME_END) printf("%d: %c%c\n", X, signInputTable1[A], signInputTable2[A]);
 
-// Is phoneme pause?
+// Is phoneme pause or pitch shift?
 		if (A == 0)
 		{
 // Move ahead to the 
@@ -638,7 +648,7 @@ void Parser2(sam_memory* sam)
 
 		//DEBUG: if (A==20) printf("RULE: insert WX following diphtong NOT ending in IY sound\n");
 		//DEBUG: if (A==21) printf("RULE: insert YX following diphtong ending in IY sound\n");
-		Insert(sam, pos+1, A, 0, mem58);
+		Insert(sam, pos+1, A, 0, mem58, sam->prepare.phoneme_input[pos].pitch);
 		X = pos;
 // Jump to ???
 		goto pos41749;
@@ -666,7 +676,7 @@ pos41466:
 // Change UL to AX
 		sam->prepare.phoneme_input[X].index = 13;  // 'AX'
 // Perform insert. Note code below may jump up here with different values
-		Insert(sam, X+1, A, 0, mem58);
+		Insert(sam, X+1, A, 0, mem58, sam->prepare.phoneme_input[X].pitch);
 		pos++;
 // Move to next phoneme
 		continue;
@@ -745,7 +755,7 @@ pos41503:
 // Insert a glottal stop and move forward
 							//DEBUG: printf("RULE: Insert glottal stop between two stressed vowels with space between them\n");
 							// 31 = 'Q'
-							Insert(sam, X, 31, 0, 0);
+							Insert(sam, X, 31, 0, 0, 0);
 							pos++;
 							continue;
 						}
@@ -947,7 +957,7 @@ pos41779:
 		{
 			//        pos41783:
 			//DEBUG: printf("CH -> CH CH+1\n");
-			Insert(sam, X+1, A+1, 0, sam->prepare.phoneme_input[X].stress);
+			Insert(sam, X+1, A+1, 0, sam->prepare.phoneme_input[X].stress, sam->prepare.phoneme_input[X].pitch);
 			pos++;
 			continue;
 		}
@@ -962,7 +972,7 @@ pos41788:
 		if (A == 44) // 'J'
 		{
 			//DEBUG: printf("J -> J J+1\n");
-			Insert(sam, X+1, A+1, 0, sam->prepare.phoneme_input[X].stress);
+			Insert(sam, X+1, A+1, 0, sam->prepare.phoneme_input[X].stress, sam->prepare.phoneme_input[X].pitch);
 			pos++;
 			continue;
 		}

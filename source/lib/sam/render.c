@@ -346,7 +346,6 @@ void Render(sam_memory* sam)
 //
 // The parameters are copied from the phoneme to the frame verbatim.
 
-
     do
     {
         // get the index
@@ -385,6 +384,7 @@ void Render(sam_memory* sam)
 
         // get number of frames to write
         phase2 = sam->common.phoneme_output[Y].length;
+        unsigned char pitch = sam->common.phoneme_output[Y].pitch;
         Y = mem56;
 
         // copy from the source to the frames list
@@ -397,7 +397,7 @@ void Render(sam_memory* sam)
             sam->render.freq_amp[X].amp2 = ampl2data[Y];     // F2 amplitude
             sam->render.freq_amp[X].amp3 = ampl3data[Y];     // F3 amplitude
             sam->render.flags[X] = sampledConsonantFlags[Y];        // phoneme data for sampled consonants
-            sam->render.pitch[X] = sam->common.pitch + phase1;      // pitch
+            sam->render.pitch[X] = pitch + phase1;      // pitch
             X++;
             phase2--;
         } while(phase2 != 0);
@@ -545,13 +545,12 @@ void Render(sam_memory* sam)
 	{
          // get the current and following phoneme
 		unsigned char Y = sam->common.phoneme_output[X].index;
-		A = sam->common.phoneme_output[X+1].index;
+        A = sam->common.phoneme_output[X+1].index;
 		X++;
 
 		// exit loop at end token
 		if (A == PHONEME_END) break;//goto pos47970;
-
-
+ 
         // get the ranking of each phoneme
 		X = A;
 		mem56 = blendRank[A];

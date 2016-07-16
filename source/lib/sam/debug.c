@@ -4,12 +4,12 @@
 extern unsigned char signInputTable1[];
 extern unsigned char signInputTable2[];
 
-void PrintPhonemes(phoneme_t *phonemes)
+void PrintPhonemes(char* title, phoneme_t *phonemes)
 {
 	int i = 0;
 	printf("===========================================\r\n");
 
-	printf("Internal Phoneme presentation:\r\n\r\n");
+	printf("%s:\r\n\r\n", title);
 	printf(" idx    phoneme  length  stress\r\n");
 	printf("------------------------------\r\n");
 

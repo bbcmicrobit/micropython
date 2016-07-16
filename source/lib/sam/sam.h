@@ -8,9 +8,10 @@
 #define DEFAULT_THROAT   128
 
 typedef struct _phoneme_t {
-    uint16_t index:7;
-    uint16_t length:5;
-    uint16_t stress:4; //numbers from 0 to 8
+    unsigned char index;
+    unsigned char length;
+    unsigned char stress; //numbers from 0 to 8
+    unsigned char pitch;
 } phoneme_t;
 
 enum {
@@ -19,7 +20,7 @@ enum {
     PHONEME_END_BREATH=126
 };
 
-#define RENDER_FRAMES 224
+#define RENDER_FRAMES 256
 
 #define INPUT_PHONEMES 128
 #define OUTPUT_PHONEMES (RENDER_FRAMES/4)

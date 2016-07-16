@@ -23,6 +23,7 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+#include<stdio.h>
 
 #include "py/obj.h"
 #include "filesystem.h"
@@ -195,8 +196,9 @@ static mp_obj_t articulate(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t 
     /* Wait for audio finish before returning */
     while (microbit_audio_is_playing());
     MP_STATE_PORT(speech_data) = NULL;
-    printf("Last position: %d\r\n", last_pos);
-    printf("Glitches: %d\r\n", glitches);
+    if (debug) {
+        printf("Glitches: %d\r\n", glitches);
+    }
     return mp_const_none;
 }
 
