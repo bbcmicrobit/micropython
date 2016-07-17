@@ -69,7 +69,7 @@ void microbit_image_set_from_char(greyscale_t *img, char c);
 microbit_image_obj_t *microbit_image_for_char(char c);
 mp_obj_t microbit_image_slice(microbit_image_obj_t *img, mp_int_t start, mp_int_t width, mp_int_t stride);
 /* ref exists so that we can pull a string out of an object and not have it GC'ed while oterating over it */
-mp_obj_t scrolling_string_image_iterable(const char* str, mp_uint_t len, mp_obj_t ref, bool monospace);
+mp_obj_t scrolling_string_image_iterable(const char* str, mp_uint_t len, mp_obj_t ref, bool monospace, bool repeat);
 
 #define SMALL_IMAGE(p0, p1, p2, p3, p4, p5, p6, p7, p8, p9, p10, p11, p12, p13, p14, p15, p16, p17, p18, p19, p20, p21, p22, p23, p44) \
 { \
