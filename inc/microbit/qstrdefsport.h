@@ -152,6 +152,7 @@ Q(ScrollingString)
 Q(on)
 Q(off)
 Q(is_on)
+Q(Facade)
 
 Q(MicroBitButton)
 Q(button_a)

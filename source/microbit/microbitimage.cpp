@@ -564,14 +564,19 @@ STATIC mp_int_t get_pixel_from_font_data(const unsigned char *data, int x, int y
     return ((data[y]>>(4-x))&1);
 }
 
-microbit_image_obj_t *microbit_image_for_char(char c) {
+void microbit_image_set_from_char(greyscale_t *img, char c) {
     const unsigned char *data = get_font_data_from_char(c);
-    greyscale_t *result = greyscale_new(5,5);
     for (int x = 0; x < 5; ++x) {
         for (int y = 0; y < 5; ++y) {
-            result->setPixelValue(x, y, get_pixel_from_font_data(data, x, y)*MAX_BRIGHTNESS);
+            img->setPixelValue(x, y, get_pixel_from_font_data(data, x, y)*MAX_BRIGHTNESS);
         }
     }
+}
+
+
+microbit_image_obj_t *microbit_image_for_char(char c) {
+    greyscale_t *result = greyscale_new(5,5);
+    microbit_image_set_from_char(result, c);
     return (microbit_image_obj_t *)result;
 }
 
@@ -798,5 +803,115 @@ const mp_obj_type_t microbit_scrolling_string_iterator_type = {
     .bases_tuple = NULL,
     .locals_dict = NULL,
 };
+
+/** Facade types to present a string as a sequence of images.
+ * These are necessary to avoid allocation during iteration,
+ * which may happen in interrupt handlers.
+ */
+
+typedef struct _string_image_facade_t {
+    mp_obj_base_t base;
+    mp_obj_t string;
+    greyscale_t *image;
+} string_image_facade_t;
+
+static mp_obj_t string_image_facade_subscr(mp_obj_t self_in, mp_obj_t index_in, mp_obj_t value) {
+    if (value == MP_OBJ_SENTINEL) {
+        // Fill in image
+        string_image_facade_t *self = (string_image_facade_t *)self_in;
+        mp_uint_t len;
+        const char *text = mp_obj_str_get_data(self->string, &len);
+        mp_uint_t index = mp_get_index(self->base.type, len, index_in, false);
+        microbit_image_set_from_char(self->image, text[index]);
+        return self->image;
+    } else {
+        return MP_OBJ_NULL; // op not supported
+    }
+}
+
+static mp_obj_t facade_unary_op(mp_uint_t op, mp_obj_t self_in) {
+    string_image_facade_t *self = (string_image_facade_t *)self_in;
+    switch (op) {
+        case MP_UNARY_OP_LEN:
+            return mp_obj_len(self->string);
+        default: return MP_OBJ_NULL; // op not supported
+    }
+}
+
+static mp_obj_t microbit_facade_iterator(mp_obj_t iterable);
+
+const mp_obj_type_t string_image_facade_type = {
+    { &mp_type_type },
+    .name = MP_QSTR_Facade,
+    .print = NULL,
+    .make_new = NULL,
+    .call = NULL,
+    .unary_op = facade_unary_op,
+    .binary_op = NULL,
+    .attr = NULL,
+    .subscr = string_image_facade_subscr,
+    .getiter = microbit_facade_iterator,
+    .iternext = NULL,
+    .buffer_p = {NULL},
+    .stream_p = NULL,
+    .bases_tuple = NULL,
+    NULL
+};
+
+
+typedef struct _facade_iterator_t {
+    mp_obj_base_t base;
+    mp_obj_t string;
+    mp_uint_t index;
+    greyscale_t *image;
+} facade_iterator_t;
+
+mp_obj_t microbit_string_facade(mp_obj_t string) {
+    string_image_facade_t *result = m_new_obj(string_image_facade_t);
+    result->base.type = &string_image_facade_type;
+    result->string = string;
+    result->image = greyscale_new(5,5);
+    return result;
+}
+
+static mp_obj_t microbit_facade_iter_next(mp_obj_t iter_in) {
+    facade_iterator_t *iter = (facade_iterator_t *)iter_in;
+    mp_uint_t len;
+    const char *text = mp_obj_str_get_data(iter->string, &len);
+    if (iter->index >= len) {
+        return MP_OBJ_STOP_ITERATION;
+    }
+    microbit_image_set_from_char(iter->image, text[iter->index]);
+    iter->index++;
+    return iter->image;
+}
+
+const mp_obj_type_t microbit_facade_iterator_type = {
+    { &mp_type_type },
+    .name = MP_QSTR_iterator,
+    .print = NULL,
+    .make_new = NULL,
+    .call = NULL,
+    .unary_op = NULL,
+    .binary_op = NULL,
+    .attr = NULL,
+    .subscr = NULL,
+    .getiter = mp_identity,
+    .iternext = microbit_facade_iter_next,
+    .buffer_p = {NULL},
+    .stream_p = NULL,
+    .bases_tuple = NULL,
+    NULL
+};
+
+mp_obj_t microbit_facade_iterator(mp_obj_t iterable_in) {
+    facade_iterator_t *result = m_new_obj(facade_iterator_t);
+    string_image_facade_t *iterable = (string_image_facade_t *)iterable_in;
+    result->base.type = &microbit_facade_iterator_type;
+    result->string = iterable->string;
+    result->image = iterable->image;
+    result->index = 0;
+    return result;
+}
 
 }

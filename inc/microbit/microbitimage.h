@@ -62,6 +62,10 @@ typedef union _microbit_image_obj_t {
     
 } microbit_image_obj_t;
 
+/** Return a facade object that presents the string as a sequence of images */
+mp_obj_t microbit_string_facade(mp_obj_t string);
+
+void microbit_image_set_from_char(greyscale_t *img, char c);
 microbit_image_obj_t *microbit_image_for_char(char c);
 mp_obj_t microbit_image_slice(microbit_image_obj_t *img, mp_int_t start, mp_int_t width, mp_int_t stride);
 /* ref exists so that we can pull a string out of an object and not have it GC'ed while oterating over it */
@@ -84,7 +88,6 @@ extern const monochrome_5by5_t microbit_const_image_heart_obj;
 #define BLANK_IMAGE (microbit_image_obj_t *)(&microbit_blank_image)
 #define HEART_IMAGE (microbit_image_obj_t *)(&microbit_const_image_heart_obj)
 
-microbit_image_obj_t *microbit_image_for_char(char c);
 microbit_image_obj_t *microbit_image_dim(microbit_image_obj_t *lhs, mp_float_t fval);
 microbit_image_obj_t *microbit_image_sum(microbit_image_obj_t *lhs, microbit_image_obj_t *rhs, bool add);
 

@@ -105,6 +105,7 @@ mp_obj_t microbit_display_show_func(mp_uint_t n_args, const mp_obj_t *pos_args, 
                 goto single_image_immediate;
             }
         }
+        image = microbit_string_facade(image);
     } else if (mp_obj_get_type(image) == &microbit_image_type) {
         if (!clear && !loop) {
             goto single_image_immediate;
@@ -381,9 +382,10 @@ void microbit_display_animate(microbit_display_obj_t *self, mp_obj_t iterable, m
     MP_STATE_PORT(async_data)[0] = self; // so it doesn't get GC'd
     MP_STATE_PORT(async_data)[1] = async_iterator;
     wakeup_event = false;
-    async_mode = ASYNC_MODE_ANIMATION;
     mp_obj_t obj = mp_iternext_allow_raise(async_iterator);
     draw_object(obj);
+    async_tick = 0;
+    async_mode = ASYNC_MODE_ANIMATION;
     if (wait) {
         wait_for_event();
     }
