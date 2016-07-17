@@ -171,7 +171,11 @@ The mapping from pitch numbers to musical notes is shown below:
 
 The ``sing`` function must take phonemes and pitch as input like this::
 
-    speech.sing("DOWWWW", 115)
+    speech.sing("#115DOWWWW")
+
+Notice how the pitch to be sung is prepended to the phoneme with a hash
+(``#``). The pitch will remain the same for subsequent phonemes until a new
+pitch is annotated.
 
 The following example demonstrates how all three generative functions (``say``,
 ``pronounce`` and ``sing``) can be used to produce speech like output:
