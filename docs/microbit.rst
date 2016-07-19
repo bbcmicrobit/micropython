@@ -16,7 +16,7 @@ Functions
     Enter a panic mode. Requires restart. Pass in an arbitrary integer <= 255
     to indicate a status::
 
-        microbit.panic(404)
+        microbit.panic(255)
 
 
 .. py:function:: reset()
