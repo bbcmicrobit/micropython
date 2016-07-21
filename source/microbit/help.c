@@ -54,7 +54,7 @@ STATIC const char *help_text =
 "  CTRL-E        -- enter paste mode, turning off auto-indent\n"
 "\n"
 "Available modules: antigravity, array, collections, gc, love, math,\n"
-"micropython, music, neopixel, random, struct, sys, this\n"
+"micropython, music, neopixel, os, radio, random, speech, struct, sys, this\n"
 "\n"
 "For more information about Python, visit: http://python.org/\n"
 "To find out about MicroPython, visit: http://micropython.org/\n"
