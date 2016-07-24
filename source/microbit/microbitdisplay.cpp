@@ -34,6 +34,7 @@ extern "C" {
 #include "modmicrobit.h"
 #include "microbitimage.h"
 #include "microbitdisplay.h"
+#include "microbitpin.h"
 #include "lib/iters.h"
 #include "lib/ticker.h"
 
@@ -423,6 +424,21 @@ MP_DEFINE_CONST_FUN_OBJ_KW(microbit_display_scroll_obj, 1, microbit_display_scro
 
 mp_obj_t microbit_display_on_func(mp_obj_t obj) {
     microbit_display_obj_t *self = (microbit_display_obj_t*)obj;
+    /* Try to reclaim the pins we need */
+    microbit_obj_pin_fail_if_cant_acquire(&microbit_p3_obj);
+    microbit_obj_pin_fail_if_cant_acquire(&microbit_p4_obj);
+    microbit_obj_pin_fail_if_cant_acquire(&microbit_p6_obj);
+    microbit_obj_pin_fail_if_cant_acquire(&microbit_p7_obj);
+    microbit_obj_pin_fail_if_cant_acquire(&microbit_p9_obj);
+    microbit_obj_pin_fail_if_cant_acquire(&microbit_p10_obj);
+    microbit_obj_pin_acquire(&microbit_p3_obj, MP_QSTR_display);
+    microbit_obj_pin_acquire(&microbit_p4_obj, MP_QSTR_display);
+    microbit_obj_pin_acquire(&microbit_p6_obj, MP_QSTR_display);
+    microbit_obj_pin_acquire(&microbit_p7_obj, MP_QSTR_display);
+    microbit_obj_pin_acquire(&microbit_p9_obj, MP_QSTR_display);
+    microbit_obj_pin_acquire(&microbit_p10_obj, MP_QSTR_display);
+    /* Make sure all pins are in the correct state */
+    microbit_display_init();
     /* Re-enable the display loop.  This will resume any animations in
      * progress and display any static image. */
     self->active = true;
@@ -440,6 +456,13 @@ mp_obj_t microbit_display_off_func(mp_obj_t obj) {
     /* Disable the row strobes, allowing the columns to be used freely for
      * GPIO. */
     nrf_gpio_pins_clear(ROW_PINS_MASK);
+    /* Free pins for other uses */
+    microbit_obj_pin_free(&microbit_p3_obj);
+    microbit_obj_pin_free(&microbit_p4_obj);
+    microbit_obj_pin_free(&microbit_p6_obj);
+    microbit_obj_pin_free(&microbit_p7_obj);
+    microbit_obj_pin_free(&microbit_p9_obj);
+    microbit_obj_pin_free(&microbit_p10_obj);
     return mp_const_none;
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_display_off_obj, microbit_display_off_func);

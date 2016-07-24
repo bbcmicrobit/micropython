@@ -24,7 +24,6 @@
  * THE SOFTWARE.
  */
 
-#include "MicroBit.h"
 #include "microbitobj.h"
 #include "microbitmusic.h"
 
@@ -34,6 +33,9 @@ extern "C" {
 #include "py/objstr.h"
 #include "py/mphal.h"
 #include "modmicrobit.h"
+#include "microbit/microbitobj.h"
+#include "microbit/microbitpin.h"
+#include "lib/pwm.h"
 
 #define DEFAULT_BPM      120
 #define DEFAULT_TICKS    4 // i.e. 4 ticks per beat
@@ -68,9 +70,11 @@ static uint32_t async_music_wait_ticks;
 static bool async_music_loop;
 static uint16_t async_music_notes_len;
 static uint16_t async_music_notes_index;
-static MicroBitPin *async_music_pin;
+static const microbit_pin_obj_t *async_music_pin;
 
-STATIC uint32_t start_note(const char *note_str, size_t note_len, MicroBitPin *pin);
+extern uint32_t ticks;
+
+STATIC uint32_t start_note(const char *note_str, size_t note_len, const microbit_pin_obj_t *pin);
 
 void microbit_music_tick(void) {
     if (async_music_state == ASYNC_MUSIC_STATE_IDLE) {
@@ -85,7 +89,7 @@ void microbit_music_tick(void) {
 
     if (async_music_state == ASYNC_MUSIC_STATE_ARTICULATE) {
         // turn off output and rest
-        async_music_pin->setAnalogValue(0);
+        pwm_set_duty_cycle(async_music_pin->name, 0);
         async_music_wait_ticks = ticks + ARTICULATION_MS;
         async_music_state = ASYNC_MUSIC_STATE_NEXT_NOTE;
     } else if (async_music_state == ASYNC_MUSIC_STATE_NEXT_NOTE) {
@@ -95,6 +99,7 @@ void microbit_music_tick(void) {
                 async_music_notes_index = 0;
             } else {
                 async_music_state = ASYNC_MUSIC_STATE_IDLE;
+                microbit_obj_pin_free(async_music_pin);
                 return;
             }
         }
@@ -106,7 +111,7 @@ void microbit_music_tick(void) {
         }
         if (note == mp_const_none) {
             // a rest (is this even used anymore?)
-            async_music_pin->setAnalogValue(0);
+            pwm_set_duty_cycle(async_music_pin->name, 0);
             async_music_wait_ticks = 60000 / music_state.bpm;
             async_music_state = ASYNC_MUSIC_STATE_NEXT_NOTE;
         } else {
@@ -127,14 +132,14 @@ STATIC void wait_async_music_idle(void) {
         // allow CTRL-C to stop the music
         if (MP_STATE_VM(mp_pending_exception) != MP_OBJ_NULL) {
             async_music_state = ASYNC_MUSIC_STATE_IDLE;
-            async_music_pin->setAnalogValue(0);
+            pwm_set_duty_cycle(async_music_pin->name, 0);
             break;
         }
     }
 }
 
-STATIC uint32_t start_note(const char *note_str, size_t note_len, MicroBitPin *pin) {
-    pin->setAnalogValue(128);
+STATIC uint32_t start_note(const char *note_str, size_t note_len, const microbit_pin_obj_t *pin) {
+    pwm_set_duty_cycle(pin->name, 128);
 
     // [NOTE](#|b)(octave)(:length)
     // technically, c4 is middle c, so we'll go with that...
@@ -214,23 +219,25 @@ STATIC uint32_t start_note(const char *note_str, size_t note_len, MicroBitPin *p
 
     // 18 is 'r' or 'R'
     if (note_index < 10) {
+        uint32_t period;
         if (sharp) {
             if (octave >= 0) {
-                pin->setAnalogPeriodUs(periods_sharps_us[note_index] >> octave);
+                period = periods_sharps_us[note_index] >> octave;
             }
             else {
-                pin->setAnalogPeriodUs(periods_sharps_us[note_index] << -octave);
+                period = periods_sharps_us[note_index] << -octave;
             }
         } else {
             if (octave >= 0) {
-                pin->setAnalogPeriodUs(periods_us[note_index] >> octave);
+                period = periods_us[note_index] >> octave;
             }
             else {
-                pin->setAnalogPeriodUs(periods_us[note_index] << -octave);
+                period = periods_us[note_index] << -octave;
             }
         }
+        pwm_set_period_us(period);
     } else {
-        pin->setAnalogValue(0);
+        pwm_set_duty_cycle(pin->name, 0);
     }
 
     // Cut off a short time from end of note so we hear articulation.
@@ -262,14 +269,14 @@ STATIC mp_obj_t microbit_music_get_tempo(void) {
 MP_DEFINE_CONST_FUN_OBJ_0(microbit_music_get_tempo_obj, microbit_music_get_tempo);
 
 STATIC mp_obj_t microbit_music_stop(mp_uint_t n_args, const mp_obj_t *args) {
-    MicroBitPin *pin;
+    const microbit_pin_obj_t *pin;
     if (n_args == 0) {
-        pin = &uBit.io.P0;
+        pin = &microbit_p0_obj;
     } else {
         pin = microbit_obj_get_pin(args[0]);
     }
-
-    pin->setAnalogValue(0);
+    pwm_set_duty_cycle(pin->name, 0);
+    microbit_obj_pin_free(pin);
 
     async_music_state = ASYNC_MUSIC_STATE_IDLE;
 
@@ -304,7 +311,8 @@ STATIC mp_obj_t microbit_music_play(mp_uint_t n_args, const mp_obj_t *pos_args, 
     }
 
     // get the pin to play on
-    MicroBitPin *pin = microbit_obj_get_pin(args[1].u_obj);
+    const microbit_pin_obj_t *pin = microbit_obj_get_pin(args[1].u_obj);
+    microbit_obj_pin_acquire(pin, MP_QSTR_music);
 
     // start the tune running in the background
     async_music_state = ASYNC_MUSIC_STATE_IDLE;
@@ -347,12 +355,12 @@ STATIC mp_obj_t microbit_music_pitch(mp_uint_t n_args, const mp_obj_t *pos_args,
     // get the parameters
     mp_uint_t frequency = args[0].u_int;
     mp_int_t duration = args[1].u_int;
-    MicroBitPin *pin = microbit_obj_get_pin(args[2].u_obj);
+    const microbit_pin_obj_t *pin = microbit_obj_get_pin(args[2].u_obj);
+    microbit_obj_pin_acquire(pin, MP_QSTR_music);
     bool wait = args[3].u_bool;
-
-    pin->setAnalogValue(128);
-    pin->setAnalogPeriodUs(1000000/frequency);
-
+    pwm_set_duty_cycle(pin->name, 128);
+    if (pwm_set_period_us(1000000/frequency))
+        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "pitch too extreme"));
     if (duration >= 0) {
         // use async machinery to stop the pitch after the duration
         async_music_state = ASYNC_MUSIC_STATE_IDLE;

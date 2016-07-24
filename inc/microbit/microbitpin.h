@@ -34,9 +34,31 @@
 #define MICROBIT_PIN_P14    (P0_22)
 #define MICROBIT_PIN_P15    (P0_21)
 
+#endif
+
+#include "microbit/microbitobj.h"
+
 mp_obj_t microbit_pin_write_digital(mp_obj_t self_in, mp_obj_t value_in);
 mp_obj_t microbit_pin_read_digital(mp_obj_t self_in);
+typedef void(*release_func)(const microbit_pin_obj_t *pin);
 
-#endif
+typedef struct _pinmode {
+    qstr name;
+    release_func release; /* Call this function to release pin */
+} microbit_pinmode_t;
+
+
+void microbit_obj_pin_fail_if_cant_acquire(const microbit_pin_obj_t *pin);
+
+void microbit_obj_pin_free(const microbit_pin_obj_t *pin);
+
+void microbit_obj_pin_acquire(const microbit_pin_obj_t *pin, qstr name);
+
+bool microbit_pin_high_debounced(microbit_pin_obj_t *pin);
+
+qstr microbit_obj_pin_get_mode(const microbit_pin_obj_t *pin);
+
+bool microbit_obj_pin_can_be_acquired(const microbit_pin_obj_t *pin);
+
 
 #endif // __MICROPY_INCLUDED_MICROBIT_MICROBITPIN_H__

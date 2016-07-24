@@ -125,10 +125,11 @@ extern const struct _mp_obj_module_t speech_module;
     void *async_data[2]; \
     void *async_music_data; \
     uint8_t *radio_buf; \
-    void *pwm_next_event; \
     void *audio_buffer; \
     void *audio_source; \
-    void *speech_data;
+    void *speech_data; \
+    const struct _pwm_events *pwm_active_events; \
+    const struct _pwm_events *pwm_pending_events; \
 
 // We need to provide a declaration/definition of alloca()
 #include <alloca.h>

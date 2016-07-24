@@ -24,58 +24,51 @@
  * THE SOFTWARE.
  */
 
-#include "MicroBit.h"
-
 extern "C" {
 
 #include "py/runtime.h"
+#include "microbitobj.h"
+#include "microbitpin.h"
 #include "modmicrobit.h"
+#include "nrf_gpio.h"
 
 typedef struct _microbit_button_obj_t {
     mp_obj_base_t base;
-    MicroBitButton *button;
-    /* Stores pressed count in top 31 bits and was_pressed in the low bit */
-    mp_uint_t pressed;
+    const microbit_pin_obj_t *pin;
+    uint8_t index;
 } microbit_button_obj_t;
+
+/* Stores pressed count in top 31 bits and was_pressed in the low bit */
+static mp_uint_t pressed[2];
+static int8_t sigmas[8] = { 5, 5, 5, 5, 5, 5, 5, 5 };
+static bool debounced_high[8] = { true, true, true, true, true, true, true, true };
 
 mp_obj_t microbit_button_is_pressed(mp_obj_t self_in) {
     microbit_button_obj_t *self = (microbit_button_obj_t*)self_in;
-    return mp_obj_new_bool(self->button->isPressed());
+    /* Button is pressed if pin is low */
+    return mp_obj_new_bool(!debounced_high[self->pin->number]);
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_button_is_pressed_obj, microbit_button_is_pressed);
 
 
 mp_obj_t microbit_button_get_presses(mp_obj_t self_in) {
     microbit_button_obj_t *self = (microbit_button_obj_t*)self_in;
-    mp_obj_t n_presses = mp_obj_new_int(self->pressed >> 1);
-    self->pressed &= 1;
+    mp_obj_t n_presses = mp_obj_new_int(pressed[self->index] >> 1);
+    pressed[self->index] &= 1;
     return n_presses;
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_button_get_presses_obj, microbit_button_get_presses);
 
 mp_obj_t microbit_button_was_pressed(mp_obj_t self_in) {
     microbit_button_obj_t *self = (microbit_button_obj_t*)self_in;
-    mp_int_t pressed = self->pressed;
-    mp_obj_t result = mp_obj_new_bool(pressed & 1);
-    self->pressed = pressed & -2;
+    mp_int_t presses = pressed[self->index];
+    mp_obj_t result = mp_obj_new_bool(presses & 1);
+    pressed[self->index] = presses & -2;
     return result;
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_button_was_pressed_obj, microbit_button_was_pressed);
 
-void button_a_listener(MicroBitEvent evt) {
-    if (evt.value == MICROBIT_BUTTON_EVT_DOWN) {
-        microbit_button_a_obj.pressed = (microbit_button_a_obj.pressed + 2) | 1;
-    }
-}
-
-void button_b_listener(MicroBitEvent evt) {
-    if (evt.value == MICROBIT_BUTTON_EVT_DOWN)
-        microbit_button_b_obj.pressed = (microbit_button_b_obj.pressed + 2) | 1;
-}
-
 void microbit_button_init(void) {
-    uBit.MessageBus.listen(MICROBIT_ID_BUTTON_A, MICROBIT_BUTTON_EVT_DOWN, button_a_listener, MESSAGE_BUS_LISTENER_IMMEDIATE);
-    uBit.MessageBus.listen(MICROBIT_ID_BUTTON_B, MICROBIT_BUTTON_EVT_DOWN, button_b_listener, MESSAGE_BUS_LISTENER_IMMEDIATE);
 }
 
 STATIC const mp_map_elem_t microbit_button_locals_dict_table[] = {
@@ -104,16 +97,81 @@ STATIC const mp_obj_type_t microbit_button_type = {
     .locals_dict = (mp_obj_dict_t*)&microbit_button_locals_dict,
 };
 
-microbit_button_obj_t microbit_button_a_obj = {
+const microbit_button_obj_t microbit_button_a_obj = {
     {&microbit_button_type},
-    .button = &uBit.buttonA,
-    .pressed = 0
+    .pin = &microbit_p5_obj,
+    .index = 0,
 };
 
-microbit_button_obj_t microbit_button_b_obj = {
+const microbit_button_obj_t microbit_button_b_obj = {
     {&microbit_button_type},
-    .button = &uBit.buttonB,
-    .pressed = 0
+    .pin = &microbit_p11_obj,
+    .index = 1,
 };
+
+extern uint8_t microbit_pinmodes[];
+
+enum PinTransition
+{
+    LOW_LOW = 0,
+    LOW_HIGH = 1,
+    HIGH_LOW = 2,
+    HIGH_HIGH = 3
+};
+
+static PinTransition update(const microbit_pin_obj_t *pin) {
+    int32_t sigma = sigmas[pin->number&7];
+    PinTransition result;
+    if (nrf_gpio_pin_read(pin->name))
+        sigma++;
+    else
+        sigma--;
+    if (sigma < 3) {
+        if (sigma < 0) {
+            sigma = 0;
+            result = LOW_LOW;
+        } else if (debounced_high[pin->number&7]) {
+            result = HIGH_LOW;
+            debounced_high[pin->number&7] = false;
+        } else {
+            result = LOW_LOW;
+        }
+    } else if (sigma > 7) {
+        if (sigma > 12) {
+            sigma = 12;
+            result = HIGH_HIGH;
+        } else if (debounced_high[pin->number&7]) {
+            result = HIGH_HIGH;
+        } else {
+            result = LOW_HIGH;
+            debounced_high[pin->number&7] = true;
+        }
+    } else if (debounced_high[pin->number&7]) {
+        result = HIGH_HIGH;
+    } else {
+        result = LOW_LOW;
+    }
+    sigmas[pin->number&7] = sigma;
+    return result;
+}
+
+void microbit_button_tick(void) {
+    // Update both buttons and the touch pins.
+    // Button is pressed when its pin transfers from HIGH to LOW.
+    if (update(microbit_button_a_obj.pin) == HIGH_LOW)
+        pressed[microbit_button_a_obj.index] = (pressed[microbit_button_a_obj.index] + 2) | 1;
+    if (update(microbit_button_b_obj.pin) == HIGH_LOW)
+        pressed[microbit_button_b_obj.index] = (pressed[microbit_button_b_obj.index] + 2) | 1;
+    if (microbit_obj_pin_get_mode(&microbit_p0_obj) == MP_QSTR_touch)
+        update(&microbit_p0_obj);
+    if (microbit_obj_pin_get_mode(&microbit_p1_obj) == MP_QSTR_touch)
+        update(&microbit_p1_obj);
+    if (microbit_obj_pin_get_mode(&microbit_p2_obj) == MP_QSTR_touch)
+        update(&microbit_p2_obj);
+}
+
+bool microbit_pin_high_debounced(microbit_pin_obj_t *pin) {
+    return debounced_high[pin->number&7];
+}
 
 }

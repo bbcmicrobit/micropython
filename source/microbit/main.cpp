@@ -12,6 +12,8 @@ extern "C" {
     
     void microbit_button_init(void);
     void microbit_accelerometer_init(void);
+    void microbit_button_tick(void);
+    void pwm_init(void);
 }
 
 void app_main() {
@@ -55,12 +57,8 @@ void microbit_ticker(void) {
     compass_up_to_date = false;
     accelerometer_up_to_date = false;
 
-    //update any components in the DAL's systemComponents array
-    for (int i = 0; i < MICROBIT_SYSTEM_COMPONENTS; i++) {
-        if (uBit.systemTickComponents[i] != NULL) {
-            uBit.systemTickComponents[i]->systemTick();
-        }
-    }
+    // Update buttons and pins with touch.
+    microbit_button_tick();
 
     // Update the display.
     microbit_display_tick();
@@ -79,6 +77,8 @@ void microbit_init(void) {
     uBit.display.disable();
     microbit_display_init();
     microbit_filesystem_init();
+    microbit_pin_init();
+    pwm_init();
 
     // Start the ticker.
     uBit.systemTicker.detach();

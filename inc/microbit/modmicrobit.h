@@ -147,8 +147,8 @@ extern const mp_obj_type_t microbit_accelerometer_type;
 extern const struct _microbit_accelerometer_obj_t microbit_accelerometer_obj;
 
 extern struct _microbit_display_obj_t microbit_display_obj;
-extern struct _microbit_button_obj_t microbit_button_a_obj;
-extern struct _microbit_button_obj_t microbit_button_b_obj;
+extern const struct _microbit_button_obj_t microbit_button_a_obj;
+extern const struct _microbit_button_obj_t microbit_button_b_obj;
 extern const struct _microbit_compass_obj_t microbit_compass_obj;
 extern const struct _microbit_i2c_obj_t microbit_i2c_obj;
 extern struct _microbit_uart_obj_t microbit_uart_obj;
