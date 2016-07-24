@@ -68,9 +68,7 @@ timbre. To be honest, the best way to get the tone of voice you want is to
 experiment, use your judgement and adjust.
 
 To adjust the settings you pass them in as arguments to the ``say`` function.
-You don't have to keep repeating the settings for each call: the speech
-synthesiser will remember what you set until you either change it or call the
-``reset()`` function (that puts everything back to the default setting).
+More details can be found in the ``speech`` module's API documentation.
 
 After some experimentation we've worked out this sounds quite DALEK-esque::
 
