@@ -16,6 +16,8 @@ This documentation includes lessons for teachers
 and API documentation for developers (check out the index on the left). We hope
 you enjoy developing for the BBC micro:bit using MicroPython.
 
+If you're a new programmer, teacher or unsure where to start, begin with the tutorials.
+
 .. image:: comic.png
 
 To get involved with the community subscribe to the microbit@python.org
