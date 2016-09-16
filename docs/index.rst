@@ -32,7 +32,7 @@ mailing list (https://mail.python.org/mailman/listinfo/microbit).
 Projects related to MicroPython on the BBC micro:bit include:
 
 * `Mu <https://github.com/ntoll/mu>`_ - a simple code editor for kids, teachers and beginner programmers. Probably the easiest way for people to program MicroPython on the BBC micro:bit.
-* `uFlash <http://uflash.readthedocs.org/en/latest/>`_ - a command line tool for flashing raw Python scripts onto a BBC micro:bit.
+* `uFlash <https://uflash.readthedocs.io/en/latest/>`_ - a command line tool for flashing raw Python scripts onto a BBC micro:bit.
 
 .. toctree::
     :maxdepth: 2
