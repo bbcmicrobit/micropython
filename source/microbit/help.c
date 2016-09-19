@@ -58,7 +58,7 @@ STATIC const char *help_text =
 "\n"
 "For more information about Python, visit: http://python.org/\n"
 "To find out about MicroPython, visit: http://micropython.org/\n"
-"Python/micro:bit documentation is here: http://microbit-micropython.rtfd.org/\n"
+"Python/micro:bit documentation is here: https://microbit-micropython.readthedocs.io/\n"
 ;
 
 typedef struct _mp_doc_t {

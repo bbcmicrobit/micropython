@@ -174,7 +174,7 @@ If you have Python installed on the computer you use to program your BBC
 micro:bit then you can use a special utility called ``microfs`` (shortened to
 ``ufs`` when using it in the command line). Full instructions for installing
 and using all the features of microfs can be found
-`in its documentation <http://microfs.rtfd.org>`_.
+`in its documentation <https://microfs.readthedocs.io>`_.
 
 Nevertheless it's possible to do most of the things you need with just four
 simple commands::
