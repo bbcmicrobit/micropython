@@ -84,7 +84,7 @@ void Init(sam_memory* sam)
         sam->common.phoneme_output[i].pitch = 0;
 	}
 	sam->prepare.phoneme_input[INPUT_PHONEMES-1].index = PHONEME_END; //to prevent buffer overflow // ML : changed from 32 to 255 to stop freezing with long inputs
-
+    sam_error = "OK";
 }
 
 void  ClearInput(sam_memory* sam) {

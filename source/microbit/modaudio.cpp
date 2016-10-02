@@ -138,7 +138,7 @@ static PinName pin1 = P0_2;
 #define audio_buffer_ptr MP_STATE_PORT(audio_buffer)
 #define audio_source_iter MP_STATE_PORT(audio_source)
 
-static void audio_stop(void) {
+void audio_stop(void) {
     timer_stop();
     audio_source_iter = NULL;
     clear_ticker_callback(0);

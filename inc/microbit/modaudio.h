@@ -7,6 +7,7 @@
 #include "py/runtime.h"
 
 void audio_play_source(mp_obj_t src, mp_obj_t pin1, mp_obj_t pin2, bool wait);
+void audio_stop(void);
 
 #define LOG_AUDIO_CHUNK_SIZE 5
 #define AUDIO_CHUNK_SIZE (1<<LOG_AUDIO_CHUNK_SIZE)

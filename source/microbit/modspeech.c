@@ -166,7 +166,7 @@ static mp_obj_t articulate(mp_obj_t phonemes, mp_uint_t n_args, const mp_obj_t *
     sam_memory *sam = m_new(sam_memory, 1);
     MP_STATE_PORT(speech_data) = sam;
 
-     // set the current saved speech state
+    // set the current saved speech state
     sam->common.singmode = sing;
     sam->common.pitch  = args[0].u_int;
     sam->common.speed  = args[1].u_int;
@@ -188,6 +188,7 @@ static mp_obj_t articulate(mp_obj_t phonemes, mp_uint_t n_args, const mp_obj_t *
     SetInput(sam, input, len);
     if (!SAMMain(sam))
     {
+        audio_stop();
         MP_STATE_PORT(speech_data) = NULL;
         nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, sam_error));
     }
