@@ -80,9 +80,11 @@ void mp_hal_stdout_tx_strn_cooked(const char *str, mp_uint_t len);
 
 // extra built in names to add to the global namespace
 extern const struct _mp_obj_fun_builtin_t mp_builtin_help_obj;
+extern const struct _mp_obj_fun_builtin_t mp_builtin_input_obj;
 extern const struct _mp_obj_fun_builtin_t mp_builtin_open_obj;
 #define MICROPY_PORT_BUILTINS \
     { MP_OBJ_NEW_QSTR(MP_QSTR_help), (mp_obj_t)&mp_builtin_help_obj }, \
+    { MP_OBJ_NEW_QSTR(MP_QSTR_input), (mp_obj_t)&mp_builtin_input_obj }, \
     { MP_OBJ_NEW_QSTR(MP_QSTR_open), (mp_obj_t)&mp_builtin_open_obj }, \
 
 // extra builtin modules to add to the list of known ones

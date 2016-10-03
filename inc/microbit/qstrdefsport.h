@@ -1,6 +1,7 @@
 // qstrs specific to this port
 
 Q(help)
+Q(input)
 Q(collections)
 Q(struct)
 
