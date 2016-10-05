@@ -56,6 +56,13 @@ When installing `Yotta
 OS X
 ~~~~
 
+After cloning the repository then install yotta using the app and launch the app. You can find the latest release of yotta for OS X at https://github.com/ARMmbed/yotta_osx_installer/releases/ .
+
+When you are at the yotta terminal execute the following commands. 
+>>> yt target bbc-microbit-classic-gcc-nosd
+>>> yt up
+>>> yt make
+You should have a firmware.hex file that you can now upload to your microbit.
 
 .. _microbit-linux:
 
