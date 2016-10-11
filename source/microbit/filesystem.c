@@ -266,6 +266,14 @@ mp_obj_t microbit_file_name(file_descriptor_obj *fd) {
 
 static file_descriptor_obj *microbit_file_descriptor_new(uint8_t start_chunk, bool write, bool binary);
 
+static void clear_file(uint8_t chunk) {
+    do {
+        persistent_write_byte_unchecked(&(file_system_chunks[chunk].marker), FREED_CHUNK);
+        DEBUG(("FILE DEBUG: Freeing chunk %d.\n", chunk));
+        chunk = file_system_chunks[chunk].next_chunk;
+    } while (chunk <= chunks_in_file_system);
+}
+
 file_descriptor_obj *microbit_file_open(const char *name, uint32_t name_len, bool write, bool binary) {
     if (name_len > MAX_FILENAME_LENGTH) {
         return NULL;
@@ -274,7 +282,7 @@ file_descriptor_obj *microbit_file_open(const char *name, uint32_t name_len, boo
     if (write) {
         if (index != FILE_NOT_FOUND) {
             // Free old file
-            persistent_write_byte_unchecked(&(file_system_chunks[index].marker), FREED_CHUNK);
+            clear_file(index);
         }
         index = find_chunk_and_erase();
         if (index == FILE_NOT_FOUND) {
@@ -305,14 +313,6 @@ static file_descriptor_obj *microbit_file_descriptor_new(uint8_t start_chunk, bo
     res->open = true;
     res->binary = binary;
     return res;
-}
-
-static void clear_file(uint8_t chunk) {
-    do {
-        persistent_write_byte_unchecked(&(file_system_chunks[chunk].marker), FREED_CHUNK);
-        DEBUG(("FILE DEBUG: Freeing chunk %d.\n", chunk));
-        chunk = file_system_chunks[chunk].next_chunk;
-    } while (chunk <= chunks_in_file_system);
 }
 
 mp_obj_t microbit_remove(mp_obj_t filename) {
