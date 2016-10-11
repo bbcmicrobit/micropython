@@ -83,18 +83,17 @@ def test_text_file():
     os.remove("test2.txt")
     assert not os.listdir()
 
-
 def test_many_files():
-    for i in range(100):
+    for i in range(80):
         name = "%d.dat" % i
         write_data_to_file(name, i*3, 16, 4)
         verify_file(name, data_stream(i*3), 16, 4, 'b')
-    for i in range(100):
+    for i in range(80):
         os.remove("%d.dat" % i)
         name = "_%d.dat" % i
         write_data_to_file(name, i*3, 16, 4)
         verify_file(name, data_stream(i*3), 16, 4, 'b')
-    for i in range(100):
+    for i in range(80):
         os.remove("_%d.dat" % i)
     assert not os.listdir()
 
