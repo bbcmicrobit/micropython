@@ -49,18 +49,18 @@ def clear_files():
         os.remove(f)
 
 def test_interleaved_small_files():
-    for i in range(100):
+    for i in range(80):
         name = "%d.dat" % i
         write_data_to_file(name, i*3, 16, 6)
-    for i in range(0, 100, 2):
+    for i in range(0, 80, 2):
         os.remove("%d.dat" % i)
-    for i in range(100, 150):
+    for i in range(80, 120):
         name = "%d.dat" % i
         write_data_to_file(name, i*3, 16, 6)
         verify_file(name, data_stream(i*3), 16, 6, 'b')
-    for i in range(1, 100, 2):
+    for i in range(1, 80, 2):
         os.remove("%d.dat" % i)
-    for i in range(100, 150):
+    for i in range(80, 120):
         os.remove("%d.dat" % i)
     assert not os.listdir()
 
@@ -70,21 +70,21 @@ def test_interleaved_large_files():
         out_buf[i] = 100-i
     with open("test1.dat", "wb") as fd1:
         with open("test2.dat", "wb") as fd2:
-            for i in range(90):
+            for i in range(60):
                 fd1.write(out_buf)
                 fd2.write(out_buf)
     os.remove("test2.dat")
     with open("test3.dat", "wb") as fd3:
-        for i in range(90):
+        for i in range(60):
             fd3.write(out_buf)
     assert sorted(os.listdir()) == [ "test1.dat", "test3.dat" ]
     in_buf = bytearray(100)
     with open("test1.dat", "rb") as fd:
-        for i in range(90):
+        for i in range(60):
             fd.readinto(in_buf)
             assert in_buf == out_buf
     with open("test3.dat", "rb") as fd:
-        for i in range(90):
+        for i in range(60):
             fd.readinto(in_buf)
             assert in_buf == out_buf
 
