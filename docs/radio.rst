@@ -9,12 +9,13 @@ networks.
 The radio module is conceptually very simple:
 
 * Broadcast messages are of a certain configurable length (up to 251 bytes).
-* Messages received are read from a queue of configurable size (the larger the queue the more RAM is used). If the queue is full, new messages are ignored.
+* Messages received are read from a queue of configurable size (the larger the queue the more RAM is used). If the queue is full, new messages are ignored. Reading a message removes it from the queue.
 * Messages are broadcast and received on a preselected channel (numbered 0-100).
 * Broadcasts are at a certain level of power - more power means more range.
 * Messages are filtered by address (like a house number) and group (like a named recipient at the specified address).
 * The rate of throughput can be one of three pre-determined settings.
 * Send and receieve bytes to work with arbitrary data.
+* Use `receive_full` to obtain full details about an incoming message: receiving signal strength and the device's `running_time` when the message arrived.
 * As a convenience for children, it's easy to send and receive messages as strings.
 * The default configuration is both sensible and compatible with other platforms that target the BBC micro:bit.
 
@@ -131,6 +132,28 @@ Functions
     the prepended bytes before converting to a string.
 
     A ``ValueError`` exception is raised if conversion to string fails.
+
+.. py:function:: receive_full()
+
+    Returns a tuple containing three values representing the next incoming
+    message on the message queue. If there are no pending messages then
+    ``None`` is returned.
+
+    The three values in the tuple represent:
+
+    * the next incoming message on the message queue as bytes.
+    * the RSSI (signal strength): a value between 0 (strongest) and -255 (weakest) as measured in dBm.
+    * a timestamp: the value returned by `microbit.running_time` when the message was receieved.
+
+    For example::
+
+        details = radio.receive_full()
+        if details:
+            msg, rssi, timestamp = details
+
+    This function is useful for providing information needed for triangulation
+    and/or triliteration with other micro:bit devices.
+
 
 Examples
 --------
