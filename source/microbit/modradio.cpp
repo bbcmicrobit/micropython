@@ -234,7 +234,7 @@ void radio_send(const void *buf, size_t len, const void *buf2, size_t len2) {
     NVIC_EnableIRQ(RADIO_IRQn);
 }
 
-static mp_obj_t radio_receive(bool typed_packet) {
+static mp_obj_t radio_receive(bool typed_packet, mp_buffer_info_t *bufinfo) {
     ensure_enabled();
 
     // disable the radio irq while we receive the packet
@@ -253,7 +253,12 @@ static mp_obj_t radio_receive(bool typed_packet) {
     size_t len = buf[0];
     mp_obj_t ret;
     if (!typed_packet) {
-        ret = mp_obj_new_bytes(buf + 1, len); // if it raises the radio irq remains disabled...
+        if (bufinfo == NULL) {
+            ret = mp_obj_new_bytes(buf + 1, len); // if it raises the radio irq remains disabled...
+        } else {
+            memmove(bufinfo->buf, buf+1, len < bufinfo->len ? len : bufinfo->len);
+            ret = MP_OBJ_NEW_SMALL_INT(len);
+        }
     } else if (len >= 3 && buf[1] == 1 && buf[2] == 0 && buf[3] == 1) {
         ret = mp_obj_new_str((char*)buf + 4, len - 3, false); // if it raises the radio irq remains disabled...
     } else {
@@ -431,7 +436,7 @@ STATIC mp_obj_t mod_radio_send_bytes(mp_obj_t buf_in) {
 MP_DEFINE_CONST_FUN_OBJ_1(mod_radio_send_bytes_obj, mod_radio_send_bytes);
 
 STATIC mp_obj_t mod_radio_receive_bytes(void) {
-    return radio_receive(false);
+    return radio_receive(false, NULL);
 }
 MP_DEFINE_CONST_FUN_OBJ_0(mod_radio_receive_bytes_obj, mod_radio_receive_bytes);
 
@@ -444,9 +449,16 @@ STATIC mp_obj_t mod_radio_send(mp_obj_t buf_in) {
 MP_DEFINE_CONST_FUN_OBJ_1(mod_radio_send_obj, mod_radio_send);
 
 STATIC mp_obj_t mod_radio_receive(void) {
-    return radio_receive(true);
+    return radio_receive(true, NULL);
 }
 MP_DEFINE_CONST_FUN_OBJ_0(mod_radio_receive_obj, mod_radio_receive);
+
+STATIC mp_obj_t mod_radio_receive_bytes_into(mp_obj_t buf_in) {
+    mp_buffer_info_t bufinfo;
+    mp_get_buffer_raise(buf_in, &bufinfo, MP_BUFFER_WRITE);
+    return radio_receive(false, &bufinfo);
+}
+MP_DEFINE_CONST_FUN_OBJ_1(mod_radio_receive_bytes_into_obj, mod_radio_receive_bytes_into);
 
 STATIC const mp_map_elem_t radio_module_globals_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR___name__), MP_OBJ_NEW_QSTR(MP_QSTR_radio) },
@@ -460,6 +472,7 @@ STATIC const mp_map_elem_t radio_module_globals_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_receive_bytes), (mp_obj_t)&mod_radio_receive_bytes_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_send), (mp_obj_t)&mod_radio_send_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_receive), (mp_obj_t)&mod_radio_receive_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_receive_bytes_into), (mp_obj_t)&mod_radio_receive_bytes_into_obj },
 
     { MP_OBJ_NEW_QSTR(MP_QSTR_RATE_250KBIT), MP_OBJ_NEW_SMALL_INT(RADIO_MODE_MODE_Nrf_250Kbit) },
     { MP_OBJ_NEW_QSTR(MP_QSTR_RATE_1MBIT), MP_OBJ_NEW_SMALL_INT(RADIO_MODE_MODE_Nrf_1Mbit) },

@@ -113,6 +113,13 @@ Functions
     Receive the next incoming message on the message queue. Returns ``None`` if
     there are no pending messages. Messages are returned as bytes.
 
+.. py:function:: receive_bytes_into(buffer)
+
+    Receive the next incoming message on the message queue. Copies the message
+    into ``buffer``, trimming the end of the message if necessary.
+    Returns ``None`` if there are no pending messages, otherwise it returns the length
+    of the message (which might be more than the length of the buffer).
+
 .. py:function:: send(message)
 
     Sends a message string. This is the equivalent of
