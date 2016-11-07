@@ -21,6 +21,16 @@ should be described separately in that device's documentation.
 Functions
 =========
 
+.. py:function:: init(freq=100000, sda=pin20, scl=pin19)
+
+    Re-initialize peripheral with the specified clock frequency ``freq`` on the
+    specified ``sda`` and ``scl`` pins.
+
+    .. warning::
+
+        Changing the I²C pins from defaults will make the accelerometer and
+        compass stop working, as they are connected internally to those pins.
+
 
 .. py:function:: read(addr, n, repeat=False)
 
