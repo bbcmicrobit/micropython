@@ -188,6 +188,7 @@ MP_DECLARE_CONST_FUN_OBJ(microbit_pin_write_digital_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_pin_read_analog_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_pin_write_analog_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_pin_is_touched_obj);
+MP_DECLARE_CONST_FUN_OBJ(microbit_pin_set_pull_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_pin_set_analog_period_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_pin_set_analog_period_microseconds_obj);
 MP_DECLARE_CONST_FUN_OBJ(microbit_i2c_read_obj);
