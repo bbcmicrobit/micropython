@@ -526,11 +526,11 @@ static microbit_audio_frame_obj_t *copy(microbit_audio_frame_obj_t *self) {
 
 mp_obj_t copyfrom(mp_obj_t self_in, mp_obj_t other) {
     microbit_audio_frame_obj_t *self = (microbit_audio_frame_obj_t *)self_in;
-    if (mp_obj_get_type(other) != &microbit_audio_frame_type) {
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_TypeError, "Must be an AudioBuffer"));
-    }
-    for (int i = 0; i < AUDIO_CHUNK_SIZE; i++) {
-        self->data[i] = ((microbit_audio_frame_obj_t *)other)->data[i];
+    mp_buffer_info_t bufinfo;
+    mp_get_buffer_raise(other, &bufinfo, MP_BUFFER_READ);
+    uint32_t len = bufinfo.len > AUDIO_CHUNK_SIZE ? AUDIO_CHUNK_SIZE : bufinfo.len;
+    for (uint32_t i = 0; i < len; i++) {
+        self->data[i] = ((uint8_t *)bufinfo.buf)[i];
     }
    return mp_const_none;
 }
@@ -620,7 +620,7 @@ const mp_obj_type_t microbit_audio_frame_type = {
     .buffer_p = { .get_buffer = audio_frame_get_buffer },
     .stream_p = NULL,
     .bases_tuple = NULL,
-    .locals_dict = (mp_obj_dict_t*)&microbit_audio_frame_locals_dict_table,
+    .locals_dict = (mp_obj_dict_t*)&microbit_audio_frame_locals_dict,
 };
 
 microbit_audio_frame_obj_t *new_microbit_audio_frame(void) {
