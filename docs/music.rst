@@ -119,8 +119,6 @@ Functions
 
     Resets the state of the following attributes in the following way:
 
-        * ``ticks = 4``
-        * ``bpm = 120``
         * ``duration = 4``
         * ``octave = 4``
 
