@@ -35,7 +35,7 @@ void microbit_display_show(microbit_display_obj_t *display, microbit_image_obj_t
 
 void microbit_display_animate(microbit_display_obj_t *display, mp_obj_t iterable, mp_int_t delay, bool clear, bool wait);
 
-void microbit_display_scroll(microbit_display_obj_t *display, const char* str);
+void microbit_display_scroll(microbit_display_obj_t *display, const char* str, bool wait);
 
 mp_int_t microbit_display_get_pixel(microbit_display_obj_t *display, mp_int_t x, mp_int_t y);
 
@@ -46,6 +46,8 @@ void microbit_display_clear(void);
 void microbit_display_init(void);
 
 void microbit_display_tick(void);
+
+bool microbit_display_active_animation(void);
 
 }
 

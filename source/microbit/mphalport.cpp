@@ -124,7 +124,7 @@ void mp_hal_erase_line_from_cursor(unsigned int n_chars) {
 }
 
 void mp_hal_display_string(const char *str) {
-    microbit_display_scroll(&microbit_display_obj, str);
+    microbit_display_scroll(&microbit_display_obj, str, true);
 }
 
 void mp_hal_delay_ms(mp_uint_t ms) {

@@ -48,6 +48,10 @@ extern volatile bool accelerometer_updating;
 
 extern void microbit_pin_init(void);
 
+extern bool microbit_button_is_pressed(const struct _microbit_button_obj_t *button);
+
+extern void microbit_accelerometer_get_values(const struct _microbit_accelerometer_obj_t *acc, int *x, int *y, int *z);
+
 }
 
 #endif // __MICROPY_INCLUDED_MICROBIT_MICROBITOBJ_H__

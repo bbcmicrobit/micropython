@@ -130,6 +130,7 @@ extern const struct _mp_obj_module_t speech_module;
     void *speech_data; \
     const struct _pwm_events *pwm_active_events; \
     const struct _pwm_events *pwm_pending_events; \
+    struct _compass_calibration_t *compass_calibration_data; \
 
 // We need to provide a declaration/definition of alloca()
 #include <alloca.h>
