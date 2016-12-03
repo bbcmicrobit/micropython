@@ -75,19 +75,27 @@ void microbit_accelerometer_init(void) {
     uBit.MessageBus.listen(MICROBIT_ID_GESTURE, MICROBIT_EVT_ANY, accelerometer_listener, MESSAGE_BUS_LISTENER_IMMEDIATE);
 }
 
-mp_obj_t microbit_accelerometer_get_x(mp_obj_t self_in) {
-    microbit_accelerometer_obj_t *self = (microbit_accelerometer_obj_t*)self_in;
+int microbit_accelerometer_get_x(microbit_accelerometer_obj_t *self) {
     update(self);
-    return mp_obj_new_int(self->accelerometer->getX());
+    return self->accelerometer->getX();
 }
-MP_DEFINE_CONST_FUN_OBJ_1(microbit_accelerometer_get_x_obj, microbit_accelerometer_get_x);
 
-mp_obj_t microbit_accelerometer_get_y(mp_obj_t self_in) {
+static mp_obj_t microbit_accelerometer_get_x_func(mp_obj_t self_in) {
     microbit_accelerometer_obj_t *self = (microbit_accelerometer_obj_t*)self_in;
-    update(self);
-    return mp_obj_new_int(self->accelerometer->getY());
+    return mp_obj_new_int(microbit_accelerometer_get_x(self));
 }
-MP_DEFINE_CONST_FUN_OBJ_1(microbit_accelerometer_get_y_obj, microbit_accelerometer_get_y);
+MP_DEFINE_CONST_FUN_OBJ_1(microbit_accelerometer_get_x_obj, microbit_accelerometer_get_x_func);
+
+int microbit_accelerometer_get_y(microbit_accelerometer_obj_t *self) {
+    update(self);
+    return self->accelerometer->getY();
+}
+
+static mp_obj_t microbit_accelerometer_get_y_func(mp_obj_t self_in) {
+    microbit_accelerometer_obj_t *self = (microbit_accelerometer_obj_t*)self_in;
+    return mp_obj_new_int(microbit_accelerometer_get_y(self));
+}
+MP_DEFINE_CONST_FUN_OBJ_1(microbit_accelerometer_get_y_obj, microbit_accelerometer_get_y_func);
 
 mp_obj_t microbit_accelerometer_get_z(mp_obj_t self_in) {
     microbit_accelerometer_obj_t *self = (microbit_accelerometer_obj_t*)self_in;
@@ -96,16 +104,24 @@ mp_obj_t microbit_accelerometer_get_z(mp_obj_t self_in) {
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_accelerometer_get_z_obj, microbit_accelerometer_get_z);
 
-mp_obj_t microbit_accelerometer_get_values(mp_obj_t self_in) {
-    microbit_accelerometer_obj_t *self = (microbit_accelerometer_obj_t*)self_in;
-    mp_obj_tuple_t *tuple = (mp_obj_tuple_t *)mp_obj_new_tuple(3, NULL);
+void microbit_accelerometer_get_values(microbit_accelerometer_obj_t *self, int *x, int *y, int *z) {
     update(self);
-    tuple->items[0] = mp_obj_new_int(self->accelerometer->getX());
-    tuple->items[1] = mp_obj_new_int(self->accelerometer->getY());
-    tuple->items[2] = mp_obj_new_int(self->accelerometer->getZ());
+    *x = self->accelerometer->getX();
+    *y = self->accelerometer->getY();
+    *z = self->accelerometer->getZ();
+}
+
+static mp_obj_t microbit_accelerometer_get_values_func(mp_obj_t self_in) {
+    microbit_accelerometer_obj_t *self = (microbit_accelerometer_obj_t*)self_in;
+    int x, y, z;
+    microbit_accelerometer_get_values(self, &x, &y, &z);
+    mp_obj_tuple_t *tuple = (mp_obj_tuple_t *)mp_obj_new_tuple(3, NULL);
+    tuple->items[0] = mp_obj_new_int(x);
+    tuple->items[1] = mp_obj_new_int(y);
+    tuple->items[2] = mp_obj_new_int(z);
     return tuple;
 }
-MP_DEFINE_CONST_FUN_OBJ_1(microbit_accelerometer_get_values_obj, microbit_accelerometer_get_values);
+MP_DEFINE_CONST_FUN_OBJ_1(microbit_accelerometer_get_values_obj, microbit_accelerometer_get_values_func);
 
 STATIC const qstr gesture_name_map[] = {
     [GESTURE_NONE] = MP_QSTR_NULL,

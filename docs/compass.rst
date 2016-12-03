@@ -59,6 +59,7 @@ Functions
     Gives the compass heading, calculated from the above readings, as an
     integer in the range from 0 to 360, representing the angle in degrees,
     clockwise, with north as 0.
+    If the compass has not been calibrated, then this will call ``calibrate``.
 
 
 .. py:function:: get_field_strength()
