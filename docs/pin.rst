@@ -116,9 +116,9 @@ Classes
 =======
 
 There are three kinds of pins, differing in what is available for them. They
-are represented by the below classes. Note that they form a hierarchy, so that
-each class has all the functionality of the previous class, and adds its own
-to that.
+are represented by the classes listed below. Note that they form a hierarchy,
+so that each class has all the functionality of the previous class, and adds
+its own to that.
 
 .. note::
     Those classes are not actually available for the user, you can't create
@@ -134,6 +134,12 @@ to that.
     .. py:method:: write_digital(value)
 
         Set the pin to high if ``value`` is 1, or to low, if it is 0.
+
+    .. py:method::set_pull(value)
+
+        Set the pull state to one of three possible values: ``pin.PULL_UP``,
+        ``pin.PULL_DOWN`` or ``pin.NO_PULL`` (where ``pin`` is an instance of
+        a pin). See below for discussion of default pull states.
 
 .. py:class:: MicroBitAnalogDigitalPin
 
@@ -170,3 +176,16 @@ to that.
         whatever is connected to it. Human body has quite a large capacitance,
         so touching the pin gives a dramatic change in reading, which can be
         detected.
+
+The pull mode for a pin is automatically configured when the pin changes to an
+input mode. Input modes are when you call ``read_analog`` / ``read_digital`` /
+``is_touched``. The pull mode for these is, respectively, ``NO_PULL``,
+``PULL_DOWN``, ``PULL_UP``. Only when in ``read_digital`` mode can you call
+``set_pull`` to change the pull mode from the default.
+
+
+.. note::
+    Also note, the micro:bit has external weak (10M) pull-ups fitted on pins
+    0, 1 and 2 only, in order for the touch sensing to work. See the edge
+    connector data sheet here:
+    http://tech.microbit.org/hardware/edgeconnector_ds/
