@@ -281,7 +281,7 @@ mp_obj_t microbit_pin_is_touched(mp_obj_t self_in) {
     qstr mode = microbit_obj_pin_get_mode(self);
     if (mode != MP_QSTR_touch && mode != MP_QSTR_button) {
         microbit_obj_pin_acquire(self, MP_QSTR_touch);
-        nrf_gpio_cfg_input(self->name, NRF_GPIO_PIN_PULLUP);
+        nrf_gpio_cfg_input(self->name, NRF_GPIO_PIN_NOPULL);
     }
     /* Pin is touched if it is low after debouncing */
     return mp_obj_new_bool(!microbit_pin_high_debounced(self));
