@@ -46,7 +46,7 @@ static bool debounced_high[8] = { true, true, true, true, true, true, true, true
 mp_obj_t microbit_button_is_pressed(mp_obj_t self_in) {
     microbit_button_obj_t *self = (microbit_button_obj_t*)self_in;
     /* Button is pressed if pin is low */
-    return mp_obj_new_bool(!debounced_high[self->pin->number]);
+    return mp_obj_new_bool(!debounced_high[self->pin->number&7]);
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_button_is_pressed_obj, microbit_button_is_pressed);
 
