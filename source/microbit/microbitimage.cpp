@@ -84,6 +84,13 @@ void greyscale_t::setPixelValue(mp_int_t x, mp_int_t y, mp_int_t val) {
     this->byte_data[index>>1] = (this->byte_data[index>>1] & mask) | (val << shift);
 }
 
+void greyscale_t::fill(mp_int_t val) {
+    mp_int_t byte = (val<<4) | val;
+    for (int i = 0; i < ((this->width*this->height+1)>>1); i++) {
+        this->byte_data[i] = byte;
+    }
+}
+
 void greyscale_t::clear() {
     memset(&this->byte_data, 0, (this->width*this->height+1)>>1);
 }
@@ -282,7 +289,9 @@ STATIC mp_obj_t microbit_image_make_new(const mp_obj_type_t *type_in, mp_uint_t 
 
     switch (n_args) {
         case 0: {
-            return BLANK_IMAGE;
+            greyscale_t *image = greyscale_new(5, 5);
+            image->clear();
+            return image;
         }
 
         case 1: {
@@ -389,12 +398,18 @@ mp_obj_t microbit_image_get_pixel(mp_obj_t self_in, mp_obj_t x_in, mp_obj_t y_in
 }
 MP_DEFINE_CONST_FUN_OBJ_3(microbit_image_get_pixel_obj, microbit_image_get_pixel);
 
+/* Raise an exception if not mutable */
+static void check_mutability(microbit_image_obj_t *self) {
+    if (self->base.five) {
+        nlr_raise(mp_obj_new_exception_msg(&mp_type_TypeError, "image cannot be modified (try copying first)"));
+    }
+}
+
+
 mp_obj_t microbit_image_set_pixel(mp_uint_t n_args, const mp_obj_t *args) {
     (void)n_args;
     microbit_image_obj_t *self = (microbit_image_obj_t*)args[0];
-    if (self->base.five) {
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_TypeError, "This image cannot be modified. Try copying it first."));
-    }
+    check_mutability(self);
     mp_int_t x = mp_obj_get_int(args[1]);
     mp_int_t y = mp_obj_get_int(args[2]);
     if (x < 0 || y < 0) {
@@ -411,6 +426,19 @@ mp_obj_t microbit_image_set_pixel(mp_uint_t n_args, const mp_obj_t *args) {
     nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "index too large"));
 }
 MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_image_set_pixel_obj, 4, 4, microbit_image_set_pixel);
+
+mp_obj_t microbit_image_fill(mp_obj_t self_in, mp_obj_t n_in) {
+    microbit_image_obj_t *self = (microbit_image_obj_t*)self_in;
+    check_mutability(self);
+    mp_int_t n = mp_obj_get_int(n_in);
+    if (n < 0 || n > MAX_BRIGHTNESS) {
+        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "brightness out of bounds."));
+    }
+    self->greyscale.fill(n);
+    return mp_const_none;
+}
+MP_DEFINE_CONST_FUN_OBJ_2(microbit_image_fill_obj, microbit_image_fill);
+
 
 mp_obj_t microbit_image_crop(mp_uint_t n_args, const mp_obj_t *args) {
     (void)n_args;
@@ -476,6 +504,7 @@ STATIC const mp_map_elem_t microbit_image_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_copy), (mp_obj_t)&microbit_image_copy_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_crop), (mp_obj_t)&microbit_image_crop_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_invert), (mp_obj_t)&microbit_image_invert_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_fill), (mp_obj_t)&microbit_image_fill_obj },
 
     { MP_OBJ_NEW_QSTR(MP_QSTR_HEART), (mp_obj_t)&microbit_const_image_heart_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_HEART_SMALL), (mp_obj_t)&microbit_const_image_heart_small_obj },

@@ -57,7 +57,7 @@ Classes
         Set the brightness of the pixel at column ``x`` and row ``y`` to the
         ``value``, which has to be between 0 (dark) and 9 (bright).
 
-        This method will raise an exception when called on any of the build-in
+        This method will raise an exception when called on any of the built-in
         read-only images, like ``Image.HEART``.
 
 
@@ -100,6 +100,13 @@ Classes
         Return a new image by inverting the brightness of the pixels in the
         source image.
 
+    .. py:method:: fill(value)
+
+        Set the brightness of all the pixels in the image to the
+        ``value``, which has to be between 0 (dark) and 9 (bright).
+
+        This method will raise an exception when called on any of the built-in
+        read-only images, like ``Image.HEART``.
 
 Attributes
 ==========
