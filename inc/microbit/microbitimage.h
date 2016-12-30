@@ -43,6 +43,7 @@ typedef struct _greyscale_t {
     /* Thiese are internal methods and it is up to the caller to validate the inputs */
     uint8_t getPixelValue(mp_int_t x, mp_int_t y);
     void setPixelValue(mp_int_t x, mp_int_t y, mp_int_t val);
+    void fill(mp_int_t val);
 } greyscale_t;
 
 typedef union _microbit_image_obj_t {
