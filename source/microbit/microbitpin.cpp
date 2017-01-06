@@ -50,14 +50,14 @@ static const qstr initial_modes[] = {
     MP_QSTR_display, /* pin 10 */
     MP_QSTR_button,  /* pin 11 - button B */
     MP_QSTR_unused,  /* pin 12 */
-    MP_QSTR_spi,     /* pin 13 */
-    MP_QSTR_spi,     /* pin 14 */
-    MP_QSTR_spi,     /* pin 15 */
+    MP_QSTR_unused,  /* pin 13 */
+    MP_QSTR_unused,  /* pin 14 */
+    MP_QSTR_unused,  /* pin 15 */
     MP_QSTR_unused,  /* pin 16 */
     MP_QSTR_3v,      /* pin 17 - 3V */
     MP_QSTR_3v,      /* pin 18 - 3V */
-    MP_QSTR_i2c,     /* pin 19 */
-    MP_QSTR_i2c,     /* pin 20 */
+    MP_QSTR_unused,  /* pin 19 */
+    MP_QSTR_unused,  /* pin 20 */
     MP_QSTR_stop     /* Sentinel value to mark end of array */
 };
 
