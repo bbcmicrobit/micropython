@@ -296,10 +296,6 @@ STATIC mp_obj_t microbit_music_play(mp_uint_t n_args, const mp_obj_t *pos_args, 
     mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
     mp_arg_parse_all(n_args, pos_args, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
 
-    // reset octave and duration so tunes always play the same
-    music_state.last_octave = DEFAULT_OCTAVE;
-    music_state.last_duration = DEFAULT_DURATION;
-
     // get either a single note or a list of notes
     mp_uint_t len;
     mp_obj_t *items;
@@ -312,6 +308,18 @@ STATIC mp_obj_t microbit_music_play(mp_uint_t n_args, const mp_obj_t *pos_args, 
 
     // get the pin to play on
     const microbit_pin_obj_t *pin = microbit_obj_get_pin(args[1].u_obj);
+
+    if (async_music_state != ASYNC_MUSIC_STATE_IDLE) {
+      // Stop the current music before starting new music.
+      async_music_state = ASYNC_MUSIC_STATE_IDLE;
+      pwm_set_duty_cycle(pin->name, 0);
+      microbit_obj_pin_free(pin);
+    }
+
+    // reset octave and duration so tunes always play the same
+    music_state.last_octave = DEFAULT_OCTAVE;
+    music_state.last_duration = DEFAULT_DURATION;
+
     microbit_obj_pin_acquire(pin, MP_QSTR_music);
 
     // start the tune running in the background
