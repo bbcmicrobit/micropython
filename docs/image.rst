@@ -108,6 +108,22 @@ Classes
         This method will raise an exception when called on any of the built-in
         read-only images, like ``Image.HEART``.
 
+    .. py:method:: blit(src, x, y, w, h, xdest=0, ydest=0)
+
+        Copy the rectangle defined by ``x``, ``y``, ``w``, ``h`` from the image ``src`` into
+        this image at ``xdest``, ``ydest``.
+        Areas in the source rectangle, but outside the source image are treated as having a value of 0.
+
+        ``shift_left()``, ``shift_right()``, ``shift_up()``, ``shift_down()`` and ``crop()``
+        can are all implemented by using ``blit()``.
+        For example, img.crop(x, y, w, h) can be implemented as::
+
+            def crop(self, x, y, w, h):
+                res = Image(w, h)
+                res.blit(self, x, y, w, h)
+                return res
+
+
 Attributes
 ==========
 
