@@ -149,82 +149,6 @@ greyscale_t *microbit_image_obj_t::invert() {
     return result;
 }
 
-/** Internal method, does no error checking. Result is undefined if n < 0 or n > width */
-void greyscale_t::shiftLeftInplace(mp_int_t n) {
-    mp_int_t w = this->width;
-    mp_int_t h = this->height;
-    for (mp_int_t x = n; x < w; ++x) {
-        for (mp_int_t y = 0; y < h; y++) {
-             this->setPixelValue(x-n, y, this->getPixelValue(x, y));
-        }
-    }
-    for (mp_int_t x = w-n; x < w; ++x) {
-        for (mp_int_t y = 0; y < h; y++) {
-            this->setPixelValue(x, y, 0);
-        }
-    }
-}
-
-/** Internal method, does no error checking. Result is undefined if n < 0 or n > width */
-void greyscale_t::shiftRightInplace(mp_int_t n) {
-    if (n < 0)
-        return;
-    mp_int_t w = this->width;
-    mp_int_t h = this->height;
-    for (mp_int_t x = w-1; x >= n; --x) {
-        for (mp_int_t y = 0; y < h; y++) {
-             this->setPixelValue(x, y, this->getPixelValue(x-n, y));
-        }
-    }
-    for (mp_int_t x = 0; x < n; ++x) {
-        for (mp_int_t y = 0; y < h; y++) {
-            this->setPixelValue(x, y, 0);
-        }
-    }
-}
-
-greyscale_t *microbit_image_obj_t::shiftLeft(mp_int_t n) {
-    mp_int_t w = this->width();
-    if (n <= -w || n >= w)
-        return greyscale_new(w, this->height());
-    greyscale_t *result = this->copy();
-    if (n >= 0) {
-        result->shiftLeftInplace(n);
-    } else {
-        result->shiftRightInplace(-n);
-    }
-    return result;
-}
-
-
-greyscale_t *microbit_image_obj_t::shiftUp(mp_int_t n) {
-    mp_int_t w = this->width();
-    mp_int_t h = this->height();
-    n = max(n, -h);
-    n = min(n, h);
-    mp_int_t src_start = max(n, 0);
-    mp_int_t src_end = min(h+n,h);
-    mp_int_t dest = max(0,-n);
-    greyscale_t *result = greyscale_new(w, h);
-    for (mp_int_t y = 0; y < dest; ++y) {
-        for (mp_int_t x = 0; x < w; x++) {
-            result->setPixelValue(x, y, 0);
-        }
-    }
-    for (mp_int_t y = src_start; y < src_end; ++y) {
-        for (mp_int_t x = 0; x < w; x++) {
-             result->setPixelValue(x, dest, this->getPixelValue(x, y));
-        }
-        ++dest;
-    }
-    for (mp_int_t y = dest; y < h; ++y) {
-        for (mp_int_t x = 0; x < w; x++) {
-            result->setPixelValue(x, y, 0);
-        }
-    }
-    return result;
-}
-
 STATIC microbit_image_obj_t *image_from_parsed_str(const char *s, mp_int_t len) {
     mp_int_t w = 0;
     mp_int_t h = 0;
@@ -347,27 +271,74 @@ STATIC mp_obj_t microbit_image_make_new(const mp_obj_type_t *type_in, mp_uint_t 
     }
 }
 
+static void clear_rect(greyscale_t *img, mp_int_t x0, mp_int_t y0,mp_int_t x1, mp_int_t y1) {
+    for (int i = x0; i < x1; ++i) {
+        for (int j = y0; j < y1; ++j) {
+            img->setPixelValue(i, j, 0);
+        }
+    }
+}
+
+STATIC void image_blit(microbit_image_obj_t *src, greyscale_t *dest, mp_int_t x, mp_int_t y, mp_int_t w, mp_int_t h, mp_int_t xdest, mp_int_t ydest) {
+    if (w < 0)
+        w = 0;
+    if (h < 0)
+        h = 0;
+    mp_int_t intersect_x0 = max(max(0, x), -xdest);
+    mp_int_t intersect_y0 = max(max(0, y), -ydest);
+    mp_int_t intersect_x1 = min(min(dest->width+x-xdest, src->width()), x+w);
+    mp_int_t intersect_y1 = min(min(dest->height+y-ydest, src->height()), y+h);
+    mp_int_t xstart, xend, ystart, yend, xdel, ydel;
+    mp_int_t clear_x0 = max(0, xdest);
+    mp_int_t clear_y0 = max(0, ydest);
+    mp_int_t clear_x1 = min(dest->width, xdest+w);
+    mp_int_t clear_y1 = min(dest->height, ydest+h);
+    if (intersect_x0 >= intersect_x1 || intersect_y0 >= intersect_y1) {
+        // Nothing to copy
+        clear_rect(dest, clear_x0, clear_y0, clear_x1, clear_y1);
+        return;
+    }
+    if (x > xdest) {
+        xstart = intersect_x0; xend = intersect_x1; xdel = 1;
+    } else {
+        xstart = intersect_x1-1; xend = intersect_x0-1; xdel = -1;
+    }
+    if (y > ydest) {
+        ystart = intersect_y0; yend = intersect_y1; ydel = 1;
+    } else {
+        ystart = intersect_y1-1; yend = intersect_y0-1; ydel = -1;
+    }
+    for (int i = xstart; i != xend; i += xdel) {
+        for (int j = ystart; j != yend; j += ydel) {
+            int val = src->getPixelValue(i, j);
+            dest->setPixelValue(i+xdest-x, j+ydest-y, val);
+        }
+    }
+    // Adjust intersection rectange to dest
+    intersect_x0 += xdest-x;
+    intersect_y0 += ydest-y;
+    intersect_x1 += xdest-x;
+    intersect_y1 += ydest-y;
+    // Clear four rectangles in the cleared area surrounding the copied area.
+    clear_rect(dest, clear_x0, clear_y0, intersect_x0, intersect_y1);
+    clear_rect(dest, clear_x0, intersect_y1, intersect_x1, clear_y1);
+    clear_rect(dest, intersect_x1, intersect_y0, clear_x1, clear_y1);
+    clear_rect(dest, intersect_x0, clear_y0, clear_x1, intersect_y0);
+}
+
+greyscale_t *image_shift(microbit_image_obj_t *self, mp_int_t x, mp_int_t y) {
+    greyscale_t *result = greyscale_new(self->width(), self->width());
+    image_blit(self, result, x, y, self->width(), self->width(), 0, 0);
+    return result;
+}
+
 STATIC microbit_image_obj_t *image_crop(microbit_image_obj_t *img, mp_int_t x, mp_int_t y, mp_int_t w, mp_int_t h) {
     if (w < 0)
         w = 0;
     if (h < 0)
         h = 0;
     greyscale_t *result = greyscale_new(w, h);
-    mp_int_t intersect_x0 = max(0, x);   
-    mp_int_t intersect_y0 = max(0, y);
-    mp_int_t intersect_x1 = min(img->width(), x+w);
-    mp_int_t intersect_y1 = min(img->height(), y+h);
-    /* If the cropped image is larger than the intersection then
-     * make sure that all other pixels are set to 0 */
-    if (w > intersect_x1 - intersect_x0 || h > intersect_y1 - intersect_y0) {
-        result->clear();
-    }
-    for (int i = intersect_x0; i < intersect_x1; ++i) {
-        for (int j = intersect_y0; j < intersect_y1; ++j) {
-            int val = img->getPixelValue(i, j);
-            result->setPixelValue(i-x, j-y, val);
-        }
-    }
+    image_blit(img, result, x, y, w, h, 0, 0);
     return (microbit_image_obj_t *)result;
 }
 
@@ -439,6 +410,39 @@ mp_obj_t microbit_image_fill(mp_obj_t self_in, mp_obj_t n_in) {
 }
 MP_DEFINE_CONST_FUN_OBJ_2(microbit_image_fill_obj, microbit_image_fill);
 
+mp_obj_t microbit_image_blit(mp_uint_t n_args, const mp_obj_t *args) {
+    microbit_image_obj_t *self = (microbit_image_obj_t*)args[0];
+    check_mutability(self);
+
+    mp_obj_t src = args[1];
+    if (mp_obj_get_type(src) != &microbit_image_type) {
+        nlr_raise(mp_obj_new_exception_msg(&mp_type_TypeError, "expecting an image"));
+    }
+    if (n_args == 7) {
+        nlr_raise(mp_obj_new_exception_msg(&mp_type_TypeError,
+            "must specify both offsets"));
+    }
+    mp_int_t x = mp_obj_get_int(args[2]);
+    mp_int_t y = mp_obj_get_int(args[3]);
+    mp_int_t w = mp_obj_get_int(args[4]);
+    mp_int_t h = mp_obj_get_int(args[5]);
+    if (w < 0 || h < 0) {
+        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError,
+            "size cannot be negative"));
+    }
+    mp_int_t xdest;
+    mp_int_t ydest;
+    if (n_args == 6) {
+        xdest = 0;
+        ydest = 0;
+    } else {
+        xdest = mp_obj_get_int(args[6]);
+        ydest = mp_obj_get_int(args[7]);
+    }
+    image_blit((microbit_image_obj_t *)src, &(self->greyscale), x, y, w, h, xdest, ydest);
+    return mp_const_none;
+}
+MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_image_blit_obj, 6, 8, microbit_image_blit);
 
 mp_obj_t microbit_image_crop(mp_uint_t n_args, const mp_obj_t *args) {
     (void)n_args;
@@ -454,28 +458,28 @@ MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_image_crop_obj, 5, 5, microbit_imag
 mp_obj_t microbit_image_shift_left(mp_obj_t self_in, mp_obj_t n_in) {
     microbit_image_obj_t *self = (microbit_image_obj_t*)self_in;
     mp_int_t n = mp_obj_get_int(n_in);
-    return self->shiftLeft(n);
+    return image_shift(self, n, 0);
 }
 MP_DEFINE_CONST_FUN_OBJ_2(microbit_image_shift_left_obj, microbit_image_shift_left);
 
 mp_obj_t microbit_image_shift_right(mp_obj_t self_in, mp_obj_t n_in) {
     microbit_image_obj_t *self = (microbit_image_obj_t*)self_in;
     mp_int_t n = mp_obj_get_int(n_in);
-    return self->shiftLeft(-n);
+    return image_shift(self, -n, 0);
 }
 MP_DEFINE_CONST_FUN_OBJ_2(microbit_image_shift_right_obj, microbit_image_shift_right);
 
 mp_obj_t microbit_image_shift_up(mp_obj_t self_in, mp_obj_t n_in) {
     microbit_image_obj_t *self = (microbit_image_obj_t*)self_in;
     mp_int_t n = mp_obj_get_int(n_in);
-    return self->shiftUp(n);
+    return image_shift(self, 0, n);
 }
 MP_DEFINE_CONST_FUN_OBJ_2(microbit_image_shift_up_obj, microbit_image_shift_up);
 
 mp_obj_t microbit_image_shift_down(mp_obj_t self_in, mp_obj_t n_in) {
     microbit_image_obj_t *self = (microbit_image_obj_t*)self_in;
     mp_int_t n = mp_obj_get_int(n_in);
-    return self->shiftUp(-n);
+    return image_shift(self, 0, -n);
 }
 MP_DEFINE_CONST_FUN_OBJ_2(microbit_image_shift_down_obj, microbit_image_shift_down);
 
@@ -505,6 +509,7 @@ STATIC const mp_map_elem_t microbit_image_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_crop), (mp_obj_t)&microbit_image_crop_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_invert), (mp_obj_t)&microbit_image_invert_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_fill), (mp_obj_t)&microbit_image_fill_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_blit), (mp_obj_t)&microbit_image_blit_obj },
 
     { MP_OBJ_NEW_QSTR(MP_QSTR_HEART), (mp_obj_t)&microbit_const_image_heart_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_HEART_SMALL), (mp_obj_t)&microbit_const_image_heart_small_obj },
@@ -782,7 +787,14 @@ STATIC mp_obj_t microbit_scrolling_string_iter_next(mp_obj_t o_in) {
             return MP_OBJ_STOP_ITERATION;
         }
     }
-    iter->img->shiftLeftInplace(1);
+    for (int x = 0; x < 4; x++) {
+        for (int y = 0; y < 5; y++) {
+            iter->img->setPixelValue(x, y, iter->img->getPixelValue(x+1, y));
+        }
+    }
+    for (int y = 0; y < 5; y++) {
+        iter->img->setPixelValue(4, y, 0);
+    }
     const unsigned char *font_data;
     if (iter->offset < iter->offset_limit) {
         font_data = get_font_data_from_char(iter->right);
