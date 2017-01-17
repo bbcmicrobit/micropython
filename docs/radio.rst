@@ -71,7 +71,7 @@ Functions
     via this channel will be put onto the incoming message queue. Each step is
     1MHz wide, based at 2400MHz.
 
-    The ``power`` (default=0) is an integer value from 0 to 7 (inclusive) to
+    The ``power`` (default=6) is an integer value from 0 to 7 (inclusive) to
     indicate the strength of signal used when broadcasting a message. The
     higher the value the stronger the signal, but the more power is consumed
     by the device. The numbering translates to positions in the following list
