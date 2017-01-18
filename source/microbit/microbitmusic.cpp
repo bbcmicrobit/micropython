@@ -281,17 +281,11 @@ STATIC mp_obj_t microbit_music_get_tempo(void) {
 }
 MP_DEFINE_CONST_FUN_OBJ_0(microbit_music_get_tempo_obj, microbit_music_get_tempo);
 
-STATIC mp_obj_t microbit_music_stop(mp_uint_t n_args, const mp_obj_t *args) {
-    const microbit_pin_obj_t *pin;
-    if (n_args == 0) {
-        pin = &microbit_p0_obj;
-    } else {
-        pin = microbit_obj_get_pin(args[0]);
-    }
+STATIC mp_obj_t microbit_music_stop(void) {
     music_stop();
     return mp_const_none;
 }
-MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_music_stop_obj, 0, 1, microbit_music_stop);
+MP_DEFINE_CONST_FUN_OBJ_0(microbit_music_stop_obj, microbit_music_stop);
 
 STATIC mp_obj_t microbit_music_play(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
     static const mp_arg_t allowed_args[] = {
