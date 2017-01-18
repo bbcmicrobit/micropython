@@ -70,11 +70,26 @@ static uint32_t async_music_wait_ticks;
 static bool async_music_loop;
 static uint16_t async_music_notes_len;
 static uint16_t async_music_notes_index;
-static const microbit_pin_obj_t *async_music_pin;
+static const microbit_pin_obj_t *async_music_pin = NULL;
 
 extern uint32_t ticks;
 
 STATIC uint32_t start_note(const char *note_str, size_t note_len, const microbit_pin_obj_t *pin);
+
+STATIC void music_stop_internal(void) {
+    async_music_state = ASYNC_MUSIC_STATE_IDLE;
+    if (async_music_pin) {
+      pwm_set_duty_cycle(async_music_pin->name, 0);
+      microbit_obj_pin_free(async_music_pin);
+      async_music_pin = NULL;
+    }
+}
+
+STATIC void music_stop(void) {
+    mp_uint_t atomic_state = MICROPY_BEGIN_ATOMIC_SECTION;
+    music_stop_internal();
+    MICROPY_END_ATOMIC_SECTION(atomic_state);
+}
 
 void microbit_music_tick(void) {
     if (async_music_state == ASYNC_MUSIC_STATE_IDLE) {
@@ -98,8 +113,7 @@ void microbit_music_tick(void) {
             if (async_music_loop) {
                 async_music_notes_index = 0;
             } else {
-                async_music_state = ASYNC_MUSIC_STATE_IDLE;
-                microbit_obj_pin_free(async_music_pin);
+                music_stop_internal();
                 return;
             }
         }
@@ -131,8 +145,7 @@ STATIC void wait_async_music_idle(void) {
     while (async_music_state != ASYNC_MUSIC_STATE_IDLE) {
         // allow CTRL-C to stop the music
         if (MP_STATE_VM(mp_pending_exception) != MP_OBJ_NULL) {
-            async_music_state = ASYNC_MUSIC_STATE_IDLE;
-            pwm_set_duty_cycle(async_music_pin->name, 0);
+            music_stop();
             break;
         }
     }
@@ -275,11 +288,7 @@ STATIC mp_obj_t microbit_music_stop(mp_uint_t n_args, const mp_obj_t *args) {
     } else {
         pin = microbit_obj_get_pin(args[0]);
     }
-    pwm_set_duty_cycle(pin->name, 0);
-    microbit_obj_pin_free(pin);
-
-    async_music_state = ASYNC_MUSIC_STATE_IDLE;
-
+    music_stop();
     return mp_const_none;
 }
 MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_music_stop_obj, 0, 1, microbit_music_stop);
@@ -309,12 +318,8 @@ STATIC mp_obj_t microbit_music_play(mp_uint_t n_args, const mp_obj_t *pos_args, 
     // get the pin to play on
     const microbit_pin_obj_t *pin = microbit_obj_get_pin(args[1].u_obj);
 
-    if (async_music_state != ASYNC_MUSIC_STATE_IDLE) {
-      // Stop the current music before starting new music.
-      async_music_state = ASYNC_MUSIC_STATE_IDLE;
-      pwm_set_duty_cycle(pin->name, 0);
-      microbit_obj_pin_free(pin);
-    }
+    // Stop the current music before starting new music.
+    music_stop();
 
     // reset octave and duration so tunes always play the same
     music_state.last_octave = DEFAULT_OCTAVE;
@@ -323,7 +328,6 @@ STATIC mp_obj_t microbit_music_play(mp_uint_t n_args, const mp_obj_t *pos_args, 
     microbit_obj_pin_acquire(pin, MP_QSTR_music);
 
     // start the tune running in the background
-    async_music_state = ASYNC_MUSIC_STATE_IDLE;
     async_music_wait_ticks = ticks;
     async_music_loop = args[3].u_bool;
     async_music_notes_len = len;
@@ -336,8 +340,11 @@ STATIC mp_obj_t microbit_music_play(mp_uint_t n_args, const mp_obj_t *pos_args, 
     } else {
         MP_STATE_PORT(async_music_data) = items;
     }
+
+    mp_uint_t atomic_state = MICROPY_BEGIN_ATOMIC_SECTION;
     async_music_pin = pin;
     async_music_state = ASYNC_MUSIC_STATE_NEXT_NOTE;
+    MICROPY_END_ATOMIC_SECTION(atomic_state);
 
     if (args[2].u_bool) {
         // wait for tune to finish
