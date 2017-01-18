@@ -367,24 +367,27 @@ STATIC mp_obj_t microbit_music_pitch(mp_uint_t n_args, const mp_obj_t *pos_args,
     mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
     mp_arg_parse_all(n_args, pos_args, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
 
+    // Stop the current music before starting new music.
+    music_stop();
+
     // get the parameters
     mp_uint_t frequency = args[0].u_int;
     mp_int_t duration = args[1].u_int;
     const microbit_pin_obj_t *pin = microbit_obj_get_pin(args[2].u_obj);
     microbit_obj_pin_acquire(pin, MP_QSTR_music);
+    async_music_pin = pin;  // Set async pin, so that we can free it later.
+
     bool wait = args[3].u_bool;
     pwm_set_duty_cycle(pin->name, 128);
     if (pwm_set_period_us(1000000/frequency))
         nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "pitch too extreme"));
     if (duration >= 0) {
         // use async machinery to stop the pitch after the duration
-        async_music_state = ASYNC_MUSIC_STATE_IDLE;
         async_music_wait_ticks = ticks + duration;
         async_music_loop = false;
         async_music_notes_len = 0;
         async_music_notes_index = 0;
         MP_STATE_PORT(async_music_data) = NULL;
-        async_music_pin = pin;
         async_music_state = ASYNC_MUSIC_STATE_ARTICULATE;
 
         if (wait) {
