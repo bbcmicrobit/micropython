@@ -131,6 +131,11 @@ extern const struct _mp_obj_module_t speech_module;
     const struct _pwm_events *pwm_active_events; \
     const struct _pwm_events *pwm_pending_events; \
 
+
+// Enable/disable irqs to make sections of code atomic.
+#define MICROPY_BEGIN_ATOMIC_SECTION (__get_PRIMASK()); __set_PRIMASK(0)
+#define MICROPY_END_ATOMIC_SECTION(state) __set_PRIMASK(state)
+
 // We need to provide a declaration/definition of alloca()
 #include <alloca.h>
 
