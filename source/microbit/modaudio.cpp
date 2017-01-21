@@ -64,7 +64,7 @@ static void disable_gpiote(uint8_t channel)
     nrf_gpiote_te_default(channel);
 }
 
-static void audio_gpiote_init(PinName pin, uint8_t channel)
+static void audio_gpiote_init(uint32_t pin, uint8_t channel)
 {
     DEBUG(("GPIOTE init. pin %d, channel %d\r\n", pin, channel));
     nrf_gpio_pin_clear(pin);
@@ -162,7 +162,7 @@ static int32_t audio_ticker(void);
 #define AUDIO_BUFFER_MASK (AUDIO_BUFFER_SIZE-1)
 
 static void init_pin(const microbit_pin_obj_t *p0) {
-    microbit_obj_pin_acquire(p0, MP_QSTR_audio_play);
+    microbit_obj_pin_acquire(p0, microbit_pin_mode_audio_play);
     pin0 = p0;
     nrf_gpio_pin_write(pin0->name, 0);
     audio_gpiote_init(pin0->name, 0);
@@ -172,8 +172,8 @@ static void init_pin(const microbit_pin_obj_t *p0) {
 
 static void init_pins(const microbit_pin_obj_t *p0, const microbit_pin_obj_t *p1) {
     microbit_obj_pin_fail_if_cant_acquire(p0);
-    microbit_obj_pin_acquire(p1, MP_QSTR_audio_play);
-    microbit_obj_pin_acquire(p0, MP_QSTR_audio_play);
+    microbit_obj_pin_acquire(p1, microbit_pin_mode_audio_play);
+    microbit_obj_pin_acquire(p0, microbit_pin_mode_audio_play);
     pin0 = p0;
     pin1 = p1;
     nrf_gpio_pin_write(pin0->name, 0);
@@ -349,15 +349,15 @@ static void audio_auto_set_pins(void) {
     bool usable[3];
     if (microbit_obj_pin_can_be_acquired(&microbit_p0_obj)) {
         usable[0] = true;
-        microbit_obj_pin_acquire(&microbit_p0_obj, MP_QSTR_unused);
+        microbit_obj_pin_acquire(&microbit_p0_obj, microbit_pin_mode_unused);
     }
     if (microbit_obj_pin_can_be_acquired(&microbit_p1_obj)) {
         usable[1] = true;
-        microbit_obj_pin_acquire(&microbit_p1_obj, MP_QSTR_unused);
+        microbit_obj_pin_acquire(&microbit_p1_obj, microbit_pin_mode_unused);
     }
     if (microbit_obj_pin_can_be_acquired(&microbit_p2_obj)) {
         usable[2] = true;
-        microbit_obj_pin_acquire(&microbit_p2_obj, MP_QSTR_unused);
+        microbit_obj_pin_acquire(&microbit_p2_obj, microbit_pin_mode_unused);
     }
     for (i = 0; i < 2; i++) {
         if (!usable[i])

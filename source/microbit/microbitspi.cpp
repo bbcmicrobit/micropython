@@ -56,9 +56,9 @@ STATIC mp_obj_t microbit_spi_init(mp_uint_t n_args, const mp_obj_t *pos_args, mp
         MP_ARRAY_SIZE(allowed_args), allowed_args, (mp_arg_val_t*)&args);
 
     // get pins
-    PinName p_sclk = MICROBIT_PIN_P13;
-    PinName p_mosi = MICROBIT_PIN_P15;
-    PinName p_miso = MICROBIT_PIN_P14;
+    PinName p_sclk = (PinName)microbit_p13_obj.name;
+    PinName p_mosi = (PinName)microbit_p15_obj.name;
+    PinName p_miso = (PinName)microbit_p14_obj.name;
     if (args.sclk.u_obj != mp_const_none) {
         p_sclk = microbit_obj_get_pin_name(args.sclk.u_obj);
     }

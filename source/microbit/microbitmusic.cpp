@@ -70,7 +70,7 @@ static uint32_t async_music_wait_ticks;
 static bool async_music_loop;
 static uint16_t async_music_notes_len;
 static uint16_t async_music_notes_index;
-static const microbit_pin_obj_t *async_music_pin;
+static const microbit_pin_obj_t *async_music_pin = NULL;
 
 extern uint32_t ticks;
 
@@ -100,6 +100,7 @@ void microbit_music_tick(void) {
             } else {
                 async_music_state = ASYNC_MUSIC_STATE_IDLE;
                 microbit_obj_pin_free(async_music_pin);
+                async_music_pin = NULL;
                 return;
             }
         }
@@ -275,9 +276,11 @@ STATIC mp_obj_t microbit_music_stop(mp_uint_t n_args, const mp_obj_t *args) {
     } else {
         pin = microbit_obj_get_pin(args[0]);
     }
+    // Raise exception if the pin we are trying to stop is not in a compatible mode.
+    microbit_obj_pin_acquire(pin, microbit_pin_mode_music);
     pwm_set_duty_cycle(pin->name, 0);
     microbit_obj_pin_free(pin);
-
+    async_music_pin = NULL;
     async_music_state = ASYNC_MUSIC_STATE_IDLE;
 
     return mp_const_none;
@@ -296,6 +299,10 @@ STATIC mp_obj_t microbit_music_play(mp_uint_t n_args, const mp_obj_t *pos_args, 
     mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
     mp_arg_parse_all(n_args, pos_args, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
 
+    // reset octave and duration so tunes always play the same
+    music_state.last_octave = DEFAULT_OCTAVE;
+    music_state.last_duration = DEFAULT_DURATION;
+
     // get either a single note or a list of notes
     mp_uint_t len;
     mp_obj_t *items;
@@ -306,21 +313,13 @@ STATIC mp_obj_t microbit_music_play(mp_uint_t n_args, const mp_obj_t *pos_args, 
         mp_obj_get_array(args[0].u_obj, &len, &items);
     }
 
+    // Release the previous pin
+    microbit_obj_pin_free(async_music_pin);
+    async_music_pin = NULL;
+
     // get the pin to play on
     const microbit_pin_obj_t *pin = microbit_obj_get_pin(args[1].u_obj);
-
-    if (async_music_state != ASYNC_MUSIC_STATE_IDLE) {
-      // Stop the current music before starting new music.
-      async_music_state = ASYNC_MUSIC_STATE_IDLE;
-      pwm_set_duty_cycle(pin->name, 0);
-      microbit_obj_pin_free(pin);
-    }
-
-    // reset octave and duration so tunes always play the same
-    music_state.last_octave = DEFAULT_OCTAVE;
-    music_state.last_duration = DEFAULT_DURATION;
-
-    microbit_obj_pin_acquire(pin, MP_QSTR_music);
+    microbit_obj_pin_acquire(pin, microbit_pin_mode_music);
 
     // start the tune running in the background
     async_music_state = ASYNC_MUSIC_STATE_IDLE;
@@ -364,11 +363,19 @@ STATIC mp_obj_t microbit_music_pitch(mp_uint_t n_args, const mp_obj_t *pos_args,
     mp_uint_t frequency = args[0].u_int;
     mp_int_t duration = args[1].u_int;
     const microbit_pin_obj_t *pin = microbit_obj_get_pin(args[2].u_obj);
-    microbit_obj_pin_acquire(pin, MP_QSTR_music);
+
+    // Update pin modes
+    microbit_obj_pin_free(async_music_pin);
+    async_music_pin = NULL;
+    microbit_obj_pin_acquire(pin, microbit_pin_mode_music);
     bool wait = args[3].u_bool;
     pwm_set_duty_cycle(pin->name, 128);
-    if (pwm_set_period_us(1000000/frequency))
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "pitch too extreme"));
+    if (frequency == 0) {
+        pwm_release(pin->name);
+    } else if (pwm_set_period_us(1000000/frequency)) {
+        pwm_release(pin->name);
+        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "invalid pitch"));
+    }
     if (duration >= 0) {
         // use async machinery to stop the pitch after the duration
         async_music_state = ASYNC_MUSIC_STATE_IDLE;

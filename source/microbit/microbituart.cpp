@@ -73,18 +73,18 @@ STATIC mp_obj_t microbit_uart_init(mp_uint_t n_args, const mp_obj_t *pos_args, m
 
     // set tx/rx pins if they are given
     if (args[5].u_obj != mp_const_none) {
-        p_tx = microbit_obj_get_pin(args[5].u_obj)->name;
+        p_tx = microbit_obj_get_pin_name(args[5].u_obj);
     }
     if (args[6].u_obj != mp_const_none) {
-        p_rx = microbit_obj_get_pin(args[6].u_obj)->name;
+        p_rx = microbit_obj_get_pin_name(args[6].u_obj);
     }
 
     // support for legacy "pins" argument
     if (args[4].u_obj != mp_const_none) {
         mp_obj_t *pins;
         mp_obj_get_array_fixed_n(args[4].u_obj, 2, &pins);
-        p_tx = microbit_obj_get_pin(pins[0])->name;
-        p_rx = microbit_obj_get_pin(pins[1])->name;
+        p_tx = microbit_obj_get_pin_name(pins[0]);
+        p_rx = microbit_obj_get_pin_name(pins[1]);
     }
 
     // initialise the uart

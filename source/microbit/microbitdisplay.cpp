@@ -431,12 +431,12 @@ mp_obj_t microbit_display_on_func(mp_obj_t obj) {
     microbit_obj_pin_fail_if_cant_acquire(&microbit_p7_obj);
     microbit_obj_pin_fail_if_cant_acquire(&microbit_p9_obj);
     microbit_obj_pin_fail_if_cant_acquire(&microbit_p10_obj);
-    microbit_obj_pin_acquire(&microbit_p3_obj, MP_QSTR_display);
-    microbit_obj_pin_acquire(&microbit_p4_obj, MP_QSTR_display);
-    microbit_obj_pin_acquire(&microbit_p6_obj, MP_QSTR_display);
-    microbit_obj_pin_acquire(&microbit_p7_obj, MP_QSTR_display);
-    microbit_obj_pin_acquire(&microbit_p9_obj, MP_QSTR_display);
-    microbit_obj_pin_acquire(&microbit_p10_obj, MP_QSTR_display);
+    microbit_obj_pin_acquire(&microbit_p3_obj, microbit_pin_mode_display);
+    microbit_obj_pin_acquire(&microbit_p4_obj, microbit_pin_mode_display);
+    microbit_obj_pin_acquire(&microbit_p6_obj, microbit_pin_mode_display);
+    microbit_obj_pin_acquire(&microbit_p7_obj, microbit_pin_mode_display);
+    microbit_obj_pin_acquire(&microbit_p9_obj, microbit_pin_mode_display);
+    microbit_obj_pin_acquire(&microbit_p10_obj, microbit_pin_mode_display);
     /* Make sure all pins are in the correct state */
     microbit_display_init();
     /* Re-enable the display loop.  This will resume any animations in

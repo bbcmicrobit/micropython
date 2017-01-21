@@ -26,20 +26,15 @@
 #ifndef __MICROPY_INCLUDED_MICROBIT_MICROBITPIN_H__
 #define __MICROPY_INCLUDED_MICROBIT_MICROBITPIN_H__
 
-#ifndef MICROBIT_PIN_P0
+#include "py/obj.h"
 
-#define MICROBIT_PIN_P0     (P0_3)
-#define MICROBIT_PIN_P1     (P0_2)
-#define MICROBIT_PIN_P13    (P0_23)
-#define MICROBIT_PIN_P14    (P0_22)
-#define MICROBIT_PIN_P15    (P0_21)
+typedef struct _microbit_pin_obj_t {
+    mp_obj_base_t base;
+    uint8_t number; // The pin number on microbit board
+    uint8_t name; // The pin number in the GPIO port.
+    uint8_t initial_mode;
+} microbit_pin_obj_t;
 
-#endif
-
-#include "microbit/microbitobj.h"
-
-mp_obj_t microbit_pin_write_digital(mp_obj_t self_in, mp_obj_t value_in);
-mp_obj_t microbit_pin_read_digital(mp_obj_t self_in);
 typedef void(*release_func)(const microbit_pin_obj_t *pin);
 
 typedef struct _pinmode {
@@ -47,18 +42,52 @@ typedef struct _pinmode {
     release_func release; /* Call this function to release pin */
 } microbit_pinmode_t;
 
+extern const microbit_pinmode_t microbit_pinmodes[];
 
+/* Leave 0 to mean default mode. */
+#define MODE_UNUSED 1
+#define MODE_READ_DIGITAL 2
+#define MODE_WRITE_DIGITAL 3
+#define MODE_DISPLAY 4
+#define MODE_BUTTON 5
+#define MODE_MUSIC 6
+#define MODE_AUDIO_PLAY 7
+#define MODE_TOUCH 8
+#define MODE_I2C 9
+#define MODE_SPI 10
+#define MODE_WRITE_ANALOG 11
+
+#define microbit_pin_mode_unused        (&microbit_pinmodes[MODE_UNUSED])
+#define microbit_pin_mode_write_analog  (&microbit_pinmodes[MODE_WRITE_ANALOG])
+#define microbit_pin_mode_read_digital  (&microbit_pinmodes[MODE_READ_DIGITAL])
+#define microbit_pin_mode_write_digital (&microbit_pinmodes[MODE_WRITE_DIGITAL])
+#define microbit_pin_mode_display       (&microbit_pinmodes[MODE_DISPLAY])
+#define microbit_pin_mode_button        (&microbit_pinmodes[MODE_BUTTON])
+#define microbit_pin_mode_music         (&microbit_pinmodes[MODE_MUSIC])
+#define microbit_pin_mode_audio_play    (&microbit_pinmodes[MODE_AUDIO_PLAY])
+#define microbit_pin_mode_touch         (&microbit_pinmodes[MODE_TOUCH])
+#define microbit_pin_mode_i2c           (&microbit_pinmodes[MODE_I2C])
+#define microbit_pin_mode_spi           (&microbit_pinmodes[MODE_SPI])
+
+/** Can this pin be acquired? Safe to call in an interrupt. Not safe to call in an interrupt. */
 void microbit_obj_pin_fail_if_cant_acquire(const microbit_pin_obj_t *pin);
 
+/** Release pin for use by other modes. Safe to call in an interrupt.
+ * If pin is NULL or pin already unused, then this is a no-op
+ */
 void microbit_obj_pin_free(const microbit_pin_obj_t *pin);
 
-void microbit_obj_pin_acquire(const microbit_pin_obj_t *pin, qstr name);
+/** Acquire pin (causing analog/digital modes to release) for mode.
+ * If pin is already in specified mode, this is a no-op.
+ * Not safe to call in an interrupt as it may raise. */
+void microbit_obj_pin_acquire(const microbit_pin_obj_t *pin, const microbit_pinmode_t *mode);
 
 bool microbit_pin_high_debounced(microbit_pin_obj_t *pin);
 
-qstr microbit_obj_pin_get_mode(const microbit_pin_obj_t *pin);
+const microbit_pinmode_t *microbit_pin_get_mode(const microbit_pin_obj_t *pin);
 
 bool microbit_obj_pin_can_be_acquired(const microbit_pin_obj_t *pin);
 
+void pinmode_error(const microbit_pin_obj_t *pin);
 
 #endif // __MICROPY_INCLUDED_MICROBIT_MICROBITPIN_H__

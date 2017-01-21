@@ -109,8 +109,6 @@ const microbit_button_obj_t microbit_button_b_obj = {
     .index = 1,
 };
 
-extern uint8_t microbit_pinmodes[];
-
 enum PinTransition
 {
     LOW_LOW = 0,
@@ -162,11 +160,11 @@ void microbit_button_tick(void) {
         pressed[microbit_button_a_obj.index] = (pressed[microbit_button_a_obj.index] + 2) | 1;
     if (update(microbit_button_b_obj.pin) == HIGH_LOW)
         pressed[microbit_button_b_obj.index] = (pressed[microbit_button_b_obj.index] + 2) | 1;
-    if (microbit_obj_pin_get_mode(&microbit_p0_obj) == MP_QSTR_touch)
+    if (microbit_pin_get_mode(&microbit_p0_obj) == microbit_pin_mode_touch)
         update(&microbit_p0_obj);
-    if (microbit_obj_pin_get_mode(&microbit_p1_obj) == MP_QSTR_touch)
+    if (microbit_pin_get_mode(&microbit_p1_obj) == microbit_pin_mode_touch)
         update(&microbit_p1_obj);
-    if (microbit_obj_pin_get_mode(&microbit_p2_obj) == MP_QSTR_touch)
+    if (microbit_pin_get_mode(&microbit_p2_obj) == microbit_pin_mode_touch)
         update(&microbit_p2_obj);
 }
 

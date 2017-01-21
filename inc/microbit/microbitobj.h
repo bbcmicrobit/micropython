@@ -29,13 +29,8 @@
 extern "C" {
 
 #include "py/obj.h"
+#include "microbitpin.h"
 #include "PinNames.h"
-
-typedef struct _microbit_pin_obj_t {
-    mp_obj_base_t base;
-    uint8_t number; // The pin number on microbit board
-    PinName name; // The pin number in the GPIO port.
-} microbit_pin_obj_t;
 
 const microbit_pin_obj_t *microbit_obj_get_pin(mp_obj_t o);
 PinName microbit_obj_get_pin_name(mp_obj_t o);
