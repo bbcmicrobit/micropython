@@ -138,6 +138,7 @@ STATIC const mp_doc_t help_table_instances[] = {
     {&microbit_i2c_obj, "Communicate with one or more named devices connected to micro:bit. Each named\ndevice has an 'address', communicates using I2C, and connects to the I/O pins.\n"},
     {&microbit_i2c_read_obj, "Use read(address, n) to read 'n' bytes from the device with this address.\n"},
     {&microbit_i2c_write_obj, "Use write(address, buffer) to write to the 'buffer' of the device at this 'address'.\n"},
+    {&microbit_i2c_init_obj, "Use init(frequency, scl, sda) to set the bus frequency and pins.\n"},
     // Image
     {&microbit_image_type, "Create and use built-in IMAGES to show on the display. Use:\nImage(\n  '09090:'\n  '99999:'\n  '99999:'\n  '09990:'\n  '00900:')\n...to make a new 5x5 heart image. Numbers go from 0 (off) to 9 (brightest). Note\nthe colon ':' to set the end of a row.\n"},
     {&microbit_image_width_obj, "Return the width of the image in pixels.\n"},
