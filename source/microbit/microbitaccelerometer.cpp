@@ -75,6 +75,35 @@ void microbit_accelerometer_init(void) {
     uBit.MessageBus.listen(MICROBIT_ID_GESTURE, MICROBIT_EVT_ANY, accelerometer_listener, MESSAGE_BUS_LISTENER_IMMEDIATE);
 }
 
+mp_obj_t microbit_accelerometer_get_rate(mp_obj_t self_in) {
+    microbit_accelerometer_obj_t *self = (microbit_accelerometer_obj_t*)self_in;
+    mp_int_t hz = 1000 / self->accelerometer->getPeriod();
+    return mp_obj_new_int(hz);
+}
+MP_DEFINE_CONST_FUN_OBJ_1(microbit_accelerometer_get_rate_obj, microbit_accelerometer_get_rate);
+
+mp_obj_t microbit_accelerometer_set_rate(mp_obj_t self_in, mp_obj_t hz_obj) {
+    microbit_accelerometer_obj_t *self = (microbit_accelerometer_obj_t*)self_in;
+    mp_int_t hz = mp_obj_get_int(hz_obj);
+    mp_int_t period = (hz == 0) ? 0 : 1000 / hz;
+    self->accelerometer->setPeriod(period);
+    return mp_const_none;
+}
+MP_DEFINE_CONST_FUN_OBJ_2(microbit_accelerometer_set_rate_obj, microbit_accelerometer_set_rate);
+
+mp_obj_t microbit_accelerometer_get_range(mp_obj_t self_in) {
+    microbit_accelerometer_obj_t *self = (microbit_accelerometer_obj_t*)self_in;
+    return mp_obj_new_int(self->accelerometer->getRange());
+}
+MP_DEFINE_CONST_FUN_OBJ_1(microbit_accelerometer_get_range_obj, microbit_accelerometer_get_range);
+
+mp_obj_t microbit_accelerometer_set_range(mp_obj_t self_in, mp_obj_t g) {
+    microbit_accelerometer_obj_t *self = (microbit_accelerometer_obj_t*)self_in;
+    self->accelerometer->setRange(mp_obj_get_int(g));
+    return mp_const_none;
+}
+MP_DEFINE_CONST_FUN_OBJ_2(microbit_accelerometer_set_range_obj, microbit_accelerometer_set_range);
+
 mp_obj_t microbit_accelerometer_get_x(mp_obj_t self_in) {
     microbit_accelerometer_obj_t *self = (microbit_accelerometer_obj_t*)self_in;
     update(self);
@@ -175,6 +204,10 @@ mp_obj_t microbit_accelerometer_get_gestures(mp_obj_t self_in) {
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_accelerometer_get_gestures_obj, microbit_accelerometer_get_gestures);
 
 STATIC const mp_map_elem_t microbit_accelerometer_locals_dict_table[] = {
+    { MP_OBJ_NEW_QSTR(MP_QSTR_get_rate), (mp_obj_t)&microbit_accelerometer_get_rate_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_set_rate), (mp_obj_t)&microbit_accelerometer_set_rate_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_get_range), (mp_obj_t)&microbit_accelerometer_get_range_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_set_range), (mp_obj_t)&microbit_accelerometer_set_range_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_get_x), (mp_obj_t)&microbit_accelerometer_get_x_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_get_y), (mp_obj_t)&microbit_accelerometer_get_y_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_get_z), (mp_obj_t)&microbit_accelerometer_get_z_obj },

@@ -59,6 +59,22 @@ Functions
     Return a tuple of the gesture history. The most recent is listed last.
     Also clears the gesture history before returning.
 
+.. py:function:: get_rate()
+
+    Get the accelerometer samping rate, in Hz.
+
+.. py:function:: set_rate()
+
+    Set the accelerometer samping rate, in Hz.
+
+.. py:function:: get_range()
+
+    Get the accelerometer sensitivity range, in g's.
+
+.. py:function:: set_range()
+
+    Set the accelerometer sensitivity range, in Hz.
+
 Examples
 --------
 
