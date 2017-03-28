@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Damien P. George, 2016 Mark Shannon
+ * Copyright (c) 2015 Damien P. George, 2016-2017 Mark Shannon
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,41 +24,64 @@
  * THE SOFTWARE.
  */
 
-#include "MicroBit.h"
-
 extern "C" {
+
+#include "stdio.h"
 
 #include "lib/ticker.h"
 #include "py/runtime.h"
 #include "modmicrobit.h"
 #include "py/mphal.h"
 #include "microbitdisplay.h"
+#include "nrf_gpio.h"
+#include "nrf_delay.h"
 
 #include "py/runtime0.h"
 #include "filesystem.h"
 #include "microbitobj.h"
+#include "microbitmath.h"
+#include "math.h"
+
+extern void microbit_accelerometer_get_values(const struct _microbit_accelerometer_obj_t *self, microbit_vector3_t *values);
+
+#define MICROBIT_PIN_COMPASS_DATA_READY          P0_29
+
+/**
+  * MAG3110 Register map
+  */
+#define MAG_DR_STATUS 0x00
+#define MAG_OUT_X_MSB 0x01
+#define MAG_OUT_X_LSB 0x02
+#define MAG_OUT_Y_MSB 0x03
+#define MAG_OUT_Y_LSB 0x04
+#define MAG_OUT_Z_MSB 0x05
+#define MAG_OUT_Z_LSB 0x06
+#define MAG_WHOAMI    0x07
+#define MAG_SYSMOD    0x08
+#define MAG_OFF_X_MSB 0x09
+#define MAG_OFF_X_LSB 0x0A
+#define MAG_OFF_Y_MSB 0x0B
+#define MAG_OFF_Y_LSB 0x0C
+#define MAG_OFF_Z_MSB 0x0D
+#define MAG_OFF_Z_LSB 0x0E
+#define MAG_DIE_TEMP  0x0F
+#define MAG_CTRL_REG1 0x10
+#define MAG_CTRL_REG2 0x11
+
 
 typedef struct _persistent_compass_calibration {
     bool calibrated;
-    int x;
-    int y;
-    int z;
+    microbit_vector3_t values;
 } persistent_compass_calibration;
 
-typedef struct _point {
-    int16_t x;
-    int16_t y;
-    int16_t z;
-} point;
-
-typedef struct _compass_calibration_point {
-    point coords;
+typedef struct _compass_calibration_vector {
+    microbit_vector3_t coords;
     int16_t directional_sum;
-} compass_calibration_point;
+} compass_calibration_vector;
 
 typedef struct _compass_calibration_t {
     bool initialised;
-    compass_calibration_point points[27];
+    compass_calibration_vector vectors[27];
 } compass_calibration_t;
 
 typedef union _persistent_compass_data {
@@ -79,7 +102,7 @@ static inline volatile persistent_compass_calibration *get_calibration(void) {
 
 typedef struct _microbit_compass_obj_t {
     mp_obj_base_t base;
-    MicroBitCompass *compass;
+    microbit_vector3_t *sample;
 } microbit_compass_obj_t;
 
 mp_obj_t microbit_compass_is_calibrated(mp_obj_t self_in) {
@@ -88,46 +111,107 @@ mp_obj_t microbit_compass_is_calibrated(mp_obj_t self_in) {
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_compass_is_calibrated_obj, microbit_compass_is_calibrated);
 
-static int samples_taken = 0;
+#define COMPASS_ADDRESS 0x1D
 
-static void update(const microbit_compass_obj_t *self) {
-    /* The only time it is possible for compass_updating to be true here
-     * is if this is called in an interrupt when it is already updating in
-     * the main execution thread. This is extremely unlikely, so we just
-     * accept that a slightly out-of-date result will be returned
-     */
-    if (!compass_up_to_date && !compass_updating) {
-        compass_updating = true;
-        self->compass->idleTick();
-        compass_updating = false;
-        compass_up_to_date = true;
-        samples_taken++;
+
+static int write_command(uint8_t reg, uint8_t value)
+{
+    uint8_t command[2];
+    command[0] = reg;
+    command[1] = value;
+    return microbit_i2c_write(&microbit_i2c_obj, COMPASS_ADDRESS, (const char *)command, 2, false);
+}
+
+static int read_command(uint8_t reg, uint8_t* buffer, int length)
+{
+    int err = microbit_i2c_write(&microbit_i2c_obj, COMPASS_ADDRESS, (const char *)&reg, 1, true);
+    if (err < 0)
+        return err;
+    return microbit_i2c_read(&microbit_i2c_obj, COMPASS_ADDRESS, (char *)buffer, length, false);
+}
+
+static int microbit_compass_config(void) {
+    int err;
+
+    // First, take the device offline, so it can be configured.
+    err = write_command(MAG_CTRL_REG1, 0x00);
+    if (err < 0)
+        return err;
+
+    // Wait for the part to enter standby mode
+    while(1)
+    {
+        // Read the status of the part
+        uint8_t result;
+        err = read_command(MAG_SYSMOD, &result, 1);
+        if (err < 0)
+            return err;
+
+        if((result & 0x03) == 0)
+            break;
+
+        // According data sheet turn on time is 25ms
+        // Turn off time is probably quicker (but it isn't documented)
+        nrf_delay_us(10000);
     }
+
+    // Enable automatic reset after each sample;
+    err = write_command(MAG_CTRL_REG2, 0xA0);
+    if (err < 0)
+        return err;
+
+    // Select 10Hz update rate, with 16-fold oversampling, and enable the device.
+    return write_command(MAG_CTRL_REG1, 0x60 | 0x01);
+
+}
+
+void microbit_compass_init(void) {
+    microbit_compass_config();
+}
+
+static inline int16_t bytes_to_int(uint8_t msb, uint8_t lsb) {
+  return (msb << 8) | lsb;
+}
+
+static int update(const microbit_compass_obj_t *self) {
+    uint8_t data[6];
+    int err;
+    if (!nrf_gpio_pin_read(MICROBIT_PIN_COMPASS_DATA_READY)) {
+        // sample is up to date
+        return -1;
+    }
+    err = read_command(MAG_OUT_X_MSB, data, 6);
+    if (err < 0)
+        return err;
+    self->sample->x = bytes_to_int(data[0], data[1]);
+    self->sample->y = bytes_to_int(data[2], data[3]);
+    self->sample->z = bytes_to_int(data[4], data[5]);
+    return 0;
 }
 
 #define calibration_data MP_STATE_PORT(compass_calibration_data)
 
-void compass_tick(void) {
+void microbit_compass_tick(void) {
     /** If compass is calibrating see if sample is on periphery
      *  and record it if it is.
+     * As we are an interrupt we can't call update(), so we
+     * rely on it being called by whatever is doing the calibration
      */
     compass_calibration_t *data = calibration_data;
     if (data == NULL) {
         return;
     }
-    update(&microbit_compass_obj);
-    // Scale values down to make sure that they fit into 16 bits.
-    int x = uBit.compass.getX(RAW) >> 4;
-    int y = uBit.compass.getY(RAW) >> 4;
-    int z = uBit.compass.getZ(RAW) >> 4;
+    int x = microbit_compass_obj.sample->x;
+    int y =  microbit_compass_obj.sample->y;
+    int z =  microbit_compass_obj.sample->z;
     if (!data->initialised) {
-        // Set all points to initial value.
+        // Set all vectors to initial value.
         for (int xscale=-1; xscale<2; xscale++) {
             for (int yscale=-1; yscale<2; yscale++) {
                 for (int zscale=-1; zscale<2; zscale++) {
                     int val = x*xscale + y*yscale + z*zscale;
                     uint32_t index = xscale*9+yscale*3+zscale+13;
-                    compass_calibration_point *p = &data->points[index];
+                    compass_calibration_vector *p = &data->vectors[index];
                     p->coords.x = x;
                     p->coords.y = y;
                     p->coords.z = z;
@@ -144,7 +228,7 @@ void compass_tick(void) {
             for (int zscale=-1; zscale<2; zscale++) {
                 int val = x*xscale + y*yscale + z*zscale;
                 uint32_t index = xscale*9+yscale*3+zscale+13;
-                compass_calibration_point *p = &data->points[index];
+                compass_calibration_vector *p = &data->vectors[index];
                 if (val > p->directional_sum) {
                     p->coords.x = x;
                     p->coords.y = y;
@@ -161,19 +245,23 @@ static mp_obj_t compass_start_calibrating(microbit_compass_obj_t *self) {
     compass_calibration_t *data = m_new_obj(compass_calibration_t);
     data->initialised = false;
     calibration_data = data;
+
+    // Select 40Hz update rate, with 32-fold oversampling, to maximize quality of data for calibration.
+    write_command(MAG_CTRL_REG1, 0x09);
+
     return mp_const_none;
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_compass_start_calibrating_obj, compass_start_calibrating);
 
 
-static int compute_mean(compass_calibration_t *data, int valid_samples, point *result) {
+static int compute_mean(compass_calibration_t *data, int valid_samples, microbit_vector3_t *result) {
     int sum_x = 0;
     int sum_y = 0;
     int sum_z = 0;
     int count = 0;
     for (int i = 0; i < 27; i++) {
         if ((valid_samples >> i) & 1) {
-            point *sample = &data->points[i].coords;
+            microbit_vector3_t *sample = &data->vectors[i].coords;
             sum_x += sample->x;
             sum_y += sample->y;
             sum_z += sample->z;
@@ -186,87 +274,46 @@ static int compute_mean(compass_calibration_t *data, int valid_samples, point *r
     return count;
 }
 
-/* Avoid using floating point or division */
-static int distance(point *a, point *b) {
-    int x = a->x-b->x;
-    int y = a->y-b->y;
-    int z = a->z-b->z;
-    int len_sq = x*x+y*y+z*z;
-    int bit = 15;
-    for(; bit; bit--) {
-        if (1<<(bit<<1) <= len_sq) {
-            break;
-        }
-    }
-    int estimate = 1<<bit;
-    while (bit) {
-        bit--;
-        int bigger = estimate + (1<<bit);
-        if (bigger*bigger <= len_sq) {
-            estimate = bigger;
-        }
-    }
-    return estimate;
-}
-
-static int dot_product(point *a, point *b, point *c) {
-    int a_x = a->x-c->x;
-    int a_y = a->y-c->y;
-    int a_z = a->z-c->z;
-    int b_x = b->x-c->x;
-    int b_y = b->y-c->y;
-    int b_z = b->z-c->z;
-    return a_x*b_x + a_y*b_y + a_z*b_z;
-}
-
-static float cos_angle(point *a, point *b, point *common) {
-    int dot = dot_product(a, b, common);
-    int alen = distance(a, common);
-    int blen = distance(b, common);
-    float res = ((float)dot)/alen/blen;
-    return res;
-}
-
-static void microbit_compass_save_calibration(bool calibrated, int x, int y, int z) {
+static void microbit_compass_save_calibration(bool calibrated, microbit_vector3_t *values) {
     persistent_erase_page((const void *)&data);
     persistent_compass_calibration calibration;
     calibration.calibrated = calibrated;
-    calibration.x = x;
-    calibration.y = y;
-    calibration.z = z;
+    calibration.values = *values;
     persistent_write_unchecked((const void *)&data, &calibration, sizeof(persistent_compass_calibration));
 }
 
-#define MIN_SEPARATION (6000>>4)
+#define MIN_SEPARATION 60
 
 // Returns the number of samples that were used for calibration
 static mp_obj_t compass_stop_calibrating(microbit_compass_obj_t *self) {
     (void)self;
     compass_calibration_t *data = calibration_data;
+    // Restore 10Hz update rate.
+    write_command(MAG_CTRL_REG1, 0x60 | 0x01);
     if (data == NULL) {
-        return 0;
+        return mp_obj_new_int(0);
     }
     calibration_data = NULL;
     int valid_samples = (((1<<13)-1)<<14)|((1<<13)-1);
     if (!data->initialised) {
-        return 0;
+        return mp_obj_new_int(0);
     }
-    point mean;
+    microbit_vector3_t mean;
     int sample_count;
     // Discard values that are too close together.
     for (int index = 0; index < 13; index++) {
         if (((valid_samples >> index) & 1) == 0) {
             continue;
         }
-        point *sample = &data->points[index].coords;
+        microbit_vector3_t *sample = &data->vectors[index].coords;
         uint32_t opposed_index = 26-index;
-        point *opposed = &data->points[opposed_index].coords;
-        if (distance(sample, opposed) < MIN_SEPARATION) {
+        microbit_vector3_t *opposed = &data->vectors[opposed_index].coords;
+        if (microbit_vector3_distance(sample, opposed) < MIN_SEPARATION) {
             valid_samples &= ~(1<<index);
             valid_samples &= ~(1<<opposed_index);
         }
     }
-    // Iteratively discard values too close to mean (and opposing point).
+    // Iteratively discard values too close to mean (and opposing vector).
     float tolerance = 0.0;
     while (tolerance < 0.85) {
         // Take mean value to get (scaled) centre value.
@@ -278,15 +325,19 @@ static mp_obj_t compass_stop_calibrating(microbit_compass_obj_t *self) {
                     if (((valid_samples >> index) & 1) == 0) {
                         continue;
                     }
-                    point *sample = &data->points[index].coords;
+                    microbit_vector3_t *sample = &data->vectors[index].coords;
                     uint32_t opposed_index = 26-index;
-                    point *opposed = &data->points[opposed_index].coords;
-                    point expected;
-                    expected.x = mean.x + xscale*2000;
-                    expected.y = mean.y + yscale*2000;
-                    expected.z = mean.z + zscale*2000;
-                    if (cos_angle(sample, &expected, &mean) < tolerance ||
-                        cos_angle(opposed, &expected, &mean) > -tolerance) {
+                    microbit_vector3_t *opposed = &data->vectors[opposed_index].coords;
+                    microbit_vector3_t expected;
+                    expected.x = xscale*2000;
+                    expected.y = yscale*2000;
+                    expected.z = zscale*2000;
+                    microbit_vector3_t diff;
+                    microbit_vector3_difference(sample, &mean, &diff);
+                    microbit_vector3_t opposed_diff;
+                    microbit_vector3_difference(opposed, &mean, &opposed_diff);
+                    if (microbit_vector3_cos_angle(&diff, &expected) < tolerance ||
+                        microbit_vector3_cos_angle(&opposed_diff, &expected) > -tolerance) {
                         valid_samples &= ~(1<<index);
                         valid_samples &= ~(1<<opposed_index);
                     }
@@ -297,7 +348,7 @@ static mp_obj_t compass_stop_calibrating(microbit_compass_obj_t *self) {
     }
     sample_count = compute_mean(data, valid_samples, &mean);
     //Save rescaled values
-    microbit_compass_save_calibration(true, mean.x<<4, mean.y<<4, mean.z<<4);
+    microbit_compass_save_calibration(true, &mean);
     return mp_obj_new_int(sample_count);
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_compass_stop_calibrating_obj, compass_stop_calibrating);
@@ -344,38 +395,37 @@ mp_obj_t microbit_compass_calibrate(mp_obj_t self_in) {
 
     while(samples < PERIMETER_POINTS)
     {
+        update(&microbit_compass_obj);
 
         // take a snapshot of the current accelerometer data.
-        int x;
-        int y;
-        int z;
-        microbit_accelerometer_get_values(&microbit_accelerometer_obj, &x, &y, &z);
+        microbit_vector3_t accel;
+        microbit_accelerometer_get_values(&microbit_accelerometer_obj, &accel);
 
         img->greyscale.setPixelValue(cursor.x, cursor.y, 0);
         // Deterine the position of the user controlled pixel on the screen.
-        if (x < -PIXEL2_THRESHOLD)
+        if (accel.x < -PIXEL2_THRESHOLD)
             cursor.x = 0;
-        else if (x < -PIXEL1_THRESHOLD)
+        else if (accel.x < -PIXEL1_THRESHOLD)
             cursor.x = 1;
-        else if (x > PIXEL2_THRESHOLD)
+        else if (accel.x > PIXEL2_THRESHOLD)
             cursor.x = 4;
-        else if (x > PIXEL1_THRESHOLD)
+        else if (accel.x > PIXEL1_THRESHOLD)
             cursor.x = 3;
         else
             cursor.x = 2;
 
-        if (y < -PIXEL2_THRESHOLD)
+        if (accel.y < -PIXEL2_THRESHOLD)
             cursor.y = 0;
-        else if (y < -PIXEL1_THRESHOLD)
+        else if (accel.y < -PIXEL1_THRESHOLD)
             cursor.y = 1;
-        else if (y > PIXEL2_THRESHOLD)
+        else if (accel.y > PIXEL2_THRESHOLD)
             cursor.y = 4;
-        else if (y > PIXEL1_THRESHOLD)
+        else if (accel.y > PIXEL1_THRESHOLD)
             cursor.y = 3;
         else
             cursor.y = 2;
          // Flash the current pixel
-        if ((ticks & 4) == 0) {
+        if ((ticks & 16) == 0) {
             img->greyscale.setPixelValue(cursor.x, cursor.y, 9);
         }
 
@@ -392,16 +442,16 @@ mp_obj_t microbit_compass_calibrate(mp_obj_t self_in) {
             }
         }
         microbit_display_show(&microbit_display_obj, img);
-        mp_hal_delay_ms(100);
+        mp_hal_delay_ms(24);
         ticks += 1;
     }
+    // Should have enough data by now.
+    mp_obj_t res = compass_stop_calibrating(self);
 
     // Show a smiley to indicate that we're done.
     microbit_display_show(&microbit_display_obj, HAPPY_IMAGE);
     mp_hal_delay_ms(1000);
 
-    // Should have enough data by now.
-    mp_obj_t res = compass_stop_calibrating(self);
     microbit_display_clear();
     return res;
 }
@@ -409,27 +459,28 @@ MP_DEFINE_CONST_FUN_OBJ_1(microbit_compass_calibrate_obj, microbit_compass_calib
 
 mp_obj_t microbit_compass_clear_calibration(mp_obj_t self_in) {
     (void)self_in;
-    microbit_compass_save_calibration(false, 0, 0, 0);
+    microbit_vector3_t zero;
+    zero.x = zero.y = zero.z = 0;
+    microbit_compass_save_calibration(false, &zero);
     return mp_const_none;
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_compass_clear_calibration_obj, microbit_compass_clear_calibration);
 
-volatile bool compass_up_to_date = false;
-volatile bool compass_updating = false;
+/* Factor to normalize to SI units */
+#define SCALE_FACTOR 100
 
 static int get_x(microbit_compass_obj_t *self) {
-    return self->compass->getX(RAW) - get_calibration()->x;
+    return self->sample->x - get_calibration()->values.x;
 }
 
 static int get_y(microbit_compass_obj_t *self) {
-    return self->compass->getY(RAW) - get_calibration()->y;
+    return self->sample->y - get_calibration()->values.y;
 }
 
 static int get_z(microbit_compass_obj_t *self) {
-    return self->compass->getZ(RAW) - get_calibration()->z;
+    return self->sample->z - get_calibration()->values.z;
 }
 
-#define PITCH_ADJUST true
 
 mp_obj_t microbit_compass_heading(mp_obj_t self_in) {
     microbit_compass_obj_t *self = (microbit_compass_obj_t*)self_in;
@@ -437,29 +488,27 @@ mp_obj_t microbit_compass_heading(mp_obj_t self_in) {
         microbit_compass_calibrate(self_in);
     }
     float x, y;
+    microbit_vector3_t raw;
     update(self);
-    if (PITCH_ADJUST) {
-        uBit.accelerometer.update();
-        float raw_x = get_x(self);
-        float raw_y = get_y(self);
-        float raw_z = get_z(self);
-        float roll = uBit.accelerometer.getRollRadians();
-        float pitch = uBit.accelerometer.getPitchRadians();
+    raw.x = get_x(self);
+    raw.y = get_y(self);
+    raw.z = get_z(self);
+    microbit_vector3_t acceleration;
+    microbit_accelerometer_get_values(&microbit_accelerometer_obj, &acceleration);
 
-        // Precompute cos and sin of pitch and roll angles to make the calculation a little more efficient.
-        float sinroll = sin(roll);
-        float cosroll = cos(roll);
-        float sinpitch = sin(pitch);
-        float cospitch = cos(pitch);
+    /* Do some vector maths to get horizontal compass vector */
+    microbit_vector3_t horizontal_x;
+    horizontal_x.x = -acceleration.z;
+    horizontal_x.y = 0;
+    horizontal_x.z = -acceleration.x;
+    microbit_vector3_t horizontal_y;
+    horizontal_y.x = 0;
+    horizontal_y.y = -acceleration.z;
+    horizontal_y.z = -acceleration.y;
+    x = microbit_vector3_dot_product(&raw, &horizontal_x)/microbit_vector3_length(&horizontal_x);
+    y = microbit_vector3_dot_product(&raw, &horizontal_y)/microbit_vector3_length(&horizontal_y);
 
-        x = raw_z*sinroll + raw_x*cosroll;
-        y = raw_y*cospitch + raw_z*sinpitch;
-    } else {
-        x = get_x(self);
-        y = get_y(self);
-    }
-
-    int bearing = (360*atan2(-x, -y)) / (2*PI);
+    int bearing = (360*atan2(-x, -y)) / (2*M_PI);
     if (bearing < 0) {
         bearing += 360;
     }
@@ -470,31 +519,31 @@ MP_DEFINE_CONST_FUN_OBJ_1(microbit_compass_heading_obj, microbit_compass_heading
 mp_obj_t microbit_compass_get_x(mp_obj_t self_in) {
     microbit_compass_obj_t *self = (microbit_compass_obj_t*)self_in;
     update(self);
-    return mp_obj_new_int(get_x(self));
+    return mp_obj_new_int(get_x(self)*SCALE_FACTOR);
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_compass_get_x_obj, microbit_compass_get_x);
 
 mp_obj_t microbit_compass_get_y(mp_obj_t self_in) {
     microbit_compass_obj_t *self = (microbit_compass_obj_t*)self_in;
     update(self);
-    return mp_obj_new_int(get_y(self));
+    return mp_obj_new_int(get_y(self)*SCALE_FACTOR);
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_compass_get_y_obj, microbit_compass_get_y);
 
 mp_obj_t microbit_compass_get_z(mp_obj_t self_in) {
     microbit_compass_obj_t *self = (microbit_compass_obj_t*)self_in;
     update(self);
-    return mp_obj_new_int(get_z(self));
+    return mp_obj_new_int(get_z(self)*SCALE_FACTOR);
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_compass_get_z_obj, microbit_compass_get_z);
 
 mp_obj_t microbit_compass_get_values(mp_obj_t self_in) {
     microbit_compass_obj_t *self = (microbit_compass_obj_t*)self_in;
-    mp_obj_tuple_t *tuple = (mp_obj_tuple_t *)mp_obj_new_tuple(3, NULL);
     update(self);
-    tuple->items[0] = mp_obj_new_int(get_x(self));
-    tuple->items[1] = mp_obj_new_int(get_y(self));
-    tuple->items[2] = mp_obj_new_int(get_z(self));
+    mp_obj_tuple_t *tuple = (mp_obj_tuple_t *)mp_obj_new_tuple(3, NULL);
+    tuple->items[0] = mp_obj_new_int(get_x(self)*SCALE_FACTOR);
+    tuple->items[1] = mp_obj_new_int(get_y(self)*SCALE_FACTOR);
+    tuple->items[2] = mp_obj_new_int(get_z(self)*SCALE_FACTOR);
     return tuple;
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_compass_get_values_obj, microbit_compass_get_values);
@@ -503,16 +552,20 @@ MP_DEFINE_CONST_FUN_OBJ_1(microbit_compass_get_values_obj, microbit_compass_get_
 mp_obj_t microbit_compass_get_calibration(mp_obj_t self_in) {
     (void)self_in;
     mp_obj_tuple_t *tuple = (mp_obj_tuple_t *)mp_obj_new_tuple(3, NULL);
-    tuple->items[0] = mp_obj_new_int(get_calibration()->x);
-    tuple->items[1] = mp_obj_new_int(get_calibration()->y);
-    tuple->items[2] = mp_obj_new_int(get_calibration()->z);
+    tuple->items[0] = mp_obj_new_int(get_calibration()->values.x*SCALE_FACTOR);
+    tuple->items[1] = mp_obj_new_int(get_calibration()->values.y*SCALE_FACTOR);
+    tuple->items[2] = mp_obj_new_int(get_calibration()->values.z*SCALE_FACTOR);
     return tuple;
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_compass_get_calibration_obj, microbit_compass_get_calibration);
 
 mp_obj_t microbit_compass_set_calibration(mp_uint_t n_args, const mp_obj_t *args) {
     (void)n_args;
-    microbit_compass_save_calibration(true, mp_obj_get_int(args[1]), mp_obj_get_int(args[2]), mp_obj_get_int(args[3]));
+    microbit_vector3_t calibration;
+    calibration.x = mp_obj_get_int(args[1])/100;
+    calibration.y = mp_obj_get_int(args[2])/100;
+    calibration.z = mp_obj_get_int(args[3])/100;
+    microbit_compass_save_calibration(true, &calibration);
     return mp_const_none;
 }
 MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_compass_set_calibration_obj, 4, 4, microbit_compass_set_calibration);
@@ -520,7 +573,7 @@ MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_compass_set_calibration_obj, 4, 4, 
 mp_obj_t microbit_compass_get_field_strength(mp_obj_t self_in) {
     microbit_compass_obj_t *self = (microbit_compass_obj_t*)self_in;
     update(self);
-    return mp_obj_new_int(self->compass->getFieldStrength());
+    return mp_obj_new_int(microbit_vector3_distance(self->sample, (microbit_vector3_t *)&get_calibration()->values));
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_compass_get_field_strength_obj, microbit_compass_get_field_strength);
 
@@ -560,9 +613,11 @@ STATIC const mp_obj_type_t microbit_compass_type = {
     .locals_dict = (mp_obj_dict_t*)&microbit_compass_locals_dict,
 };
 
+static microbit_vector3_t compass_sample;
+
 const microbit_compass_obj_t microbit_compass_obj = {
     {&microbit_compass_type},
-    .compass = &uBit.compass,
+    .sample = &compass_sample
 };
 
 }

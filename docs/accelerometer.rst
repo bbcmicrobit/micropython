@@ -42,8 +42,12 @@ Functions
 
     MicroPython understands the following gesture names: ``"up"``, ``"down"``,
     ``"left"``, ``"right"``, ``"face up"``, ``"face down"``, ``"freefall"``,
-    ``"3g"``, ``"6g"``, ``"8g"``, ``"shake"``. Gestures are always
-    represented as strings.
+    ``"shake"``. Gestures are always represented as strings.
+    For gesture detection to work correctly, an accelerometer function
+    must be called ar regular intervals. This is because shake detection relies on computing
+    jerk_ it needs regularly spaced samples.
+
+.. _jerk: https://en.wikipedia.org/wiki/Jerk_(physics)
 
 .. py:function:: is_gesture(name)
 
@@ -53,6 +57,7 @@ Functions
 
     Return True or False to indicate if the named gesture was active since the
     last call.
+
 
 .. py:function:: get_gestures()
 
