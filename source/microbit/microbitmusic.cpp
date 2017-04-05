@@ -157,12 +157,12 @@ STATIC uint32_t start_note(const char *note_str, size_t note_len, const microbit
     uint8_t note_index = (note_str[0] & 0x1f) - 1;
 
     // TODO: the duration and bpm should be persistent between notes
-    uint8_t ms_per_tick = (60000 / music_state.bpm) / music_state.ticks;
+    uint32_t ms_per_tick = (60000 / music_state.bpm) / music_state.ticks;
 
     int8_t octave = 0;
     bool sharp = false;
 
-    uint8_t current_position = 1;
+    size_t current_position = 1;
 
     // parse sharp or flat
     if (current_position < note_len && (note_str[current_position] == '#' || note_str[current_position] == 'b')) {
