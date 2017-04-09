@@ -25,10 +25,8 @@
  * THE SOFTWARE.
  */
 
-#include "MicroBit.h"
-
-#define rand30() (uBit.random(0x40000000))
-#define randbelow(n) (uBit.random(n))
+#define rand30() (MicroBit_random(0x40000000))
+#define randbelow(n) (MicroBit_random(n))
 
 extern "C" {
 
@@ -37,6 +35,11 @@ extern "C" {
 #include <string.h>
 
 #include "py/runtime.h"
+
+extern int MicroBit_random(int max);
+extern void MicroBit_seedRandom(void);
+extern void MicroBit_setSeed(uint32_t seed);
+
 
 STATIC mp_obj_t mod_random_getrandbits(mp_obj_t num_in) {
     int n = mp_obj_get_int(num_in);
@@ -52,10 +55,10 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_1(mod_random_getrandbits_obj, mod_random_getrandb
 
 STATIC mp_obj_t mod_random_seed(size_t n_args, const mp_obj_t *args) {
     if (n_args == 0 || args[0] == mp_const_none) {
-        uBit.seedRandom();
+        MicroBit_seedRandom();
     } else {
         mp_uint_t seed = mp_obj_get_int_truncated(args[0]);
-        uBit.seedRandom(seed);
+        MicroBit_setSeed(seed);
     }
     return mp_const_none;
 }
