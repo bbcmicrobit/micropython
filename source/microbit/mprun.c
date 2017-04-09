@@ -98,7 +98,6 @@ void mp_run(void) {
     mp_stack_ctrl_init();
     mp_stack_set_limit(1800); // stack is 2k
 
-    // allocate the heap statically in the bss
     static uint32_t heap[9720 / 4];
     gc_init(heap, (uint8_t*)heap + sizeof(heap));
 
@@ -151,7 +150,7 @@ void mp_run(void) {
     mp_hal_stdout_tx_str("soft reboot\r\n");
 
     memset(&MP_STATE_PORT(async_data)[0], 0, sizeof(MP_STATE_PORT(async_data)));
-    MP_STATE_PORT(async_music_data) = NULL;
+    MP_STATE_PORT(music_data) = NULL;
 
     mp_deinit();
 }

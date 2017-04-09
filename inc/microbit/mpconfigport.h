@@ -123,13 +123,13 @@ extern const struct _mp_obj_module_t speech_module;
     const char *readline_hist[8]; \
     mp_obj_t keyboard_interrupt_obj; \
     void *async_data[2]; \
-    void *async_music_data; \
     uint8_t *radio_buf; \
     void *audio_buffer; \
     void *audio_source; \
     void *speech_data; \
     const struct _pwm_events *pwm_active_events; \
     const struct _pwm_events *pwm_pending_events; \
+    struct _music_data_t *music_data; \
 
 // We need to provide a declaration/definition of alloca()
 #include <alloca.h>
