@@ -79,7 +79,7 @@ int32_t noop(void) {
     return -1;
 }
 
-extern uint32_t ticks;
+uint32_t ticks;
 
 static ticker_callback_ptr callbacks[3] = { noop, noop, noop };
 

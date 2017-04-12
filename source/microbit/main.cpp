@@ -1,4 +1,4 @@
-#include "MicroBit.h"
+
 #include "microbitobj.h"
 #include "microbitdisplay.h"
 #include "microbitmusic.h"
@@ -17,9 +17,10 @@ extern "C" {
     void pwm_init(void);
     void microbit_i2c_init(void);
     void MicroBit_seedRandom(void);
+    void microbit_serial_init(void);
 }
 
-void app_main() {
+int main() {
     
     // debugging: print memory layout
     /*
@@ -35,8 +36,7 @@ void app_main() {
     printf("__StackTop     = %p\r\n", &__StackTop);
     */
 
-    currentFiber->flags |= MICROBIT_FIBER_FLAG_DO_NOT_PAGE;
-
+    microbit_serial_init();
     microbit_i2c_init();
     microbit_button_init();
     microbit_accelerometer_init();
@@ -74,14 +74,12 @@ void __register_exitproc() {
 }
 
 void microbit_init(void) {
-    uBit.display.disable();
     microbit_display_init();
     microbit_filesystem_init();
     microbit_pin_init();
     pwm_init();
 
     // Start the ticker.
-    uBit.systemTicker.detach();
     ticker_init(microbit_ticker);
     ticker_start();
     pwm_start();
