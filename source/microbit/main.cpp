@@ -22,6 +22,8 @@ extern "C" {
 
 int main() {
     
+    microbit_serial_init();
+
     // debugging: print memory layout
     /*
     extern uint32_t __data_start__, __data_end__;
@@ -36,7 +38,6 @@ int main() {
     printf("__StackTop     = %p\r\n", &__StackTop);
     */
 
-    microbit_serial_init();
     microbit_i2c_init();
     microbit_button_init();
     microbit_accelerometer_init();

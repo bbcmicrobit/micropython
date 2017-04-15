@@ -31,6 +31,7 @@ extern "C" {
 #include "microbitpin.h"
 #include "modmicrobit.h"
 #include "nrf_gpio.h"
+#include "nrf_gpiote.h"
 
 typedef struct _microbit_button_obj_t {
     mp_obj_base_t base;
@@ -72,7 +73,24 @@ mp_obj_t microbit_button_was_pressed(mp_obj_t self_in) {
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_button_was_pressed_obj, microbit_button_was_pressed);
 
+// GPIO pin attached to reset button
+#define MICROBIT_RESET_BUTTON   19
+
+// The GPIOTE channel use to direct reset button press to interrupt.
+#define MICROBIT_RESET_CHANNEL 3
+
 void microbit_button_init(void) {
+    // Initialise the reset button
+    nrf_gpio_cfg_input(MICROBIT_RESET_BUTTON, NRF_GPIO_PIN_PULLUP);
+    nrf_gpiote_event_configure(MICROBIT_RESET_CHANNEL, MICROBIT_RESET_BUTTON, NRF_GPIOTE_POLARITY_HITOLO);
+    nrf_gpiote_event_enable(MICROBIT_RESET_CHANNEL);
+    nrf_gpiote_int_enable(1 << MICROBIT_RESET_CHANNEL);
+    NVIC_SetPriority(GPIOTE_IRQn, 3);
+    NVIC_EnableIRQ  (GPIOTE_IRQn);
+}
+
+void GPIOTE_IRQHandler(void) {
+    NVIC_SystemReset();
 }
 
 STATIC const mp_map_elem_t microbit_button_locals_dict_table[] = {
@@ -175,5 +193,10 @@ void microbit_button_tick(void) {
 bool microbit_pin_high_debounced(microbit_pin_obj_t *pin) {
     return debounced_high[pin->number&7];
 }
+
+
+
+
+
 
 }
