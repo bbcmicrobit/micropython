@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-#include "MicroBit.h"
+#include <string.h>
 
 extern "C" {
 
@@ -32,56 +32,22 @@ extern "C" {
 #include "py/mphal.h"
 #include "microbitimage.h"
 #include "microbitdisplay.h"
-
-#define UART_RX_BUF_SIZE (64) // it's large so we can paste example code
-
-static int interrupt_char;
-static uint8_t uart_rx_buf[UART_RX_BUF_SIZE];
-static volatile uint16_t uart_rx_buf_head, uart_rx_buf_tail;
-
-void uart_rx_irq(void) {
-    if (!uBit.serial.readable()) {
-        return;
-    }
-    int c = uBit.serial.getc();
-    if (c == interrupt_char) {
-        MP_STATE_VM(mp_pending_exception) = MP_STATE_PORT(keyboard_interrupt_obj);
-    } else {
-        uint16_t next_head = (uart_rx_buf_head + 1) % UART_RX_BUF_SIZE;
-        if (next_head != uart_rx_buf_tail) {
-            // only store data if room in buf
-            uart_rx_buf[uart_rx_buf_head] = c;
-            uart_rx_buf_head = next_head;
-        }
-    }
-}
+#include "serial.h"
 
 void mp_hal_init(void) {
-    uart_rx_buf_head = 0;
-    uart_rx_buf_tail = 0;
-    uBit.serial.attach(uart_rx_irq);
-    interrupt_char = -1;
     MP_STATE_PORT(keyboard_interrupt_obj) = mp_obj_new_exception(&mp_type_KeyboardInterrupt);
 }
 
 void mp_hal_set_interrupt_char(int c) {
-    if (c != -1) {
-        mp_obj_exception_clear_traceback(MP_STATE_PORT(keyboard_interrupt_obj));
-    }
-    interrupt_char = c;
+    microbit_serial_set_interrupt_char(c);
 }
 
 int mp_hal_stdin_rx_any(void) {
-    return uart_rx_buf_tail != uart_rx_buf_head;
+    return microbit_serial_readable();
 }
 
 int mp_hal_stdin_rx_chr(void) {
-    while (uart_rx_buf_tail == uart_rx_buf_head) {
-        __WFI();
-    }
-    int c = uart_rx_buf[uart_rx_buf_tail];
-    uart_rx_buf_tail = (uart_rx_buf_tail + 1) % UART_RX_BUF_SIZE;
-    return c;
+    return microbit_serial_getc();
 }
 
 void mp_hal_stdout_tx_str(const char *str) {
@@ -90,16 +56,16 @@ void mp_hal_stdout_tx_str(const char *str) {
 
 void mp_hal_stdout_tx_strn(const char *str, size_t len) {
     for (; len > 0; --len) {
-        uBit.serial.putc(*str++);
+        microbit_serial_putc(*str++);
     }
 }
 
 void mp_hal_stdout_tx_strn_cooked(const char *str, size_t len) {
     for (; len > 0; --len) {
         if (*str == '\n') {
-            uBit.serial.putc('\r');
+            microbit_serial_putc('\r');
         }
-        uBit.serial.putc(*str++);
+        microbit_serial_putc(*str++);
     }
 }
 
@@ -127,20 +93,22 @@ void mp_hal_display_string(const char *str) {
     microbit_display_scroll(&microbit_display_obj, str, true);
 }
 
+extern uint32_t ticks;
+
 void mp_hal_delay_ms(mp_uint_t ms) {
     if (ms <= 0)
         return;
-    unsigned long current = uBit.systemTime();
+    unsigned long current = ticks;
     unsigned long wakeup = current + ms;
     if (wakeup < current) {
         // Overflow
         do {
             __WFI();
-        } while (uBit.systemTime() > current);
+        } while (ticks > current);
     }
     do {
         __WFI();
-    } while (uBit.systemTime() < wakeup);
+    } while (ticks < wakeup);
 }
 
 }

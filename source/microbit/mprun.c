@@ -91,6 +91,8 @@ typedef struct _appended_script_t {
 
 #define APPENDED_SCRIPT ((const appended_script_t*)microbit_mp_appended_script())
 
+#define HEAP_SIZE (12*1024)
+
 void mp_run(void) {
     int stack_dummy;
     stack_top = (char*)&stack_dummy;
@@ -98,21 +100,10 @@ void mp_run(void) {
     mp_stack_ctrl_init();
     mp_stack_set_limit(1800); // stack is 2k
 
-    // allocate the heap statically in the bss
-    static uint32_t heap[9712 / 4];
-    gc_init(heap, (uint8_t*)heap + sizeof(heap));
+    extern uint32_t __StackLimit;
 
-    /*
-    // allocate the heap using system malloc
-    extern void *malloc(int);
-    void *mheap = malloc(2000);
-    gc_init(mheap, (byte*)mheap + 2000);
-    */
-
-    /*
-    // allocate the heap statically (will clash with BLE)
-    gc_init((void*)0x20000100, (void*)0x20002000);
-    */
+    uint8_t* heap_end = ((uint8_t *)&__StackLimit)-4;
+    gc_init(heap_end-HEAP_SIZE, heap_end);
 
     mp_init();
     mp_hal_init();

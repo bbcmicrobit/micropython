@@ -1,4 +1,4 @@
-#include "MicroBit.h"
+
 #include "microbitobj.h"
 #include "microbitdisplay.h"
 #include "microbitmusic.h"
@@ -11,13 +11,19 @@ extern "C" {
     void mp_run(void);
     
     void microbit_button_init(void);
+    void microbit_compass_init(void);
     void microbit_accelerometer_init(void);
     void microbit_button_tick(void);
     void pwm_init(void);
+    void microbit_i2c_init(void);
+    void MicroBit_seedRandom(void);
+    void microbit_serial_init(void);
 }
 
-void app_main() {
+int main() {
     
+    microbit_serial_init();
+
     // debugging: print memory layout
     /*
     extern uint32_t __data_start__, __data_end__;
@@ -32,11 +38,10 @@ void app_main() {
     printf("__StackTop     = %p\r\n", &__StackTop);
     */
 
-    currentFiber->flags |= MICROBIT_FIBER_FLAG_DO_NOT_PAGE;
-
-    
+    microbit_i2c_init();
     microbit_button_init();
     microbit_accelerometer_init();
+    microbit_compass_init();
 
     while (1) {
         mp_run();
@@ -45,10 +50,9 @@ void app_main() {
 
 extern "C" {
 
-extern void compass_tick(void);
+extern void microbit_compass_tick(void);
 
 void microbit_ticker(void) {
-    accelerometer_up_to_date = false;
 
     // Update buttons and pins with touch.
     microbit_button_tick();
@@ -59,9 +63,8 @@ void microbit_ticker(void) {
     // Update the music
     microbit_music_tick();
 
-    //Update the compass
-    compass_tick();
-    compass_up_to_date = false;
+    //Update compass (if calibrating)
+    microbit_compass_tick();
 
 }
 
@@ -72,17 +75,16 @@ void __register_exitproc() {
 }
 
 void microbit_init(void) {
-    uBit.display.disable();
     microbit_display_init();
     microbit_filesystem_init();
     microbit_pin_init();
     pwm_init();
 
     // Start the ticker.
-    uBit.systemTicker.detach();
     ticker_init(microbit_ticker);
     ticker_start();
     pwm_start();
+    MicroBit_seedRandom();
 }
 
 }
