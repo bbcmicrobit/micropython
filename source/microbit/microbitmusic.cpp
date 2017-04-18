@@ -74,6 +74,11 @@ extern uint32_t ticks;
 STATIC uint32_t start_note(const char *note_str, size_t note_len, const microbit_pin_obj_t *pin);
 
 void microbit_music_tick(void) {
+    if (music_data == NULL) {
+        // music module not yet imported
+        return;
+    }
+
     if (music_data->async_state == ASYNC_MUSIC_STATE_IDLE) {
         // nothing to do
         return;
