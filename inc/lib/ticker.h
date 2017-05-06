@@ -19,6 +19,10 @@ int set_ticker_callback(uint32_t index, ticker_callback_ptr func, int32_t initia
 
 int set_low_priority_callback(callback_ptr callback, int id);
 
+uint32_t microbit_running_time(void);
+
+void microbit_delay_ms(uint32_t ms);
+
 #define CYCLES_PER_MICROSECONDS 16
 
 #define MICROSECONDS_PER_TICK 16

@@ -34,8 +34,7 @@ extern "C" {
 #include "modmicrobit.h"
 #include "microbitdisplay.h"
 #include "microbitimage.h"
-
-extern uint32_t ticks;
+#include "lib/ticker.h"
 
 STATIC mp_obj_t microbit_reset_(void) {
     NVIC_SystemReset();
@@ -51,16 +50,16 @@ STATIC mp_obj_t microbit_sleep(mp_obj_t ms_in) {
         ms = (mp_int_t)mp_obj_get_float(ms_in);
     }
     if (ms > 0) {
-        mp_hal_delay_ms(ms);
+        microbit_delay_ms(ms);
     }
     return mp_const_none;
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_sleep_obj, microbit_sleep);
 
-STATIC mp_obj_t microbit_running_time(void) {
-    return MP_OBJ_NEW_SMALL_INT(ticks);
+STATIC mp_obj_t microbit_running_time_func(void) {
+    return MP_OBJ_NEW_SMALL_INT(microbit_running_time());
 }
-MP_DEFINE_CONST_FUN_OBJ_0(microbit_running_time_obj, microbit_running_time);
+MP_DEFINE_CONST_FUN_OBJ_0(microbit_running_time_obj, microbit_running_time_func);
 
 static const monochrome_5by5_t panic = SMALL_IMAGE(
     1,1,0,1,1,

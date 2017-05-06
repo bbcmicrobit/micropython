@@ -33,6 +33,7 @@ extern "C" {
 #include "microbitimage.h"
 #include "microbitdisplay.h"
 #include "serial.h"
+#include "lib/ticker.h"
 
 void mp_hal_init(void) {
     MP_STATE_PORT(keyboard_interrupt_obj) = mp_obj_new_exception(&mp_type_KeyboardInterrupt);
@@ -93,22 +94,8 @@ void mp_hal_display_string(const char *str) {
     microbit_display_scroll(&microbit_display_obj, str, true);
 }
 
-extern uint32_t ticks;
-
 void mp_hal_delay_ms(mp_uint_t ms) {
-    if (ms <= 0)
-        return;
-    unsigned long current = ticks;
-    unsigned long wakeup = current + ms;
-    if (wakeup < current) {
-        // Overflow
-        do {
-            __WFI();
-        } while (ticks > current);
-    }
-    do {
-        __WFI();
-    } while (ticks < wakeup);
+    microbit_delay_ms(ms);
 }
 
 }

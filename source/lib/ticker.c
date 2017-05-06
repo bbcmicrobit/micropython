@@ -26,6 +26,7 @@
 
 #include "stddef.h"
 #include "lib/ticker.h"
+#include "nrf51.h"
 
 #define FastTicker NRF_TIMER0
 #define FastTicker_IRQn TIMER0_IRQn
@@ -39,6 +40,7 @@
 
 // Ticker callback function called every MACRO_TICK
 static callback_ptr slow_ticker;
+static void lf_clock_init(void);
 
 void ticker_init(callback_ptr slow_ticker_callback) {
     slow_ticker = slow_ticker_callback;
@@ -58,6 +60,7 @@ void ticker_init(callback_ptr slow_ticker_callback) {
     NVIC_SetPriority(LowPriority_IRQn, 3);
     NVIC_EnableIRQ(SlowTicker_IRQn);
     NVIC_EnableIRQ(LowPriority_IRQn);
+    lf_clock_init();
 }
 
 /* Start and stop timer 0 including workarounds for Anomaly 73 for Timer
@@ -79,8 +82,6 @@ int32_t noop(void) {
     return -1;
 }
 
-uint32_t ticks;
-
 static ticker_callback_ptr callbacks[3] = { noop, noop, noop };
 
 void FastTicker_IRQHandler(void) {
@@ -101,7 +102,6 @@ void FastTicker_IRQHandler(void) {
     if (ticker->EVENTS_COMPARE[3]) {
         ticker->EVENTS_COMPARE[3] = 0;
         ticker->CC[3] += MICROSECONDS_PER_MACRO_TICK;
-        ticks += MILLISECONDS_PER_MACRO_TICK;
         NVIC_SetPendingIRQ(SlowTicker_IRQn);
     }
 }
@@ -165,4 +165,77 @@ int set_low_priority_callback(callback_ptr callback, int id) {
     low_priority_callbacks[id] = callback;
     NVIC_SetPendingIRQ(LowPriority_IRQn);
     return 0;
+}
+
+/********* LOW FREQUENCY CLOCK **********/
+
+static volatile uint32_t overflowed_ms;
+static volatile uint8_t wakeup;
+
+static void lf_clock_init(void) {
+    overflowed_ms = 0;
+    NRF_RTC0->POWER = 1;
+    __NOP();
+    NRF_RTC0->TASKS_STOP = 1;
+    NRF_RTC0->TASKS_CLEAR = 1;
+    NRF_RTC0->EVENTS_OVRFLW = 0;
+    NRF_RTC0->PRESCALER = 0;
+    NRF_RTC0->CC[0] = -1;
+    NRF_RTC0->EVENTS_COMPARE[0] = 0;
+    NRF_RTC0->INTENSET = RTC_INTENSET_COMPARE0_Msk | RTC_INTENSET_OVRFLW_Msk;
+    NRF_RTC0->TASKS_START = 1;
+    NVIC_SetPriority(RTC0_IRQn, 2);
+    NVIC_EnableIRQ(RTC0_IRQn);
+}
+
+uint32_t microbit_running_time(void) {
+    uint32_t over = overflowed_ms;
+    int32_t counter = NRF_RTC0->COUNTER;
+    // double check for possible overflow.
+    if (over != overflowed_ms) {
+        over = overflowed_ms;
+        counter = NRF_RTC0->COUNTER;
+    }
+    // seconds = counter>>15 => ms = 1000*(counter>>15) = (125*counter)>>12
+    return over+((125*counter)>>12);
+}
+
+void RTC0_IRQHandler(void) {
+    if (NRF_RTC0->EVENTS_OVRFLW) {
+        NRF_RTC0->EVENTS_OVRFLW = 0;
+        // Overflow 2**24 ticks at 2**15 ticks/sec = 2**9 seconds
+        overflowed_ms += 512000;
+    }
+    if (NRF_RTC0->EVENTS_COMPARE[0]) {
+        NRF_RTC0->EVENTS_COMPARE[0] = 0;
+        wakeup = 1;
+    }
+}
+
+static uint32_t delay_ticks(uint32_t ticks) {
+    if (ticks < 2)
+        return 0;
+    uint32_t start = NRF_RTC0->COUNTER;
+    NRF_RTC0->CC[0] = start + ticks;
+    wakeup = 0;
+    do {
+        __WFI();
+    } while(wakeup == 0);
+    wakeup = 0;
+    return (NRF_RTC0->COUNTER - start)&0xffffff;
+}
+
+void microbit_delay_ms(uint32_t ms) {
+    if (ms == 0)
+        return;
+    int32_t ticks = 0;
+    // Avoid overflowing the 24bit counter in the timer
+    while (ms > 300000) {
+        ms -= 200000;
+        ticks += 200*(1<<15);
+        ticks -= delay_ticks(ticks);
+    }
+    // ticks = 32.768*ms
+    ticks += (ms<<5)+((((int32_t)ms)*3146)>>12)-(ms>>14);
+    delay_ticks(ticks);
 }
