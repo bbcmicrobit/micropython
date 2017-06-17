@@ -35,7 +35,7 @@ your files are just stored in the same place.
 
 The Python programming language contains easy to use and powerful ways in which
 to work with a computer's file system. MicroPython on the micro:bit implements
-a useful subset of these features to make is easy to read and write files on
+a useful subset of these features to make it easy to read and write files on
 the device, while also providing consistency with other versions of Python.
 
 .. warning::
