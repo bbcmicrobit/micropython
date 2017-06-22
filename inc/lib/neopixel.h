@@ -102,7 +102,7 @@ void neopixel_show(neopixel_strip_t *strip);
 /**
   @brief Write RGB value to LED structure
   @param[in] pointer to Strip structure
-  @param[in] LED number (starting at 1)
+  @param[in] LED number (starting at 0)
   @param[in] red value
   @param[in] green value
   @param[in] blue value
@@ -115,7 +115,7 @@ uint8_t neopixel_set_color(neopixel_strip_t *strip, uint16_t index, uint8_t red,
 /**
   @brief Write RGB value to LED structure and update LED
   @param[in] pointer to Strip structure
-  @param[in] LED number (starting at 1)
+  @param[in] LED number (starting at 0)
   @param[in] red value
   @param[in] green value
   @param[in] blue value
