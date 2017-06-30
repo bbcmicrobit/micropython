@@ -162,7 +162,7 @@ its own to that.
     .. py:method:: set_analog_period_microseconds(period)
 
         Set the period of the PWM signal being output to ``period`` in
-        microseconds. The minimum valid value is 35µs.
+        microseconds. The minimum valid value is 256µs.
 
 
 .. py:class:: MicroBitTouchPin
