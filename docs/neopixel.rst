@@ -112,7 +112,7 @@ step..!
 .. note::
 
     If you're not seeing anything change on your Neopixel strip, make sure
-    you're ``show()`` at least somewhere otherwise your updates won't be
+    you have ``show()`` at least somewhere otherwise your updates won't be
     shown.
 
 Example
