@@ -1,5 +1,5 @@
 /*
- * This file is part of the Micro Python project, http://micropython.org/
+ * This file is part of the MicroPython project, http://micropython.org/
  *
  * The MIT License (MIT)
  *
@@ -23,8 +23,8 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef __MICROPY_INCLUDED_PY_MISC_H__
-#define __MICROPY_INCLUDED_PY_MISC_H__
+#ifndef MICROPY_INCLUDED_PY_MISC_H
+#define MICROPY_INCLUDED_PY_MISC_H
 
 // a mini library of useful types and functions
 
@@ -46,7 +46,11 @@ typedef unsigned int uint;
 #define MAX(x, y) ((x) > (y) ? (x) : (y))
 #endif
 
-/** memomry allocation ******************************************/
+// Classical double-indirection stringification of preprocessor macro's value
+#define _MP_STRINGIFY(x) #x
+#define MP_STRINGIFY(x) _MP_STRINGIFY(x)
+
+/** memory allocation ******************************************/
 
 // TODO make a lazy m_renew that can increase by a smaller amount than requested (but by at least 1 more element)
 
@@ -88,7 +92,7 @@ void *m_realloc(void *ptr, size_t new_num_bytes);
 void *m_realloc_maybe(void *ptr, size_t new_num_bytes, bool allow_move);
 void m_free(void *ptr);
 #endif
-void *m_malloc_fail(size_t num_bytes);
+NORETURN void *m_malloc_fail(size_t num_bytes);
 
 #if MICROPY_MEM_STATS
 size_t m_get_total_bytes_allocated(void);
@@ -139,7 +143,6 @@ typedef struct _vstr_t {
     size_t alloc;
     size_t len;
     char *buf;
-    bool had_error : 1;
     bool fixed_buf : 1;
 } vstr_t;
 
@@ -152,13 +155,11 @@ void vstr_init_fixed_buf(vstr_t *vstr, size_t alloc, char *buf);
 struct _mp_print_t;
 void vstr_init_print(vstr_t *vstr, size_t alloc, struct _mp_print_t *print);
 void vstr_clear(vstr_t *vstr);
-vstr_t *vstr_new(void);
-vstr_t *vstr_new_size(size_t alloc);
+vstr_t *vstr_new(size_t alloc);
 void vstr_free(vstr_t *vstr);
-void vstr_reset(vstr_t *vstr);
-bool vstr_had_error(vstr_t *vstr);
-char *vstr_str(vstr_t *vstr);
-size_t vstr_len(vstr_t *vstr);
+static inline void vstr_reset(vstr_t *vstr) { vstr->len = 0; }
+static inline char *vstr_str(vstr_t *vstr) { return vstr->buf; }
+static inline size_t vstr_len(vstr_t *vstr) { return vstr->len; }
 void vstr_hint_size(vstr_t *vstr, size_t size);
 char *vstr_extend(vstr_t *vstr, size_t size);
 char *vstr_add_len(vstr_t *vstr, size_t len);
@@ -197,7 +198,7 @@ int DEBUG_printf(const char *fmt, ...);
 extern mp_uint_t mp_verbose_flag;
 
 // This is useful for unicode handling. Some CPU archs has
-// special instructions for efficient implentation of this
+// special instructions for efficient implementation of this
 // function (e.g. CLZ on ARM).
 // NOTE: this function is unused at the moment
 #ifndef count_lead_ones
@@ -223,4 +224,4 @@ static inline mp_uint_t count_lead_ones(byte val) {
 #define MP_FLOAT_EXP_BIAS ((1 << (MP_FLOAT_EXP_BITS - 1)) - 1)
 #endif // MICROPY_PY_BUILTINS_FLOAT
 
-#endif // __MICROPY_INCLUDED_PY_MISC_H__
+#endif // MICROPY_INCLUDED_PY_MISC_H
