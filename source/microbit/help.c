@@ -28,6 +28,7 @@
 
 #include "py/nlr.h"
 #include "py/obj.h"
+#include "py/stream.h"
 #include "microbit/modmicrobit.h"
 
 STATIC const char *help_text =
@@ -157,7 +158,6 @@ STATIC const mp_doc_t help_table_instances[] = {
     {&microbit_uart_init_obj, "Use init() to set up communication. Use pins 0 (TX) and 1 (RX) with a baud\nrate of 9600.\nOverride the defaults for 'baudrate', 'parity' and 'pins'.\n"},
     {&microbit_uart_any_obj, "If there are incoming characters waiting to be read, any() will return True.\nOtherwise, returns False.\n"},
     {&mp_stream_read_obj, "Use read() to read characters.\nUse read(n) to read, at most, 'n' bytes of data.\n"},
-    {&mp_stream_readall_obj, "Use readall() to read as much data as possible.\n"},
     {&mp_stream_unbuffered_readline_obj, "Use readline() to read a line that ends with a newline character.\n"},
     {&mp_stream_readinto_obj, "Use readinto(buf) to read bytes into the buffer 'buf'.\nUse readinto(buff, n) to read, at most, 'n' number of bytes into 'buf'.\n"},
     {&mp_stream_write_obj, "Use write(buf) to write the bytes in buffer 'buf' to the connected device.\n"},

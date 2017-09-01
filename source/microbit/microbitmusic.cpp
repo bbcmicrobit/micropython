@@ -438,6 +438,7 @@ static mp_obj_t music_init(void) {
 MP_DEFINE_CONST_FUN_OBJ_0(music___init___obj, music_init);
 
 STATIC const mp_map_elem_t microbit_music_locals_dict_table[] = {
+    { MP_OBJ_NEW_QSTR(MP_QSTR___name__), MP_OBJ_NEW_QSTR(MP_QSTR_music) },
     { MP_OBJ_NEW_QSTR(MP_QSTR___init__), (mp_obj_t)&music___init___obj },
 
     { MP_OBJ_NEW_QSTR(MP_QSTR_reset), (mp_obj_t)&microbit_music_reset_obj },
@@ -474,7 +475,6 @@ STATIC MP_DEFINE_CONST_DICT(microbit_music_locals_dict, microbit_music_locals_di
 
 const mp_obj_module_t music_module = {
     .base = { &mp_type_module },
-    .name = MP_QSTR_music,
     .globals = (mp_obj_dict_t*)&microbit_music_locals_dict,
 };
 

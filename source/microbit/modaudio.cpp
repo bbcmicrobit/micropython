@@ -422,7 +422,7 @@ void audio_play_source(mp_obj_t src, mp_obj_t pin1, mp_obj_t pin2, bool wait) {
     } else {
         audio_set_pins(pin1, pin2);
     }
-    audio_source_iter = mp_getiter(src);
+    audio_source_iter = mp_getiter(src, NULL);
     sample = false;
     fetcher_ready = true;
     audio_buffer_read_index = AUDIO_BUFFER_SIZE-1;
@@ -638,8 +638,8 @@ const mp_obj_type_t microbit_audio_frame_type = {
     .getiter = NULL,
     .iternext = NULL,
     .buffer_p = { .get_buffer = audio_frame_get_buffer },
-    .stream_p = NULL,
-    .bases_tuple = NULL,
+    .protocol = NULL,
+    .parent = NULL,
     .locals_dict = (mp_obj_dict_t*)&microbit_audio_frame_locals_dict,
 };
 
@@ -662,7 +662,6 @@ STATIC MP_DEFINE_CONST_DICT(audio_module_globals, audio_globals_table);
 
 const mp_obj_module_t audio_module = {
     .base = { &mp_type_module },
-    .name = MP_QSTR_audio,
     .globals = (mp_obj_dict_t*)&audio_module_globals,
 };
 

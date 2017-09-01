@@ -261,8 +261,8 @@ const mp_obj_type_t microbit_dig_pin_type = {
     .getiter = NULL,
     .iternext = NULL,
     .buffer_p = {NULL},
-    .stream_p = NULL,
-    .bases_tuple = NULL,
+    .protocol = NULL,
+    .parent = NULL,
     .locals_dict = (mp_obj_dict_t*)&microbit_dig_pin_locals_dict,
 };
 
@@ -279,8 +279,8 @@ const mp_obj_type_t microbit_ad_pin_type = {
     .getiter = NULL,
     .iternext = NULL,
     .buffer_p = {NULL},
-    .stream_p = NULL,
-    .bases_tuple = NULL,
+    .protocol = NULL,
+    .parent = NULL,
     .locals_dict = (mp_obj_dict_t*)&microbit_ann_pin_locals_dict,
 };
 
@@ -297,8 +297,8 @@ const mp_obj_type_t microbit_touch_pin_type = {
     .getiter = NULL,
     .iternext = NULL,
     .buffer_p = {NULL},
-    .stream_p = NULL,
-    .bases_tuple = NULL,
+    .protocol = NULL,
+    .parent = NULL,
     .locals_dict = (mp_obj_dict_t*)&microbit_touch_pin_locals_dict,
 };
 

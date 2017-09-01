@@ -83,7 +83,6 @@ STATIC MP_DEFINE_CONST_DICT(love_module_globals, love_module_globals_table);
 
 const mp_obj_module_t love_module = {
     .base = { &mp_type_module },
-    .name = MP_QSTR_love,
     .globals = (mp_obj_dict_t*)&love_module_globals,
 };
 

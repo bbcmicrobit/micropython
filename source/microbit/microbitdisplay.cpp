@@ -377,7 +377,7 @@ void microbit_display_animate(microbit_display_obj_t *self, mp_obj_t iterable, m
     // Reset the repeat state.
     MP_STATE_PORT(async_data)[0] = NULL;
     MP_STATE_PORT(async_data)[1] = NULL;
-    async_iterator = mp_getiter(iterable);
+    async_iterator = mp_getiter(iterable, NULL);
     async_delay = delay;
     async_clear = clear;
     MP_STATE_PORT(async_data)[0] = self; // so it doesn't get GC'd
@@ -551,8 +551,8 @@ STATIC const mp_obj_type_t microbit_display_type = {
     .getiter = NULL,
     .iternext = NULL,
     .buffer_p = {NULL},
-    .stream_p = NULL,
-    .bases_tuple = NULL,
+    .protocol = NULL,
+    .parent = NULL,
     .locals_dict = (mp_obj_dict_t*)&microbit_display_locals_dict,
 };
 

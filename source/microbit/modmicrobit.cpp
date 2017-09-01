@@ -118,7 +118,6 @@ STATIC MP_DEFINE_CONST_DICT(microbit_module_globals, microbit_module_globals_tab
 
 const mp_obj_module_t microbit_module = {
     .base = { &mp_type_module },
-    .name = MP_QSTR_microbit,
     .globals = (mp_obj_dict_t*)&microbit_module_globals,
 };
 

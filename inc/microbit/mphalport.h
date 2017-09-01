@@ -41,6 +41,9 @@ void mp_hal_erase_line_from_cursor(unsigned int n_chars);
 
 void mp_hal_display_string(const char*);
 
+// dummy definition so we don't depend on virtpin
+#define mp_hal_pin_obj_t int
+
 #ifdef __cplusplus
 }
 #endif

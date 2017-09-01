@@ -685,8 +685,8 @@ const mp_obj_type_t microbit_image_type = {
     .getiter = NULL,
     .iternext = NULL,
     .buffer_p = {NULL},
-    .stream_p = NULL,
-    .bases_tuple = NULL,
+    .protocol = NULL,
+    .parent = NULL,
     .locals_dict = (mp_obj_dict_t*)&microbit_image_locals_dict,
 };
  
@@ -763,7 +763,8 @@ static void restart(scrolling_string_iterator_t *iter) {
     }
 }
 
-STATIC mp_obj_t get_microbit_scrolling_string_iter(mp_obj_t o_in) {
+STATIC mp_obj_t get_microbit_scrolling_string_iter(mp_obj_t o_in, mp_obj_iter_buf_t *iter_buf) {
+    (void)iter_buf; // not big enough to hold scrolling_string_iterator_t
     scrolling_string_t *str = (scrolling_string_t *)o_in;
     scrolling_string_iterator_t *result = m_new_obj(scrolling_string_iterator_t);
     result->base.type = &microbit_scrolling_string_iterator_type;
@@ -837,8 +838,8 @@ const mp_obj_type_t microbit_scrolling_string_type = {
     .getiter = get_microbit_scrolling_string_iter,
     .iternext = NULL,
     .buffer_p = {NULL},
-    .stream_p = NULL,
-    .bases_tuple = NULL,
+    .protocol = NULL,
+    .parent = NULL,
     .locals_dict = NULL,
 };
 
@@ -852,11 +853,11 @@ const mp_obj_type_t microbit_scrolling_string_iterator_type = {
     .binary_op = NULL,
     .attr = NULL,
     .subscr = NULL,
-    .getiter = mp_identity,
+    .getiter = mp_identity_getiter,
     .iternext = microbit_scrolling_string_iter_next,
     .buffer_p = {NULL},
-    .stream_p = NULL,
-    .bases_tuple = NULL,
+    .protocol = NULL,
+    .parent = NULL,
     .locals_dict = NULL,
 };
 
@@ -894,7 +895,7 @@ static mp_obj_t facade_unary_op(mp_uint_t op, mp_obj_t self_in) {
     }
 }
 
-static mp_obj_t microbit_facade_iterator(mp_obj_t iterable);
+static mp_obj_t microbit_facade_iterator(mp_obj_t iterable_in, mp_obj_iter_buf_t *iter_buf);
 
 const mp_obj_type_t string_image_facade_type = {
     { &mp_type_type },
@@ -909,8 +910,8 @@ const mp_obj_type_t string_image_facade_type = {
     .getiter = microbit_facade_iterator,
     .iternext = NULL,
     .buffer_p = {NULL},
-    .stream_p = NULL,
-    .bases_tuple = NULL,
+    .protocol = NULL,
+    .parent = NULL,
     NULL
 };
 
@@ -952,16 +953,17 @@ const mp_obj_type_t microbit_facade_iterator_type = {
     .binary_op = NULL,
     .attr = NULL,
     .subscr = NULL,
-    .getiter = mp_identity,
+    .getiter = mp_identity_getiter,
     .iternext = microbit_facade_iter_next,
     .buffer_p = {NULL},
-    .stream_p = NULL,
-    .bases_tuple = NULL,
+    .protocol = NULL,
+    .parent = NULL,
     NULL
 };
 
-mp_obj_t microbit_facade_iterator(mp_obj_t iterable_in) {
-    facade_iterator_t *result = m_new_obj(facade_iterator_t);
+static mp_obj_t microbit_facade_iterator(mp_obj_t iterable_in, mp_obj_iter_buf_t *iter_buf) {
+    assert(sizeof(facade_iterator_t) <= sizeof(mp_obj_iter_buf_t));
+    facade_iterator_t *result = (facade_iterator_t*)iter_buf;
     string_image_facade_t *iterable = (string_image_facade_t *)iterable_in;
     result->base.type = &microbit_facade_iterator_type;
     result->string = iterable->string;

@@ -112,7 +112,6 @@ STATIC const mp_map_elem_t microbit_uart_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_any), (mp_obj_t)&microbit_uart_any_obj },
 
     { MP_OBJ_NEW_QSTR(MP_QSTR_read), (mp_obj_t)&mp_stream_read_obj },
-    { MP_OBJ_NEW_QSTR(MP_QSTR_readall), (mp_obj_t)&mp_stream_readall_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_readline), (mp_obj_t)&mp_stream_unbuffered_readline_obj},
     { MP_OBJ_NEW_QSTR(MP_QSTR_readinto), (mp_obj_t)&mp_stream_readinto_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_write), (mp_obj_t)&mp_stream_write_obj },
@@ -178,8 +177,8 @@ const mp_obj_type_t microbit_uart_type = {
     .getiter = NULL,
     .iternext = NULL,
     .buffer_p = {NULL},
-    .stream_p = &microbit_uart_stream_p,
-    .bases_tuple = NULL,
+    .protocol = &microbit_uart_stream_p,
+    .parent = NULL,
     .locals_dict = (mp_obj_dict_t*)&microbit_uart_locals_dict,
 };
 

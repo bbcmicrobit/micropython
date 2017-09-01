@@ -84,8 +84,8 @@ const mp_obj_type_t microbit_bytesio_type = {
     .getiter = NULL,
     .iternext = NULL,
     .buffer_p = {NULL},
-    .stream_p = &bytesio_stream_p,
-    .bases_tuple = NULL,
+    .protocol = &bytesio_stream_p,
+    .parent = NULL,
     .locals_dict = (mp_obj_dict_t*)&microbit_file_locals_dict,
 };
 
@@ -108,8 +108,8 @@ const mp_obj_type_t microbit_textio_type = {
     .getiter = NULL,
     .iternext = NULL,
     .buffer_p = {NULL},
-    .stream_p = &textio_stream_p,
-    .bases_tuple = NULL,
+    .protocol = &textio_stream_p,
+    .parent = NULL,
     .locals_dict = (mp_obj_dict_t*)&microbit_file_locals_dict,
 };
 

@@ -102,12 +102,8 @@ const mp_obj_type_t speech_iterator_type = {
     .binary_op = NULL,
     .attr = NULL,
     .subscr = NULL,
-    .getiter = mp_identity,
+    .getiter = mp_identity_getiter,
     .iternext = next,
-    .buffer_p = {NULL},
-    .stream_p = NULL,
-    .bases_tuple = NULL,
-    .locals_dict = NULL,
 };
 
 static mp_obj_t make_speech_iter(void) {
@@ -230,6 +226,5 @@ static MP_DEFINE_CONST_DICT(_globals, _globals_table);
 
 const mp_obj_module_t speech_module = {
     .base = { &mp_type_module },
-    .name = MP_QSTR_speech,
     .globals = (mp_obj_dict_t*)&_globals,
 };

@@ -457,7 +457,8 @@ static mp_uint_t file_read_byte(file_descriptor_obj *fd) {
 }
 
 mp_lexer_t *microbit_file_lexer(qstr src_name, file_descriptor_obj *fd) {
-    return mp_lexer_new(src_name, fd, (mp_lexer_stream_next_byte_t)file_read_byte, (mp_lexer_stream_close_t)microbit_file_close);
+    mp_reader_t reader = {fd, file_read_byte, microbit_file_close};
+    return mp_lexer_new(src_name, reader);
 }
 
 mp_lexer_t *mp_lexer_new_from_file(const char *filename) {

@@ -483,7 +483,6 @@ STATIC MP_DEFINE_CONST_DICT(radio_module_globals, radio_module_globals_table);
 
 const mp_obj_module_t radio_module = {
     .base = { &mp_type_module },
-    .name = MP_QSTR_radio,
     .globals = (mp_obj_dict_t*)&radio_module_globals,
 };
 

@@ -11,6 +11,7 @@
 #define MICROPY_EMIT_INLINE_THUMB   (1)
 #define MICROPY_EMIT_INLINE_THUMB_ARMV7M (0)
 #define MICROPY_EMIT_INLINE_THUMB_FLOAT (0)
+#define MICROPY_USE_SMALL_HEAP_COMPILER (1)
 #define MICROPY_COMP_MODULE_CONST   (0)
 #define MICROPY_COMP_CONST          (0)
 #define MICROPY_COMP_DOUBLE_TUPLE_ASSIGN (0)
@@ -79,9 +80,6 @@ void mp_hal_stdout_tx_strn_cooked(const char *str, mp_uint_t len);
 #define MP_PLAT_PRINT_STRN(str, len) mp_hal_stdout_tx_strn_cooked(str, len)
 
 // extra built in names to add to the global namespace
-extern const struct _mp_obj_fun_builtin_t mp_builtin_help_obj;
-extern const struct _mp_obj_fun_builtin_t mp_builtin_input_obj;
-extern const struct _mp_obj_fun_builtin_t mp_builtin_open_obj;
 #define MICROPY_PORT_BUILTINS \
     { MP_OBJ_NEW_QSTR(MP_QSTR_help), (mp_obj_t)&mp_builtin_help_obj }, \
     { MP_OBJ_NEW_QSTR(MP_QSTR_input), (mp_obj_t)&mp_builtin_input_obj }, \

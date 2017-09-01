@@ -129,8 +129,8 @@ const mp_obj_type_t neopixel_type = {
     .getiter = NULL,
     .iternext = NULL,
     .buffer_p = {NULL},
-    .stream_p = NULL,
-    .bases_tuple = NULL,
+    .protocol = NULL,
+    .parent = NULL,
     .locals_dict = (mp_obj_dict_t*)&neopixel_locals_dict,
 };
 
@@ -143,7 +143,6 @@ STATIC MP_DEFINE_CONST_DICT(neopixel_module_globals, neopixel_module_globals_tab
 
 const mp_obj_module_t neopixel_module = {
     .base = { &mp_type_module },
-    .name = MP_QSTR_neopixel,
     .globals = (mp_obj_dict_t*)&neopixel_module_globals,
 };
 

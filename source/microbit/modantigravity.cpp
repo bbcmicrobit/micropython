@@ -217,7 +217,6 @@ STATIC MP_DEFINE_CONST_DICT(antigravity_module_globals, antigravity_module_globa
 
 const mp_obj_module_t antigravity_module = {
     .base = { &mp_type_module },
-    .name = MP_QSTR_antigravity,
     .globals = (mp_obj_dict_t*)&antigravity_module_globals,
 };
 
