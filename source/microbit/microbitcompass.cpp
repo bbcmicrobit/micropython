@@ -24,7 +24,10 @@
  * THE SOFTWARE.
  */
 
-#include "MicroBit.h"
+#include "MicroBitDisplay.h"
+#include "MicroBitCompass.h"
+
+extern MicroBitDisplay ubit_display;
 
 extern "C" {
 
@@ -49,11 +52,11 @@ mp_obj_t microbit_compass_calibrate(mp_obj_t self_in) {
     // It will do the calibration and then return here.
     microbit_compass_obj_t *self = (microbit_compass_obj_t*)self_in;
     ticker_stop();
-    uBit.systemTicker.attach_us(&uBit, &MicroBit::systemTick, MICROBIT_DEFAULT_TICK_PERIOD * 1000);
-    uBit.display.enable();
+    //uBit.systemTicker.attach_us(&uBit, &MicroBit::systemTick, MICROBIT_DEFAULT_TICK_PERIOD * 1000); TODO what to replace with?
+    ubit_display.enable();
     self->compass->calibrate();
-    uBit.display.disable();
-    uBit.systemTicker.detach();
+    ubit_display.disable();
+    //uBit.systemTicker.detach(); TODO what to replace with?
     ticker_start();
     return mp_const_none;
 }
@@ -156,9 +159,13 @@ STATIC const mp_obj_type_t microbit_compass_type = {
     .locals_dict = (mp_obj_dict_t*)&microbit_compass_locals_dict,
 };
 
+extern MicroBitI2C ubit_i2c;
+extern MicroBitAccelerometer ubit_accelerometer;
+MicroBitCompass ubit_compass(ubit_i2c, ubit_accelerometer);
+
 const microbit_compass_obj_t microbit_compass_obj = {
     {&microbit_compass_type},
-    .compass = &uBit.compass,
+    .compass = &ubit_compass,
 };
 
 }

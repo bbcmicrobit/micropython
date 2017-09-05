@@ -24,7 +24,9 @@
  * THE SOFTWARE.
  */
 
-#include "MicroBit.h"
+#include "MicroBitDevice.h"
+#include "MicroBitSystemTimer.h"
+#include "MicroBitThermometer.h"
 
 extern "C" {
 
@@ -33,8 +35,10 @@ extern "C" {
 #include "py/mphal.h"
 #include "modmicrobit.h"
 
+static MicroBitThermometer ubit_thermometer;
+
 STATIC mp_obj_t microbit_reset_(void) {
-    uBit.reset();
+    microbit_reset();
     return mp_const_none;
 }
 MP_DEFINE_CONST_FUN_OBJ_0(microbit_reset_obj, microbit_reset_);
@@ -54,22 +58,23 @@ STATIC mp_obj_t microbit_sleep(mp_obj_t ms_in) {
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_sleep_obj, microbit_sleep);
 
 STATIC mp_obj_t microbit_running_time(void) {
-    return MP_OBJ_NEW_SMALL_INT(uBit.systemTime());
+    return MP_OBJ_NEW_SMALL_INT(system_timer_current_time());
 }
 MP_DEFINE_CONST_FUN_OBJ_0(microbit_running_time_obj, microbit_running_time);
 
 STATIC mp_obj_t microbit_panic(mp_uint_t n_args, const mp_obj_t *args) {
     if (n_args == 0) {
-        uBit.panic();
+        // TODO the docs don't mention this, so maybe remove it?
+        microbit_panic(999);
     } else {
-        uBit.panic(mp_obj_get_int(args[0]));
+        microbit_panic(mp_obj_get_int(args[0]));
     }
     return mp_const_none;
 }
 MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_panic_obj, 0, 1, microbit_panic);
 
 STATIC mp_obj_t microbit_temperature(void) {
-    return mp_obj_new_int(uBit.thermometer.getTemperature());
+    return mp_obj_new_int(ubit_thermometer.getTemperature());
 }
 MP_DEFINE_CONST_FUN_OBJ_0(microbit_temperature_obj, microbit_temperature);
 

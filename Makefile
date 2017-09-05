@@ -7,6 +7,7 @@ all: yotta
 
 yotta:
 	@yt build
+	@size $(HEX_SRC:.hex=)
 	@/bin/cp $(HEX_SRC) $(HEX_FINAL)
 
 deploy: $(HEX_FINAL)

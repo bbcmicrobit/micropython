@@ -27,7 +27,6 @@
  */
 
 #include <stdio.h>
-#include "MicroBit.h"
 
 extern "C" {
 

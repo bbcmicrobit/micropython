@@ -25,10 +25,10 @@
  * THE SOFTWARE.
  */
 
-#include "MicroBit.h"
+#include "MicroBitDevice.h"
 
-#define rand30() (uBit.random(0x40000000))
-#define randbelow(n) (uBit.random(n))
+#define rand30() (microbit_random(0x40000000))
+#define randbelow(n) (microbit_random(n))
 
 extern "C" {
 
@@ -52,10 +52,10 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_1(mod_random_getrandbits_obj, mod_random_getrandb
 
 STATIC mp_obj_t mod_random_seed(size_t n_args, const mp_obj_t *args) {
     if (n_args == 0 || args[0] == mp_const_none) {
-        uBit.seedRandom();
+        microbit_seed_random();
     } else {
         mp_uint_t seed = mp_obj_get_int_truncated(args[0]);
-        uBit.seedRandom(seed);
+        microbit_seed_random(seed);
     }
     return mp_const_none;
 }

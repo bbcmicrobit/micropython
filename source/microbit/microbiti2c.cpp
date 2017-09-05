@@ -24,14 +24,20 @@
  * THE SOFTWARE.
  */
 
-#include "MicroBit.h"
+#include "ErrorNo.h"
+#include "MicroBitI2C.h"
 #include "i2c_api.h"
 
 
 class mp_I2C : public MicroBitI2C {
     public:
+        mp_I2C(PinName sda, PinName scl);
         void set_pins(PinName sda, PinName scl);
 };
+
+mp_I2C::mp_I2C(PinName sda, PinName scl)
+    : MicroBitI2C(sda, scl) {
+}
 
 void mp_I2C::set_pins(PinName sda, PinName scl) {
     _i2c.sda = sda;
@@ -48,7 +54,7 @@ extern "C" {
 
 typedef struct _microbit_i2c_obj_t {
     mp_obj_base_t base;
-    MicroBitI2C *i2c;
+    mp_I2C *i2c;
 } microbit_i2c_obj_t;
 
 STATIC mp_obj_t microbit_i2c_init(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
@@ -64,8 +70,8 @@ STATIC mp_obj_t microbit_i2c_init(mp_uint_t n_args, const mp_obj_t *pos_args, mp
     mp_arg_parse_all(n_args - 1, pos_args + 1, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
 
 
-    PinName p_sda = MICROBIT_PIN_SDA;
-    PinName p_scl = MICROBIT_PIN_SCL;
+    PinName p_sda = I2C_SDA0;
+    PinName p_scl = I2C_SCL0;
 
     if (args[1].u_obj != mp_const_none) {
         p_sda = microbit_obj_get_pin_name(args[1].u_obj);
@@ -73,7 +79,7 @@ STATIC mp_obj_t microbit_i2c_init(mp_uint_t n_args, const mp_obj_t *pos_args, mp
     if (args[2].u_obj != mp_const_none) {
         p_scl = microbit_obj_get_pin_name(args[2].u_obj);
     }
-    ((mp_I2C*)self->i2c)->set_pins(p_sda, p_scl);
+    self->i2c->set_pins(p_sda, p_scl);
 
     self->i2c->frequency(args[0].u_int); // also does i2c_reset()
 
@@ -155,9 +161,11 @@ const mp_obj_type_t microbit_i2c_type = {
     .locals_dict = (mp_obj_dict_t*)&microbit_i2c_locals_dict,
 };
 
+mp_I2C ubit_i2c(I2C_SDA0, I2C_SCL0);
+
 const microbit_i2c_obj_t microbit_i2c_obj = {
     {&microbit_i2c_type},
-    .i2c = &uBit.i2c
+    .i2c = &ubit_i2c,
 };
 
 }

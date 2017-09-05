@@ -1,4 +1,6 @@
-#include "MicroBit.h"
+#include "MicroBitFiber.h"
+#include "MicroBitDisplay.h"
+#include "MicroBitCompass.h"
 #include "microbitobj.h"
 #include "microbitdisplay.h"
 #include "microbitmusic.h"
@@ -16,7 +18,10 @@ extern "C" {
     void pwm_init(void);
 }
 
-void app_main() {
+MicroBitDisplay ubit_display;
+extern MicroBitCompass ubit_compass;
+
+int main(void) {
     
     // debugging: print memory layout
     /*
@@ -45,13 +50,16 @@ void app_main() {
 
 extern "C" {
 
+uint32_t ticks = 0; // TODO clean this up
+
 void microbit_ticker(void) {
+    ++ticks; // TODO clean this up
 
     /** Update compass if it is calibrating, but not if it is still
      *  updating as compass.idleTick() is not reentrant.
      */
-    if (uBit.compass.isCalibrating() && !compass_updating) {
-        uBit.compass.idleTick();
+    if (ubit_compass.isCalibrating() && !compass_updating) {
+        ubit_compass.idleTick();
     }
 
     compass_up_to_date = false;
@@ -74,14 +82,14 @@ void __register_exitproc() {
 }
 
 void microbit_init(void) {
-    uBit.display.disable();
+    //ubit_display.disable(); TODO this seems to crash the device
     microbit_display_init();
     microbit_filesystem_init();
     microbit_pin_init();
     pwm_init();
 
     // Start the ticker.
-    uBit.systemTicker.detach();
+    //uBit.systemTicker.detach(); TODO what to replace with?
     ticker_init(microbit_ticker);
     ticker_start();
     pwm_start();
