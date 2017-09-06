@@ -3,7 +3,7 @@
 #include "MicroBitCompass.h"
 #include "microbitobj.h"
 #include "microbitdisplay.h"
-#include "microbitmusic.h"
+#include "modmusic.h"
 
 extern "C" {
 #include "lib/ticker.h"

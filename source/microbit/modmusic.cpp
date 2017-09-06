@@ -25,7 +25,7 @@
  */
 
 #include "microbitobj.h"
-#include "microbitmusic.h"
+#include "modmusic.h"
 
 extern "C" {
 
