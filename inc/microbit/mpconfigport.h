@@ -1,6 +1,6 @@
 #include <stdint.h>
 
-// options to control how Micro Python is built
+// options to control how MicroPython is built
 
 #define MICROPY_OBJ_REPR            (MICROPY_OBJ_REPR_C)
 #define MICROPY_ALLOC_GC_STACK_SIZE (32)
