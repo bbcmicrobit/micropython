@@ -13,7 +13,6 @@ extern "C" {
     void mp_run(void);
     
     void microbit_button_init(void);
-    void microbit_accelerometer_init(void);
     void microbit_button_tick(void);
     void pwm_init(void);
 }
@@ -41,7 +40,6 @@ int main(void) {
 
     
     microbit_button_init();
-    microbit_accelerometer_init();
 
     while (1) {
         mp_run();

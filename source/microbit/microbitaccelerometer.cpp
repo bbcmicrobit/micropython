@@ -26,6 +26,7 @@
 
 #include "MicroBitEvent.h"
 #include "MicroBitAccelerometer.h"
+#include "microbit/microbitaccelerometer.h"
 
 extern "C" {
 
@@ -62,20 +63,20 @@ static void update(microbit_accelerometer_obj_t *self) {
     }
 }
 
-/* TODO handle gesture events
-STATIC void accelerometer_listener(MicroBitEvent evt) {
-    if (evt.value > MICROBIT_ACCELEROMETER_EVT_NONE && evt.value <= MICROBIT_ACCELEROMETER_EVT_SHAKE) {
-        gesture_state |= 1 << evt.value;
+void microbit_accelerometer_event_handler(const MicroBitEvent *evt) {
+    if (evt->value > MICROBIT_ACCELEROMETER_EVT_NONE && evt->value <= MICROBIT_ACCELEROMETER_EVT_SHAKE) {
+        gesture_state |= 1 << evt->value;
         if (gesture_list_cur < 2 * GESTURE_LIST_SIZE) {
-            gesture_list[gesture_list_cur >> 1] |= evt.value << (4 * (gesture_list_cur & 1));
+            uint8_t entry = gesture_list[gesture_list_cur >> 1];
+            if (gesture_list_cur & 1) {
+                entry = (entry & 0x0f) | evt->value << 4;
+            } else {
+                entry = (entry & 0xf0) | evt->value;
+            }
+            gesture_list[gesture_list_cur >> 1] = entry;
             ++gesture_list_cur;
         }
     }
-}
-*/
-
-void microbit_accelerometer_init(void) {
-    //uBit.MessageBus.listen(MICROBIT_ID_GESTURE, MICROBIT_EVT_ANY, accelerometer_listener, MESSAGE_BUS_LISTENER_IMMEDIATE); TODO handle gesture events
 }
 
 mp_obj_t microbit_accelerometer_get_x(mp_obj_t self_in) {
