@@ -3,6 +3,7 @@
 #include "MicroBitCompass.h"
 #include "microbitobj.h"
 #include "microbitdisplay.h"
+#include "microbitbutton.h"
 #include "modmusic.h"
 
 extern "C" {
@@ -11,9 +12,6 @@ extern "C" {
 #include "lib/pwm.h"
 
     void mp_run(void);
-    
-    void microbit_button_init(void);
-    void microbit_button_tick(void);
     void pwm_init(void);
 }
 
@@ -37,9 +35,6 @@ int main(void) {
     */
 
     currentFiber->flags |= MICROBIT_FIBER_FLAG_DO_NOT_PAGE;
-
-    
-    microbit_button_init();
 
     while (1) {
         mp_run();

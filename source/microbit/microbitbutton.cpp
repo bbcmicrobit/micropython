@@ -29,6 +29,7 @@ extern "C" {
 #include "py/runtime.h"
 #include "microbitobj.h"
 #include "microbitpin.h"
+#include "microbitbutton.h"
 #include "modmicrobit.h"
 #include "nrf_gpio.h"
 
@@ -67,9 +68,6 @@ mp_obj_t microbit_button_was_pressed(mp_obj_t self_in) {
     return result;
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_button_was_pressed_obj, microbit_button_was_pressed);
-
-void microbit_button_init(void) {
-}
 
 STATIC const mp_map_elem_t microbit_button_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_is_pressed), (mp_obj_t)&microbit_button_is_pressed_obj },
