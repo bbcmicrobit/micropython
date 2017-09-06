@@ -155,12 +155,42 @@ void mp_run(void) {
     mp_deinit();
 }
 
+__attribute__((naked)) uint32_t gc_helper_get_regs_and_sp(uint32_t *regs) {
+    (void)regs;
+
+    // store registers into given array and return the stack pointer
+    __asm volatile (
+    "str    r4, [r0, #0]\n"
+    "str    r5, [r0, #4]\n"
+    "str    r6, [r0, #8]\n"
+    "str    r7, [r0, #12]\n"
+    "mov    r1, r8\n"
+    "str    r1, [r0, #16]\n"
+    "mov    r1, r9\n"
+    "str    r1, [r0, #20]\n"
+    "mov    r1, r10\n"
+    "str    r1, [r0, #24]\n"
+    "mov    r1, r11\n"
+    "str    r1, [r0, #28]\n"
+    "mov    r1, r12\n"
+    "str    r1, [r0, #32]\n"
+    "mov    r1, r13\n"
+    "str    r1, [r0, #36]\n"
+    "mov    r0, sp\n"
+    "bx     lr\n"
+    );
+}
+
 void gc_collect(void) {
-    // WARNING: This gc_collect implementation doesn't try to get root
-    // pointers from CPU registers, and thus may function incorrectly.
-    void *dummy;
     gc_collect_start();
-    gc_collect_root(&dummy, ((mp_uint_t)stack_top - (mp_uint_t)&dummy) / sizeof(mp_uint_t));
+
+    // get the registers and the sp
+    uint32_t regs[10];
+    uint32_t sp = gc_helper_get_regs_and_sp(regs);
+
+    // trace the stack, including the registers (since they live on the stack in this function)
+    gc_collect_root((void**)sp, ((uint32_t)stack_top - sp) / sizeof(uint32_t));
+
     gc_collect_end();
 }
 
