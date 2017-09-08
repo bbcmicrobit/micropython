@@ -444,7 +444,8 @@ mp_obj_t microbit_file_size(mp_obj_t filename) {
     return mp_obj_new_int(len);
 }
 
-static mp_uint_t file_read_byte(file_descriptor_obj *fd) {
+static mp_uint_t file_read_byte(void *fd_in) {
+    file_descriptor_obj *fd = fd_in;
     if (file_system_chunks[fd->seek_chunk].next_chunk == UNUSED_CHUNK) {
         uint8_t end_offset = file_system_chunks[fd->start_chunk].header.end_offset;
         if (end_offset == UNUSED_CHUNK || fd->seek_offset == end_offset) {
@@ -457,7 +458,7 @@ static mp_uint_t file_read_byte(file_descriptor_obj *fd) {
 }
 
 mp_lexer_t *microbit_file_lexer(qstr src_name, file_descriptor_obj *fd) {
-    mp_reader_t reader = {fd, file_read_byte, microbit_file_close};
+    mp_reader_t reader = {fd, file_read_byte, (void(*)(void*))microbit_file_close};
     return mp_lexer_new(src_name, reader);
 }
 
