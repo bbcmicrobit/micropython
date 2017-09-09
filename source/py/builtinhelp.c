@@ -128,13 +128,24 @@ STATIC void mp_help_print_modules(void) {
 }
 #endif
 
-STATIC void mp_help_print_obj(const mp_obj_t obj) {
+STATIC void mp_help_print_obj(mp_obj_t obj) {
     #if MICROPY_PY_BUILTINS_HELP_MODULES
     if (obj == MP_OBJ_NEW_QSTR(MP_QSTR_modules)) {
         mp_help_print_modules();
         return;
     }
     #endif
+
+    // Extract method from bound method, for better error messages
+    if (mp_obj_get_type(obj)->name == MP_QSTR_bound_method) {
+        obj = ((mp_obj_t*)obj)[1]; // extract method
+    }
+
+    // Hook into platform-specific help for this object
+    extern bool mp_plat_specific_help(mp_obj_t obj);
+    if (mp_plat_specific_help(obj)) {
+        return;
+    }
 
     // try to print something sensible about the given object
     mp_print_str(MP_PYTHON_PRINTER, "object ");
