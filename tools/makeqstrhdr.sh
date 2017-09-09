@@ -13,7 +13,7 @@ CAT=cat
 SED=sed
 PYTHON=python
 
-INC="-I. -Iinc -Iinc/lib -Iinc/microbit -Isource -Iyotta_modules/microbit-dal/inc -Iyotta_modules/mbed-classic/hal -Iyotta_modules/mbed-classic/targets/cmsis -Iyotta_modules/mbed-classic/api -Iyotta_modules/nrf51-sdk/source/nordic_sdk/components/device -Iyotta_modules/nrf51-sdk/source/nordic_sdk/components/drivers_nrf/hal -I./yotta_modules/mbed-classic/targets/cmsis/TARGET_NORDIC/TARGET_MCU_NRF51822 -Iyotta_modules/mbed-classic/targets/hal/TARGET_NORDIC/TARGET_MCU_NRF51822 -I./yotta_modules/mbed-classic/targets/hal/TARGET_NORDIC/TARGET_MCU_NRF51822/TARGET_NRF51_MICROBIT -Iyotta_modules/ble"
+INC="-I. -Iinc -Iinc/lib -Iinc/microbit -Isource -Iyotta_modules/microbit-dal/inc/platform -Iyotta_modules/microbit-dal/inc/types -Iyotta_modules/microbit-dal/inc/core -Iyotta_modules/microbit-dal/inc/drivers -Iyotta_modules/mbed-classic/hal -Iyotta_modules/mbed-classic/targets/cmsis -Iyotta_modules/mbed-classic/api -Iyotta_modules/nrf51-sdk/source/nordic_sdk/components/device -Iyotta_modules/nrf51-sdk/source/nordic_sdk/components/drivers_nrf/hal -I./yotta_modules/mbed-classic/targets/cmsis/TARGET_NORDIC/TARGET_MCU_NRF51822 -Iyotta_modules/mbed-classic/targets/hal/TARGET_NORDIC/TARGET_MCU_NRF51822 -I./yotta_modules/mbed-classic/targets/hal/TARGET_NORDIC/TARGET_MCU_NRF51822/TARGET_NRF51_MICROBIT -Iyotta_modules/ble"
 DEF="-DNRF51 -DYOTTA_BUILD_INFO_HEADER=<build/bbc-microbit-classic-gcc-nosd/yotta_build_info.h>"
 CC=arm-none-eabi-gcc
 CXX=arm-none-eabi-g++
