@@ -34,8 +34,6 @@ int main(void) {
     printf("__StackTop     = %p\r\n", &__StackTop);
     */
 
-    currentFiber->flags |= MICROBIT_FIBER_FLAG_DO_NOT_PAGE;
-
     while (1) {
         mp_run();
     }
