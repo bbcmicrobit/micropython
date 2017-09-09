@@ -40,7 +40,7 @@
 #include "irq.h"
 #include "usb.h"
 #endif
-#include "lib/readline.h"
+#include "lib/mp-readline/readline.h"
 #include "lib/utils/pyexec.h"
 #include "genhdr/mpversion.h"
 
