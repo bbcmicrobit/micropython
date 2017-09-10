@@ -10,6 +10,8 @@
 typedef void (*callback_ptr)(void);
 typedef int32_t (*ticker_callback_ptr)(void);
 
+extern volatile uint32_t ticker_ticks_ms;
+
 void ticker_init(callback_ptr slow_ticker_callback);
 void ticker_start(void);
 void ticker_stop(void);

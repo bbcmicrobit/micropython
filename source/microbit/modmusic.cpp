@@ -35,6 +35,7 @@ extern "C" {
 #include "modmicrobit.h"
 #include "microbit/microbitobj.h"
 #include "microbit/microbitpin.h"
+#include "lib/ticker.h"
 #include "lib/pwm.h"
 
 #define DEFAULT_BPM      120
@@ -69,8 +70,6 @@ enum {
 
 #define music_data MP_STATE_PORT(music_data)
 
-extern uint32_t ticks;
-
 STATIC uint32_t start_note(const char *note_str, size_t note_len, const microbit_pin_obj_t *pin);
 
 void microbit_music_tick(void) {
@@ -84,7 +83,7 @@ void microbit_music_tick(void) {
         return;
     }
 
-    if (ticks < music_data->async_wait_ticks) {
+    if (ticker_ticks_ms < music_data->async_wait_ticks) {
         // need to wait for timeout to expire
         return;
     }
@@ -92,7 +91,7 @@ void microbit_music_tick(void) {
     if (music_data->async_state == ASYNC_MUSIC_STATE_ARTICULATE) {
         // turn off output and rest
         pwm_set_duty_cycle(music_data->async_pin->name, 0);
-        music_data->async_wait_ticks = ticks + ARTICULATION_MS;
+        music_data->async_wait_ticks = ticker_ticks_ms + ARTICULATION_MS;
         music_data->async_state = ASYNC_MUSIC_STATE_NEXT_NOTE;
     } else if (music_data->async_state == ASYNC_MUSIC_STATE_NEXT_NOTE) {
         // play next note
@@ -122,7 +121,7 @@ void microbit_music_tick(void) {
             mp_uint_t note_len;
             const char *note_str = mp_obj_str_get_data(note, &note_len);
             uint32_t delay_on = start_note(note_str, note_len, music_data->async_pin);
-            music_data->async_wait_ticks = ticks + delay_on;
+            music_data->async_wait_ticks = ticker_ticks_ms + delay_on;
             music_data->async_notes_index += 1;
             music_data->async_state = ASYNC_MUSIC_STATE_ARTICULATE;
         }
@@ -325,7 +324,7 @@ STATIC mp_obj_t microbit_music_play(mp_uint_t n_args, const mp_obj_t *pos_args, 
 
     // start the tune running in the background
     music_data->async_state = ASYNC_MUSIC_STATE_IDLE;
-    music_data->async_wait_ticks = ticks;
+    music_data->async_wait_ticks = ticker_ticks_ms;
     music_data->async_loop = args[3].u_bool;
     music_data->async_notes_len = len;
     music_data->async_notes_index = 0;
@@ -381,7 +380,7 @@ STATIC mp_obj_t microbit_music_pitch(mp_uint_t n_args, const mp_obj_t *pos_args,
     if (duration >= 0) {
         // use async machinery to stop the pitch after the duration
         music_data->async_state = ASYNC_MUSIC_STATE_IDLE;
-        music_data->async_wait_ticks = ticks + duration;
+        music_data->async_wait_ticks = ticker_ticks_ms + duration;
         music_data->async_loop = false;
         music_data->async_notes_len = 0;
         music_data->async_notes_index = 0;

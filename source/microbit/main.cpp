@@ -41,11 +41,7 @@ int main(void) {
 
 extern "C" {
 
-uint32_t ticks = 0; // TODO clean this up
-
 void microbit_ticker(void) {
-    ++ticks; // TODO clean this up
-
     /** Update compass if it is calibrating, but not if it is still
      *  updating as compass.idleTick() is not reentrant.
      */
