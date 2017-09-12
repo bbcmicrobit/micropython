@@ -25,6 +25,7 @@
  */
 
 #include "EventModel.h"
+#include "MicroBitCompassCalibrator.h"
 #include "microbit/microbitaccelerometer.h"
 
 class MicroPythonEventHandler : public EventModel {
@@ -47,6 +48,13 @@ int MicroPythonEventHandler::send(MicroBitEvent evt) {
     switch (evt.source) {
         case MICROBIT_ID_GESTURE:
             microbit_accelerometer_event_handler(&evt);
+            break;
+
+        case MICROBIT_ID_COMPASS:
+            if (evt.value == MICROBIT_COMPASS_EVT_CALIBRATE) {
+                extern MicroBitCompassCalibrator ubit_compass_calibrator;
+                ubit_compass_calibrator.calibrate(evt);
+            }
             break;
 
         default:

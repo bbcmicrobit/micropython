@@ -26,6 +26,7 @@
 
 #include "MicroBitDisplay.h"
 #include "MicroBitCompass.h"
+#include "MicroBitCompassCalibrator.h"
 
 extern MicroBitDisplay ubit_display;
 
@@ -34,6 +35,7 @@ extern "C" {
 #include "lib/ticker.h"
 #include "py/runtime.h"
 #include "modmicrobit.h"
+#include "microbitdisplay.h"
 
 typedef struct _microbit_compass_obj_t {
     mp_obj_base_t base;
@@ -58,6 +60,7 @@ mp_obj_t microbit_compass_calibrate(mp_obj_t self_in) {
     ubit_display.disable();
     //uBit.systemTicker.detach(); TODO what to replace with?
     ticker_start();
+    microbit_display_init();
     return mp_const_none;
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_compass_calibrate_obj, microbit_compass_calibrate);
@@ -162,6 +165,7 @@ STATIC const mp_obj_type_t microbit_compass_type = {
 extern MicroBitI2C ubit_i2c;
 extern MicroBitAccelerometer ubit_accelerometer;
 MicroBitCompass ubit_compass(ubit_i2c, ubit_accelerometer);
+MicroBitCompassCalibrator ubit_compass_calibrator(ubit_compass, ubit_accelerometer, ubit_display);
 
 const microbit_compass_obj_t microbit_compass_obj = {
     {&microbit_compass_type},

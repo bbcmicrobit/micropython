@@ -69,7 +69,7 @@ void __register_exitproc() {
 }
 
 void microbit_init(void) {
-    //ubit_display.disable(); TODO this seems to crash the device
+    ubit_display.disable();
     microbit_display_init();
     microbit_filesystem_init();
     microbit_pin_init();
