@@ -66,7 +66,7 @@ STATIC void microbit_image_print(const mp_print_t *print, mp_obj_t self_in, mp_p
 
 uint8_t monochrome_5by5_t::getPixelValue(mp_int_t x, mp_int_t y) {
     unsigned int index = y*5+x;
-    if (index == 24) 
+    if (index == 24)
         return this->pixel44;
     return (this->bits24[index>>3] >> (index&7))&1;
 }
@@ -388,7 +388,7 @@ mp_obj_t microbit_image_set_pixel(mp_uint_t n_args, const mp_obj_t *args) {
             "index cannot be negative"));
     }
     mp_int_t bright = mp_obj_get_int(args[3]);
-    if (bright < 0 || bright > MAX_BRIGHTNESS) 
+    if (bright < 0 || bright > MAX_BRIGHTNESS)
         nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "brightness out of bounds."));
     if (x < self->width() && y < self->height()) {
         self->greyscale.setPixelValue(x, y, bright);
@@ -615,7 +615,7 @@ microbit_image_obj_t *microbit_image_for_char(char c) {
 }
 
 microbit_image_obj_t *microbit_image_dim(microbit_image_obj_t *lhs, mp_float_t fval) {
-    if (fval < 0) 
+    if (fval < 0)
         nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "Brightness multiplier must not be negative."));
     greyscale_t *result = greyscale_new(lhs->width(), lhs->height());
     for (int x = 0; x < lhs->width(); ++x) {
@@ -639,7 +639,7 @@ microbit_image_obj_t *microbit_image_sum(microbit_image_obj_t *lhs, microbit_ima
             int val;
             int lval = lhs->getPixelValue(x,y);
             int rval = rhs->getPixelValue(x,y);
-            if (add) 
+            if (add)
                 val = min(lval + rval, MAX_BRIGHTNESS);
             else
                 val = max(0, lval - rval);
@@ -647,8 +647,8 @@ microbit_image_obj_t *microbit_image_sum(microbit_image_obj_t *lhs, microbit_ima
         }
     }
     return (microbit_image_obj_t *)result;
-}                      
-                                   
+}
+
 STATIC mp_obj_t image_binary_op(mp_uint_t op, mp_obj_t lhs_in, mp_obj_t rhs_in) {
     if (mp_obj_get_type(lhs_in) != &microbit_image_type) {
         return MP_OBJ_NULL; // op not supported
@@ -689,9 +689,9 @@ const mp_obj_type_t microbit_image_type = {
     .parent = NULL,
     .locals_dict = (mp_obj_dict_t*)&microbit_image_locals_dict,
 };
- 
+
 typedef struct _scrolling_string_t {
-    mp_obj_base_t base; 
+    mp_obj_base_t base;
     char const *str;
     mp_uint_t len;
     mp_obj_t ref;
@@ -700,7 +700,7 @@ typedef struct _scrolling_string_t {
 } scrolling_string_t;
 
 typedef struct _scrolling_string_iterator_t {
-    mp_obj_base_t base; 
+    mp_obj_base_t base;
     mp_obj_t ref;
     greyscale_t *img;
     char const *next_char;

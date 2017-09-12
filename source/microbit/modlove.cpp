@@ -34,7 +34,7 @@ extern "C" {
 #include "microbitimage.h"
 #include "microbitdisplay.h"
 
-static const mp_float_t bright[7] = { 
+static const mp_float_t bright[7] = {
     0.0, 1.0/9, 2.0/9, 4.0/9, 6.0/9, 7.0/9, 1.0,
 };
 
@@ -43,7 +43,7 @@ void love(int interval = 25 /* ms */) {
     for (uint i = 0; i < MP_ARRAY_SIZE(bright); i++) {
          hearts[i] = microbit_image_dim(HEART_IMAGE, bright[i]);
     }
-   
+
     for (int iteration = 0; iteration < 8; iteration++) {
         // pause between double beats of the heart
         if (iteration && (iteration & 1) == 0) {

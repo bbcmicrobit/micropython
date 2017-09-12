@@ -2,15 +2,15 @@
 #define __MICROPY_INCLUDED_MICROBIT_IMAGE_H__
 
 #include "py/runtime.h"
-   
+
 #define MAX_BRIGHTNESS 9
 
-/** Monochrome images are immutable, which means that 
+/** Monochrome images are immutable, which means that
  * we only need one bit per pixel which saves quite a lot
  * of memory */
 
 /* we reserve a couple of bits, so we won't need to modify the
- * layout if we need to add more functionality or subtypes. */ 
+ * layout if we need to add more functionality or subtypes. */
 #define TYPE_AND_FLAGS \
     mp_obj_base_t base; \
     uint8_t five:1; \
@@ -25,7 +25,7 @@ typedef struct _monochrome_5by5_t {
     TYPE_AND_FLAGS;
     uint8_t pixel44: 1;
     uint8_t bits24[3];
-    
+
     /* This is an internal method it is up to the caller to validate the inputs */
     uint8_t getPixelValue(mp_int_t x, mp_int_t y);
 
@@ -48,15 +48,14 @@ typedef union _microbit_image_obj_t {
     image_base_t base;
     monochrome_5by5_t monochrome_5by5;
     greyscale_t greyscale;
-    
+
     mp_int_t height();
     mp_int_t width();
     greyscale_t *copy();
     greyscale_t *invert();
-    
+
     /* This is an internal method it is up to the caller to validate the inputs */
     uint8_t getPixelValue(mp_int_t x, mp_int_t y);
-    
 } microbit_image_obj_t;
 
 /** Return a facade object that presents the string as a sequence of images */

@@ -15,7 +15,7 @@
 #include "memory.h"
 
 extern void microbit_init(void);
-    
+
 void microbit_display_exception(mp_obj_t exc_in) {
     mp_uint_t n, *values;
     mp_obj_exception_get_traceback(exc_in, &n, &values);

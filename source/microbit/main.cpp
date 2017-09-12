@@ -20,7 +20,6 @@ MicroBitCompass ubit_compass(ubit_i2c, ubit_accelerometer);
 MicroBitCompassCalibrator ubit_compass_calibrator(ubit_compass, ubit_accelerometer, ubit_display);
 
 int main(void) {
-    
     // debugging: print memory layout
     /*
     extern uint32_t __data_start__, __data_end__;

@@ -18,8 +18,6 @@ typedef struct _microbit_display_obj_t {
 
     void advanceRow();
     inline void setPinsForRow(uint8_t brightness);
-
-    
 } microbit_display_obj_t;
 
 #define ASYNC_MODE_STOPPED 0
