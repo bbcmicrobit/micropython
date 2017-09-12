@@ -24,11 +24,7 @@
  * THE SOFTWARE.
  */
 
-#include "MicroBitDisplay.h"
-#include "MicroBitCompass.h"
-#include "MicroBitCompassCalibrator.h"
-
-extern MicroBitDisplay ubit_display;
+#include "microbit/microbitdal.h"
 
 extern "C" {
 
@@ -161,11 +157,6 @@ STATIC const mp_obj_type_t microbit_compass_type = {
     .parent = NULL,
     .locals_dict = (mp_obj_dict_t*)&microbit_compass_locals_dict,
 };
-
-extern MicroBitI2C ubit_i2c;
-extern MicroBitAccelerometer ubit_accelerometer;
-MicroBitCompass ubit_compass(ubit_i2c, ubit_accelerometer);
-MicroBitCompassCalibrator ubit_compass_calibrator(ubit_compass, ubit_accelerometer, ubit_display);
 
 const microbit_compass_obj_t microbit_compass_obj = {
     {&microbit_compass_type},

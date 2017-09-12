@@ -23,43 +23,28 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+#ifndef MICROPY_INCLUDED_MICROBIT_MICROBITDAL_H
+#define MICROPY_INCLUDED_MICROBIT_MICROBITDAL_H
 
-#include "EventModel.h"
-#include "microbit/microbitdal.h"
-#include "microbit/microbitaccelerometer.h"
+#include "MicroBitDisplay.h"
+#include "MicroBitCompass.h"
+#include "MicroBitCompassCalibrator.h"
 
-class MicroPythonEventHandler : public EventModel {
-public:
-    MicroPythonEventHandler();
-
-    virtual int send(MicroBitEvent evt);
+class MicroPythonI2C : public MicroBitI2C {
+    public:
+        MicroPythonI2C(PinName sda, PinName scl)
+            : MicroBitI2C(sda, scl) {
+        }
+        void set_pins(PinName sda, PinName scl) {
+            _i2c.sda = sda;
+            _i2c.scl = scl;
+        }
 };
 
-// Create a static instance of our custom event handler
-static MicroPythonEventHandler event_handler;
+extern MicroPythonI2C ubit_i2c;
+extern MicroBitAccelerometer ubit_accelerometer;
+extern MicroBitDisplay ubit_display;
+extern MicroBitCompass ubit_compass;
+extern MicroBitCompassCalibrator ubit_compass_calibrator;
 
-MicroPythonEventHandler::MicroPythonEventHandler() {
-    // We take full control of the event bus
-    EventModel::defaultEventBus = this;
-}
-
-int MicroPythonEventHandler::send(MicroBitEvent evt) {
-    // Dispatch the event to the relevant component
-    switch (evt.source) {
-        case MICROBIT_ID_GESTURE:
-            microbit_accelerometer_event_handler(&evt);
-            break;
-
-        case MICROBIT_ID_COMPASS:
-            if (evt.value == MICROBIT_COMPASS_EVT_CALIBRATE) {
-                ubit_compass_calibrator.calibrate(evt);
-            }
-            break;
-
-        default:
-            // Ignore this event
-            break;
-    }
-
-    return MICROBIT_OK;
-}
+#endif // MICROPY_INCLUDED_MICROBIT_MICROBITDAL_H

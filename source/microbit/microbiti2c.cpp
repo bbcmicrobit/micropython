@@ -24,26 +24,7 @@
  * THE SOFTWARE.
  */
 
-#include "ErrorNo.h"
-#include "MicroBitI2C.h"
-#include "i2c_api.h"
-
-
-class mp_I2C : public MicroBitI2C {
-    public:
-        mp_I2C(PinName sda, PinName scl);
-        void set_pins(PinName sda, PinName scl);
-};
-
-mp_I2C::mp_I2C(PinName sda, PinName scl)
-    : MicroBitI2C(sda, scl) {
-}
-
-void mp_I2C::set_pins(PinName sda, PinName scl) {
-    _i2c.sda = sda;
-    _i2c.scl = scl;
-}
-
+#include "microbitdal.h"
 
 extern "C" {
 
@@ -54,7 +35,7 @@ extern "C" {
 
 typedef struct _microbit_i2c_obj_t {
     mp_obj_base_t base;
-    mp_I2C *i2c;
+    MicroPythonI2C *i2c;
 } microbit_i2c_obj_t;
 
 STATIC mp_obj_t microbit_i2c_init(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
@@ -160,8 +141,6 @@ const mp_obj_type_t microbit_i2c_type = {
     .parent = NULL,
     .locals_dict = (mp_obj_dict_t*)&microbit_i2c_locals_dict,
 };
-
-mp_I2C ubit_i2c(I2C_SDA0, I2C_SCL0);
 
 const microbit_i2c_obj_t microbit_i2c_obj = {
     {&microbit_i2c_type},

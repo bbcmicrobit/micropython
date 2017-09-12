@@ -1,6 +1,4 @@
-#include "MicroBitFiber.h"
-#include "MicroBitDisplay.h"
-#include "MicroBitCompass.h"
+#include "microbitdal.h"
 #include "microbitobj.h"
 #include "microbitdisplay.h"
 #include "microbitbutton.h"
@@ -16,7 +14,10 @@ extern "C" {
 }
 
 MicroBitDisplay ubit_display;
-extern MicroBitCompass ubit_compass;
+MicroPythonI2C ubit_i2c(I2C_SDA0, I2C_SCL0);
+MicroBitAccelerometer ubit_accelerometer(ubit_i2c);
+MicroBitCompass ubit_compass(ubit_i2c, ubit_accelerometer);
+MicroBitCompassCalibrator ubit_compass_calibrator(ubit_compass, ubit_accelerometer, ubit_display);
 
 int main(void) {
     

@@ -24,8 +24,7 @@
  * THE SOFTWARE.
  */
 
-#include "MicroBitEvent.h"
-#include "MicroBitAccelerometer.h"
+#include "microbitdal.h"
 #include "microbit/microbitaccelerometer.h"
 
 extern "C" {
@@ -208,9 +207,6 @@ const mp_obj_type_t microbit_accelerometer_type = {
     .parent = NULL,
     .locals_dict = (mp_obj_dict_t*)&microbit_accelerometer_locals_dict,
 };
-
-extern MicroBitI2C ubit_i2c;
-MicroBitAccelerometer ubit_accelerometer(ubit_i2c);
 
 const microbit_accelerometer_obj_t microbit_accelerometer_obj = {
     {&microbit_accelerometer_type},
