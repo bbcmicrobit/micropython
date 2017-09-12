@@ -31,12 +31,12 @@ extern "C" {
 
 #include "py/mpstate.h"
 #include "py/mphal.h"
+#include "lib/utils/interrupt_char.h"
 #include "microbitimage.h"
 #include "microbitdisplay.h"
 
 #define UART_RX_BUF_SIZE (64) // it's large so we can paste example code
 
-static int interrupt_char;
 static uint8_t uart_rx_buf[UART_RX_BUF_SIZE];
 static volatile uint16_t uart_rx_buf_head, uart_rx_buf_tail;
 
@@ -47,8 +47,8 @@ void uart_rx_irq(void) {
         return;
     }
     int c = ubit_serial.getc();
-    if (c == interrupt_char) {
-        MP_STATE_VM(mp_pending_exception) = MP_STATE_PORT(keyboard_interrupt_obj);
+    if (c == mp_interrupt_char) {
+        mp_keyboard_interrupt();
     } else {
         uint16_t next_head = (uart_rx_buf_head + 1) % UART_RX_BUF_SIZE;
         if (next_head != uart_rx_buf_tail) {
@@ -63,15 +63,6 @@ void mp_hal_init(void) {
     uart_rx_buf_head = 0;
     uart_rx_buf_tail = 0;
     ubit_serial.attach(uart_rx_irq);
-    interrupt_char = -1;
-    MP_STATE_PORT(keyboard_interrupt_obj) = mp_obj_new_exception(&mp_type_KeyboardInterrupt);
-}
-
-void mp_hal_set_interrupt_char(int c) {
-    if (c != -1) {
-        mp_obj_exception_clear_traceback(MP_STATE_PORT(keyboard_interrupt_obj));
-    }
-    interrupt_char = c;
 }
 
 int mp_hal_stdin_rx_any(void) {

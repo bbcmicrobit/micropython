@@ -20,6 +20,7 @@
 #define MICROPY_DEBUG_PRINTERS      (0)
 #define MICROPY_ENABLE_GC           (1)
 #define MICROPY_STACK_CHECK         (1)
+#define MICROPY_KBD_EXCEPTION       (1)
 #define MICROPY_REPL_EVENT_DRIVEN   (0)
 #define MICROPY_REPL_EMACS_KEYS     (1)
 #define MICROPY_REPL_AUTO_INDENT    (1)
@@ -121,7 +122,6 @@ extern const struct _mp_obj_module_t speech_module;
 
 #define MICROPY_PORT_ROOT_POINTERS \
     const char *readline_hist[8]; \
-    mp_obj_t keyboard_interrupt_obj; \
     void *async_data[2]; \
     uint8_t *radio_buf; \
     void *audio_buffer; \
