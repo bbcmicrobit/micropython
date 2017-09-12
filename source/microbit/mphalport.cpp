@@ -122,19 +122,17 @@ void mp_hal_display_string(const char *str) {
 }
 
 void mp_hal_delay_ms(mp_uint_t ms) {
-    if (ms <= 0)
+    if (ms <= 0) {
         return;
-    unsigned long current = system_timer_current_time();
-    unsigned long wakeup = current + ms;
-    if (wakeup < current) {
-        // Overflow
-        do {
-            __WFI();
-        } while (system_timer_current_time() > current);
     }
-    do {
+    // Wraparound of tick is taken care of by 2's complement arithmetic
+    uint64_t start = system_timer_current_time();
+    while (system_timer_current_time() - start < (uint64_t)ms) {
+        // Check for any pending events, like a KeyboardInterrupt
+        mp_handle_pending();
+        // Enter sleep mode, waiting for (at least) the SysTick interrupt
         __WFI();
-    } while (system_timer_current_time() < wakeup);
+    }
 }
 
 }
