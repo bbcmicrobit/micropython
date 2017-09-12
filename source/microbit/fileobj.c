@@ -145,6 +145,6 @@ static mp_obj_t mp_builtin_open(size_t n_args, const mp_obj_t *args) {
     }
     return res;
 mode_error:
-    nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "illegal mode"));
+    mp_raise_ValueError("illegal mode");
 }
 MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(mp_builtin_open_obj, 1, 2, mp_builtin_open);

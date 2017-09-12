@@ -417,7 +417,7 @@ void audio_play_source(mp_obj_t src, mp_obj_t pin1, mp_obj_t pin2, bool wait) {
         if (pin2 == mp_const_none) {
             audio_auto_set_pins();
         } else {
-            nlr_raise(mp_obj_new_exception_msg(&mp_type_TypeError, "Cannot set return_pin without pin"));
+            mp_raise_TypeError("cannot set return_pin without pin");
         }
     } else {
         audio_set_pins(pin1, pin2);
@@ -489,18 +489,18 @@ STATIC mp_obj_t audio_frame_subscr(mp_obj_t self_in, mp_obj_t index_in, mp_obj_t
     microbit_audio_frame_obj_t *self = (microbit_audio_frame_obj_t *)self_in;
     mp_int_t index = mp_obj_get_int(index_in);
     if (index < 0 || index >= AUDIO_CHUNK_SIZE) {
-         nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "index out of bounds"));
+         mp_raise_ValueError("index out of bounds");
     }
     if (value_in == MP_OBJ_NULL) {
         // delete
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_TypeError, "Cannot delete elements of AudioFrame"));
+        mp_raise_TypeError("cannot delete elements of AudioFrame");
     } else if (value_in == MP_OBJ_SENTINEL) {
         // load
         return MP_OBJ_NEW_SMALL_INT(self->data[index]);
     } else {
         mp_int_t value = mp_obj_get_int(value_in);
         if (value < 0 || value > 255) {
-            nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "value out of range"));
+            mp_raise_ValueError("value out of range");
         }
         self->data[index] = value;
         return mp_const_none;

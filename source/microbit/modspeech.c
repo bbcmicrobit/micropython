@@ -120,7 +120,7 @@ static mp_obj_t translate(mp_obj_t words) {
     // Reciter truncates *output* at about 120 characters.
     // So to avoid that we must disallow any input that will exceed that.
     if (len > 80) {
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "text too long."));
+        mp_raise_ValueError("text too long");
     }
     reciter_memory *mem = m_new(reciter_memory, 1);
     MP_STATE_PORT(speech_data) = mem;
@@ -130,7 +130,7 @@ static mp_obj_t translate(mp_obj_t words) {
     mem->input[len] = '[';
     if (!TextToPhonemes(mem)) {
         MP_STATE_PORT(speech_data) = NULL;
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "could not parse input."));
+        mp_raise_ValueError("could not parse input");
     }
     for (outlen = 0; outlen < 255; outlen++) {
         if (mem->input[outlen] == 155) {
@@ -186,7 +186,7 @@ static mp_obj_t articulate(mp_obj_t phonemes, mp_uint_t n_args, const mp_obj_t *
     {
         audio_stop();
         MP_STATE_PORT(speech_data) = NULL;
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, sam_error));
+        mp_raise_ValueError(sam_error);
     }
 
     last_frame = true;

@@ -328,7 +328,7 @@ mp_obj_t microbit_remove(mp_obj_t filename) {
 
 static void check_file_open(file_descriptor_obj *self) {
     if (!self->open) {
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "I/O operation on closed file"));
+        mp_raise_ValueError("I/O operation on closed file");
     }
 }
 

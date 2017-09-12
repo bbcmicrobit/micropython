@@ -48,7 +48,7 @@ STATIC mp_obj_t neopixel_make_new(const mp_obj_type_t *type_in, mp_uint_t n_args
     mp_int_t num_pixels = mp_obj_get_int(args[1]);
 
     if (num_pixels <= 0) {
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "invalid number of pixels"));
+        mp_raise_ValueError("invalid number of pixels");
     }
 
     neopixel_obj_t *self = m_new_obj(neopixel_obj_t);
@@ -88,7 +88,7 @@ STATIC mp_obj_t neopixel_subscr(mp_obj_t self_in, mp_obj_t index_in, mp_obj_t va
         mp_int_t g = mp_obj_get_int(rgb[1]);
         mp_int_t b = mp_obj_get_int(rgb[2]);
         if (r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255) {
-            nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "invalid colour"));
+            mp_raise_ValueError("invalid colour");
         }
         neopixel_set_color(&self->strip, index, r, g, b);
         return mp_const_none;

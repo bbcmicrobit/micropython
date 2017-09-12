@@ -90,7 +90,7 @@ void RADIO_IRQHandler(void) {
 
 static void ensure_enabled(void) {
     if (MP_STATE_PORT(radio_buf) == NULL) {
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "radio is not enabled"));
+        mp_raise_ValueError("radio is not enabled");
     }
 }
 
@@ -263,7 +263,7 @@ static mp_obj_t radio_receive(bool typed_packet, mp_buffer_info_t *bufinfo) {
         ret = mp_obj_new_str((char*)buf + 4, len - 3, false); // if it raises the radio irq remains disabled...
     } else {
         NVIC_EnableIRQ(RADIO_IRQn);
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "received packet is not a string"));
+        mp_raise_ValueError("received packet is not a string");
     }
 
     // copy the rest of the packets down and restart the radio
@@ -296,7 +296,7 @@ STATIC mp_obj_t mod_radio_config(size_t n_args, const mp_obj_t *pos_args, mp_map
     (void)pos_args; // unused
 
     if (n_args != 0) {
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_TypeError, "arguments must be keyword arguments"));
+        mp_raise_TypeError("arguments must be keywords");
     }
 
     // make a copy of the radio state so we don't change anything if there are value errors

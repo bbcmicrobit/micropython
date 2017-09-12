@@ -375,7 +375,7 @@ STATIC mp_obj_t microbit_music_pitch(mp_uint_t n_args, const mp_obj_t *pos_args,
         pwm_release(pin->name);
     } else if (pwm_set_period_us(1000000/frequency)) {
         pwm_release(pin->name);
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "invalid pitch"));
+        mp_raise_ValueError("invalid pitch");
     }
     if (duration >= 0) {
         // use async machinery to stop the pitch after the duration

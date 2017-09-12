@@ -68,7 +68,7 @@ mp_obj_t microbit_pin_write_digital(mp_obj_t self_in, mp_obj_t value_in) {
     microbit_pin_obj_t *self = (microbit_pin_obj_t*)self_in;
     int val = mp_obj_get_int(value_in);
     if (val >> 1) {
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "value must be 0 or 1"));
+        mp_raise_ValueError("value must be 0 or 1");
     }
     if (microbit_pin_get_mode(self) != microbit_pin_mode_write_digital) {
         microbit_obj_pin_acquire(self, microbit_pin_mode_write_digital);
@@ -99,7 +99,7 @@ mp_obj_t microbit_pin_set_pull(mp_obj_t self_in, mp_obj_t pull_in) {
     microbit_pin_obj_t *self = (microbit_pin_obj_t*)self_in;
     int pull = mp_obj_get_int(pull_in);
     if (((1 << pull) & SHIFT_PULL_MASK) == 0) {
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "invalid pull"));
+        mp_raise_ValueError("invalid pull");
     }
     const microbit_pinmode_t *mode = microbit_pin_get_mode(self);
     /* Pull only applies in an read digital mode */
@@ -135,7 +135,7 @@ mp_obj_t microbit_pin_write_analog(mp_obj_t self_in, mp_obj_t value_in) {
         set_value = mp_obj_get_int(value_in);
     }
     if (set_value < 0 || set_value > MICROBIT_PIN_MAX_OUTPUT) {
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "value must be between 0 and 1023"));
+        mp_raise_ValueError("value must be between 0 and 1023");
     }
     if (microbit_pin_get_mode(self) != microbit_pin_mode_write_analog) {
         microbit_obj_pin_acquire(self, microbit_pin_mode_write_analog);
@@ -163,7 +163,7 @@ mp_obj_t microbit_pin_set_analog_period(mp_obj_t self_in, mp_obj_t period_in) {
     (void)self_in;
     int err = pwm_set_period_us(mp_obj_get_int(period_in)*1000);
     if (err) {
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "invalid period"));
+        mp_raise_ValueError("invalid period");
     }
     return mp_const_none;
 }
@@ -173,7 +173,7 @@ mp_obj_t microbit_pin_set_analog_period_microseconds(mp_obj_t self_in, mp_obj_t 
     (void)self_in;
     int err = pwm_set_period_us(mp_obj_get_int(period_in));
     if (err) {
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "invalid period"));
+        mp_raise_ValueError("invalid period");
     }
     return mp_const_none;
 }
@@ -314,7 +314,7 @@ const microbit_pin_obj_t *microbit_obj_get_pin(mp_obj_t o) {
     if (type == &microbit_touch_pin_type || type == &microbit_ad_pin_type || type == &microbit_dig_pin_type) {
         return (microbit_pin_obj_t*)o;
     } else {
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_TypeError, "expecting a pin"));
+        mp_raise_TypeError("expecting a pin");
     }
 }
 
