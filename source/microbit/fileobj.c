@@ -27,7 +27,7 @@
 
 
 
-#include "py/nlr.h"
+#include "py/runtime.h"
 #include "py/obj.h"
 #include "filesystem.h"
 #include "py/stream.h"
@@ -141,7 +141,7 @@ static mp_obj_t mp_builtin_open(size_t n_args, const mp_obj_t *args) {
     const char *filename = mp_obj_str_get_data(args[0], &name_len);
     file_descriptor_obj *res = microbit_file_open(filename, name_len, read == 0, text == 0);
     if (res == NULL) {
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_OSError, "file not found"));
+        mp_raise_msg(&mp_type_OSError, "file not found");
     }
     return res;
 mode_error:

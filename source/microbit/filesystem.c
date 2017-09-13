@@ -28,7 +28,7 @@
 #include <errno.h>
 #include <sys/stat.h>
 
-#include "py/nlr.h"
+#include "py/runtime.h"
 #include "py/obj.h"
 #include "py/gc.h"
 #include "py/stream.h"
@@ -286,7 +286,7 @@ file_descriptor_obj *microbit_file_open(const char *name, uint32_t name_len, boo
         }
         index = find_chunk_and_erase();
         if (index == FILE_NOT_FOUND) {
-            nlr_raise(mp_obj_new_exception_msg(&mp_type_OSError, "No more storage space"));
+            mp_raise_msg(&mp_type_OSError, "no more storage space");
         }
         persistent_write_byte_unchecked(&(file_system_chunks[index].marker), FILE_START);
         persistent_write_byte_unchecked(&(file_system_chunks[index].header.name_len), name_len);
@@ -320,7 +320,7 @@ mp_obj_t microbit_remove(mp_obj_t filename) {
     const char *name = mp_obj_str_get_data(filename, &name_len);
     mp_uint_t index = microbit_find_file(name, name_len);
     if (index == 255) {
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_OSError, "file not found"));
+        mp_raise_msg(&mp_type_OSError, "file not found");
     }
     clear_file(index);
     return mp_const_none;
@@ -430,7 +430,7 @@ mp_obj_t microbit_file_size(mp_obj_t filename) {
     const char *name = mp_obj_str_get_data(filename, &name_len);
     uint8_t chunk = microbit_find_file(name, name_len);
     if (chunk == 255) {
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_OSError, "file not found"));
+        mp_raise_msg(&mp_type_OSError, "file not found");
     }
     mp_uint_t len = 0;
     uint8_t end_offset = file_system_chunks[chunk].header.end_offset;

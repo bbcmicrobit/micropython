@@ -116,7 +116,7 @@ STATIC mp_obj_t mod_random_choice(mp_obj_t seq) {
     if (len > 0) {
         return mp_obj_subscr(seq, mp_obj_new_int(randbelow(len)), MP_OBJ_SENTINEL);
     } else {
-        nlr_raise(mp_obj_new_exception(&mp_type_IndexError));
+        mp_raise_msg(&mp_type_IndexError, NULL);
     }
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(mod_random_choice_obj, mod_random_choice);
