@@ -31,24 +31,24 @@ extern uint32_t __data_end__;
 extern uint32_t __data_start__;
 extern uint32_t __etext;
 
-inline char *rounddown(char *addr, uint32_t align) {
+static inline char *rounddown(char *addr, uint32_t align) {
     return (char *)(((uint32_t)addr)&(-align));
 }
 
-inline char *roundup(char *addr, uint32_t align) {
+static inline char *roundup(char *addr, uint32_t align) {
     return (char *)((((uint32_t)addr)+align-1)&(-align));
 }
 
 /** The end of the code area in flash ROM (text plus read-only copy of data area) */
-inline char *microbit_end_of_code() {
+static inline char *microbit_end_of_code() {
     return (char *)(&__etext + (&__data_end__ - &__data_start__));
 }
 
-inline char *microbit_end_of_rom() {
+static inline char *microbit_end_of_rom() {
     return (char *)0x40000;
 }
 
-inline char *microbit_mp_appended_script() {
+static inline char *microbit_mp_appended_script() {
     return (char *)0x3e000;
 }
 

@@ -34,7 +34,7 @@ extern "C" {
 #include "nrf_nvmc.h"
 #include "py/lexer.h"
 
-inline uint32_t persistent_page_size(void) {
+static inline uint32_t persistent_page_size(void) {
     return NRF_FICR->CODEPAGESIZE;
 }
 
