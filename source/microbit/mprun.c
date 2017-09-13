@@ -80,9 +80,6 @@ void do_file(file_descriptor_obj *fd) {
     do_lexer(lex);
 }
 
-
-static char *stack_top;
-
 typedef struct _appended_script_t {
     byte header[2]; // should be "MP"
     uint16_t len; // length of script stored little endian
@@ -92,10 +89,9 @@ typedef struct _appended_script_t {
 #define APPENDED_SCRIPT ((const appended_script_t*)microbit_mp_appended_script())
 
 void mp_run(void) {
-    int stack_dummy;
-    stack_top = (char*)&stack_dummy;
     file_descriptor_obj *main_module;
-    mp_stack_ctrl_init();
+    extern uint32_t __StackTop;
+    mp_stack_set_top(&__StackTop);
     mp_stack_set_limit(1800); // stack is 2k
 
     static uint32_t heap[9720 / 4];
@@ -153,45 +149,6 @@ void mp_run(void) {
     MP_STATE_PORT(music_data) = NULL;
 
     mp_deinit();
-}
-
-__attribute__((naked)) uint32_t gc_helper_get_regs_and_sp(uint32_t *regs) {
-    (void)regs;
-
-    // store registers into given array and return the stack pointer
-    __asm volatile (
-    "str    r4, [r0, #0]\n"
-    "str    r5, [r0, #4]\n"
-    "str    r6, [r0, #8]\n"
-    "str    r7, [r0, #12]\n"
-    "mov    r1, r8\n"
-    "str    r1, [r0, #16]\n"
-    "mov    r1, r9\n"
-    "str    r1, [r0, #20]\n"
-    "mov    r1, r10\n"
-    "str    r1, [r0, #24]\n"
-    "mov    r1, r11\n"
-    "str    r1, [r0, #28]\n"
-    "mov    r1, r12\n"
-    "str    r1, [r0, #32]\n"
-    "mov    r1, r13\n"
-    "str    r1, [r0, #36]\n"
-    "mov    r0, sp\n"
-    "bx     lr\n"
-    );
-}
-
-void gc_collect(void) {
-    gc_collect_start();
-
-    // get the registers and the sp
-    uint32_t regs[10];
-    uint32_t sp = gc_helper_get_regs_and_sp(regs);
-
-    // trace the stack, including the registers (since they live on the stack in this function)
-    gc_collect_root((void**)sp, ((uint32_t)stack_top - sp) / sizeof(uint32_t));
-
-    gc_collect_end();
 }
 
 mp_import_stat_t mp_import_stat(const char *path) {
