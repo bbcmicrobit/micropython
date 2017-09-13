@@ -119,7 +119,7 @@ typedef struct _appended_script_t {
 int main(void) {
     for (;;) {
         extern uint32_t __StackTop;
-        static uint32_t mp_heap[9720 / sizeof(uint32_t)];
+        static uint32_t mp_heap[10240 / sizeof(uint32_t)];
 
         // Initialise memory regions: stack and MicroPython heap
         mp_stack_set_top(&__StackTop);
