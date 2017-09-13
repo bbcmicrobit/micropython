@@ -24,14 +24,10 @@
  * THE SOFTWARE.
  */
 
-
-
-
 #include "py/runtime.h"
 #include "py/obj.h"
-#include "filesystem.h"
 #include "py/stream.h"
-
+#include "microbit/filesystem.h"
 
 static mp_obj_t microbit_file_writable(mp_obj_t self) {
     return mp_obj_new_bool(((file_descriptor_obj *)self)->writable);
@@ -112,7 +108,6 @@ const mp_obj_type_t microbit_textio_type = {
     .parent = NULL,
     .locals_dict = (mp_obj_dict_t*)&microbit_file_locals_dict,
 };
-
 
 static mp_obj_t mp_builtin_open(size_t n_args, const mp_obj_t *args) {
     /// -1 means default; 0 explicitly false; 1 explicitly true.
