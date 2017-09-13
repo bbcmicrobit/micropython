@@ -26,6 +26,10 @@
 #ifndef __MICROPY_INCLUDED_FILESYSTEM_H__
 #define __MICROPY_INCLUDED_FILESYSTEM_H__
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "nrf51.h"
 #include "nrf_nvmc.h"
 #include "py/lexer.h"
@@ -122,5 +126,9 @@ extern const mp_obj_type_t microbit_bytesio_type;
 extern const mp_obj_type_t microbit_textio_type;
 
 #define min(a,b) (((a)<(b))?(a):(b))
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // __MICROPY_INCLUDED_FILESYSTEM_H__

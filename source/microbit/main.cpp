@@ -1,16 +1,14 @@
-#include "microbitdal.h"
-#include "microbitobj.h"
-#include "microbitdisplay.h"
-#include "microbitbutton.h"
-#include "modmusic.h"
+#include "lib/ticker.h"
+#include "lib/pwm.h"
+#include "microbit/filesystem.h"
+#include "microbit/microbitdal.h"
+#include "microbit/microbitobj.h"
+#include "microbit/microbitdisplay.h"
+#include "microbit/microbitbutton.h"
+#include "microbit/modmusic.h"
 
 extern "C" {
-#include "lib/ticker.h"
-#include "filesystem.h"
-#include "lib/pwm.h"
-
     void mp_run(void);
-    void pwm_init(void);
 }
 
 MicroBitDisplay ubit_display;
