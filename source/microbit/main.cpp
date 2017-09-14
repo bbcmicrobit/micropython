@@ -7,6 +7,7 @@
 #include "microbit/microbitbutton.h"
 #include "microbit/microbitcompass.h"
 #include "microbit/modmusic.h"
+#include "_newlib_version.h"
 
 // Global instances of the DAL components that we use
 MicroBitDisplay ubit_display;
@@ -120,7 +121,13 @@ typedef struct _appended_script_t {
 int main(void) {
     for (;;) {
         extern uint32_t __StackTop;
+#if __NEWLIB__ > 2 || (__NEWLIB__ == 2 && (__NEWLIB_MINOR__ > 4 || (__NEWLIB_MINOR == 4 && __NEWLIB_PATCHLEVEL > 0)))
+        // newlib >2.4.0 uses more RAM for locale data.
+#warning "Detected newlib >2.4.0 so reducing heap by 220 bytes. See https://github.com/bbcmicrobit/micropython/issues/363 for details."
+        static uint32_t mp_heap[10020 / sizeof(uint32_t)];
+#else
         static uint32_t mp_heap[10240 / sizeof(uint32_t)];
+#endif
 
         // Initialise memory regions: stack and MicroPython heap
         mp_stack_set_top(&__StackTop);
