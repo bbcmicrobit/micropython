@@ -26,7 +26,9 @@
 #ifndef __MICROPY_INCLUDED_MICROBIT_MICROBITOBJ_H__
 #define __MICROPY_INCLUDED_MICROBIT_MICROBITOBJ_H__
 
+#ifdef __cplusplus
 extern "C" {
+#endif
 
 #include "py/obj.h"
 #include "microbitpin.h"
@@ -43,6 +45,8 @@ extern volatile bool accelerometer_updating;
 
 extern void microbit_pin_init(void);
 
+#ifdef __cplusplus
 }
+#endif
 
 #endif // __MICROPY_INCLUDED_MICROBIT_MICROBITOBJ_H__
