@@ -41,8 +41,12 @@ void mp_hal_erase_line_from_cursor(unsigned int n_chars);
 
 void mp_hal_display_string(const char*);
 
-// dummy definition so we don't depend on virtpin
-#define mp_hal_pin_obj_t int
+// MicroPython low-level C API for pins
+#include "nrf_gpio.h"
+#include "microbit/microbitobj.h"
+#define mp_hal_pin_obj_t uint8_t
+#define mp_hal_get_pin_obj(o) microbit_obj_get_pin_name(o)
+#define mp_hal_pin_read(p) (int)nrf_gpio_pin_read(p)
 
 #ifdef __cplusplus
 }
