@@ -102,21 +102,21 @@ extern const struct _mp_obj_module_t audio_module;
 extern const struct _mp_obj_module_t speech_module;
 
 #define MICROPY_PORT_BUILTIN_MODULES \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_microbit), (mp_obj_t)&microbit_module }, \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_music), (mp_obj_t)&music_module }, \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_this), (mp_obj_t)&this_module }, \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_antigravity), (mp_obj_t)&antigravity_module }, \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_love), (mp_obj_t)&love_module }, \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_neopixel), (mp_obj_t)&neopixel_module }, \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_random), (mp_obj_t)&random_module }, \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_os), (mp_obj_t)&os_module }, \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_radio), (mp_obj_t)&radio_module }, \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_audio), (mp_obj_t)&audio_module }, \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_speech), (mp_obj_t)&speech_module }, \
+    { MP_ROM_QSTR(MP_QSTR_microbit), MP_ROM_PTR(&microbit_module) }, \
+    { MP_ROM_QSTR(MP_QSTR_music), MP_ROM_PTR(&music_module) }, \
+    { MP_ROM_QSTR(MP_QSTR_this), MP_ROM_PTR(&this_module) }, \
+    { MP_ROM_QSTR(MP_QSTR_antigravity), MP_ROM_PTR(&antigravity_module) }, \
+    { MP_ROM_QSTR(MP_QSTR_love), MP_ROM_PTR(&love_module) }, \
+    { MP_ROM_QSTR(MP_QSTR_neopixel), MP_ROM_PTR(&neopixel_module) }, \
+    { MP_ROM_QSTR(MP_QSTR_random), MP_ROM_PTR(&random_module) }, \
+    { MP_ROM_QSTR(MP_QSTR_os), MP_ROM_PTR(&os_module) }, \
+    { MP_ROM_QSTR(MP_QSTR_radio), MP_ROM_PTR(&radio_module) }, \
+    { MP_ROM_QSTR(MP_QSTR_audio), MP_ROM_PTR(&audio_module) }, \
+    { MP_ROM_QSTR(MP_QSTR_speech), MP_ROM_PTR(&speech_module) }, \
     \
     /* the following provide aliases for existing modules */ \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_collections), (mp_obj_t)&mp_module_collections }, \
-    { MP_OBJ_NEW_QSTR(MP_QSTR_struct), (mp_obj_t)&mp_module_ustruct }, \
+    { MP_ROM_QSTR(MP_QSTR_collections), MP_ROM_PTR(&mp_module_collections) }, \
+    { MP_ROM_QSTR(MP_QSTR_struct), MP_ROM_PTR(&mp_module_ustruct) }, \
 
 #define MP_STATE_PORT MP_STATE_VM
 
