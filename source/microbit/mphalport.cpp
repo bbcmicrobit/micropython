@@ -24,6 +24,8 @@
  * THE SOFTWARE.
  */
 
+#include "us_ticker_api.h"
+#include "wait_api.h"
 #include "MicroBitSystemTimer.h"
 #include "MicroBitSerial.h"
 
@@ -121,6 +123,10 @@ void mp_hal_display_string(const char *str) {
     microbit_display_scroll(&microbit_display_obj, str);
 }
 
+void mp_hal_delay_us(mp_uint_t us) {
+    wait_us(us);
+}
+
 void mp_hal_delay_ms(mp_uint_t ms) {
     if (ms <= 0) {
         return;
@@ -133,6 +139,14 @@ void mp_hal_delay_ms(mp_uint_t ms) {
         // Enter sleep mode, waiting for (at least) the SysTick interrupt
         __WFI();
     }
+}
+
+mp_uint_t mp_hal_ticks_us(void) {
+    return us_ticker_read();
+}
+
+mp_uint_t mp_hal_ticks_ms(void) {
+    return system_timer_current_time();
 }
 
 }
