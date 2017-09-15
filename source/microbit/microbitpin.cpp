@@ -70,8 +70,7 @@ mp_obj_t microbit_pin_write_digital(mp_obj_t self_in, mp_obj_t value_in) {
     if (val >> 1) {
         mp_raise_ValueError("value must be 0 or 1");
     }
-    if (microbit_pin_get_mode(self) != microbit_pin_mode_write_digital) {
-        microbit_obj_pin_acquire(self, microbit_pin_mode_write_digital);
+    if (microbit_obj_pin_acquire(self, microbit_pin_mode_write_digital)) {
         nrf_gpio_cfg_output(self->name);
     }
     if (val)
@@ -84,8 +83,7 @@ MP_DEFINE_CONST_FUN_OBJ_2(microbit_pin_write_digital_obj, microbit_pin_write_dig
 
 mp_obj_t microbit_pin_read_digital(mp_obj_t self_in) {
     microbit_pin_obj_t *self = (microbit_pin_obj_t*)self_in;
-    if (microbit_pin_get_mode(self) != microbit_pin_mode_read_digital) {
-        microbit_obj_pin_acquire(self, microbit_pin_mode_read_digital);
+    if (microbit_obj_pin_acquire(self, microbit_pin_mode_read_digital)) {
         nrf_gpio_cfg_input(self->name, NRF_GPIO_PIN_PULLDOWN);
     }
     return mp_obj_new_int(nrf_gpio_pin_read(self->name));
@@ -137,8 +135,7 @@ mp_obj_t microbit_pin_write_analog(mp_obj_t self_in, mp_obj_t value_in) {
     if (set_value < 0 || set_value > MICROBIT_PIN_MAX_OUTPUT) {
         mp_raise_ValueError("value must be between 0 and 1023");
     }
-    if (microbit_pin_get_mode(self) != microbit_pin_mode_write_analog) {
-        microbit_obj_pin_acquire(self, microbit_pin_mode_write_analog);
+    if (microbit_obj_pin_acquire(self, microbit_pin_mode_write_analog)) {
         nrf_gpio_cfg_output(self->name);
     }
     pwm_set_duty_cycle(self->name, set_value);

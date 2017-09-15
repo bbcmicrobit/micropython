@@ -75,9 +75,10 @@ extern const microbit_pinmode_t microbit_pinmodes[];
 void microbit_obj_pin_free(const microbit_pin_obj_t *pin);
 
 /** Acquire pin (causing analog/digital modes to release) for mode.
- * If pin is already in specified mode, this is a no-op.
+ * If pin is already in specified mode, this is a no-op and returns "false".
+ * Otherwise if the acquisition succeeds then it returns "true".
  * Not safe to call in an interrupt as it may raise if pin can't be acquired. */
-void microbit_obj_pin_acquire(const microbit_pin_obj_t *pin, const microbit_pinmode_t *mode);
+bool microbit_obj_pin_acquire(const microbit_pin_obj_t *pin, const microbit_pinmode_t *mode);
 
 bool microbit_pin_high_debounced(microbit_pin_obj_t *pin);
 

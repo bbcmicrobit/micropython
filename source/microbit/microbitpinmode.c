@@ -64,11 +64,14 @@ bool microbit_obj_pin_can_be_acquired(const microbit_pin_obj_t *pin) {
     return current_mode->release != pinmode_error;
 }
 
-void microbit_obj_pin_acquire(const microbit_pin_obj_t *pin, const microbit_pinmode_t *new_mode) {
+bool microbit_obj_pin_acquire(const microbit_pin_obj_t *pin, const microbit_pinmode_t *new_mode) {
     const microbit_pinmode_t *current_mode = microbit_pin_get_mode(pin);
     if (current_mode != new_mode) {
         current_mode->release(pin);
         set_mode(pin->number, new_mode);
+        return true;
+    } else {
+        return false;
     }
 }
 
