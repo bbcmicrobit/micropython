@@ -42,7 +42,7 @@
 #ifdef MP_CONFIGFILE
 #include MP_CONFIGFILE
 #else
-#include <mpconfigport.h>
+#include "microbit/mpconfigport.h"
 #endif
 
 // Any options not explicitly set in mpconfigport.h will get default
