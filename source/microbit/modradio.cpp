@@ -29,9 +29,21 @@ extern "C" {
 #include <stdio.h>
 #include <string.h>
 
+#include "us_ticker_api.h"
 #include "py/runtime0.h"
 #include "py/runtime.h"
+#include "py/smallint.h"
 #include "microbitobj.h"
+
+// Packets are stored in the queue as a sequence of bytes of the form:
+//
+//  len  - byte
+//  data - "len" bytes
+//  RSSI - byte
+//  time - 4 bytes, little endian, microsecond timestamp
+//
+// "len" is first because it is written by the hardware, followed by the data.
+#define RADIO_PACKET_OVERHEAD       (1 + 1 + 4) // 1 byte for len, 1 byte for RSSI, 4 bytes for time
 
 #define RADIO_DEFAULT_MAX_PAYLOAD   (32)
 #define RADIO_DEFAULT_QUEUE_LEN     (3)
@@ -75,11 +87,19 @@ void RADIO_IRQHandler(void) {
 
         // if the CRC was valid then accept the packet
         if (NRF_RADIO->CRCSTATUS == 1) {
-            //printf("rssi: %d\r\n", -NRF_RADIO->RSSISAMPLE);
+            // store RSSI as last byte in packet (needs to be negated to get actual dBm value)
+            rx_buf[1 + len] = NRF_RADIO->RSSISAMPLE;
+
+            // get and store the microsecond timestamp
+            uint32_t time = us_ticker_read();
+            rx_buf[1 + len + 1] = time & 0xff;
+            rx_buf[1 + len + 2] = (time >> 8) & 0xff;
+            rx_buf[1 + len + 3] = (time >> 16) & 0xff;
+            rx_buf[1 + len + 4] = (time >> 24) & 0xff;
 
             // only move the rx_buf pointer if there is enough room for another full packet
-            if (rx_buf + 1 + len + 1 + max_len <= buf_end) {
-                rx_buf += 1 + len;
+            if (rx_buf + RADIO_PACKET_OVERHEAD + len + RADIO_PACKET_OVERHEAD + max_len <= buf_end) {
+                rx_buf += RADIO_PACKET_OVERHEAD + len;
                 NRF_RADIO->PACKETPTR = (uint32_t)rx_buf;
             }
         }
@@ -110,7 +130,7 @@ static void radio_enable(void) {
     radio_disable();
 
     // allocate tx and rx buffers
-    size_t max_payload = radio_state.max_payload + 1; // an extra byte to store the length
+    size_t max_payload = radio_state.max_payload + RADIO_PACKET_OVERHEAD;
     size_t queue_len = radio_state.queue_len + 1; // one extra for tx buffer
     MP_STATE_PORT(radio_buf) = m_new(uint8_t, max_payload * queue_len);
     buf_end = MP_STATE_PORT(radio_buf) + max_payload * queue_len;
@@ -234,14 +254,14 @@ void radio_send(const void *buf, size_t len, const void *buf2, size_t len2) {
     NVIC_EnableIRQ(RADIO_IRQn);
 }
 
-static mp_obj_t radio_receive(bool typed_packet, mp_buffer_info_t *bufinfo) {
+static mp_obj_t radio_receive(bool typed_packet, mp_buffer_info_t *bufinfo, uint32_t *data_out) {
     ensure_enabled();
 
     // disable the radio irq while we receive the packet
     NVIC_DisableIRQ(RADIO_IRQn);
 
     // get the pointer to the next packet
-    uint8_t *buf = MP_STATE_PORT(radio_buf) + (NRF_RADIO->PCNF1 & 0xff) + 1; // skip tx buf
+    uint8_t *buf = MP_STATE_PORT(radio_buf) + (NRF_RADIO->PCNF1 & 0xff) + RADIO_PACKET_OVERHEAD; // skip tx buf
 
     // return None if there are no packets waiting
     if (rx_buf == buf) {
@@ -266,9 +286,18 @@ static mp_obj_t radio_receive(bool typed_packet, mp_buffer_info_t *bufinfo) {
         mp_raise_ValueError("received packet is not a string");
     }
 
+    if (data_out != NULL) {
+        // return the RSSI (to be interpreted as a signed value)
+        *data_out = -buf[1 + len];
+
+        // return the timestamp
+        data_out[1] = buf[1 + len + 1] | buf[1 + len + 2] << 8
+            | buf[1 + len + 3] << 16 | buf[1 + len + 4] << 24;
+    }
+
     // copy the rest of the packets down and restart the radio
-    memmove(buf, buf + 1 + len, rx_buf - (buf + 1 + len));
-    rx_buf -= 1 + len;
+    memmove(buf, buf + RADIO_PACKET_OVERHEAD + len, rx_buf - (buf + RADIO_PACKET_OVERHEAD + len));
+    rx_buf -= RADIO_PACKET_OVERHEAD + len;
     NRF_RADIO->PACKETPTR = (uint32_t)rx_buf;
     NRF_RADIO->EVENTS_END = 0;
     NRF_RADIO->TASKS_START = 1;
@@ -436,7 +465,7 @@ STATIC mp_obj_t mod_radio_send_bytes(mp_obj_t buf_in) {
 MP_DEFINE_CONST_FUN_OBJ_1(mod_radio_send_bytes_obj, mod_radio_send_bytes);
 
 STATIC mp_obj_t mod_radio_receive_bytes(void) {
-    return radio_receive(false, NULL);
+    return radio_receive(false, NULL, NULL);
 }
 MP_DEFINE_CONST_FUN_OBJ_0(mod_radio_receive_bytes_obj, mod_radio_receive_bytes);
 
@@ -449,16 +478,31 @@ STATIC mp_obj_t mod_radio_send(mp_obj_t buf_in) {
 MP_DEFINE_CONST_FUN_OBJ_1(mod_radio_send_obj, mod_radio_send);
 
 STATIC mp_obj_t mod_radio_receive(void) {
-    return radio_receive(true, NULL);
+    return radio_receive(true, NULL, NULL);
 }
 MP_DEFINE_CONST_FUN_OBJ_0(mod_radio_receive_obj, mod_radio_receive);
 
 STATIC mp_obj_t mod_radio_receive_bytes_into(mp_obj_t buf_in) {
     mp_buffer_info_t bufinfo;
     mp_get_buffer_raise(buf_in, &bufinfo, MP_BUFFER_WRITE);
-    return radio_receive(false, &bufinfo);
+    return radio_receive(false, &bufinfo, NULL);
 }
 MP_DEFINE_CONST_FUN_OBJ_1(mod_radio_receive_bytes_into_obj, mod_radio_receive_bytes_into);
+
+STATIC mp_obj_t mod_radio_receive_full(void) {
+    uint32_t data[2];
+    mp_obj_t bytes = radio_receive(false, NULL, data);
+    if (bytes == mp_const_none) {
+        return mp_const_none;
+    }
+    mp_obj_t t[3] = {
+        bytes,
+        MP_OBJ_NEW_SMALL_INT((int32_t)data[0]),
+        MP_OBJ_NEW_SMALL_INT(data[1] & (MICROPY_PY_UTIME_TICKS_PERIOD - 1))
+    };
+    return mp_obj_new_tuple(3, t);
+}
+MP_DEFINE_CONST_FUN_OBJ_0(mod_radio_receive_full_obj, mod_radio_receive_full);
 
 STATIC const mp_map_elem_t radio_module_globals_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR___name__), MP_OBJ_NEW_QSTR(MP_QSTR_radio) },
@@ -473,6 +517,7 @@ STATIC const mp_map_elem_t radio_module_globals_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_send), (mp_obj_t)&mod_radio_send_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_receive), (mp_obj_t)&mod_radio_receive_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_receive_bytes_into), (mp_obj_t)&mod_radio_receive_bytes_into_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_receive_full), (mp_obj_t)&mod_radio_receive_full_obj },
 
     { MP_OBJ_NEW_QSTR(MP_QSTR_RATE_250KBIT), MP_OBJ_NEW_SMALL_INT(RADIO_MODE_MODE_Nrf_250Kbit) },
     { MP_OBJ_NEW_QSTR(MP_QSTR_RATE_1MBIT), MP_OBJ_NEW_SMALL_INT(RADIO_MODE_MODE_Nrf_1Mbit) },
