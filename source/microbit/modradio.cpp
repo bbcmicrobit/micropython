@@ -53,6 +53,8 @@ extern "C" {
 #define RADIO_DEFAULT_PREFIX0       (0)
 #define RADIO_DEFAULT_DATA_RATE     (RADIO_MODE_MODE_Nrf_1Mbit)
 
+#define RADIO_MAX_CHANNEL           (83) // maximum allowed frequency is 2483.5 MHz
+
 typedef struct _radio_state_t {
     uint8_t max_payload;    // 1-251 inclusive
     uint8_t queue_len;      // 1-254 inclusive
@@ -351,7 +353,7 @@ STATIC mp_obj_t mod_radio_config(size_t n_args, const mp_obj_t *pos_args, mp_map
                     break;
 
                 case MP_QSTR_channel:
-                    if (!(0 <= value && value <= 100)) {
+                    if (!(0 <= value && value <= RADIO_MAX_CHANNEL)) {
                         goto value_error;
                     }
                     new_state.channel = value;
