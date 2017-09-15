@@ -179,6 +179,7 @@ static void radio_enable(void) {
 
     // configure interrupts
     NRF_RADIO->INTENSET = 0x00000008;
+    NVIC_SetPriority(RADIO_IRQn, 3);
     NVIC_ClearPendingIRQ(RADIO_IRQn);
     NVIC_EnableIRQ(RADIO_IRQn);
 
