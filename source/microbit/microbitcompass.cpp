@@ -24,6 +24,7 @@
  * THE SOFTWARE.
  */
 
+#include "microbit/memory.h"
 #include "microbit/microbitdal.h"
 
 extern "C" {
@@ -32,11 +33,23 @@ extern "C" {
 #include "py/runtime.h"
 #include "modmicrobit.h"
 #include "microbitdisplay.h"
+#include "microbitcompass.h"
+
+#define COMPASS_CALIBRATION_MAGIC (0xc011ba55)
 
 typedef struct _microbit_compass_obj_t {
     mp_obj_base_t base;
     MicroBitCompass *compass;
 } microbit_compass_obj_t;
+
+void microbit_compass_init(void) {
+    // load any peristent calibration data if it exists
+    uint32_t *persist = (uint32_t*)microbit_compass_calibration_page();
+    if (persist[0] == COMPASS_CALIBRATION_MAGIC) {
+        CompassSample samp = {(int)persist[1], (int)persist[2], (int)persist[3]};
+        ubit_compass.setCalibration(samp);
+    }
+}
 
 mp_obj_t microbit_compass_is_calibrated(mp_obj_t self_in) {
     microbit_compass_obj_t *self = (microbit_compass_obj_t*)self_in;
@@ -57,6 +70,14 @@ mp_obj_t microbit_compass_calibrate(mp_obj_t self_in) {
     //uBit.systemTicker.detach(); TODO what to replace with?
     ticker_start();
     microbit_display_init();
+
+    // store the calibration data
+    uint32_t *persist = (uint32_t*)microbit_compass_calibration_page();
+    CompassSample samp = self->compass->getCalibration();
+    uint32_t data[4] = {COMPASS_CALIBRATION_MAGIC, (uint32_t)samp.x, (uint32_t)samp.y, (uint32_t)samp.z};
+    persistent_erase_page(persist);
+    persistent_write_unchecked(persist, data, sizeof(data));
+
     return mp_const_none;
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_compass_calibrate_obj, microbit_compass_calibrate);

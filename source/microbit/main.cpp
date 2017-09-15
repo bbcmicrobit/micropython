@@ -5,6 +5,7 @@
 #include "microbit/microbitdal.h"
 #include "microbit/microbitobj.h"
 #include "microbit/microbitbutton.h"
+#include "microbit/microbitcompass.h"
 #include "microbit/modmusic.h"
 
 // Global instances of the DAL components that we use
@@ -136,6 +137,7 @@ int main(void) {
         microbit_display_init();
         microbit_filesystem_init();
         microbit_pin_init();
+        microbit_compass_init();
         pwm_init();
         MP_STATE_PORT(radio_buf) = NULL;
 

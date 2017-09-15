@@ -87,13 +87,7 @@ static inline void *last_page(void) {
 
 static void init_limits(void) {
     /* First determine where to end */
-    char *end;
-    if (microbit_mp_appended_script()[0] == 'M') {
-        end = microbit_mp_appended_script();
-    } else {
-        end = microbit_end_of_rom();
-    }
-    end = rounddown(end, persistent_page_size())-persistent_page_size();
+    char *end = (char*)microbit_compass_calibration_page() - persistent_page_size();
     last_page_index = (microbit_end_of_rom() - end)/persistent_page_size();
     /** Now find the start */
     char *start = roundup(end - CHUNK_SIZE*MAX_CHUNKS_IN_FILE_SYSTEM, persistent_page_size());
