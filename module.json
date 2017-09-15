@@ -10,9 +10,7 @@
     "microbit-dal":"lancaster-university/microbit-dal#v2.0.0-rc10"
   },
   "extraIncludes":[
-    "inc",
-    "inc/lib",
-    "inc/microbit"
+    "inc"
   ],
   "bin": "./source"
 }

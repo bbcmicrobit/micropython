@@ -25,16 +25,16 @@
  */
 
 #include <string.h>
-#include "microbitobj.h"
+#include "microbit/microbitobj.h"
 #include "nrf_gpio.h"
 
 extern "C" {
 #include "py/runtime.h"
 #include "py/gc.h"
-#include "modmicrobit.h"
-#include "microbitimage.h"
-#include "microbitdisplay.h"
-#include "microbitpin.h"
+#include "microbit/modmicrobit.h"
+#include "microbit/microbitimage.h"
+#include "microbit/microbitdisplay.h"
+#include "microbit/microbitpin.h"
 #include "lib/iters.h"
 #include "lib/ticker.h"
 

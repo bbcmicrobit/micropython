@@ -77,7 +77,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include <stdint.h>
 #include <stdlib.h>
 #include "nrf_gpio.h"
-#include "neopixel.h"
+#include "lib/neopixel.h"
 
 void neopixel_init(neopixel_strip_t *strip, uint8_t pin_num, uint16_t num_leds)
 {

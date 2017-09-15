@@ -3,7 +3,7 @@
 #define __MICROPY_INCLUDED_MICROBIT_DISPLAY_H__
 
 #include "py/runtime.h"
-#include "microbitimage.h"
+#include "microbit/microbitimage.h"
 
 typedef struct _microbit_display_obj_t {
     mp_obj_base_t base;

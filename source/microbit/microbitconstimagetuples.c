@@ -23,7 +23,7 @@
  */
 
 #include "py/runtime.h"
-#include "modmicrobit.h"
+#include "microbit/modmicrobit.h"
 
 const mp_obj_tuple_t microbit_const_image_all_clocks_tuple_obj = {
     {&mp_type_tuple},

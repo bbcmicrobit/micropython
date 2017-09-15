@@ -25,12 +25,12 @@
  */
 
 #include "MicroBitPin.h"
-#include "microbitobj.h"
+#include "microbit/microbitobj.h"
 
 extern "C" {
 
 #include "py/runtime.h"
-#include "modmicrobit.h"
+#include "microbit/modmicrobit.h"
 #include "lib/pwm.h"
 #include "microbit/microbitpin.h"
 #include "nrf_gpio.h"

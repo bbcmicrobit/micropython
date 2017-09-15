@@ -31,9 +31,9 @@ extern "C" {
 
 #include "lib/ticker.h"
 #include "py/runtime.h"
-#include "modmicrobit.h"
-#include "microbitdisplay.h"
-#include "microbitcompass.h"
+#include "microbit/modmicrobit.h"
+#include "microbit/microbitdisplay.h"
+#include "microbit/microbitcompass.h"
 
 #define COMPASS_CALIBRATION_MAGIC (0xc011ba55)
 

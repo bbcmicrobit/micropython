@@ -31,8 +31,8 @@
 extern "C" {
 
 #include "py/mphal.h"
-#include "microbitimage.h"
-#include "microbitdisplay.h"
+#include "microbit/microbitimage.h"
+#include "microbit/microbitdisplay.h"
 
 #define GET_PIXEL(x, y) microbit_display_get_pixel(&microbit_display_obj, x, y)
 #define SET_PIXEL(x, y, v) microbit_display_set_pixel(&microbit_display_obj, x, y, v)

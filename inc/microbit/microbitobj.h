@@ -31,7 +31,7 @@ extern "C" {
 #endif
 
 #include "py/obj.h"
-#include "microbitpin.h"
+#include "microbit/microbitpin.h"
 #include "PinNames.h"
 
 const microbit_pin_obj_t *microbit_obj_get_pin(mp_obj_t o);

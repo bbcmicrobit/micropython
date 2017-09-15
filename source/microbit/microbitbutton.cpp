@@ -27,10 +27,10 @@
 extern "C" {
 
 #include "py/runtime.h"
-#include "microbitobj.h"
-#include "microbitpin.h"
-#include "microbitbutton.h"
-#include "modmicrobit.h"
+#include "microbit/microbitobj.h"
+#include "microbit/microbitpin.h"
+#include "microbit/microbitbutton.h"
+#include "microbit/modmicrobit.h"
 #include "nrf_gpio.h"
 
 typedef struct _microbit_button_obj_t {

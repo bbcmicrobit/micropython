@@ -24,13 +24,13 @@
  * THE SOFTWARE.
  */
 
-#include "microbitdal.h"
+#include "microbit/microbitdal.h"
 
 extern "C" {
 
 #include "py/runtime.h"
-#include "modmicrobit.h"
-#include "microbitobj.h"
+#include "microbit/modmicrobit.h"
+#include "microbit/microbitobj.h"
 
 
 typedef struct _microbit_i2c_obj_t {

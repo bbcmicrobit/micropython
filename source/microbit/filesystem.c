@@ -32,8 +32,8 @@
 #include "py/obj.h"
 #include "py/gc.h"
 #include "py/stream.h"
-#include "filesystem.h"
-#include "memory.h"
+#include "microbit/filesystem.h"
+#include "microbit/memory.h"
 
 #define DEBUG_FILE 0
 #if DEBUG_FILE

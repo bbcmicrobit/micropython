@@ -24,15 +24,15 @@
  * THE SOFTWARE.
  */
 
-#include "microbitobj.h"
-#include "modmusic.h"
+#include "microbit/microbitobj.h"
+#include "microbit/modmusic.h"
 
 extern "C" {
 
 #include "py/runtime.h"
 #include "py/objstr.h"
 #include "py/mphal.h"
-#include "modmicrobit.h"
+#include "microbit/modmicrobit.h"
 #include "microbit/microbitobj.h"
 #include "microbit/microbitpin.h"
 #include "lib/ticker.h"

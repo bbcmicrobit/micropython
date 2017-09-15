@@ -34,8 +34,8 @@ extern "C" {
 #include "py/mpstate.h"
 #include "py/mphal.h"
 #include "lib/utils/interrupt_char.h"
-#include "microbitimage.h"
-#include "microbitdisplay.h"
+#include "microbit/microbitimage.h"
+#include "microbit/microbitdisplay.h"
 
 #define UART_RX_BUF_SIZE (64) // it's large so we can paste example code
 

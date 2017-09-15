@@ -25,7 +25,7 @@
  */
 
 #include "py/obj.h"
-#include "filesystem.h"
+#include "microbit/filesystem.h"
 #include "py/objtuple.h"
 #include "py/objstr.h"
 #include "genhdr/mpversion.h"

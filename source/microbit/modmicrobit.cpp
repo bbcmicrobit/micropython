@@ -33,7 +33,7 @@ extern "C" {
 #include "py/nlr.h"
 #include "py/obj.h"
 #include "py/mphal.h"
-#include "modmicrobit.h"
+#include "microbit/modmicrobit.h"
 
 static MicroBitThermometer ubit_thermometer;
 

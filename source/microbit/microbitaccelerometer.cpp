@@ -24,13 +24,13 @@
  * THE SOFTWARE.
  */
 
-#include "microbitdal.h"
+#include "microbit/microbitdal.h"
 #include "microbit/microbitaccelerometer.h"
 
 extern "C" {
 
 #include "py/runtime.h"
-#include "modmicrobit.h"
+#include "microbit/modmicrobit.h"
 
 typedef struct _microbit_accelerometer_obj_t {
     mp_obj_base_t base;

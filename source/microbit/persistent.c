@@ -29,7 +29,7 @@
 #include "py/nlr.h"
 #include "py/obj.h"
 #include "py/gc.h"
-#include "filesystem.h"
+#include "microbit/filesystem.h"
 #include "lib/ticker.h"
 
 #define DEBUG_PERSISTENT 0

@@ -28,9 +28,9 @@ extern "C" {
 
 #include "spi_api.h"
 #include "py/runtime.h"
-#include "modmicrobit.h"
-#include "microbitpin.h"
-#include "microbitobj.h"
+#include "microbit/modmicrobit.h"
+#include "microbit/microbitpin.h"
+#include "microbit/microbitobj.h"
 
 typedef struct _microbit_spi_obj_t {
     mp_obj_base_t base;

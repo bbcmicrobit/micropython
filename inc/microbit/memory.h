@@ -27,7 +27,7 @@
 #ifndef __MICROPY_INCLUDED_MEMORY_H__
 #define __MICROPY_INCLUDED_MEMORY_H__
 
-#include "filesystem.h"
+#include "microbit/filesystem.h"
 
 extern uint32_t __data_end__;
 extern uint32_t __data_start__;
