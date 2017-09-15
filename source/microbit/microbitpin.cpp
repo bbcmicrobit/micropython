@@ -99,11 +99,8 @@ mp_obj_t microbit_pin_set_pull(mp_obj_t self_in, mp_obj_t pull_in) {
     if (((1 << pull) & SHIFT_PULL_MASK) == 0) {
         mp_raise_ValueError("invalid pull");
     }
-    const microbit_pinmode_t *mode = microbit_pin_get_mode(self);
     /* Pull only applies in an read digital mode */
-    if (mode != microbit_pin_mode_read_digital) {
-        pinmode_error(self);
-    }
+    microbit_obj_pin_acquire(self, microbit_pin_mode_read_digital);
     nrf_gpio_cfg_input(self->name, (nrf_gpio_pin_pull_t)pull);
     return mp_const_none;
 }
