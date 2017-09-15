@@ -425,12 +425,6 @@ MP_DEFINE_CONST_FUN_OBJ_KW(microbit_display_scroll_obj, 1, microbit_display_scro
 mp_obj_t microbit_display_on_func(mp_obj_t obj) {
     microbit_display_obj_t *self = (microbit_display_obj_t*)obj;
     /* Try to reclaim the pins we need */
-    microbit_obj_pin_fail_if_cant_acquire(&microbit_p3_obj);
-    microbit_obj_pin_fail_if_cant_acquire(&microbit_p4_obj);
-    microbit_obj_pin_fail_if_cant_acquire(&microbit_p6_obj);
-    microbit_obj_pin_fail_if_cant_acquire(&microbit_p7_obj);
-    microbit_obj_pin_fail_if_cant_acquire(&microbit_p9_obj);
-    microbit_obj_pin_fail_if_cant_acquire(&microbit_p10_obj);
     microbit_obj_pin_acquire(&microbit_p3_obj, microbit_pin_mode_display);
     microbit_obj_pin_acquire(&microbit_p4_obj, microbit_pin_mode_display);
     microbit_obj_pin_acquire(&microbit_p6_obj, microbit_pin_mode_display);

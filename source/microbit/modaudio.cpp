@@ -171,7 +171,6 @@ static void init_pin(const microbit_pin_obj_t *p0) {
 }
 
 static void init_pins(const microbit_pin_obj_t *p0, const microbit_pin_obj_t *p1) {
-    microbit_obj_pin_fail_if_cant_acquire(p0);
     microbit_obj_pin_acquire(p1, microbit_pin_mode_audio_play);
     microbit_obj_pin_acquire(p0, microbit_pin_mode_audio_play);
     pin0 = p0;

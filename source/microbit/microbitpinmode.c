@@ -53,14 +53,6 @@ static void set_mode(uint32_t pin, const microbit_pinmode_t *mode) {
     return;
 }
 
-
-void microbit_obj_pin_fail_if_cant_acquire(const microbit_pin_obj_t *pin) {
-    const microbit_pinmode_t *current_mode = microbit_pin_get_mode(pin);
-    if (current_mode->release == pinmode_error) {
-        pinmode_error(pin);
-    }
-}
-
 void microbit_obj_pin_free(const microbit_pin_obj_t *pin) {
     if (pin != NULL) {
         set_mode(pin->number, microbit_pin_mode_unused);

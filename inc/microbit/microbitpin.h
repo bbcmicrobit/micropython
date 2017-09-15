@@ -69,9 +69,6 @@ extern const microbit_pinmode_t microbit_pinmodes[];
 #define microbit_pin_mode_i2c           (&microbit_pinmodes[MODE_I2C])
 #define microbit_pin_mode_spi           (&microbit_pinmodes[MODE_SPI])
 
-/** Can this pin be acquired? Safe to call in an interrupt. Not safe to call in an interrupt. */
-void microbit_obj_pin_fail_if_cant_acquire(const microbit_pin_obj_t *pin);
-
 /** Release pin for use by other modes. Safe to call in an interrupt.
  * If pin is NULL or pin already unused, then this is a no-op
  */
@@ -79,7 +76,7 @@ void microbit_obj_pin_free(const microbit_pin_obj_t *pin);
 
 /** Acquire pin (causing analog/digital modes to release) for mode.
  * If pin is already in specified mode, this is a no-op.
- * Not safe to call in an interrupt as it may raise. */
+ * Not safe to call in an interrupt as it may raise if pin can't be acquired. */
 void microbit_obj_pin_acquire(const microbit_pin_obj_t *pin, const microbit_pinmode_t *mode);
 
 bool microbit_pin_high_debounced(microbit_pin_obj_t *pin);
