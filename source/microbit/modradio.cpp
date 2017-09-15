@@ -254,7 +254,7 @@ void radio_send(const void *buf, size_t len, const void *buf2, size_t len2) {
     NVIC_EnableIRQ(RADIO_IRQn);
 }
 
-static mp_obj_t radio_receive(bool typed_packet, mp_buffer_info_t *bufinfo, uint32_t *data_out) {
+static mp_obj_t radio_receive(uint8_t *header, mp_buffer_info_t *bufinfo, uint32_t *data_out) {
     ensure_enabled();
 
     // disable the radio irq while we receive the packet
@@ -272,18 +272,16 @@ static mp_obj_t radio_receive(bool typed_packet, mp_buffer_info_t *bufinfo, uint
     // convert the packet data into a Python object
     size_t len = buf[0];
     mp_obj_t ret;
-    if (!typed_packet) {
+    if (header == NULL) {
         if (bufinfo == NULL) {
             ret = mp_obj_new_bytes(buf + 1, len); // if it raises the radio irq remains disabled...
         } else {
             memmove(bufinfo->buf, buf+1, len < bufinfo->len ? len : bufinfo->len);
             ret = MP_OBJ_NEW_SMALL_INT(len);
         }
-    } else if (len >= 3 && buf[1] == 1 && buf[2] == 0 && buf[3] == 1) {
-        ret = mp_obj_new_str((char*)buf + 4, len - 3, false); // if it raises the radio irq remains disabled...
     } else {
-        NVIC_EnableIRQ(RADIO_IRQn);
-        mp_raise_ValueError("received packet is not a string");
+        memcpy(header, buf, 4);
+        ret = mp_obj_new_str((char*)buf + 4, len - 3, false); // if it raises the radio irq remains disabled...
     }
 
     if (data_out != NULL) {
@@ -465,7 +463,7 @@ STATIC mp_obj_t mod_radio_send_bytes(mp_obj_t buf_in) {
 MP_DEFINE_CONST_FUN_OBJ_1(mod_radio_send_bytes_obj, mod_radio_send_bytes);
 
 STATIC mp_obj_t mod_radio_receive_bytes(void) {
-    return radio_receive(false, NULL, NULL);
+    return radio_receive(NULL, NULL, NULL);
 }
 MP_DEFINE_CONST_FUN_OBJ_0(mod_radio_receive_bytes_obj, mod_radio_receive_bytes);
 
@@ -478,20 +476,26 @@ STATIC mp_obj_t mod_radio_send(mp_obj_t buf_in) {
 MP_DEFINE_CONST_FUN_OBJ_1(mod_radio_send_obj, mod_radio_send);
 
 STATIC mp_obj_t mod_radio_receive(void) {
-    return radio_receive(true, NULL, NULL);
+    uint8_t header[4];
+    mp_obj_t obj = radio_receive(header, NULL, NULL);
+    // verify header has the correct values
+    if (obj != mp_const_none && !(header[0] >= 3 && header[1] == 1 && header[2] == 0 && header[3] == 1)) {
+        mp_raise_ValueError("received packet is not a string");
+    }
+    return obj;
 }
 MP_DEFINE_CONST_FUN_OBJ_0(mod_radio_receive_obj, mod_radio_receive);
 
 STATIC mp_obj_t mod_radio_receive_bytes_into(mp_obj_t buf_in) {
     mp_buffer_info_t bufinfo;
     mp_get_buffer_raise(buf_in, &bufinfo, MP_BUFFER_WRITE);
-    return radio_receive(false, &bufinfo, NULL);
+    return radio_receive(NULL, &bufinfo, NULL);
 }
 MP_DEFINE_CONST_FUN_OBJ_1(mod_radio_receive_bytes_into_obj, mod_radio_receive_bytes_into);
 
 STATIC mp_obj_t mod_radio_receive_full(void) {
     uint32_t data[2];
-    mp_obj_t bytes = radio_receive(false, NULL, data);
+    mp_obj_t bytes = radio_receive(NULL, NULL, data);
     if (bytes == mp_const_none) {
         return mp_const_none;
     }
