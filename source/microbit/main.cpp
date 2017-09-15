@@ -123,7 +123,7 @@ int main(void) {
 #if __NEWLIB__ > 2 || (__NEWLIB__ == 2 && (__NEWLIB_MINOR__ > 4 || (__NEWLIB_MINOR == 4 && __NEWLIB_PATCHLEVEL > 0)))
         // newlib >2.4.0 uses more RAM for locale data.
         // https://github.com/bbcmicrobit/micropython/issues/363
-        static uint32_t mp_heap[10052 / sizeof(uint32_t)];
+        static uint32_t mp_heap[10020 / sizeof(uint32_t)];
 #else
         static uint32_t mp_heap[10240 / sizeof(uint32_t)];
 #endif
