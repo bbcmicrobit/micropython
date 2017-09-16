@@ -32,10 +32,9 @@ extern "C" {
 
 #include "py/obj.h"
 #include "microbit/microbitpin.h"
-#include "PinNames.h"
 
 const microbit_pin_obj_t *microbit_obj_get_pin(mp_obj_t o);
-PinName microbit_obj_get_pin_name(mp_obj_t o);
+uint8_t microbit_obj_get_pin_name(mp_obj_t o);
 
 extern volatile bool compass_up_to_date;
 extern volatile bool compass_updating;

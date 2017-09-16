@@ -29,7 +29,6 @@
 #include "nrf_gpio.h"
 #include "py/runtime.h"
 #include "py/gc.h"
-#include "PinNames.h"
 
 #define PWM_TICKER_INDEX 2
 

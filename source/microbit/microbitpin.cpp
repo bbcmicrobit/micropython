@@ -312,8 +312,8 @@ const microbit_pin_obj_t *microbit_obj_get_pin(mp_obj_t o) {
     }
 }
 
-PinName microbit_obj_get_pin_name(mp_obj_t o) {
-    return (PinName)microbit_obj_get_pin(o)->name;
+uint8_t microbit_obj_get_pin_name(mp_obj_t o) {
+    return microbit_obj_get_pin(o)->name;
 }
 
 }

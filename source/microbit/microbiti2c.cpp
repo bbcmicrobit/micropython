@@ -55,10 +55,10 @@ STATIC mp_obj_t microbit_i2c_init(mp_uint_t n_args, const mp_obj_t *pos_args, mp
     PinName p_scl = I2C_SCL0;
 
     if (args[1].u_obj != mp_const_none) {
-        p_sda = microbit_obj_get_pin_name(args[1].u_obj);
+        p_sda = (PinName)microbit_obj_get_pin_name(args[1].u_obj);
     }
     if (args[2].u_obj != mp_const_none) {
-        p_scl = microbit_obj_get_pin_name(args[2].u_obj);
+        p_scl = (PinName)microbit_obj_get_pin_name(args[2].u_obj);
     }
     self->i2c->set_pins(p_sda, p_scl);
 
