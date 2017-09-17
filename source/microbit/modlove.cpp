@@ -29,10 +29,9 @@
 
 extern "C" {
 
-#include "microbit/modmicrobit.h"
 #include "py/mphal.h"
-#include "microbit/microbitimage.h"
-#include "microbit/microbitdisplay.h"
+#include "microbit/modmicrobit.h"
+#include "microbit/microbit_image.h"
 
 static const mp_float_t bright[7] = {
     0.0, 1.0/9, 2.0/9, 4.0/9, 6.0/9, 7.0/9, 1.0,

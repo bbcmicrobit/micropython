@@ -25,7 +25,6 @@
  */
 
 #include "microbit/microbitdal.h"
-#include "microbit/microbitaccelerometer.h"
 
 extern "C" {
 

@@ -43,7 +43,7 @@ void mp_hal_display_string(const char*);
 
 // MicroPython low-level C API for pins
 #include "nrf_gpio.h"
-#include "microbit/microbitobj.h"
+#include "microbit/modmicrobit.h"
 #define mp_hal_pin_obj_t uint8_t
 #define mp_hal_get_pin_obj(o) microbit_obj_get_pin_name(o)
 #define mp_hal_pin_read(p) (int)nrf_gpio_pin_read(p)

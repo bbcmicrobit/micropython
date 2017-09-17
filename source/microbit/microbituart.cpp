@@ -32,8 +32,6 @@ extern "C" {
 #include "py/stream.h"
 #include "py/mphal.h"
 #include "microbit/modmicrobit.h"
-#include "microbit/microbitpin.h"
-#include "microbit/microbitobj.h"
 
 // There is only one UART peripheral and it's already used by stdio (and
 // connected to USB serial).  So to access the UART we go through the

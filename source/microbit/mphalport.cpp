@@ -31,11 +31,10 @@
 
 extern "C" {
 
-#include "py/mpstate.h"
+#include "py/runtime.h"
 #include "py/mphal.h"
 #include "lib/utils/interrupt_char.h"
-#include "microbit/microbitimage.h"
-#include "microbit/microbitdisplay.h"
+#include "microbit/modmicrobit.h"
 
 #define UART_RX_BUF_SIZE (64) // it's large so we can paste example code
 

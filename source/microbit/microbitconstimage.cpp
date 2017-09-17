@@ -24,14 +24,11 @@
  * THE SOFTWARE.
  */
 
-#include "microbit/microbitobj.h"
-
 extern "C" {
 
 #include "py/runtime.h"
 #include "microbit/modmicrobit.h"
-#include "microbit/microbitimage.h"
-
+#include "microbit/microbit_image.h"
 
 #define IMAGE_T const monochrome_5by5_t
 

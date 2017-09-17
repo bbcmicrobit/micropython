@@ -25,17 +25,14 @@
  */
 
 #include "MicroBitPin.h"
-#include "microbit/microbitobj.h"
 
 extern "C" {
 
-#include "py/runtime.h"
-#include "microbit/modmicrobit.h"
-#include "lib/pwm.h"
-#include "microbit/microbitpin.h"
 #include "nrf_gpio.h"
+#include "py/runtime.h"
 #include "py/mphal.h"
-
+#include "lib/pwm.h"
+#include "microbit/modmicrobit.h"
 
 const microbit_pin_obj_t microbit_p0_obj = {{&microbit_touch_pin_type}, 0, MICROBIT_PIN_P0, MODE_UNUSED};
 const microbit_pin_obj_t microbit_p1_obj = {{&microbit_touch_pin_type}, 1, MICROBIT_PIN_P1, MODE_UNUSED};

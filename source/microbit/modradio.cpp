@@ -33,7 +33,7 @@ extern "C" {
 #include "py/runtime0.h"
 #include "py/runtime.h"
 #include "py/smallint.h"
-#include "microbit/microbitobj.h"
+#include "microbit/modmicrobit.h"
 
 // Packets are stored in the queue as a sequence of bytes of the form:
 //

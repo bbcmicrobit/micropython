@@ -26,12 +26,9 @@
 
 extern "C" {
 
-#include "py/runtime.h"
-#include "microbit/microbitobj.h"
-#include "microbit/microbitpin.h"
-#include "microbit/microbitbutton.h"
-#include "microbit/modmicrobit.h"
 #include "nrf_gpio.h"
+#include "py/runtime.h"
+#include "microbit/modmicrobit.h"
 
 typedef struct _microbit_button_obj_t {
     mp_obj_base_t base;

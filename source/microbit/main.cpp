@@ -3,10 +3,6 @@
 #include "microbit/memory.h"
 #include "microbit/filesystem.h"
 #include "microbit/microbitdal.h"
-#include "microbit/microbitobj.h"
-#include "microbit/microbitbutton.h"
-#include "microbit/microbitcompass.h"
-#include "microbit/modmusic.h"
 #include "_newlib_version.h"
 
 // Global instances of the DAL components that we use
@@ -18,14 +14,15 @@ MicroBitCompassCalibrator ubit_compass_calibrator(ubit_compass, ubit_acceleromet
 
 extern "C" {
 
-#include "py/mpstate.h"
 #include "py/stackctrl.h"
 #include "py/gc.h"
 #include "py/compile.h"
+#include "py/runtime.h"
 #include "py/mphal.h"
 #include "lib/mp-readline/readline.h"
 #include "lib/utils/pyexec.h"
-#include "microbit/microbitdisplay.h"
+#include "microbit/modmicrobit.h"
+#include "microbit/modmusic.h"
 
 void microbit_ticker(void) {
     // Update compass if it is calibrating, but not if it is still

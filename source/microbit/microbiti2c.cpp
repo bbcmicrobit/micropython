@@ -30,8 +30,6 @@ extern "C" {
 
 #include "py/runtime.h"
 #include "microbit/modmicrobit.h"
-#include "microbit/microbitobj.h"
-
 
 typedef struct _microbit_i2c_obj_t {
     mp_obj_base_t base;

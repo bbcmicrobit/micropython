@@ -25,8 +25,8 @@
  */
 
 #include "py/runtime.h"
-#include "microbit/microbitpin.h"
 #include "lib/pwm.h"
+#include "microbit/modmicrobit.h"
 
 uint8_t microbit_pinmode_indices[32] = { 0 };
 

@@ -24,19 +24,15 @@
  * THE SOFTWARE.
  */
 
-#include "microbit/microbitobj.h"
-#include "microbit/modmusic.h"
-
 extern "C" {
 
 #include "py/runtime.h"
 #include "py/objstr.h"
 #include "py/mphal.h"
-#include "microbit/modmicrobit.h"
-#include "microbit/microbitobj.h"
-#include "microbit/microbitpin.h"
 #include "lib/ticker.h"
 #include "lib/pwm.h"
+#include "microbit/modmicrobit.h"
+#include "microbit/modmusic.h"
 
 #define DEFAULT_BPM      120
 #define DEFAULT_TICKS    4 // i.e. 4 ticks per beat

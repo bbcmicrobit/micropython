@@ -31,7 +31,7 @@ extern "C" {
 #include "py/runtime0.h"
 #include "py/runtime.h"
 #include "lib/neopixel.h"
-#include "microbit/microbitobj.h"
+#include "microbit/modmicrobit.h"
 
 extern const mp_obj_type_t neopixel_type;
 

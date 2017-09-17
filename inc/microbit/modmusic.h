@@ -26,8 +26,6 @@
 #ifndef MICROPY_INCLUDED_MICROBIT_MUSIC_H
 #define MICROPY_INCLUDED_MICROBIT_MUSIC_H
 
-extern "C" {
-
 #include "py/objtuple.h"
 
 extern const struct _mp_obj_tuple_t microbit_music_tune_dadadadum_obj;
@@ -53,7 +51,5 @@ extern const struct _mp_obj_tuple_t microbit_music_tune_power_up_obj;
 extern const struct _mp_obj_tuple_t microbit_music_tune_power_down_obj;
 
 void microbit_music_tick(void);
-
-}
 
 #endif // MICROPY_INCLUDED_MICROBIT_MUSIC_H

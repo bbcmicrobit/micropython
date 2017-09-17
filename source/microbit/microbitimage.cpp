@@ -25,15 +25,14 @@
  */
 
 #include <string.h>
-#include "microbit/microbitobj.h"
 #include "MicroBitFont.h"
 
 extern "C" {
 
+#include "py/runtime0.h"
 #include "py/runtime.h"
 #include "microbit/modmicrobit.h"
-#include "microbit/microbitimage.h"
-#include "py/runtime0.h"
+#include "microbit/microbit_image.h"
 
 #define min(a,b) (((a)<(b))?(a):(b))
 #define max(a,b) (((a)>(b))?(a):(b))

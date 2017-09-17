@@ -26,7 +26,11 @@
 
 #include "EventModel.h"
 #include "microbit/microbitdal.h"
-#include "microbit/microbitaccelerometer.h"
+#include "microbit/modmicrobit.h"
+
+extern "C" {
+    extern void microbit_accelerometer_event_handler(const MicroBitEvent*);
+}
 
 class MicroPythonEventHandler : public EventModel {
 public:

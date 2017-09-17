@@ -28,7 +28,6 @@
 
 extern "C" {
 
-#include "microbit/modmicrobit.h"
 #include "gpio_api.h"
 #include "device.h"
 #include "nrf_gpio.h"
@@ -42,9 +41,8 @@ extern "C" {
 #include "py/objstr.h"
 #include "py/mphal.h"
 #include "py/gc.h"
+#include "microbit/modmicrobit.h"
 #include "microbit/modaudio.h"
-#include "microbit/microbitobj.h"
-#include "microbit/microbitpin.h"
 
 #define TheTimer NRF_TIMER1
 #define TheTimer_IRQn TIMER1_IRQn
