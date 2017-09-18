@@ -182,6 +182,9 @@ int main(void) {
         // Print the special string for pyboard.py to detect the soft reset
         mp_hal_stdout_tx_str("soft reboot\r\n");
 
+        // Stop the ticker to prevent any background tasks from running
+        ticker_stop();
+
         // Reset state associated with background tasks
         memset(&MP_STATE_PORT(async_data)[0], 0, sizeof(MP_STATE_PORT(async_data)));
         MP_STATE_PORT(music_data) = NULL;
