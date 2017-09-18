@@ -146,8 +146,6 @@ extern const struct _mp_obj_module_t machine_module;
     void *audio_buffer; \
     void *audio_source; \
     void *speech_data; \
-    const struct _pwm_events *pwm_active_events; \
-    const struct _pwm_events *pwm_pending_events; \
     struct _music_data_t *music_data; \
 
 // type definitions for the specific machine
