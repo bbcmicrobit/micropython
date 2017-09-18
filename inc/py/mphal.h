@@ -31,7 +31,7 @@
 #ifdef MICROPY_MPHALPORT_H
 #include MICROPY_MPHALPORT_H
 #else
-#include "microbit/mphalport.h"
+#include <mphalport.h>
 #endif
 
 #ifndef mp_hal_stdin_rx_chr
