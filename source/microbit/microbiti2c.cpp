@@ -113,7 +113,7 @@ STATIC mp_obj_t microbit_i2c_read(mp_uint_t n_args, const mp_obj_t *pos_args, mp
     vstr_init_len(&vstr, args[1].u_int);
     int err = self->i2c->read(args[0].u_int << 1, vstr.buf, vstr.len, args[2].u_bool);
     if (err != MICROBIT_OK) {
-        nlr_raise(mp_obj_new_exception_msg_varg(&mp_type_OSError, "I2C read failed with error code %d", err));
+        nlr_raise(mp_obj_new_exception_msg_varg(&mp_type_OSError, "I2C read error %d", err));
     }
     // return bytes object with read data
     return mp_obj_new_str_from_vstr(&mp_type_bytes, &vstr);
@@ -137,7 +137,7 @@ STATIC mp_obj_t microbit_i2c_write(mp_uint_t n_args, const mp_obj_t *pos_args, m
     mp_get_buffer_raise(args[1].u_obj, &bufinfo, MP_BUFFER_READ);
     int err = self->i2c->write(args[0].u_int << 1, (char*)bufinfo.buf, bufinfo.len, args[2].u_bool);
     if (err != MICROBIT_OK) {
-        nlr_raise(mp_obj_new_exception_msg_varg(&mp_type_OSError, "I2C write failed with error code %d", err));
+        nlr_raise(mp_obj_new_exception_msg_varg(&mp_type_OSError, "I2C write error %d", err));
     }
     return mp_const_none;
 
