@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Damien P. George
+ * Copyright (c) 2015-2017 Damien P. George
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -66,6 +66,36 @@ STATIC mp_obj_t microbit_i2c_init(mp_uint_t n_args, const mp_obj_t *pos_args, mp
 }
 MP_DEFINE_CONST_FUN_OBJ_KW(microbit_i2c_init_obj, 1, microbit_i2c_init);
 
+// Probe the given I2C address with an empty write to see if a device responds with an ACK
+STATIC bool i2c_probe(i2c_t *obj, uint8_t address) {
+    obj->i2c->ADDRESS = address;
+    obj->i2c->SHORTS = 0;
+    obj->i2c->TASKS_STARTTX = 1;
+    obj->i2c->EVENTS_STOPPED = 0;
+    obj->i2c->TASKS_STOP = 1;
+    uint32_t timeout = 10000;
+    while (!obj->i2c->EVENTS_STOPPED && timeout > 0) {
+        --timeout;
+    }
+    bool ack = timeout > 0 && obj->i2c->ERRORSRC == 0;
+    i2c_reset(obj);
+    return ack;
+}
+
+STATIC mp_obj_t microbit_i2c_scan(mp_obj_t self_in) {
+    microbit_i2c_obj_t *self = (microbit_i2c_obj_t*)MP_OBJ_TO_PTR(self_in);
+    i2c_t *obj = self->i2c->get_i2c_obj();
+    mp_obj_t list = mp_obj_new_list(0, NULL);
+    // 7-bit addresses 0b0000xxx and 0b1111xxx are reserved
+    for (int addr = 0x08; addr < 0x78; ++addr) {
+        if (i2c_probe(obj, addr)) {
+            mp_obj_list_append(list, MP_OBJ_NEW_SMALL_INT(addr));
+        }
+    }
+    return list;
+}
+MP_DEFINE_CONST_FUN_OBJ_1(microbit_i2c_scan_obj, microbit_i2c_scan);
+
 STATIC mp_obj_t microbit_i2c_read(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
     static const mp_arg_t allowed_args[] = {
         { MP_QSTR_addr,     MP_ARG_REQUIRED | MP_ARG_INT, {.u_int = 0} },
@@ -116,6 +146,7 @@ MP_DEFINE_CONST_FUN_OBJ_KW(microbit_i2c_write_obj, 1, microbit_i2c_write);
 
 STATIC const mp_map_elem_t microbit_i2c_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_init), (mp_obj_t)&microbit_i2c_init_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_scan), (mp_obj_t)&microbit_i2c_scan_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_read), (mp_obj_t)&microbit_i2c_read_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_write), (mp_obj_t)&microbit_i2c_write_obj },
 };

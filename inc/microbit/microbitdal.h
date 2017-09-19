@@ -39,6 +39,9 @@ class MicroPythonI2C : public MicroBitI2C {
             _i2c.sda = sda;
             _i2c.scl = scl;
         }
+        i2c_t *get_i2c_obj() {
+            return &_i2c;
+        }
 };
 
 extern MicroPythonI2C ubit_i2c;
