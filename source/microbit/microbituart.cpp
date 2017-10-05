@@ -27,6 +27,7 @@
 extern "C" {
 
 #include <errno.h>
+#include "pinmap.h"
 #include "serial_api.h"
 #include "py/runtime.h"
 #include "py/stream.h"
@@ -86,8 +87,18 @@ STATIC mp_obj_t microbit_uart_init(mp_uint_t n_args, const mp_obj_t *pos_args, m
     }
 
     // initialise the uart
+    // Note: we don't want to call serial_init() because it sends a single 0x00
+    // character on the line during initialisation.  This function has anyway
+    // already been called by the MicroBitSerial constructor so it's enough to
+    // just reconfigure the pins here, as would have been done by serial_init().
     serial_t serial;
-    serial_init(&serial, p_tx, p_rx);
+    serial.uart = NRF_UART0;
+    NRF_GPIO->DIR |= (1 << p_tx);
+    NRF_GPIO->DIR &= ~(1 << p_rx);
+    NRF_UART0->PSELTXD = p_tx;
+    NRF_UART0->PSELRXD = p_rx;
+    pin_mode(p_tx, PullUp);
+    pin_mode(p_rx, PullUp);
     serial_baud(&serial, args[0].u_int);
     serial_format(&serial, args[1].u_int, parity, args[3].u_int);
 
