@@ -43,6 +43,9 @@ typedef struct _microbit_uart_obj_t {
     mp_obj_base_t base;
 } microbit_uart_obj_t;
 
+// timeout (in ms) to wait between characters when reading
+STATIC uint16_t microbit_uart_timeout_char = 0;
+
 STATIC mp_obj_t microbit_uart_init(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
     static const mp_arg_t allowed_args[] = {
         { MP_QSTR_baudrate, MP_ARG_INT, {.u_int = 9600} },
@@ -102,6 +105,9 @@ STATIC mp_obj_t microbit_uart_init(mp_uint_t n_args, const mp_obj_t *pos_args, m
     serial_baud(&serial, args[0].u_int);
     serial_format(&serial, args[1].u_int, parity, args[3].u_int);
 
+    // set the character read timeout based on the baudrate and 13 bits
+    microbit_uart_timeout_char = 13000 / args[0].u_int + 1;
+
     return mp_const_none;
 }
 MP_DEFINE_CONST_FUN_OBJ_KW(microbit_uart_init_obj, 1, microbit_uart_init);
@@ -131,6 +137,20 @@ STATIC const mp_map_elem_t microbit_uart_locals_dict_table[] = {
 
 STATIC MP_DEFINE_CONST_DICT(microbit_uart_locals_dict, microbit_uart_locals_dict_table);
 
+// Waits at most timeout_ms for at least 1 char to become ready for reading.
+// Returns true if something available, false if not.
+STATIC bool microbit_uart_rx_wait(uint32_t timeout_ms) {
+    uint32_t start = mp_hal_ticks_ms();
+    for (;;) {
+        if (mp_hal_stdin_rx_any()) {
+            return true; // have at least 1 character waiting
+        }
+        if (mp_hal_ticks_ms() - start >= timeout_ms) {
+            return false; // timeout
+        }
+    }
+}
+
 STATIC mp_uint_t microbit_uart_read(mp_obj_t self_in, void *buf_in, mp_uint_t size, int *errcode) {
     (void)self_in;
     byte *buf = (byte*)buf_in;
@@ -151,7 +171,7 @@ STATIC mp_uint_t microbit_uart_read(mp_obj_t self_in, void *buf_in, mp_uint_t si
     byte *orig_buf = buf;
     for (;;) {
         *buf++ = mp_hal_stdin_rx_chr();
-        if (--size == 0 || !mp_hal_stdin_rx_any()) {
+        if (--size == 0 || !microbit_uart_rx_wait(microbit_uart_timeout_char)) {
             // return number of bytes read
             return buf - orig_buf;
         }
