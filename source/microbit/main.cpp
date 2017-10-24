@@ -137,6 +137,7 @@ int main(void) {
         readline_init0();
 
         // Initialise the micro:bit peripherals
+        microbit_seed_random();
         ubit_display.disable();
         microbit_display_init();
         microbit_filesystem_init();
