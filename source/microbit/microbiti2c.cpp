@@ -60,7 +60,10 @@ STATIC mp_obj_t microbit_i2c_init(mp_uint_t n_args, const mp_obj_t *pos_args, mp
     }
     self->i2c->set_pins(p_sda, p_scl);
 
-    self->i2c->frequency(args[0].u_int); // also does i2c_reset()
+    self->i2c->frequency(args[0].u_int);
+
+    // Call underlying mbed i2c_reset to reconfigure the pins and reset the peripheral
+    i2c_reset(self->i2c->get_i2c_obj());
 
     return mp_const_none;
 }
