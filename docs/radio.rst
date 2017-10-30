@@ -14,7 +14,7 @@ The radio module is conceptually very simple:
 * Broadcasts are at a certain level of power - more power means more range.
 * Messages are filtered by address (like a house number) and group (like a named recipient at the specified address).
 * The rate of throughput can be one of three pre-determined settings.
-* Send and receieve bytes to work with arbitrary data.
+* Send and receive bytes to work with arbitrary data.
 * As a convenience for children, it's easy to send and receive messages as strings.
 * The default configuration is both sensible and compatible with other platforms that target the BBC micro:bit.
 
