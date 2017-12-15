@@ -77,7 +77,7 @@ durations are called dashes (``-``) whereas short durations are dots (``.``).
 By combining dashes and dots Morse defines a way to send characters. For
 example, here's how the standard Morse alphabet is defined::
 
-    .-    A     ---   J     ...   S     .----  1      ----.  9
+    .-    A     .---  J     ...   S     .----  1      ----.  9
     -...  B     -.-   K     -     T     ..---  2      -----  0
     -.-.  C     .-..  L     ..-   U     ...--  3
     -..   D     --    M     ...-  V     ....-  4
