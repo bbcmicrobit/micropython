@@ -386,10 +386,8 @@ static void audio_auto_set_pins(void) {
 }
 
 static void audio_init(void) {
-    static bool initialised = false;
-    if (!initialised) {
+    if (audio_buffer_ptr == NULL) {
         audio_source_iter = NULL;
-        initialised = true;
         //Allocate buffer
         audio_buffer_ptr = m_new(uint8_t, AUDIO_BUFFER_SIZE);
     }

@@ -188,6 +188,7 @@ int main(void) {
 
         // Reset state associated with background tasks
         memset(&MP_STATE_PORT(async_data)[0], 0, sizeof(MP_STATE_PORT(async_data)));
+        MP_STATE_PORT(audio_buffer) = NULL;
         MP_STATE_PORT(music_data) = NULL;
     }
 }
