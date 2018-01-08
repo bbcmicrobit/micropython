@@ -44,8 +44,9 @@ extern "C" {
 #include "microbit/modmicrobit.h"
 #include "microbit/modaudio.h"
 
-#define TheTimer NRF_TIMER1
-#define TheTimer_IRQn TIMER1_IRQn
+#define TheTimer NRF_TIMER2
+#define TheTimer_IRQn TIMER2_IRQn
+#define TheTimer_Anomaly73_Addr (NRF_TIMER2_BASE + 0xC0C)
 
 #define DEBUG_AUDIO 0
 #if DEBUG_AUDIO
@@ -110,7 +111,7 @@ static void audio_ppi_init(uint8_t channel0, uint8_t channel1) {
 */
 static inline void timer_stop(void) {
     TheTimer->TASKS_STOP = 1;
-    *(uint32_t *)0x40009C0C = 0; //for Timer 1
+    *(uint32_t *)TheTimer_Anomaly73_Addr = 0;
     TheTimer->TASKS_CLEAR = 1;
     TheTimer->CC[0] = 0xfffc;
     TheTimer->CC[1] = 0xfffc;
@@ -119,7 +120,7 @@ static inline void timer_stop(void) {
 }
 
 static inline void timer_start(void) {
-    *(uint32_t *)0x40009C0C = 1; //for Timer 1
+    *(uint32_t *)TheTimer_Anomaly73_Addr = 1;
     TheTimer->TASKS_START = 1;
 }
 
