@@ -31,6 +31,7 @@ extern "C" {
 
 #include "py/runtime.h"
 #include "py/gc.h"
+#include "py/objstr.h"
 #include "lib/iters.h"
 #include "lib/ticker.h"
 #include "microbit/modmicrobit.h"
@@ -432,7 +433,11 @@ mp_obj_t microbit_display_scroll_func(mp_uint_t n_args, const mp_obj_t *pos_args
     mp_arg_val_t args[MP_ARRAY_SIZE(scroll_allowed_args)];
     mp_arg_parse_all(n_args - 1, pos_args + 1, kw_args, MP_ARRAY_SIZE(scroll_allowed_args), scroll_allowed_args, args);
     mp_uint_t len;
-    const char* str = mp_obj_str_get_data(args[0].u_obj, &len);
+    mp_obj_t object_string = args[0].u_obj;
+    if (mp_obj_is_integer(object_string) || mp_obj_is_float(object_string)) {
+        object_string = mp_obj_str_make_new(&mp_type_str, 1, 0, &object_string);
+    }
+    const char* str = mp_obj_str_get_data(object_string, &len);
     mp_obj_t iterable = scrolling_string_image_iterable(str, len, args[0].u_obj, args[3].u_bool /*monospace?*/, args[4].u_bool /*loop*/);
     microbit_display_animate(self, iterable, args[1].u_int /*delay*/, false/*clear*/, args[2].u_bool/*wait?*/);
     return mp_const_none;
