@@ -110,6 +110,11 @@ mp_obj_t microbit_display_show_func(mp_uint_t n_args, const mp_obj_t *pos_args, 
     bool wait = args[3].u_bool;
     bool loop = args[4].u_bool;
 
+    // Convert to string from an integer or float if applicable
+    if (mp_obj_is_integer(image) || mp_obj_is_float(image)) {
+        image = mp_obj_str_make_new(&mp_type_str, 1, 0, &image);
+    }
+
     if (MP_OBJ_IS_STR(image)) {
         // arg is a string object
         mp_uint_t len;
@@ -131,6 +136,7 @@ mp_obj_t microbit_display_show_func(mp_uint_t n_args, const mp_obj_t *pos_args, 
         }
         image = mp_obj_new_tuple(1, &image);
     }
+
     // iterable:
     if (args[4].u_bool) { /*loop*/
         image = microbit_repeat_iterator(image);
