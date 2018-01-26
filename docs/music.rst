@@ -99,7 +99,7 @@ Functions
     If ``loop`` is set to ``True``, the tune repeats until ``stop`` is called
     (see below) or the blocking call is interrupted.
 
-.. py:function:: pitch(frequency, len=-1, pin=microbit.pin0, wait=True)
+.. py:function:: pitch(frequency, duration=-1, pin=microbit.pin0, wait=True)
 
     Plays a pitch at the integer frequency given for the specified number of
     milliseconds. For example, if the frequency is set to 440 and the length to
@@ -107,7 +107,7 @@ Functions
 
     If ``wait`` is set to ``True``, this function is blocking.
 
-    If ``len`` is negative the pitch is played continuously until either the
+    If ``duration`` is negative the pitch is played continuously until either the
     blocking call is interrupted or, in the case of a background call, a new
     frequency is set or ``stop`` is called (see below).
 
