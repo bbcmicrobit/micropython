@@ -172,10 +172,10 @@ its own to that.
         Return ``True`` if the pin is being touched with a finger, otherwise
         return ``False``.
 
-        This test is done by measuring the capacitance of the pin together with
-        whatever is connected to it. Human body has quite a large capacitance,
-        so touching the pin gives a dramatic change in reading, which can be
-        detected.
+        This test is done by measuring how much resistance there is between the
+        pin and ground.  A low resistance gives a reading of ``True``.  To get
+        a reliable reading using a finger you may need to touch the ground pin
+        with another part of your body, for example your other hand.
 
 The pull mode for a pin is automatically configured when the pin changes to an
 input mode. Input modes are when you call ``read_analog`` / ``read_digital`` /
