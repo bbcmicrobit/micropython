@@ -26,7 +26,6 @@
 
 #include "MicroBitDevice.h"
 #include "MicroBitSystemTimer.h"
-#include "MicroBitThermometer.h"
 
 extern "C" {
 
@@ -34,8 +33,6 @@ extern "C" {
 #include "py/obj.h"
 #include "py/mphal.h"
 #include "microbit/modmicrobit.h"
-
-static MicroBitThermometer ubit_thermometer;
 
 STATIC mp_obj_t microbit_reset_(void) {
     microbit_reset();
@@ -74,7 +71,13 @@ STATIC mp_obj_t microbit_panic(mp_uint_t n_args, const mp_obj_t *args) {
 MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_panic_obj, 0, 1, microbit_panic);
 
 STATIC mp_obj_t microbit_temperature(void) {
-    return mp_obj_new_int(ubit_thermometer.getTemperature());
+    NRF_TEMP->TASKS_START = 1;
+    while (NRF_TEMP->EVENTS_DATARDY == 0) {
+    }
+    NRF_TEMP->EVENTS_DATARDY = 0;
+    int32_t temp = NRF_TEMP->TEMP / 4;
+    NRF_TEMP->TASKS_STOP = 1;
+    return mp_obj_new_int(temp);
 }
 MP_DEFINE_CONST_FUN_OBJ_0(microbit_temperature_obj, microbit_temperature);
 
