@@ -198,7 +198,7 @@ same function).
 
     $ ufs rm story.txt
 
-The ``rm`` sub-command removes the named from from the file system on the
+The ``rm`` sub-command removes the named file from the file system on the
 connected micro:bit (it's named after the common Unix command, ``rm``, that
 serves the same function).
 
