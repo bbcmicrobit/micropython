@@ -59,7 +59,7 @@ The best way to make sure of this is to use the ``with`` statement like this::
 
     with open('story.txt') as my_file:
         content = my_file.read()
-    print(content)
+    display.scroll(content)
 
 The ``with`` statement uses the ``open`` function to open a file and assign it
 to an object. In the example above, the ``open`` function opens the file called
@@ -69,7 +69,7 @@ The object that's used to represent the file in the Python code is called
 statement, the ``my_file`` object is used to ``read()`` the content of the
 file and assign it to the ``content`` object.
 
-Here's the important point, *the next line containing the* ``print`` *statement
+Here's the important point, *the next line containing the* ``display.scroll`` *statement
 is not indented*. The code block associated with the ``with`` statement is only
 the single line that reads the file. Once the code block associated with the
 ``with`` statement is closed then Python (and MicroPython) will automatically
@@ -146,6 +146,7 @@ system::
 
     import os
     my_files = os.listdir()
+    display.scroll(str(len(my_files))) 
 
 To delete a file use the ``remove`` function. It takes a string representing
 the file name of the file you want to delete as an argument, like this::
@@ -161,6 +162,7 @@ file takes up::
 
     import os
     file_size = os.size('a_big_file.txt')
+    display.scroll(str(file_size))
 
 It's all very well having a file system, but what if we want to put or get
 files on or off the device?
