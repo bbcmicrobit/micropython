@@ -161,6 +161,47 @@ file takes up::
 
     import os
     file_size = os.size('a_big_file.txt')
+    
+See all this in action
+
+    # Demonstrates OS File System List, Size and Remove
+    # And Open to write and read files
+    from microbit import *
+    import os
+
+    my_files = os.listdir() # list of files ( 0 on first go)
+    print(str(len(my_files)) + ' Files' ) # '0 Files'
+
+    with open('hello.txt', 'w') as my_file: # Open to write (it's new, so create it)
+        my_file.write("Hello, World!") # fill with 13 characters
+
+    my_files = os.listdir() # Same code as before to list files
+    print(str(len(my_files)) + ' Files' )  # Now there's '1 Files'
+
+    file_size = os.size('hello.txt') # Read file size
+    print('File Size ' + str(file_size)) # 'File_size 13'
+
+    with open('hello.txt') as my_file: # Open to read
+        content = my_file.read() 
+    print(content) # 'Hello, World!'
+
+    with open('hello.txt', 'w') as my_file:
+        my_file.write("Bye Now!") # Overwrite with 8 characters 
+
+    file_size = os.size('hello.txt') # Same code to read and display file size
+    print('File Size ' + str(file_size)) # 'File_size 8'
+
+    with open('hello.txt') as my_file: # Same code to read and display content
+        content = my_file.read()
+    print(content) #'Bye Now!'
+
+    # Press button A to delete the file
+    while len(my_files):
+        if button_a.is_pressed():
+            os.remove('hello.txt')
+            my_files = os.listdir() 
+            print(str(len(my_files)) + ' Files' )  # Now there's '0 Files'
+
 
 It's all very well having a file system, but what if we want to put or get
 files on or off the device?
