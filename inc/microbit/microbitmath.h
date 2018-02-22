@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Damien P. George
+ * Copyright (c) 2017 Mark Shannon
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,32 +23,31 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef __MICROPY_INCLUDED_MICROBIT_MICROBITOBJ_H__
-#define __MICROPY_INCLUDED_MICROBIT_MICROBITOBJ_H__
 
-extern "C" {
 
-#include "py/obj.h"
-#include "microbitpin.h"
-#include "PinNames.h"
+#ifndef __MICROPY_INCLUDED_MICROBIT_MICROBITMATH_H__
+#define __MICROPY_INCLUDED_MICROBIT_MICROBITMATH_H__
 
-const microbit_pin_obj_t *microbit_obj_get_pin(mp_obj_t o);
-PinName microbit_obj_get_pin_name(mp_obj_t o);
+#include "py/runtime.h"
 
-extern volatile bool compass_up_to_date;
-extern volatile bool compass_updating;
 
-extern volatile bool accelerometer_up_to_date;
-extern volatile bool accelerometer_updating;
+typedef struct _microbit_vector3_t {
+    int16_t x;
+    int16_t y;
+    int16_t z;
+} microbit_vector3_t;
 
-extern void microbit_pin_init(void);
 
-extern bool microbit_button_is_pressed(const struct _microbit_button_obj_t *button);
+int32_t microbit_vector3_length(const microbit_vector3_t *v);
 
-extern int microbit_i2c_read(const struct _microbit_i2c_obj_t *i2c, int address, char *data, int length, bool repeat);
+/* Store a - b into r */
+void microbit_vector3_difference(const microbit_vector3_t *a, const microbit_vector3_t *b, microbit_vector3_t *r);
 
-extern int microbit_i2c_write(const struct _microbit_i2c_obj_t *i2c, int address, const char *data, int length, bool repeat);
+/* |a-b| */
+int32_t microbit_vector3_distance(const microbit_vector3_t *a, const microbit_vector3_t *b);
 
-}
+int32_t microbit_vector3_dot_product(const microbit_vector3_t *a, const microbit_vector3_t *b);
 
-#endif // __MICROPY_INCLUDED_MICROBIT_MICROBITOBJ_H__
+float microbit_vector3_cos_angle(const microbit_vector3_t *a, const microbit_vector3_t *b);
+
+#endif // __MICROPY_INCLUDED_MICROBIT_MICROBITMATH_H__

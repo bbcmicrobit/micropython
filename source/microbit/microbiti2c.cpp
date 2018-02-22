@@ -24,20 +24,13 @@
  * THE SOFTWARE.
  */
 
-#include "MicroBit.h"
 #include "i2c_api.h"
 
+#define MICROBIT_I2C_BUSY -1011
 
-class mp_I2C : public MicroBitI2C {
-    public:
-        void set_pins(PinName sda, PinName scl);
-};
-
-void mp_I2C::set_pins(PinName sda, PinName scl) {
-    _i2c.sda = sda;
-    _i2c.scl = scl;
-}
-
+// Pin assignments
+#define MICROBIT_PIN_SDA                        P0_30
+#define MICROBIT_PIN_SCL                        P0_0
 
 extern "C" {
 
@@ -45,13 +38,16 @@ extern "C" {
 #include "modmicrobit.h"
 #include "microbitobj.h"
 
-
 typedef struct _microbit_i2c_obj_t {
     mp_obj_base_t base;
-    MicroBitI2C *i2c;
+    i2c_t *i2c;
 } microbit_i2c_obj_t;
 
-STATIC mp_obj_t microbit_i2c_init(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
+void microbit_i2c_init(void) {
+    i2c_init(microbit_i2c_obj.i2c, MICROBIT_PIN_SDA, MICROBIT_PIN_SCL);
+}
+
+STATIC mp_obj_t microbit_i2c_init_func(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
     static const mp_arg_t allowed_args[] = {
         { MP_QSTR_freq, MP_ARG_INT, {.u_int = 100000} },
         { MP_QSTR_sda, MP_ARG_OBJ, {.u_obj = mp_const_none } },
@@ -73,15 +69,30 @@ STATIC mp_obj_t microbit_i2c_init(mp_uint_t n_args, const mp_obj_t *pos_args, mp
     if (args[2].u_obj != mp_const_none) {
         p_scl = microbit_obj_get_pin_name(args[2].u_obj);
     }
-    ((mp_I2C*)self->i2c)->set_pins(p_sda, p_scl);
 
-    self->i2c->frequency(args[0].u_int); // also does i2c_reset()
+    i2c_init(self->i2c, p_sda, p_scl);
+    i2c_frequency(self->i2c, args[0].u_int);
 
     return mp_const_none;
 }
-MP_DEFINE_CONST_FUN_OBJ_KW(microbit_i2c_init_obj, 1, microbit_i2c_init);
+MP_DEFINE_CONST_FUN_OBJ_KW(microbit_i2c_init_obj, 1, microbit_i2c_init_func);
 
-STATIC mp_obj_t microbit_i2c_read(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
+static int error_convert(int code, int length) {
+    if (code >= length) {
+        return 0;
+    }
+    if (code >= 0) {
+        return -3;
+    }
+    return code; // Should return error code -1 (I2C_ERROR_NO_SLAVE) or -2 (I2C_ERROR_BUS_BUSY).
+}
+
+int microbit_i2c_read(const microbit_i2c_obj_t *i2c, int address, char *data, int length, bool repeat) {
+    int stop = repeat ? 0: 1;
+    return error_convert(i2c_read(i2c->i2c,address, data, length, stop), length);
+}
+
+STATIC mp_obj_t microbit_i2c_read_func(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
     static const mp_arg_t allowed_args[] = {
         { MP_QSTR_addr,     MP_ARG_REQUIRED | MP_ARG_INT, {.u_int = 0} },
         { MP_QSTR_n,        MP_ARG_REQUIRED | MP_ARG_INT, {.u_int = 0} },
@@ -96,16 +107,23 @@ STATIC mp_obj_t microbit_i2c_read(mp_uint_t n_args, const mp_obj_t *pos_args, mp
     // do the I2C read
     vstr_t vstr;
     vstr_init_len(&vstr, args[1].u_int);
-    int err = self->i2c->read(args[0].u_int << 1, vstr.buf, vstr.len, args[2].u_bool);
-    if (err != MICROBIT_OK) {
+
+    int err = microbit_i2c_read(self, args[0].u_int << 1, vstr.buf, vstr.len, args[2].u_bool);
+    if (err) {
         nlr_raise(mp_obj_new_exception_msg_varg(&mp_type_OSError, "I2C read failed with error code %d", err));
     }
     // return bytes object with read data
     return mp_obj_new_str_from_vstr(&mp_type_bytes, &vstr);
 }
-MP_DEFINE_CONST_FUN_OBJ_KW(microbit_i2c_read_obj, 1, microbit_i2c_read);
+MP_DEFINE_CONST_FUN_OBJ_KW(microbit_i2c_read_obj, 1, microbit_i2c_read_func);
 
-STATIC mp_obj_t microbit_i2c_write(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
+int microbit_i2c_write(const microbit_i2c_obj_t *i2c, int address, const char *data, int length, bool repeat) {
+    int stop = repeat ? 0: 1;
+    return error_convert(i2c_write(i2c->i2c, address, data, length, stop), length);
+}
+
+
+STATIC mp_obj_t microbit_i2c_write_func(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
     static const mp_arg_t allowed_args[] = {
         { MP_QSTR_addr,     MP_ARG_REQUIRED | MP_ARG_INT, {.u_int = 0} },
         { MP_QSTR_buf,      MP_ARG_REQUIRED | MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
@@ -120,14 +138,14 @@ STATIC mp_obj_t microbit_i2c_write(mp_uint_t n_args, const mp_obj_t *pos_args, m
     // do the I2C write
     mp_buffer_info_t bufinfo;
     mp_get_buffer_raise(args[1].u_obj, &bufinfo, MP_BUFFER_READ);
-    int err = self->i2c->write(args[0].u_int << 1, (char*)bufinfo.buf, bufinfo.len, args[2].u_bool);
-    if (err != MICROBIT_OK) {
+    int err = microbit_i2c_write(self, args[0].u_int << 1, (char*)bufinfo.buf, bufinfo.len, args[2].u_bool);
+    if (err) {
         nlr_raise(mp_obj_new_exception_msg_varg(&mp_type_OSError, "I2C write failed with error code %d", err));
     }
     return mp_const_none;
 
 }
-MP_DEFINE_CONST_FUN_OBJ_KW(microbit_i2c_write_obj, 1, microbit_i2c_write);
+MP_DEFINE_CONST_FUN_OBJ_KW(microbit_i2c_write_obj, 1, microbit_i2c_write_func);
 
 STATIC const mp_map_elem_t microbit_i2c_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_init), (mp_obj_t)&microbit_i2c_init_obj },
@@ -155,9 +173,11 @@ const mp_obj_type_t microbit_i2c_type = {
     .locals_dict = (mp_obj_dict_t*)&microbit_i2c_locals_dict,
 };
 
+static i2c_t _i2c;
+
 const microbit_i2c_obj_t microbit_i2c_obj = {
     {&microbit_i2c_type},
-    .i2c = &uBit.i2c
+    .i2c = &_i2c
 };
 
 }

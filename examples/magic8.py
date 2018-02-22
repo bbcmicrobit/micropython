@@ -35,4 +35,5 @@ while True:
         display.clear()
         sleep(1000)
         display.scroll(random.choice(answers))
-    sleep(10)
+    #Accelerometer updates at 50Hz
+    sleep(20)
