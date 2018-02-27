@@ -24,7 +24,7 @@
  * THE SOFTWARE.
  */
 
-#include "mbed.h"
+#include "MicroBit.h"
 
 extern "C" {
 
@@ -32,13 +32,9 @@ extern "C" {
 #include "py/obj.h"
 #include "py/mphal.h"
 #include "modmicrobit.h"
-#include "microbitdisplay.h"
-#include "microbitimage.h"
-
-extern uint32_t ticks;
 
 STATIC mp_obj_t microbit_reset_(void) {
-    NVIC_SystemReset();
+    uBit.reset();
     return mp_const_none;
 }
 MP_DEFINE_CONST_FUN_OBJ_0(microbit_reset_obj, microbit_reset_);
@@ -58,51 +54,22 @@ STATIC mp_obj_t microbit_sleep(mp_obj_t ms_in) {
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_sleep_obj, microbit_sleep);
 
 STATIC mp_obj_t microbit_running_time(void) {
-    return MP_OBJ_NEW_SMALL_INT(ticks);
+    return MP_OBJ_NEW_SMALL_INT(uBit.systemTime());
 }
 MP_DEFINE_CONST_FUN_OBJ_0(microbit_running_time_obj, microbit_running_time);
 
-static const monochrome_5by5_t panic = SMALL_IMAGE(
-    1,1,0,1,1,
-    1,1,0,1,1,
-    0,0,0,0,0,
-    0,1,1,1,0,
-    1,0,0,0,1
-);
-
 STATIC mp_obj_t microbit_panic(mp_uint_t n_args, const mp_obj_t *args) {
-    while(true) {
-        microbit_display_show(&microbit_display_obj, (microbit_image_obj_t*)&panic);
-        mp_hal_delay_ms(1000);
-        char num[4];
-        int code;
-        if (n_args) {
-            code = mp_obj_get_int(args[0]);
-        } else {
-            code = 0;
-        }
-        num[2] = code%10 + '0';
-        code /= 10;
-        num[1] = code%10 + '0';
-        code /= 10;
-        num[0] = code%10 + '0';
-        for (int i = 0; i < 3; i++) {
-            microbit_display_show(&microbit_display_obj, microbit_image_for_char(num[i]));
-            mp_hal_delay_ms(1000);
-        }
+    if (n_args == 0) {
+        uBit.panic();
+    } else {
+        uBit.panic(mp_obj_get_int(args[0]));
     }
     return mp_const_none;
 }
 MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_panic_obj, 0, 1, microbit_panic);
 
 STATIC mp_obj_t microbit_temperature(void) {
-    int temp;
-    NRF_TEMP->TASKS_START = 1;
-    while (NRF_TEMP->EVENTS_DATARDY == 0);
-    NRF_TEMP->EVENTS_DATARDY = 0;
-    temp = NRF_TEMP->TEMP;
-    NRF_TEMP->TASKS_STOP = 1;
-    return mp_obj_new_float(temp/4.0);
+    return mp_obj_new_int(uBit.thermometer.getTemperature());
 }
 MP_DEFINE_CONST_FUN_OBJ_0(microbit_temperature_obj, microbit_temperature);
 

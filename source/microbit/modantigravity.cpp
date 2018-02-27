@@ -26,6 +26,9 @@
  * THE SOFTWARE.
  */
 
+#include <stdio.h>
+#include "MicroBit.h"
+
 extern "C" {
 
 #include "py/mphal.h"
