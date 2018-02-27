@@ -1,5 +1,5 @@
 /*
- * This file is part of the Micro Python project, http://micropython.org/
+ * This file is part of the MicroPython project, http://micropython.org/
  *
  * The MIT License (MIT)
  *
@@ -37,10 +37,14 @@
 #define LowPriority_IRQn SWI4_IRQn
 #define LowPriority_IRQHandler SWI4_IRQHandler
 
+// The number of milliseconds that have passed since the ticker was initialised
+volatile uint32_t ticker_ticks_ms;
+
 // Ticker callback function called every MACRO_TICK
 static callback_ptr slow_ticker;
 
 void ticker_init(callback_ptr slow_ticker_callback) {
+    ticker_ticks_ms = 0;
     slow_ticker = slow_ticker_callback;
     NRF_TIMER_Type *ticker = FastTicker;
     ticker->POWER = 1;
@@ -79,8 +83,6 @@ int32_t noop(void) {
     return -1;
 }
 
-extern uint32_t ticks;
-
 static ticker_callback_ptr callbacks[3] = { noop, noop, noop };
 
 void FastTicker_IRQHandler(void) {
@@ -101,7 +103,7 @@ void FastTicker_IRQHandler(void) {
     if (ticker->EVENTS_COMPARE[3]) {
         ticker->EVENTS_COMPARE[3] = 0;
         ticker->CC[3] += MICROSECONDS_PER_MACRO_TICK;
-        ticks += MILLISECONDS_PER_MACRO_TICK;
+        ticker_ticks_ms += MILLISECONDS_PER_MACRO_TICK;
         NVIC_SetPendingIRQ(SlowTicker_IRQn);
     }
 }

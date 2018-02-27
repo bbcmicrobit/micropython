@@ -1,9 +1,9 @@
 /*
- * This file is part of the Micro Python project, http://micropython.org/
+ * This file is part of the MicroPython project, http://micropython.org/
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Damien P. George
+ * Copyright (c) 2015-2017 Damien P. George
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,10 +23,54 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef __MICROPY_INCLUDED_MICROBIT_MODMICROBIT_H__
-#define __MICROPY_INCLUDED_MICROBIT_MODMICROBIT_H__
+#ifndef MICROPY_INCLUDED_MICROBIT_MODMICROBIT_H
+#define MICROPY_INCLUDED_MICROBIT_MODMICROBIT_H
 
-#include "py/objtuple.h"
+#include "py/obj.h"
+
+/****************************************************************/
+// microbit.pin objects
+
+/* Leave 0 to mean default mode. */
+#define MODE_UNUSED 1
+#define MODE_READ_DIGITAL 2
+#define MODE_WRITE_DIGITAL 3
+#define MODE_DISPLAY 4
+#define MODE_BUTTON 5
+#define MODE_MUSIC 6
+#define MODE_AUDIO_PLAY 7
+#define MODE_TOUCH 8
+#define MODE_I2C 9
+#define MODE_SPI 10
+#define MODE_WRITE_ANALOG 11
+
+#define microbit_pin_mode_unused        (&microbit_pinmodes[MODE_UNUSED])
+#define microbit_pin_mode_write_analog  (&microbit_pinmodes[MODE_WRITE_ANALOG])
+#define microbit_pin_mode_read_digital  (&microbit_pinmodes[MODE_READ_DIGITAL])
+#define microbit_pin_mode_write_digital (&microbit_pinmodes[MODE_WRITE_DIGITAL])
+#define microbit_pin_mode_display       (&microbit_pinmodes[MODE_DISPLAY])
+#define microbit_pin_mode_button        (&microbit_pinmodes[MODE_BUTTON])
+#define microbit_pin_mode_music         (&microbit_pinmodes[MODE_MUSIC])
+#define microbit_pin_mode_audio_play    (&microbit_pinmodes[MODE_AUDIO_PLAY])
+#define microbit_pin_mode_touch         (&microbit_pinmodes[MODE_TOUCH])
+#define microbit_pin_mode_i2c           (&microbit_pinmodes[MODE_I2C])
+#define microbit_pin_mode_spi           (&microbit_pinmodes[MODE_SPI])
+
+typedef struct _microbit_pin_obj_t {
+    mp_obj_base_t base;
+    uint8_t number; // The pin number on microbit board
+    uint8_t name; // The pin number in the GPIO port.
+    uint8_t initial_mode;
+} microbit_pin_obj_t;
+
+typedef void(*release_func)(const microbit_pin_obj_t *pin);
+
+typedef struct _pinmode {
+    qstr name;
+    release_func release; /* Call this function to release pin */
+} microbit_pinmode_t;
+
+extern const microbit_pinmode_t microbit_pinmodes[];
 
 extern const mp_obj_type_t microbit_ad_pin_type;
 extern const mp_obj_type_t microbit_dig_pin_type;
@@ -52,7 +96,35 @@ extern const struct _microbit_pin_obj_t microbit_p16_obj;
 extern const struct _microbit_pin_obj_t microbit_p19_obj;
 extern const struct _microbit_pin_obj_t microbit_p20_obj;
 
+void microbit_pin_init(void);
+
+const microbit_pin_obj_t *microbit_obj_get_pin(mp_obj_t o);
+uint8_t microbit_obj_get_pin_name(mp_obj_t o);
+
+// Release pin for use by other modes. Safe to call in an interrupt.
+// If pin is NULL or pin already unused, then this is a no-op
+void microbit_obj_pin_free(const microbit_pin_obj_t *pin);
+
+// Acquire pin (causing analog/digital modes to release) for mode.
+// If pin is already in specified mode, this is a no-op and returns "false".
+// Otherwise if the acquisition succeeds then it returns "true".
+// Not safe to call in an interrupt as it may raise if pin can't be acquired.
+bool microbit_obj_pin_acquire(const microbit_pin_obj_t *pin, const microbit_pinmode_t *mode);
+
+const microbit_pinmode_t *microbit_pin_get_mode(const microbit_pin_obj_t *pin);
+bool microbit_obj_pin_can_be_acquired(const microbit_pin_obj_t *pin);
+void pinmode_error(const microbit_pin_obj_t *pin);
+
+bool microbit_pin_high_debounced(microbit_pin_obj_t *pin);
+
+/****************************************************************/
+// microbit.Image class
+
+typedef union _microbit_image_obj_t microbit_image_obj_t;
+
 extern const mp_obj_type_t microbit_const_image_type;
+extern const mp_obj_type_t microbit_image_type;
+
 extern const struct _monochrome_5by5_t microbit_const_image_heart_obj;
 extern const struct _monochrome_5by5_t microbit_const_image_heart_small_obj;
 extern const struct _monochrome_5by5_t microbit_const_image_happy_obj;
@@ -119,116 +191,125 @@ extern const struct _monochrome_5by5_t microbit_const_image_skull_obj;
 extern const struct _monochrome_5by5_t microbit_const_image_umbrella_obj;
 extern const struct _monochrome_5by5_t microbit_const_image_snake_obj;
 
-extern const struct _mp_obj_tuple_t microbit_music_tune_dadadadum_obj;
-extern const struct _mp_obj_tuple_t microbit_music_tune_entertainer_obj;
-extern const struct _mp_obj_tuple_t microbit_music_tune_prelude_obj;
-extern const struct _mp_obj_tuple_t microbit_music_tune_ode_obj;
-extern const struct _mp_obj_tuple_t microbit_music_tune_nyan_obj;
-extern const struct _mp_obj_tuple_t microbit_music_tune_ringtone_obj;
-extern const struct _mp_obj_tuple_t microbit_music_tune_funk_obj;
-extern const struct _mp_obj_tuple_t microbit_music_tune_blues_obj;
-extern const struct _mp_obj_tuple_t microbit_music_tune_birthday_obj;
-extern const struct _mp_obj_tuple_t microbit_music_tune_wedding_obj;
-extern const struct _mp_obj_tuple_t microbit_music_tune_funeral_obj;
-extern const struct _mp_obj_tuple_t microbit_music_tune_punchline_obj;
-extern const struct _mp_obj_tuple_t microbit_music_tune_python_obj;
-extern const struct _mp_obj_tuple_t microbit_music_tune_baddy_obj;
-extern const struct _mp_obj_tuple_t microbit_music_tune_chase_obj;
-extern const struct _mp_obj_tuple_t microbit_music_tune_ba_ding_obj;
-extern const struct _mp_obj_tuple_t microbit_music_tune_wawawawaa_obj;
-extern const struct _mp_obj_tuple_t microbit_music_tune_jump_up_obj;
-extern const struct _mp_obj_tuple_t microbit_music_tune_jump_down_obj;
-extern const struct _mp_obj_tuple_t microbit_music_tune_power_up_obj;
-extern const struct _mp_obj_tuple_t microbit_music_tune_power_down_obj;
+/****************************************************************/
+// microbit.display object
 
-extern const mp_obj_type_t microbit_image_type;
+typedef struct _microbit_display_obj_t microbit_display_obj_t;
+
+extern microbit_display_obj_t microbit_display_obj;
+
+void microbit_display_init(void);
+void microbit_display_tick(void);
+
+void microbit_display_clear(void);
+mp_int_t microbit_display_get_pixel(microbit_display_obj_t *display, mp_int_t x, mp_int_t y);
+void microbit_display_set_pixel(microbit_display_obj_t *display, mp_int_t x, mp_int_t y, mp_int_t val);
+void microbit_display_show(microbit_display_obj_t *display, microbit_image_obj_t *image);
+void microbit_display_animate(microbit_display_obj_t *display, mp_obj_t iterable, mp_int_t delay, bool clear, bool wait);
+void microbit_display_scroll(microbit_display_obj_t *display, const char* str);
+
+/****************************************************************/
+// microbit.compass object
+
+extern volatile bool compass_up_to_date;
+extern volatile bool compass_updating;
+
+extern const struct _microbit_compass_obj_t microbit_compass_obj;
+
+void microbit_compass_init(void);
+
+/****************************************************************/
+// microbit.accelerometer object
+
+extern volatile bool accelerometer_up_to_date;
+extern volatile bool accelerometer_updating;
 
 extern const mp_obj_type_t microbit_accelerometer_type;
 extern const struct _microbit_accelerometer_obj_t microbit_accelerometer_obj;
 
-extern struct _microbit_display_obj_t microbit_display_obj;
+//void microbit_accelerometer_event_handler(const MicroBitEvent *evt);
+
+/****************************************************************/
+// microbit.button objects
+
 extern const struct _microbit_button_obj_t microbit_button_a_obj;
 extern const struct _microbit_button_obj_t microbit_button_b_obj;
-extern const struct _microbit_compass_obj_t microbit_compass_obj;
+
+void microbit_button_tick(void);
+
+/****************************************************************/
+// microbit.i2c, microbit.uart and microbit.spi objects
+
 extern const struct _microbit_i2c_obj_t microbit_i2c_obj;
 extern struct _microbit_uart_obj_t microbit_uart_obj;
 extern struct _microbit_spi_obj_t microbit_spi_obj;
 
-MP_DECLARE_CONST_FUN_OBJ(microbit_reset_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_sleep_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_random_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_running_time_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_temperature_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_panic_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_accelerometer_get_x_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_accelerometer_get_y_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_accelerometer_get_z_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_button_is_pressed_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_button_was_pressed_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_button_get_presses_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_compass_is_calibrated_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_compass_heading_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_compass_calibrate_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_compass_is_calibrating_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_compass_clear_calibration_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_compass_get_x_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_compass_get_y_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_compass_get_z_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_compass_get_field_strength_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_display_show_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_display_scroll_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_display_clear_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_display_get_pixel_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_display_set_pixel_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_display_on_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_display_off_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_display_is_on_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_pin_read_digital_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_pin_write_digital_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_pin_read_analog_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_pin_write_analog_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_pin_is_touched_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_pin_set_analog_period_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_pin_set_analog_period_microseconds_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_i2c_init_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_i2c_read_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_i2c_write_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_image_width_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_image_height_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_image_get_pixel_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_image_set_pixel_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_image_shift_left_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_image_shift_right_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_image_shift_up_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_image_shift_down_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_image_copy_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_image_crop_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_image_invert_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_image_slice_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_uart_init_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_uart_any_obj);
-MP_DECLARE_CONST_FUN_OBJ(mp_stream_read_obj);
-MP_DECLARE_CONST_FUN_OBJ(mp_stream_readall_obj);
-MP_DECLARE_CONST_FUN_OBJ(mp_stream_unbuffered_readline_obj);
-MP_DECLARE_CONST_FUN_OBJ(mp_stream_readinto_obj);
-MP_DECLARE_CONST_FUN_OBJ(mp_stream_write_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_spi_init_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_spi_write_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_spi_read_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_spi_write_readinto_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_music_set_tempo_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_music_pitch_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_music_play_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_music_get_tempo_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_music_stop_obj);
-MP_DECLARE_CONST_FUN_OBJ(microbit_music_reset_obj);
-MP_DECLARE_CONST_FUN_OBJ(love_badaboom_obj);
-MP_DECLARE_CONST_FUN_OBJ(this_authors_obj);
+/****************************************************************/
+// declarations of microbit functions and methods
 
-extern const mp_obj_module_t microbit_module;
-extern const mp_obj_module_t music_module;
-extern const mp_obj_module_t love_module;
-extern const mp_obj_module_t antigravity_module;
-extern const mp_obj_module_t this_module;
+MP_DECLARE_CONST_FUN_OBJ_0(microbit_reset_obj);
+MP_DECLARE_CONST_FUN_OBJ_1(microbit_sleep_obj);
+MP_DECLARE_CONST_FUN_OBJ_0(microbit_random_obj);
+MP_DECLARE_CONST_FUN_OBJ_0(microbit_running_time_obj);
+MP_DECLARE_CONST_FUN_OBJ_0(microbit_temperature_obj);
+MP_DECLARE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_panic_obj);
+MP_DECLARE_CONST_FUN_OBJ_1(microbit_accelerometer_get_x_obj);
+MP_DECLARE_CONST_FUN_OBJ_1(microbit_accelerometer_get_y_obj);
+MP_DECLARE_CONST_FUN_OBJ_1(microbit_accelerometer_get_z_obj);
+MP_DECLARE_CONST_FUN_OBJ_1(microbit_button_is_pressed_obj);
+MP_DECLARE_CONST_FUN_OBJ_1(microbit_button_was_pressed_obj);
+MP_DECLARE_CONST_FUN_OBJ_1(microbit_button_get_presses_obj);
+MP_DECLARE_CONST_FUN_OBJ_1(microbit_compass_is_calibrated_obj);
+MP_DECLARE_CONST_FUN_OBJ_1(microbit_compass_heading_obj);
+MP_DECLARE_CONST_FUN_OBJ_1(microbit_compass_calibrate_obj);
+MP_DECLARE_CONST_FUN_OBJ_1(microbit_compass_is_calibrating_obj);
+MP_DECLARE_CONST_FUN_OBJ_1(microbit_compass_clear_calibration_obj);
+MP_DECLARE_CONST_FUN_OBJ_1(microbit_compass_get_x_obj);
+MP_DECLARE_CONST_FUN_OBJ_1(microbit_compass_get_y_obj);
+MP_DECLARE_CONST_FUN_OBJ_1(microbit_compass_get_z_obj);
+MP_DECLARE_CONST_FUN_OBJ_1(microbit_compass_get_field_strength_obj);
+MP_DECLARE_CONST_FUN_OBJ_KW(microbit_display_show_obj);
+MP_DECLARE_CONST_FUN_OBJ_KW(microbit_display_scroll_obj);
+MP_DECLARE_CONST_FUN_OBJ_1(microbit_display_clear_obj);
+MP_DECLARE_CONST_FUN_OBJ_3(microbit_display_get_pixel_obj);
+MP_DECLARE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_display_set_pixel_obj);
+MP_DECLARE_CONST_FUN_OBJ_1(microbit_display_on_obj);
+MP_DECLARE_CONST_FUN_OBJ_1(microbit_display_off_obj);
+MP_DECLARE_CONST_FUN_OBJ_1(microbit_display_is_on_obj);
+MP_DECLARE_CONST_FUN_OBJ_1(microbit_pin_read_digital_obj);
+MP_DECLARE_CONST_FUN_OBJ_2(microbit_pin_write_digital_obj);
+MP_DECLARE_CONST_FUN_OBJ_1(microbit_pin_read_analog_obj);
+MP_DECLARE_CONST_FUN_OBJ_2(microbit_pin_write_analog_obj);
+MP_DECLARE_CONST_FUN_OBJ_1(microbit_pin_is_touched_obj);
+MP_DECLARE_CONST_FUN_OBJ_2(microbit_pin_set_analog_period_obj);
+MP_DECLARE_CONST_FUN_OBJ_2(microbit_pin_set_analog_period_microseconds_obj);
+MP_DECLARE_CONST_FUN_OBJ_KW(microbit_i2c_init_obj);
+MP_DECLARE_CONST_FUN_OBJ_KW(microbit_i2c_read_obj);
+MP_DECLARE_CONST_FUN_OBJ_KW(microbit_i2c_write_obj);
+MP_DECLARE_CONST_FUN_OBJ_1(microbit_image_width_obj);
+MP_DECLARE_CONST_FUN_OBJ_1(microbit_image_height_obj);
+MP_DECLARE_CONST_FUN_OBJ_3(microbit_image_get_pixel_obj);
+MP_DECLARE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_image_set_pixel_obj);
+MP_DECLARE_CONST_FUN_OBJ_2(microbit_image_shift_left_obj);
+MP_DECLARE_CONST_FUN_OBJ_2(microbit_image_shift_right_obj);
+MP_DECLARE_CONST_FUN_OBJ_2(microbit_image_shift_up_obj);
+MP_DECLARE_CONST_FUN_OBJ_2(microbit_image_shift_down_obj);
+MP_DECLARE_CONST_FUN_OBJ_1(microbit_image_copy_obj);
+MP_DECLARE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_image_crop_obj);
+MP_DECLARE_CONST_FUN_OBJ_1(microbit_image_invert_obj);
+MP_DECLARE_CONST_FUN_OBJ_KW(microbit_uart_init_obj);
+MP_DECLARE_CONST_FUN_OBJ_1(microbit_uart_any_obj);
+MP_DECLARE_CONST_FUN_OBJ_KW(microbit_spi_init_obj);
+MP_DECLARE_CONST_FUN_OBJ_2(microbit_spi_write_obj);
+MP_DECLARE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_spi_read_obj);
+MP_DECLARE_CONST_FUN_OBJ_3(microbit_spi_write_readinto_obj);
+MP_DECLARE_CONST_FUN_OBJ_KW(microbit_music_set_tempo_obj);
+MP_DECLARE_CONST_FUN_OBJ_KW(microbit_music_pitch_obj);
+MP_DECLARE_CONST_FUN_OBJ_KW(microbit_music_play_obj);
+MP_DECLARE_CONST_FUN_OBJ_0(microbit_music_get_tempo_obj);
+MP_DECLARE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_music_stop_obj);
+MP_DECLARE_CONST_FUN_OBJ_0(microbit_music_reset_obj);
+MP_DECLARE_CONST_FUN_OBJ_0(love_badaboom_obj);
+MP_DECLARE_CONST_FUN_OBJ_0(this_authors_obj);
 
-#endif // __MICROPY_INCLUDED_MICROBIT_MODMICROBIT_H__
+#endif // MICROPY_INCLUDED_MICROBIT_MODMICROBIT_H

@@ -1,5 +1,5 @@
 /*
- * This file is part of the Micro Python project, http://micropython.org/
+ * This file is part of the MicroPython project, http://micropython.org/
  *
  * The MIT License (MIT)
  *
@@ -37,7 +37,6 @@ STATIC MP_DEFINE_CONST_DICT(mp_module_array_globals, mp_module_array_globals_tab
 
 const mp_obj_module_t mp_module_array = {
     .base = { &mp_type_module },
-    .name = MP_QSTR_array,
     .globals = (mp_obj_dict_t*)&mp_module_array_globals,
 };
 

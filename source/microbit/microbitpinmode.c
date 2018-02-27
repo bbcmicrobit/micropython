@@ -1,5 +1,5 @@
 /*
- * This file is part of the Micro Python project, http://micropython.org/
+ * This file is part of the MicroPython project, http://micropython.org/
  *
  * The MIT License (MIT)
  *
@@ -25,8 +25,8 @@
  */
 
 #include "py/runtime.h"
-#include "microbit/microbitpin.h"
 #include "lib/pwm.h"
+#include "microbit/modmicrobit.h"
 
 uint8_t microbit_pinmode_indices[32] = { 0 };
 
@@ -53,14 +53,6 @@ static void set_mode(uint32_t pin, const microbit_pinmode_t *mode) {
     return;
 }
 
-
-void microbit_obj_pin_fail_if_cant_acquire(const microbit_pin_obj_t *pin) {
-    const microbit_pinmode_t *current_mode = microbit_pin_get_mode(pin);
-    if (current_mode->release == pinmode_error) {
-        pinmode_error(pin);
-    }
-}
-
 void microbit_obj_pin_free(const microbit_pin_obj_t *pin) {
     if (pin != NULL) {
         set_mode(pin->number, microbit_pin_mode_unused);
@@ -72,11 +64,14 @@ bool microbit_obj_pin_can_be_acquired(const microbit_pin_obj_t *pin) {
     return current_mode->release != pinmode_error;
 }
 
-void microbit_obj_pin_acquire(const microbit_pin_obj_t *pin, const microbit_pinmode_t *new_mode) {
+bool microbit_obj_pin_acquire(const microbit_pin_obj_t *pin, const microbit_pinmode_t *new_mode) {
     const microbit_pinmode_t *current_mode = microbit_pin_get_mode(pin);
     if (current_mode != new_mode) {
         current_mode->release(pin);
         set_mode(pin->number, new_mode);
+        return true;
+    } else {
+        return false;
     }
 }
 

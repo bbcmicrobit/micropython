@@ -1,5 +1,5 @@
 /*
- * This file is part of the Micro Python project, http://micropython.org/
+ * This file is part of the MicroPython project, http://micropython.org/
  *
  * The MIT License (MIT)
  *
@@ -36,7 +36,7 @@
 
 #if MICROPY_PY_BUILTINS_STR_UNICODE
 
-STATIC mp_obj_t mp_obj_new_str_iterator(mp_obj_t str);
+STATIC mp_obj_t mp_obj_new_str_iterator(mp_obj_t str, mp_obj_iter_buf_t *iter_buf);
 
 /******************************************************************************/
 /* str                                                                        */
@@ -116,7 +116,14 @@ STATIC mp_obj_t uni_unary_op(mp_uint_t op, mp_obj_t self_in) {
 // be capped to the first/last character of the string, depending on is_slice.
 const byte *str_index_to_ptr(const mp_obj_type_t *type, const byte *self_data, size_t self_len,
                              mp_obj_t index, bool is_slice) {
-    (void)type;
+    // All str functions also handle bytes objects, and they call str_index_to_ptr(),
+    // so it must handle bytes.
+    if (type == &mp_type_bytes) {
+        // Taken from objstr.c:str_index_to_ptr()
+        size_t index_val = mp_get_index(type, self_len, index, is_slice);
+        return self_data + index_val;
+    }
+
     mp_int_t i;
     // Copied from mp_get_index; I don't want bounds checking, just give me
     // the integer as-is. (I can't bounds-check without scanning the whole
@@ -135,32 +142,35 @@ const byte *str_index_to_ptr(const mp_obj_type_t *type, const byte *self_data, s
                 if (is_slice) {
                     return self_data;
                 }
-                nlr_raise(mp_obj_new_exception_msg_varg(&mp_type_IndexError, "string index out of range"));
+                mp_raise_msg(&mp_type_IndexError, "string index out of range");
             }
             if (!UTF8_IS_CONT(*s)) {
                 ++i;
             }
         }
         ++s;
-    } else if (!i) {
-        return self_data; // Shortcut - str[0] is its base pointer
     } else {
         // Positive indexing, correspondingly, counts from the start of the string.
         // It's assumed that negative indexing will generally be used with small
         // absolute values (eg str[-1], not str[-1000000]), which means it'll be
         // more efficient this way.
-        for (s = self_data; true; ++s) {
+        s = self_data;
+        while (1) {
+            // First check out-of-bounds
             if (s >= top) {
                 if (is_slice) {
                     return top;
                 }
-                nlr_raise(mp_obj_new_exception_msg_varg(&mp_type_IndexError, "string index out of range"));
+                mp_raise_msg(&mp_type_IndexError, "string index out of range");
             }
+            // Then check completion
+            if (i-- == 0) {
+                break;
+            }
+            // Then skip UTF-8 char
+            ++s;
             while (UTF8_IS_CONT(*s)) {
                 ++s;
-            }
-            if (!i--) {
-                return s;
             }
         }
     }
@@ -178,7 +188,7 @@ STATIC mp_obj_t str_subscr(mp_obj_t self_in, mp_obj_t index, mp_obj_t value) {
             mp_obj_t ostart, ostop, ostep;
             mp_obj_slice_get(index, &ostart, &ostop, &ostep);
             if (ostep != mp_const_none && ostep != MP_OBJ_NEW_SMALL_INT(1)) {
-                mp_not_implemented("only slices with step=1 (aka None) are supported");
+                mp_raise_NotImplementedError("only slices with step=1 (aka None) are supported");
             }
 
             const byte *pstart, *pstop;
@@ -236,8 +246,13 @@ STATIC const mp_rom_map_elem_t struni_locals_dict_table[] = {
     { MP_ROM_QSTR(MP_QSTR_format), MP_ROM_PTR(&str_format_obj) },
     { MP_ROM_QSTR(MP_QSTR_replace), MP_ROM_PTR(&str_replace_obj) },
     { MP_ROM_QSTR(MP_QSTR_count), MP_ROM_PTR(&str_count_obj) },
+    #if MICROPY_PY_BUILTINS_STR_PARTITION
     { MP_ROM_QSTR(MP_QSTR_partition), MP_ROM_PTR(&str_partition_obj) },
     { MP_ROM_QSTR(MP_QSTR_rpartition), MP_ROM_PTR(&str_rpartition_obj) },
+    #endif
+    #if MICROPY_PY_BUILTINS_STR_CENTER
+    { MP_ROM_QSTR(MP_QSTR_center), MP_ROM_PTR(&str_center_obj) },
+    #endif
     { MP_ROM_QSTR(MP_QSTR_lower), MP_ROM_PTR(&str_lower_obj) },
     { MP_ROM_QSTR(MP_QSTR_upper), MP_ROM_PTR(&str_upper_obj) },
     { MP_ROM_QSTR(MP_QSTR_isspace), MP_ROM_PTR(&str_isspace_obj) },
@@ -269,7 +284,7 @@ typedef struct _mp_obj_str_it_t {
     mp_obj_base_t base;
     mp_fun_1_t iternext;
     mp_obj_t str;
-    mp_uint_t cur;
+    size_t cur;
 } mp_obj_str_it_t;
 
 STATIC mp_obj_t str_it_iternext(mp_obj_t self_in) {
@@ -286,8 +301,9 @@ STATIC mp_obj_t str_it_iternext(mp_obj_t self_in) {
     }
 }
 
-STATIC mp_obj_t mp_obj_new_str_iterator(mp_obj_t str) {
-    mp_obj_str_it_t *o = m_new_obj(mp_obj_str_it_t);
+STATIC mp_obj_t mp_obj_new_str_iterator(mp_obj_t str, mp_obj_iter_buf_t *iter_buf) {
+    assert(sizeof(mp_obj_str_it_t) <= sizeof(mp_obj_iter_buf_t));
+    mp_obj_str_it_t *o = (mp_obj_str_it_t*)iter_buf;
     o->base.type = &mp_type_polymorph_iter;
     o->iternext = str_it_iternext;
     o->str = str;

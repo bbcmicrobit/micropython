@@ -1,6 +1,6 @@
 
 /*
- * This file is part of the Micro Python project, http://micropython.org/
+ * This file is part of the MicroPython project, http://micropython.org/
  *
  * The MIT License (MIT)
  *
@@ -26,16 +26,14 @@
  */
 
 #include <stdio.h>
-#include "MicroBit.h"
 
 extern "C" {
 
-#include "microbit/modmicrobit.h"
 #include "py/mphal.h"
-#include "microbitimage.h"
-#include "microbitdisplay.h"
+#include "microbit/modmicrobit.h"
+#include "microbit/microbit_image.h"
 
-static const mp_float_t bright[7] = { 
+static const mp_float_t bright[7] = {
     0.0, 1.0/9, 2.0/9, 4.0/9, 6.0/9, 7.0/9, 1.0,
 };
 
@@ -44,7 +42,7 @@ void love(int interval = 25 /* ms */) {
     for (uint i = 0; i < MP_ARRAY_SIZE(bright); i++) {
          hearts[i] = microbit_image_dim(HEART_IMAGE, bright[i]);
     }
-   
+
     for (int iteration = 0; iteration < 8; iteration++) {
         // pause between double beats of the heart
         if (iteration && (iteration & 1) == 0) {
@@ -83,7 +81,6 @@ STATIC MP_DEFINE_CONST_DICT(love_module_globals, love_module_globals_table);
 
 const mp_obj_module_t love_module = {
     .base = { &mp_type_module },
-    .name = MP_QSTR_love,
     .globals = (mp_obj_dict_t*)&love_module_globals,
 };
 

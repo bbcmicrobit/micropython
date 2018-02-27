@@ -1,5 +1,5 @@
 /*
- * This file is part of the Micro Python project, http://micropython.org/
+ * This file is part of the MicroPython project, http://micropython.org/
  *
  * The MIT License (MIT)
  *
@@ -34,7 +34,7 @@
 #include "py/emitglue.h"
 #include "py/bc.h"
 
-#if 0 // print debugging info
+#if MICROPY_DEBUG_VERBOSE // print debugging info
 #define DEBUG_printf DEBUG_printf
 #else // don't print debugging info
 #define DEBUG_printf(...) (void)0
@@ -42,7 +42,7 @@
 
 #if MICROPY_EMIT_NATIVE
 
-// convert a Micro Python object to a valid native value based on type
+// convert a MicroPython object to a valid native value based on type
 mp_uint_t mp_convert_obj_to_native(mp_obj_t obj, mp_uint_t type) {
     DEBUG_printf("mp_convert_obj_to_native(%p, " UINT_FMT ")\n", obj, type);
     switch (type & 0xf) {
@@ -64,9 +64,9 @@ mp_uint_t mp_convert_obj_to_native(mp_obj_t obj, mp_uint_t type) {
 
 #endif
 
-#if MICROPY_EMIT_NATIVE || MICROPY_EMIT_INLINE_THUMB
+#if MICROPY_EMIT_NATIVE || MICROPY_EMIT_INLINE_ASM
 
-// convert a native value to a Micro Python object based on type
+// convert a native value to a MicroPython object based on type
 mp_obj_t mp_convert_native_to_obj(mp_uint_t val, mp_uint_t type) {
     DEBUG_printf("mp_convert_native_to_obj(" UINT_FMT ", " UINT_FMT ")\n", val, type);
     switch (type & 0xf) {
@@ -86,7 +86,7 @@ mp_obj_t mp_convert_native_to_obj(mp_uint_t val, mp_uint_t type) {
 
 // wrapper that accepts n_args and n_kw in one argument
 // (native emitter can only pass at most 3 arguments to a function)
-mp_obj_t mp_native_call_function_n_kw(mp_obj_t fun_in, mp_uint_t n_args_kw, const mp_obj_t *args) {
+mp_obj_t mp_native_call_function_n_kw(mp_obj_t fun_in, size_t n_args_kw, const mp_obj_t *args) {
     return mp_call_function_n_kw(fun_in, n_args_kw & 0xff, (n_args_kw >> 8) & 0xff, args);
 }
 
@@ -98,6 +98,32 @@ void mp_native_raise(mp_obj_t o) {
     }
 }
 
+// wrapper that handles iterator buffer
+STATIC mp_obj_t mp_native_getiter(mp_obj_t obj, mp_obj_iter_buf_t *iter) {
+    if (iter == NULL) {
+        return mp_getiter(obj, NULL);
+    } else {
+        obj = mp_getiter(obj, iter);
+        if (obj != MP_OBJ_FROM_PTR(iter)) {
+            // Iterator didn't use the stack so indicate that with MP_OBJ_NULL.
+            iter->base.type = MP_OBJ_NULL;
+            iter->buf[0] = obj;
+        }
+        return NULL;
+    }
+}
+
+// wrapper that handles iterator buffer
+STATIC mp_obj_t mp_native_iternext(mp_obj_iter_buf_t *iter) {
+    mp_obj_t obj;
+    if (iter->base.type == MP_OBJ_NULL) {
+        obj = iter->buf[0];
+    } else {
+        obj = MP_OBJ_FROM_PTR(iter);
+    }
+    return mp_iternext(obj);
+}
+
 // these must correspond to the respective enum in runtime0.h
 void *const mp_fun_table[MP_F_NUMBER_OF] = {
     mp_convert_obj_to_native,
@@ -107,6 +133,7 @@ void *const mp_fun_table[MP_F_NUMBER_OF] = {
     mp_load_build_class,
     mp_load_attr,
     mp_load_method,
+    mp_load_super_method,
     mp_store_name,
     mp_store_global,
     mp_store_attr,
@@ -127,8 +154,8 @@ void *const mp_fun_table[MP_F_NUMBER_OF] = {
     mp_native_call_function_n_kw,
     mp_call_method_n_kw,
     mp_call_method_n_kw_var,
-    mp_getiter,
-    mp_iternext,
+    mp_native_getiter,
+    mp_native_iternext,
     nlr_push,
     nlr_pop,
     mp_native_raise,

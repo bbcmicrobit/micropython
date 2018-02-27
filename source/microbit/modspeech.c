@@ -1,5 +1,5 @@
 /*
- * This file is part of the Micro Python project, http://micropython.org/
+ * This file is part of the MicroPython project, http://micropython.org/
  *
  * The MIT License (MIT)
  *
@@ -26,7 +26,7 @@
 #include<stdio.h>
 
 #include "py/obj.h"
-#include "filesystem.h"
+#include "microbit/filesystem.h"
 #include "py/objtuple.h"
 #include "py/objstr.h"
 #include "microbit/modaudio.h"
@@ -102,12 +102,8 @@ const mp_obj_type_t speech_iterator_type = {
     .binary_op = NULL,
     .attr = NULL,
     .subscr = NULL,
-    .getiter = mp_identity,
+    .getiter = mp_identity_getiter,
     .iternext = next,
-    .buffer_p = {NULL},
-    .stream_p = NULL,
-    .bases_tuple = NULL,
-    .locals_dict = NULL,
 };
 
 static mp_obj_t make_speech_iter(void) {
@@ -124,7 +120,7 @@ static mp_obj_t translate(mp_obj_t words) {
     // Reciter truncates *output* at about 120 characters.
     // So to avoid that we must disallow any input that will exceed that.
     if (len > 80) {
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "text too long."));
+        mp_raise_ValueError("text too long");
     }
     reciter_memory *mem = m_new(reciter_memory, 1);
     MP_STATE_PORT(speech_data) = mem;
@@ -134,7 +130,7 @@ static mp_obj_t translate(mp_obj_t words) {
     mem->input[len] = '[';
     if (!TextToPhonemes(mem)) {
         MP_STATE_PORT(speech_data) = NULL;
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "could not parse input."));
+        mp_raise_ValueError("could not parse input");
     }
     for (outlen = 0; outlen < 255; outlen++) {
         if (mem->input[outlen] == 155) {
@@ -190,7 +186,7 @@ static mp_obj_t articulate(mp_obj_t phonemes, mp_uint_t n_args, const mp_obj_t *
     {
         audio_stop();
         MP_STATE_PORT(speech_data) = NULL;
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, sam_error));
+        mp_raise_ValueError(sam_error);
     }
 
     last_frame = true;
@@ -230,6 +226,5 @@ static MP_DEFINE_CONST_DICT(_globals, _globals_table);
 
 const mp_obj_module_t speech_module = {
     .base = { &mp_type_module },
-    .name = MP_QSTR_speech,
     .globals = (mp_obj_dict_t*)&_globals,
 };

@@ -1,5 +1,5 @@
 /*
- * This file is part of the Micro Python project, http://micropython.org/
+ * This file is part of the MicroPython project, http://micropython.org/
  *
  * The MIT License (MIT)
  *
@@ -24,14 +24,11 @@
  * THE SOFTWARE.
  */
 
-#include "microbitobj.h"
-
 extern "C" {
 
 #include "py/runtime.h"
-#include "modmicrobit.h"
-#include "microbitimage.h"
-
+#include "microbit/modmicrobit.h"
+#include "microbit/microbit_image.h"
 
 #define IMAGE_T const monochrome_5by5_t
 

@@ -1,5 +1,5 @@
 /*
- * This file is part of the Micro Python project, http://micropython.org/
+ * This file is part of the MicroPython project, http://micropython.org/
  *
  * The music encoded herein is either in the public domain, composed by
  * Nicholas H.Tollervey or the composer is untraceable and covered by fair
@@ -30,7 +30,7 @@
  */
 
 #include "py/objtuple.h"
-#include "modmicrobit.h"
+#include "microbit/modmicrobit.h"
 
 #define N(q) MP_OBJ_NEW_QSTR(MP_QSTR_ ## q)
 #define T(name, ...) const mp_obj_tuple_t microbit_music_tune_ ## name ## _obj = {{&mp_type_tuple}, .len = (sizeof((mp_obj_t[]){__VA_ARGS__})/sizeof(mp_obj_t)), .items = {__VA_ARGS__}};

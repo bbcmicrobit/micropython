@@ -31,7 +31,7 @@ extern "C" {
 #include "py/runtime0.h"
 #include "py/runtime.h"
 #include "lib/neopixel.h"
-#include "microbitobj.h"
+#include "microbit/modmicrobit.h"
 
 extern const mp_obj_type_t neopixel_type;
 
@@ -44,11 +44,11 @@ STATIC mp_obj_t neopixel_make_new(const mp_obj_type_t *type_in, mp_uint_t n_args
     (void)type_in;
     mp_arg_check_num(n_args, n_kw, 2, 2, false);
 
-    PinName pin = microbit_obj_get_pin_name(args[0]);
+    PinName pin = (PinName)microbit_obj_get_pin_name(args[0]);
     mp_int_t num_pixels = mp_obj_get_int(args[1]);
 
     if (num_pixels <= 0) {
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "invalid number of pixels"));
+        mp_raise_ValueError("invalid number of pixels");
     }
 
     neopixel_obj_t *self = m_new_obj(neopixel_obj_t);
@@ -88,7 +88,7 @@ STATIC mp_obj_t neopixel_subscr(mp_obj_t self_in, mp_obj_t index_in, mp_obj_t va
         mp_int_t g = mp_obj_get_int(rgb[1]);
         mp_int_t b = mp_obj_get_int(rgb[2]);
         if (r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255) {
-            nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "invalid colour"));
+            mp_raise_ValueError("invalid colour");
         }
         neopixel_set_color(&self->strip, index, r, g, b);
         return mp_const_none;
@@ -129,8 +129,8 @@ const mp_obj_type_t neopixel_type = {
     .getiter = NULL,
     .iternext = NULL,
     .buffer_p = {NULL},
-    .stream_p = NULL,
-    .bases_tuple = NULL,
+    .protocol = NULL,
+    .parent = NULL,
     .locals_dict = (mp_obj_dict_t*)&neopixel_locals_dict,
 };
 
@@ -143,7 +143,6 @@ STATIC MP_DEFINE_CONST_DICT(neopixel_module_globals, neopixel_module_globals_tab
 
 const mp_obj_module_t neopixel_module = {
     .base = { &mp_type_module },
-    .name = MP_QSTR_neopixel,
     .globals = (mp_obj_dict_t*)&neopixel_module_globals,
 };
 

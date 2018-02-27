@@ -1,9 +1,10 @@
 /*
- * This file is part of the Micro Python project, http://micropython.org/
+ * This file is part of the MicroPython project, http://micropython.org/
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Damien P. George
+ * Copyright (c) 2013, 2014 Damien P. George
+ * Copyright (c) 2014 Paul Sokolovsky
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,26 +24,19 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-#ifndef __MICROPY_INCLUDED_MICROBIT_MICROBITOBJ_H__
-#define __MICROPY_INCLUDED_MICROBIT_MICROBITOBJ_H__
-
-extern "C" {
+#ifndef MICROPY_INCLUDED_PY_OBJARRAY_H
+#define MICROPY_INCLUDED_PY_OBJARRAY_H
 
 #include "py/obj.h"
-#include "microbitpin.h"
-#include "PinNames.h"
 
-const microbit_pin_obj_t *microbit_obj_get_pin(mp_obj_t o);
-PinName microbit_obj_get_pin_name(mp_obj_t o);
+typedef struct _mp_obj_array_t {
+    mp_obj_base_t base;
+    size_t typecode : 8;
+    // free is number of unused elements after len used elements
+    // alloc size = len + free
+    size_t free : (8 * sizeof(size_t) - 8);
+    size_t len; // in elements
+    void *items;
+} mp_obj_array_t;
 
-extern volatile bool compass_up_to_date;
-extern volatile bool compass_updating;
-
-extern volatile bool accelerometer_up_to_date;
-extern volatile bool accelerometer_updating;
-
-extern void microbit_pin_init(void);
-
-}
-
-#endif // __MICROPY_INCLUDED_MICROBIT_MICROBITOBJ_H__
+#endif // MICROPY_INCLUDED_PY_OBJARRAY_H

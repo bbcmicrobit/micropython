@@ -179,9 +179,9 @@ its own to that.
 
 The pull mode for a pin is automatically configured when the pin changes to an
 input mode. Input modes are when you call ``read_analog`` / ``read_digital`` /
-``is_touched``. The pull mode for these is, respectively, ``NO_PULL``,
-``PULL_DOWN``, ``PULL_UP``. Only when in ``read_digital`` mode can you call
-``set_pull`` to change the pull mode from the default.
+``is_touched``. The default pull mode for these is, respectively, ``NO_PULL``,
+``PULL_DOWN``, ``PULL_UP``. Calling ``set_pull`` will configure the pin to be
+in ``read_digital`` mode with the given pull mode.
 
 
 .. note::

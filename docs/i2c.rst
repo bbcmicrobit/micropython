@@ -32,6 +32,12 @@ Functions
         compass stop working, as they are connected internally to those pins.
 
 
+.. py:function:: scan()
+
+    Scan the bus for devices.  Returns a list of 7-bit addresses corresponding
+    to those devices that responded to the scan.
+
+
 .. py:function:: read(addr, n, repeat=False)
 
     Read ``n`` bytes from the device with 7-bit address ``addr``. If ``repeat``

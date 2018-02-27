@@ -1,5 +1,5 @@
 /*
- * This file is part of the Micro Python project, http://micropython.org/
+ * This file is part of the MicroPython project, http://micropython.org/
  *
  * The MIT License (MIT)
  *
@@ -29,7 +29,7 @@
 #include "py/nlr.h"
 #include "py/obj.h"
 #include "py/gc.h"
-#include "filesystem.h"
+#include "microbit/filesystem.h"
 #include "lib/ticker.h"
 
 #define DEBUG_PERSISTENT 0
@@ -45,7 +45,7 @@ void persistent_write_byte_unchecked(const uint8_t *dest, const uint8_t val) {
 #if DEBUG_PERSISTENT
     if (((~(*dest)) & val) != 0) {
         DEBUG(("PERSISTENCE DEBUG: ERROR: Unchecked write of byte %u to %lx which contains %u\r\n", val, (uint32_t)dest, *dest));
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_Exception, "Internal error: Attempting illegal write."));
+        mp_raise_msg(&mp_type_Exception, "Internal error: Attempting illegal write.");
     }
 #endif
     DEBUG(("PERSISTENCE DEBUG: Write unchecked byte %u to %lx, previous value %u\r\n", val, (uint32_t)dest, *dest));
@@ -63,7 +63,7 @@ void persistent_write_unchecked(const void *dest, const void *src, uint32_t len)
     for(uint32_t i = 0; i < len; i++) {
         if ((~address[i] & data[i]) != 0) {
             DEBUG(("PERSISTENCE DEBUG: ERROR: Unchecked write of byte %u to %lx which contains %u\r\n", data[i], (uint32_t)&address[i], address[i]));
-            nlr_raise(mp_obj_new_exception_msg(&mp_type_Exception, "Internal error: Attempting illegal write."));
+            mp_raise_msg(&mp_type_Exception, "Internal error: Attempting illegal write.");
         }
     }
 #endif

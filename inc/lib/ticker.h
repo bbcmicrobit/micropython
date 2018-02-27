@@ -5,10 +5,16 @@
  * 62.5kHz (16µs cycle time) ticker.
  ************************************/
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "nrf.h"
 
 typedef void (*callback_ptr)(void);
 typedef int32_t (*ticker_callback_ptr)(void);
+
+extern volatile uint32_t ticker_ticks_ms;
 
 void ticker_init(callback_ptr slow_ticker_callback);
 void ticker_start(void);
@@ -26,5 +32,9 @@ int set_low_priority_callback(callback_ptr callback, int id);
 // This must be an integer multiple of MICROSECONDS_PER_TICK
 #define MICROSECONDS_PER_MACRO_TICK 6000
 #define MILLISECONDS_PER_MACRO_TICK 6
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // __MICROPY_INCLUDED_LIB_TICKER_H__

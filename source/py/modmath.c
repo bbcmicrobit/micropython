@@ -1,5 +1,5 @@
 /*
- * This file is part of the Micro Python project, http://micropython.org/
+ * This file is part of the MicroPython project, http://micropython.org/
  *
  * The MIT License (MIT)
  *
@@ -25,11 +25,15 @@
  */
 
 #include "py/builtin.h"
-#include "py/nlr.h"
+#include "py/runtime.h"
 
 #if MICROPY_PY_BUILTINS_FLOAT && MICROPY_PY_MATH
 
 #include <math.h>
+
+// M_PI is not part of the math.h standard and may not be defined
+// And by defining our own we can ensure it uses the correct const format.
+#define MP_PI MICROPY_FLOAT_CONST(3.14159265358979323846)
 
 /// \module math - mathematical functions
 ///
@@ -37,7 +41,7 @@
 /// working with floating-point numbers.
 
 STATIC NORETURN void math_error(void) {
-    nlr_raise(mp_obj_new_exception_msg_varg(&mp_type_ValueError, "math domain error"));
+    mp_raise_ValueError("math domain error");
 }
 
 #define MATH_FUN_1(py_name, c_name) \
@@ -53,7 +57,7 @@ STATIC NORETURN void math_error(void) {
     STATIC MP_DEFINE_CONST_FUN_OBJ_1(mp_math_## py_name ## _obj, mp_math_ ## py_name);
 
 #define MATH_FUN_1_TO_INT(py_name, c_name) \
-    STATIC mp_obj_t mp_math_ ## py_name(mp_obj_t x_obj) { mp_int_t x = MICROPY_FLOAT_C_FUN(c_name)(mp_obj_get_float(x_obj)); return mp_obj_new_int(x); } \
+    STATIC mp_obj_t mp_math_ ## py_name(mp_obj_t x_obj) { return mp_obj_new_int_from_float(MICROPY_FLOAT_C_FUN(c_name)(mp_obj_get_float(x_obj))); } \
     STATIC MP_DEFINE_CONST_FUN_OBJ_1(mp_math_## py_name ## _obj, mp_math_ ## py_name);
 
 #define MATH_FUN_1_ERRCOND(py_name, c_name, error_condition) \
@@ -164,6 +168,8 @@ STATIC mp_obj_t mp_math_log(size_t n_args, const mp_obj_t *args) {
         mp_float_t base = mp_obj_get_float(args[1]);
         if (base <= (mp_float_t)0.0) {
             math_error();
+        } else if (base == (mp_float_t)1.0) {
+            mp_raise_msg(&mp_type_ZeroDivisionError, "division by zero");
         }
         return mp_obj_new_float(l / MICROPY_FLOAT_C_FUN(log)(base));
     }
@@ -199,13 +205,13 @@ STATIC MP_DEFINE_CONST_FUN_OBJ_1(mp_math_modf_obj, mp_math_modf);
 
 /// \function radians(x)
 STATIC mp_obj_t mp_math_radians(mp_obj_t x_obj) {
-    return mp_obj_new_float(mp_obj_get_float(x_obj) * M_PI / 180.0);
+    return mp_obj_new_float(mp_obj_get_float(x_obj) * (MP_PI / MICROPY_FLOAT_CONST(180.0)));
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(mp_math_radians_obj, mp_math_radians);
 
 /// \function degrees(x)
 STATIC mp_obj_t mp_math_degrees(mp_obj_t x_obj) {
-    return mp_obj_new_float(mp_obj_get_float(x_obj) * 180.0 / M_PI);
+    return mp_obj_new_float(mp_obj_get_float(x_obj) * (MICROPY_FLOAT_CONST(180.0) / MP_PI));
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_1(mp_math_degrees_obj, mp_math_degrees);
 
@@ -263,7 +269,6 @@ STATIC MP_DEFINE_CONST_DICT(mp_module_math_globals, mp_module_math_globals_table
 
 const mp_obj_module_t mp_module_math = {
     .base = { &mp_type_module },
-    .name = MP_QSTR_math,
     .globals = (mp_obj_dict_t*)&mp_module_math_globals,
 };
 

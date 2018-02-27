@@ -1,5 +1,5 @@
 /*
- * This file is part of the Micro Python project, http://micropython.org/
+ * This file is part of the MicroPython project, http://micropython.org/
  *
  * The MIT License (MIT)
  *
@@ -28,12 +28,12 @@
 #include <errno.h>
 #include <sys/stat.h>
 
-#include "py/nlr.h"
+#include "py/runtime.h"
 #include "py/obj.h"
 #include "py/gc.h"
 #include "py/stream.h"
-#include "filesystem.h"
-#include "memory.h"
+#include "microbit/filesystem.h"
+#include "microbit/memory.h"
 
 #define DEBUG_FILE 0
 #if DEBUG_FILE
@@ -87,13 +87,7 @@ static inline void *last_page(void) {
 
 static void init_limits(void) {
     /* First determine where to end */
-    char *end;
-    if (microbit_mp_appended_script()[0] == 'M') {
-        end = microbit_mp_appended_script();
-    } else {
-        end = microbit_end_of_rom();
-    }
-    end = rounddown(end, persistent_page_size())-persistent_page_size();
+    char *end = (char*)microbit_compass_calibration_page() - persistent_page_size();
     last_page_index = (microbit_end_of_rom() - end)/persistent_page_size();
     /** Now find the start */
     char *start = roundup(end - CHUNK_SIZE*MAX_CHUNKS_IN_FILE_SYSTEM, persistent_page_size());
@@ -286,7 +280,7 @@ file_descriptor_obj *microbit_file_open(const char *name, uint32_t name_len, boo
         }
         index = find_chunk_and_erase();
         if (index == FILE_NOT_FOUND) {
-            nlr_raise(mp_obj_new_exception_msg(&mp_type_OSError, "No more storage space"));
+            mp_raise_msg(&mp_type_OSError, "no more storage space");
         }
         persistent_write_byte_unchecked(&(file_system_chunks[index].marker), FILE_START);
         persistent_write_byte_unchecked(&(file_system_chunks[index].header.name_len), name_len);
@@ -320,7 +314,7 @@ mp_obj_t microbit_remove(mp_obj_t filename) {
     const char *name = mp_obj_str_get_data(filename, &name_len);
     mp_uint_t index = microbit_find_file(name, name_len);
     if (index == 255) {
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_OSError, "file not found"));
+        mp_raise_msg(&mp_type_OSError, "file not found");
     }
     clear_file(index);
     return mp_const_none;
@@ -328,7 +322,7 @@ mp_obj_t microbit_remove(mp_obj_t filename) {
 
 static void check_file_open(file_descriptor_obj *self) {
     if (!self->open) {
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "I/O operation on closed file"));
+        mp_raise_ValueError("I/O operation on closed file");
     }
 }
 
@@ -430,7 +424,7 @@ mp_obj_t microbit_file_size(mp_obj_t filename) {
     const char *name = mp_obj_str_get_data(filename, &name_len);
     uint8_t chunk = microbit_find_file(name, name_len);
     if (chunk == 255) {
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_OSError, "file not found"));
+        mp_raise_msg(&mp_type_OSError, "file not found");
     }
     mp_uint_t len = 0;
     uint8_t end_offset = file_system_chunks[chunk].header.end_offset;
@@ -444,7 +438,8 @@ mp_obj_t microbit_file_size(mp_obj_t filename) {
     return mp_obj_new_int(len);
 }
 
-static mp_uint_t file_read_byte(file_descriptor_obj *fd) {
+static mp_uint_t file_read_byte(void *fd_in) {
+    file_descriptor_obj *fd = fd_in;
     if (file_system_chunks[fd->seek_chunk].next_chunk == UNUSED_CHUNK) {
         uint8_t end_offset = file_system_chunks[fd->start_chunk].header.end_offset;
         if (end_offset == UNUSED_CHUNK || fd->seek_offset == end_offset) {
@@ -457,7 +452,8 @@ static mp_uint_t file_read_byte(file_descriptor_obj *fd) {
 }
 
 mp_lexer_t *microbit_file_lexer(qstr src_name, file_descriptor_obj *fd) {
-    return mp_lexer_new(src_name, fd, (mp_lexer_stream_next_byte_t)file_read_byte, (mp_lexer_stream_close_t)microbit_file_close);
+    mp_reader_t reader = {fd, file_read_byte, (void(*)(void*))microbit_file_close};
+    return mp_lexer_new(src_name, reader);
 }
 
 mp_lexer_t *mp_lexer_new_from_file(const char *filename) {

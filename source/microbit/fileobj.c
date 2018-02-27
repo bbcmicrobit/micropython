@@ -1,5 +1,5 @@
 /*
- * This file is part of the Micro Python project, http://micropython.org/
+ * This file is part of the MicroPython project, http://micropython.org/
  *
  * The MIT License (MIT)
  *
@@ -24,14 +24,10 @@
  * THE SOFTWARE.
  */
 
-
-
-
-#include "py/nlr.h"
+#include "py/runtime.h"
 #include "py/obj.h"
-#include "filesystem.h"
 #include "py/stream.h"
-
+#include "microbit/filesystem.h"
 
 static mp_obj_t microbit_file_writable(mp_obj_t self) {
     return mp_obj_new_bool(((file_descriptor_obj *)self)->writable);
@@ -84,8 +80,8 @@ const mp_obj_type_t microbit_bytesio_type = {
     .getiter = NULL,
     .iternext = NULL,
     .buffer_p = {NULL},
-    .stream_p = &bytesio_stream_p,
-    .bases_tuple = NULL,
+    .protocol = &bytesio_stream_p,
+    .parent = NULL,
     .locals_dict = (mp_obj_dict_t*)&microbit_file_locals_dict,
 };
 
@@ -108,11 +104,10 @@ const mp_obj_type_t microbit_textio_type = {
     .getiter = NULL,
     .iternext = NULL,
     .buffer_p = {NULL},
-    .stream_p = &textio_stream_p,
-    .bases_tuple = NULL,
+    .protocol = &textio_stream_p,
+    .parent = NULL,
     .locals_dict = (mp_obj_dict_t*)&microbit_file_locals_dict,
 };
-
 
 static mp_obj_t mp_builtin_open(size_t n_args, const mp_obj_t *args) {
     /// -1 means default; 0 explicitly false; 1 explicitly true.
@@ -141,10 +136,10 @@ static mp_obj_t mp_builtin_open(size_t n_args, const mp_obj_t *args) {
     const char *filename = mp_obj_str_get_data(args[0], &name_len);
     file_descriptor_obj *res = microbit_file_open(filename, name_len, read == 0, text == 0);
     if (res == NULL) {
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_OSError, "file not found"));
+        mp_raise_msg(&mp_type_OSError, "file not found");
     }
     return res;
 mode_error:
-    nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "illegal mode"));
+    mp_raise_ValueError("illegal mode");
 }
 MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(mp_builtin_open_obj, 1, 2, mp_builtin_open);

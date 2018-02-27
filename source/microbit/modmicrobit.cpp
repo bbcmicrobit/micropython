@@ -1,5 +1,5 @@
 /*
- * This file is part of the Micro Python project, http://micropython.org/
+ * This file is part of the MicroPython project, http://micropython.org/
  *
  * The MIT License (MIT)
  *
@@ -24,17 +24,18 @@
  * THE SOFTWARE.
  */
 
-#include "MicroBit.h"
+#include "MicroBitDevice.h"
+#include "MicroBitSystemTimer.h"
 
 extern "C" {
 
 #include "py/nlr.h"
 #include "py/obj.h"
 #include "py/mphal.h"
-#include "modmicrobit.h"
+#include "microbit/modmicrobit.h"
 
 STATIC mp_obj_t microbit_reset_(void) {
-    uBit.reset();
+    microbit_reset();
     return mp_const_none;
 }
 MP_DEFINE_CONST_FUN_OBJ_0(microbit_reset_obj, microbit_reset_);
@@ -54,22 +55,29 @@ STATIC mp_obj_t microbit_sleep(mp_obj_t ms_in) {
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_sleep_obj, microbit_sleep);
 
 STATIC mp_obj_t microbit_running_time(void) {
-    return MP_OBJ_NEW_SMALL_INT(uBit.systemTime());
+    return MP_OBJ_NEW_SMALL_INT(system_timer_current_time());
 }
 MP_DEFINE_CONST_FUN_OBJ_0(microbit_running_time_obj, microbit_running_time);
 
 STATIC mp_obj_t microbit_panic(mp_uint_t n_args, const mp_obj_t *args) {
     if (n_args == 0) {
-        uBit.panic();
+        // TODO the docs don't mention this, so maybe remove it?
+        microbit_panic(999);
     } else {
-        uBit.panic(mp_obj_get_int(args[0]));
+        microbit_panic(mp_obj_get_int(args[0]));
     }
     return mp_const_none;
 }
 MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_panic_obj, 0, 1, microbit_panic);
 
 STATIC mp_obj_t microbit_temperature(void) {
-    return mp_obj_new_int(uBit.thermometer.getTemperature());
+    NRF_TEMP->TASKS_START = 1;
+    while (NRF_TEMP->EVENTS_DATARDY == 0) {
+    }
+    NRF_TEMP->EVENTS_DATARDY = 0;
+    int32_t temp = NRF_TEMP->TEMP / 4;
+    NRF_TEMP->TASKS_STOP = 1;
+    return mp_obj_new_int(temp);
 }
 MP_DEFINE_CONST_FUN_OBJ_0(microbit_temperature_obj, microbit_temperature);
 
@@ -92,7 +100,7 @@ STATIC const mp_map_elem_t microbit_module_globals_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_running_time), (mp_obj_t)&microbit_running_time_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_panic), (mp_obj_t)&microbit_panic_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_temperature), (mp_obj_t)&microbit_temperature_obj },
-    
+
     { MP_OBJ_NEW_QSTR(MP_QSTR_pin0), (mp_obj_t)&microbit_p0_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_pin1), (mp_obj_t)&microbit_p1_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_pin2), (mp_obj_t)&microbit_p2_obj },
@@ -118,7 +126,6 @@ STATIC MP_DEFINE_CONST_DICT(microbit_module_globals, microbit_module_globals_tab
 
 const mp_obj_module_t microbit_module = {
     .base = { &mp_type_module },
-    .name = MP_QSTR_microbit,
     .globals = (mp_obj_dict_t*)&microbit_module_globals,
 };
 

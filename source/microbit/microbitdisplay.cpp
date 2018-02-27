@@ -1,5 +1,5 @@
 /*
- * This file is part of the Micro Python project, http://micropython.org/
+ * This file is part of the MicroPython project, http://micropython.org/
  *
  * The MIT License (MIT)
  *
@@ -25,20 +25,37 @@
  */
 
 #include <string.h>
-#include "microbitobj.h"
 #include "nrf_gpio.h"
 
 extern "C" {
+
 #include "py/runtime.h"
 #include "py/gc.h"
-#include "modmicrobit.h"
-#include "microbitimage.h"
-#include "microbitdisplay.h"
-#include "microbitpin.h"
 #include "lib/iters.h"
 #include "lib/ticker.h"
+#include "microbit/modmicrobit.h"
+#include "microbit/microbit_image.h"
 
 #define min(a,b) (((a)<(b))?(a):(b))
+
+#define ASYNC_MODE_STOPPED 0
+#define ASYNC_MODE_ANIMATION 1
+#define ASYNC_MODE_CLEAR 2
+
+typedef struct _microbit_display_obj_t {
+    mp_obj_base_t base;
+    uint8_t image_buffer[5][5];
+    uint8_t previous_brightness;
+    bool    active;
+    /* Current row for strobing */
+    uint8_t strobe_row;
+    /* boolean histogram of brightness in buffer */
+    uint16_t brightnesses;
+    uint16_t pins_for_brightness[MAX_BRIGHTNESS+1];
+
+    void advanceRow();
+    inline void setPinsForRow(uint8_t brightness);
+} microbit_display_obj_t;
 
 void microbit_display_show(microbit_display_obj_t *display, microbit_image_obj_t *image) {
     mp_int_t w = min(image->width(), 5);
@@ -303,7 +320,7 @@ static void draw_object(mp_obj_t obj) {
             async_stop();
         }
     } else {
-        MP_STATE_VM(mp_pending_exception) = mp_obj_new_exception_msg(&mp_type_TypeError, "not an image.");
+        MP_STATE_VM(mp_pending_exception) = mp_obj_new_exception_msg(&mp_type_TypeError, "not an image");
         async_stop();
     }
 }
@@ -377,7 +394,7 @@ void microbit_display_animate(microbit_display_obj_t *self, mp_obj_t iterable, m
     // Reset the repeat state.
     MP_STATE_PORT(async_data)[0] = NULL;
     MP_STATE_PORT(async_data)[1] = NULL;
-    async_iterator = mp_getiter(iterable);
+    async_iterator = mp_getiter(iterable, NULL);
     async_delay = delay;
     async_clear = clear;
     MP_STATE_PORT(async_data)[0] = self; // so it doesn't get GC'd
@@ -425,12 +442,6 @@ MP_DEFINE_CONST_FUN_OBJ_KW(microbit_display_scroll_obj, 1, microbit_display_scro
 mp_obj_t microbit_display_on_func(mp_obj_t obj) {
     microbit_display_obj_t *self = (microbit_display_obj_t*)obj;
     /* Try to reclaim the pins we need */
-    microbit_obj_pin_fail_if_cant_acquire(&microbit_p3_obj);
-    microbit_obj_pin_fail_if_cant_acquire(&microbit_p4_obj);
-    microbit_obj_pin_fail_if_cant_acquire(&microbit_p6_obj);
-    microbit_obj_pin_fail_if_cant_acquire(&microbit_p7_obj);
-    microbit_obj_pin_fail_if_cant_acquire(&microbit_p9_obj);
-    microbit_obj_pin_fail_if_cant_acquire(&microbit_p10_obj);
     microbit_obj_pin_acquire(&microbit_p3_obj, microbit_pin_mode_display);
     microbit_obj_pin_acquire(&microbit_p4_obj, microbit_pin_mode_display);
     microbit_obj_pin_acquire(&microbit_p6_obj, microbit_pin_mode_display);
@@ -494,10 +505,10 @@ MP_DEFINE_CONST_FUN_OBJ_1(microbit_display_clear_obj, microbit_display_clear_fun
 
 void microbit_display_set_pixel(microbit_display_obj_t *display, mp_int_t x, mp_int_t y, mp_int_t bright) {
     if (x < 0 || y < 0 || x > 4 || y > 4) {
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "index out of bounds."));
+        mp_raise_ValueError("index out of bounds");
     }
     if (bright < 0 || bright > MAX_BRIGHTNESS) {
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "brightness out of bounds."));
+        mp_raise_ValueError("brightness out of bounds");
     }
     display->image_buffer[x][y] = bright;
     display->brightnesses |= (1 << bright);
@@ -513,7 +524,7 @@ MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_display_set_pixel_obj, 4, 4, microb
 
 mp_int_t microbit_display_get_pixel(microbit_display_obj_t *display, mp_int_t x, mp_int_t y) {
     if (x < 0 || y < 0 || x > 4 || y > 4) {
-        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "index out of bounds."));
+        mp_raise_ValueError("index out of bounds");
     }
     return display->image_buffer[x][y];
 }
@@ -551,8 +562,8 @@ STATIC const mp_obj_type_t microbit_display_type = {
     .getiter = NULL,
     .iternext = NULL,
     .buffer_p = {NULL},
-    .stream_p = NULL,
-    .bases_tuple = NULL,
+    .protocol = NULL,
+    .parent = NULL,
     .locals_dict = (mp_obj_dict_t*)&microbit_display_locals_dict,
 };
 

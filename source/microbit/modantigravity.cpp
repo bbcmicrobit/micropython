@@ -1,6 +1,6 @@
 
 /*
- * This file is part of the Micro Python project, http://micropython.org/
+ * This file is part of the MicroPython project, http://micropython.org/
  *
  * The MIT License (MIT)
  *
@@ -27,13 +27,11 @@
  */
 
 #include <stdio.h>
-#include "MicroBit.h"
 
 extern "C" {
 
 #include "py/mphal.h"
-#include "microbitimage.h"
-#include "microbitdisplay.h"
+#include "microbit/modmicrobit.h"
 
 #define GET_PIXEL(x, y) microbit_display_get_pixel(&microbit_display_obj, x, y)
 #define SET_PIXEL(x, y, v) microbit_display_set_pixel(&microbit_display_obj, x, y, v)
@@ -217,7 +215,6 @@ STATIC MP_DEFINE_CONST_DICT(antigravity_module_globals, antigravity_module_globa
 
 const mp_obj_module_t antigravity_module = {
     .base = { &mp_type_module },
-    .name = MP_QSTR_antigravity,
     .globals = (mp_obj_dict_t*)&antigravity_module_globals,
 };
 

@@ -1,5 +1,5 @@
 /*
- * This file is part of the Micro Python project, http://micropython.org/
+ * This file is part of the MicroPython project, http://micropython.org/
  *
  * The MIT License (MIT)
  *
@@ -27,13 +27,12 @@
 extern "C" {
 
 #include <errno.h>
+#include "pinmap.h"
 #include "serial_api.h"
 #include "py/runtime.h"
 #include "py/stream.h"
 #include "py/mphal.h"
-#include "modmicrobit.h"
-#include "microbitpin.h"
-#include "microbitobj.h"
+#include "microbit/modmicrobit.h"
 
 // There is only one UART peripheral and it's already used by stdio (and
 // connected to USB serial).  So to access the UART we go through the
@@ -43,6 +42,9 @@ extern "C" {
 typedef struct _microbit_uart_obj_t {
     mp_obj_base_t base;
 } microbit_uart_obj_t;
+
+// timeout (in ms) to wait between characters when reading
+STATIC uint16_t microbit_uart_timeout_char = 0;
 
 STATIC mp_obj_t microbit_uart_init(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
     static const mp_arg_t allowed_args[] = {
@@ -73,25 +75,38 @@ STATIC mp_obj_t microbit_uart_init(mp_uint_t n_args, const mp_obj_t *pos_args, m
 
     // set tx/rx pins if they are given
     if (args[5].u_obj != mp_const_none) {
-        p_tx = microbit_obj_get_pin_name(args[5].u_obj);
+        p_tx = (PinName)microbit_obj_get_pin_name(args[5].u_obj);
     }
     if (args[6].u_obj != mp_const_none) {
-        p_rx = microbit_obj_get_pin_name(args[6].u_obj);
+        p_rx = (PinName)microbit_obj_get_pin_name(args[6].u_obj);
     }
 
     // support for legacy "pins" argument
     if (args[4].u_obj != mp_const_none) {
         mp_obj_t *pins;
         mp_obj_get_array_fixed_n(args[4].u_obj, 2, &pins);
-        p_tx = microbit_obj_get_pin_name(pins[0]);
-        p_rx = microbit_obj_get_pin_name(pins[1]);
+        p_tx = (PinName)microbit_obj_get_pin_name(pins[0]);
+        p_rx = (PinName)microbit_obj_get_pin_name(pins[1]);
     }
 
     // initialise the uart
+    // Note: we don't want to call serial_init() because it sends a single 0x00
+    // character on the line during initialisation.  This function has anyway
+    // already been called by the MicroBitSerial constructor so it's enough to
+    // just reconfigure the pins here, as would have been done by serial_init().
     serial_t serial;
-    serial_init(&serial, p_tx, p_rx);
+    serial.uart = NRF_UART0;
+    NRF_GPIO->DIR |= (1 << p_tx);
+    NRF_GPIO->DIR &= ~(1 << p_rx);
+    NRF_UART0->PSELTXD = p_tx;
+    NRF_UART0->PSELRXD = p_rx;
+    pin_mode(p_tx, PullUp);
+    pin_mode(p_rx, PullUp);
     serial_baud(&serial, args[0].u_int);
     serial_format(&serial, args[1].u_int, parity, args[3].u_int);
+
+    // set the character read timeout based on the baudrate and 13 bits
+    microbit_uart_timeout_char = 13000 / args[0].u_int + 1;
 
     return mp_const_none;
 }
@@ -112,7 +127,6 @@ STATIC const mp_map_elem_t microbit_uart_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_any), (mp_obj_t)&microbit_uart_any_obj },
 
     { MP_OBJ_NEW_QSTR(MP_QSTR_read), (mp_obj_t)&mp_stream_read_obj },
-    { MP_OBJ_NEW_QSTR(MP_QSTR_readall), (mp_obj_t)&mp_stream_readall_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_readline), (mp_obj_t)&mp_stream_unbuffered_readline_obj},
     { MP_OBJ_NEW_QSTR(MP_QSTR_readinto), (mp_obj_t)&mp_stream_readinto_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_write), (mp_obj_t)&mp_stream_write_obj },
@@ -122,6 +136,20 @@ STATIC const mp_map_elem_t microbit_uart_locals_dict_table[] = {
 };
 
 STATIC MP_DEFINE_CONST_DICT(microbit_uart_locals_dict, microbit_uart_locals_dict_table);
+
+// Waits at most timeout_ms for at least 1 char to become ready for reading.
+// Returns true if something available, false if not.
+STATIC bool microbit_uart_rx_wait(uint32_t timeout_ms) {
+    uint32_t start = mp_hal_ticks_ms();
+    for (;;) {
+        if (mp_hal_stdin_rx_any()) {
+            return true; // have at least 1 character waiting
+        }
+        if (mp_hal_ticks_ms() - start >= timeout_ms) {
+            return false; // timeout
+        }
+    }
+}
 
 STATIC mp_uint_t microbit_uart_read(mp_obj_t self_in, void *buf_in, mp_uint_t size, int *errcode) {
     (void)self_in;
@@ -143,7 +171,7 @@ STATIC mp_uint_t microbit_uart_read(mp_obj_t self_in, void *buf_in, mp_uint_t si
     byte *orig_buf = buf;
     for (;;) {
         *buf++ = mp_hal_stdin_rx_chr();
-        if (--size == 0 || !mp_hal_stdin_rx_any()) {
+        if (--size == 0 || !microbit_uart_rx_wait(microbit_uart_timeout_char)) {
             // return number of bytes read
             return buf - orig_buf;
         }
@@ -178,8 +206,8 @@ const mp_obj_type_t microbit_uart_type = {
     .getiter = NULL,
     .iternext = NULL,
     .buffer_p = {NULL},
-    .stream_p = &microbit_uart_stream_p,
-    .bases_tuple = NULL,
+    .protocol = &microbit_uart_stream_p,
+    .parent = NULL,
     .locals_dict = (mp_obj_dict_t*)&microbit_uart_locals_dict,
 };
 

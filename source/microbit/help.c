@@ -1,5 +1,5 @@
 /*
- * This file is part of the Micro Python project, http://micropython.org/
+ * This file is part of the MicroPython project, http://micropython.org/
  *
  * The MIT License (MIT)
  *
@@ -24,13 +24,11 @@
  * THE SOFTWARE.
  */
 
-#include <stdio.h>
-
-#include "py/nlr.h"
-#include "py/obj.h"
+#include "py/builtin.h"
+#include "py/stream.h"
 #include "microbit/modmicrobit.h"
 
-STATIC const char *help_text =
+const char *microbit_help_text =
 "Welcome to MicroPython on the micro:bit!\n"
 "\n"
 "Try these commands:\n"
@@ -53,8 +51,7 @@ STATIC const char *help_text =
 "  CTRL-D        -- on a blank line, do a soft reset of the micro:bit\n"
 "  CTRL-E        -- enter paste mode, turning off auto-indent\n"
 "\n"
-"Available modules: antigravity, array, collections, gc, love, math,\n"
-"micropython, music, neopixel, os, radio, random, speech, struct, sys, this\n"
+"For a list of available modules, type help('modules')\n"
 "\n"
 "For more information about Python, visit: http://python.org/\n"
 "To find out about MicroPython, visit: http://micropython.org/\n"
@@ -157,7 +154,6 @@ STATIC const mp_doc_t help_table_instances[] = {
     {&microbit_uart_init_obj, "Use init() to set up communication. Use pins 0 (TX) and 1 (RX) with a baud\nrate of 9600.\nOverride the defaults for 'baudrate', 'parity' and 'pins'.\n"},
     {&microbit_uart_any_obj, "If there are incoming characters waiting to be read, any() will return True.\nOtherwise, returns False.\n"},
     {&mp_stream_read_obj, "Use read() to read characters.\nUse read(n) to read, at most, 'n' bytes of data.\n"},
-    {&mp_stream_readall_obj, "Use readall() to read as much data as possible.\n"},
     {&mp_stream_unbuffered_readline_obj, "Use readline() to read a line that ends with a newline character.\n"},
     {&mp_stream_readinto_obj, "Use readinto(buf) to read bytes into the buffer 'buf'.\nUse readinto(buff, n) to read, at most, 'n' number of bytes into 'buf'.\n"},
     {&mp_stream_write_obj, "Use write(buf) to write the bytes in buffer 'buf' to the connected device.\n"},
@@ -185,75 +181,27 @@ STATIC const mp_doc_t help_table_instances[] = {
     {&love_badaboom_obj, "Hear my soul speak:\nThe very instant that I saw you, did\nMy heart fly to your service.\n"},
 };
 
-STATIC void pyb_help_print_info_about_object(mp_obj_t name_o, mp_obj_t value) {
-    mp_printf(&mp_plat_print, "  ");
-    mp_obj_print(name_o, PRINT_STR);
-    mp_printf(&mp_plat_print, " -- ");
-    mp_obj_print(value, PRINT_STR);
-    mp_printf(&mp_plat_print, "\n");
-}
+bool mp_plat_specific_help(mp_obj_t args0) {
+    mp_obj_type_t *args0_type = mp_obj_get_type(args0);
 
-STATIC mp_obj_t pyb_help(uint n_args, const mp_obj_t *args) {
-    if (n_args == 0) {
-        // print a general help message
-        mp_printf(&mp_plat_print, "%s", help_text);
-
-    } else {
-        mp_obj_t args0 = args[0];
-        mp_obj_type_t *args0_type = mp_obj_get_type(args0);
-        if (args0_type->name == MP_QSTR_bound_method) {
-            args0 = ((mp_obj_t*)args0)[1]; // extract method
-            args0_type = mp_obj_get_type(args0);
-        }
-
-        // see if we have specific help info for this instance
-        for (size_t i = 0; i < MP_ARRAY_SIZE(help_table_instances); i++) {
-            if (args0 == help_table_instances[i].obj) {
-                mp_print_str(&mp_plat_print, help_table_instances[i].doc);
-                //if (args0_type == &mp_type_module) {
-                //TODO here we can list the things inside the module
-                //}
-                return mp_const_none;
-            }
-        }
-
-        // see if we have specific help info for this type
-        for (size_t i = 0; i < MP_ARRAY_SIZE(help_table_types); i++) {
-            if (args0 == help_table_types[i].obj || args0_type == help_table_types[i].obj) {
-                mp_print_str(&mp_plat_print, help_table_types[i].doc);
-                return mp_const_none;
-            }
-        }
-
-        // don't have specific help info, try instead to print something sensible
-
-        mp_printf(&mp_plat_print, "object ");
-        mp_obj_print(args0, PRINT_STR);
-        mp_printf(&mp_plat_print, " is of type %q\n", args0_type->name);
-
-        mp_map_t *map = NULL;
-        if (args0_type == &mp_type_module) {
-            map = mp_obj_dict_get_map(mp_obj_module_get_globals(args0));
-        } else {
-            mp_obj_type_t *type;
-            if (args0_type == &mp_type_type) {
-                type = args0;
-            } else {
-                type = args0_type;
-            }
-            if (type->locals_dict != MP_OBJ_NULL && MP_OBJ_IS_TYPE(type->locals_dict, &mp_type_dict)) {
-                map = mp_obj_dict_get_map(type->locals_dict);
-            }
-        }
-        if (map != NULL) {
-            for (uint i = 0; i < map->alloc; i++) {
-                if (map->table[i].key != MP_OBJ_NULL) {
-                    pyb_help_print_info_about_object(map->table[i].key, map->table[i].value);
-                }
-            }
+    // see if we have specific help info for this instance
+    for (size_t i = 0; i < MP_ARRAY_SIZE(help_table_instances); i++) {
+        if (args0 == help_table_instances[i].obj) {
+            mp_print_str(&mp_plat_print, help_table_instances[i].doc);
+            //if (args0_type == &mp_type_module) {
+            //TODO here we can list the things inside the module
+            //}
+            return true;
         }
     }
 
-    return mp_const_none;
+    // see if we have specific help info for this type
+    for (size_t i = 0; i < MP_ARRAY_SIZE(help_table_types); i++) {
+        if (args0 == help_table_types[i].obj || args0_type == help_table_types[i].obj) {
+            mp_print_str(&mp_plat_print, help_table_types[i].doc);
+            return true;
+        }
+    }
+
+    return false;
 }
-MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(mp_builtin_help_obj, 0, 1, pyb_help);

@@ -1,5 +1,5 @@
 /*
- * This file is part of the Micro Python project, http://micropython.org/
+ * This file is part of the MicroPython project, http://micropython.org/
  *
  * The MIT License (MIT)
  *
@@ -24,28 +24,32 @@
  * THE SOFTWARE.
  */
 
-#include "MicroBit.h"
+#include "us_ticker_api.h"
+#include "wait_api.h"
+#include "MicroBitSystemTimer.h"
+#include "MicroBitSerial.h"
 
 extern "C" {
 
-#include "py/mpstate.h"
+#include "py/runtime.h"
 #include "py/mphal.h"
-#include "microbitimage.h"
-#include "microbitdisplay.h"
+#include "lib/utils/interrupt_char.h"
+#include "microbit/modmicrobit.h"
 
 #define UART_RX_BUF_SIZE (64) // it's large so we can paste example code
 
-static int interrupt_char;
 static uint8_t uart_rx_buf[UART_RX_BUF_SIZE];
 static volatile uint16_t uart_rx_buf_head, uart_rx_buf_tail;
 
+MicroBitSerial ubit_serial(USBTX, USBRX);
+
 void uart_rx_irq(void) {
-    if (!uBit.serial.readable()) {
+    if (!ubit_serial.readable()) {
         return;
     }
-    int c = uBit.serial.getc();
-    if (c == interrupt_char) {
-        MP_STATE_VM(mp_pending_exception) = MP_STATE_PORT(keyboard_interrupt_obj);
+    int c = ubit_serial.getc();
+    if (c == mp_interrupt_char) {
+        mp_keyboard_interrupt();
     } else {
         uint16_t next_head = (uart_rx_buf_head + 1) % UART_RX_BUF_SIZE;
         if (next_head != uart_rx_buf_tail) {
@@ -59,16 +63,7 @@ void uart_rx_irq(void) {
 void mp_hal_init(void) {
     uart_rx_buf_head = 0;
     uart_rx_buf_tail = 0;
-    uBit.serial.attach(uart_rx_irq);
-    interrupt_char = -1;
-    MP_STATE_PORT(keyboard_interrupt_obj) = mp_obj_new_exception(&mp_type_KeyboardInterrupt);
-}
-
-void mp_hal_set_interrupt_char(int c) {
-    if (c != -1) {
-        mp_obj_exception_clear_traceback(MP_STATE_PORT(keyboard_interrupt_obj));
-    }
-    interrupt_char = c;
+    ubit_serial.attach(uart_rx_irq);
 }
 
 int mp_hal_stdin_rx_any(void) {
@@ -90,16 +85,16 @@ void mp_hal_stdout_tx_str(const char *str) {
 
 void mp_hal_stdout_tx_strn(const char *str, size_t len) {
     for (; len > 0; --len) {
-        uBit.serial.putc(*str++);
+        ubit_serial.putc(*str++);
     }
 }
 
 void mp_hal_stdout_tx_strn_cooked(const char *str, size_t len) {
     for (; len > 0; --len) {
         if (*str == '\n') {
-            uBit.serial.putc('\r');
+            ubit_serial.putc('\r');
         }
-        uBit.serial.putc(*str++);
+        ubit_serial.putc(*str++);
     }
 }
 
@@ -127,20 +122,30 @@ void mp_hal_display_string(const char *str) {
     microbit_display_scroll(&microbit_display_obj, str);
 }
 
+void mp_hal_delay_us(mp_uint_t us) {
+    wait_us(us);
+}
+
 void mp_hal_delay_ms(mp_uint_t ms) {
-    if (ms <= 0)
+    if (ms <= 0) {
         return;
-    unsigned long current = uBit.systemTime();
-    unsigned long wakeup = current + ms;
-    if (wakeup < current) {
-        // Overflow
-        do {
-            __WFI();
-        } while (uBit.systemTime() > current);
     }
-    do {
+    // Wraparound of tick is taken care of by 2's complement arithmetic
+    uint64_t start = system_timer_current_time();
+    while (system_timer_current_time() - start < (uint64_t)ms) {
+        // Check for any pending events, like a KeyboardInterrupt
+        mp_handle_pending();
+        // Enter sleep mode, waiting for (at least) the SysTick interrupt
         __WFI();
-    } while (uBit.systemTime() < wakeup);
+    }
+}
+
+mp_uint_t mp_hal_ticks_us(void) {
+    return us_ticker_read();
+}
+
+mp_uint_t mp_hal_ticks_ms(void) {
+    return system_timer_current_time();
 }
 
 }

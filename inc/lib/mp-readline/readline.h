@@ -3,7 +3,7 @@
  *
  * The MIT License (MIT)
  *
- * Copyright (c) 2013-2016 Damien P. George
+ * Copyright (c) 2013, 2014 Damien P. George
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -23,22 +23,26 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+#ifndef MICROPY_INCLUDED_LIB_MP_READLINE_READLINE_H
+#define MICROPY_INCLUDED_LIB_MP_READLINE_READLINE_H
 
-#include "py/runtime.h"
-#include "py/obj.h"
-#include "lib/readline.h"
+#define CHAR_CTRL_A (1)
+#define CHAR_CTRL_B (2)
+#define CHAR_CTRL_C (3)
+#define CHAR_CTRL_D (4)
+#define CHAR_CTRL_E (5)
+#define CHAR_CTRL_F (6)
+#define CHAR_CTRL_K (11)
+#define CHAR_CTRL_N (14)
+#define CHAR_CTRL_P (16)
+#define CHAR_CTRL_U (21)
 
-STATIC mp_obj_t mp_builtin_input(uint n_args, const mp_obj_t *args) {
-    if (n_args == 1) {
-        mp_obj_print(args[0], PRINT_STR);
-    }
-    vstr_t line;
-    vstr_init(&line, 16);
-    int ret = readline(&line, "");
-    if (line.len == 0 && ret == CHAR_CTRL_D) {
-        nlr_raise(mp_obj_new_exception(&mp_type_EOFError));
-    }
-    return mp_obj_new_str_from_vstr(&mp_type_str, &line);
-}
+void readline_init0(void);
+int readline(vstr_t *line, const char *prompt);
+void readline_push_history(const char *line);
 
-MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(mp_builtin_input_obj, 0, 1, mp_builtin_input);
+void readline_init(vstr_t *line, const char *prompt);
+void readline_note_newline(const char *prompt);
+int readline_process_char(int c);
+
+#endif // MICROPY_INCLUDED_LIB_MP_READLINE_READLINE_H

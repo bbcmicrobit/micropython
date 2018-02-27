@@ -1,5 +1,5 @@
 /*
- * This file is part of the Micro Python project, http://micropython.org/
+ * This file is part of the MicroPython project, http://micropython.org/
  *
  * The MIT License (MIT)
  *
@@ -25,7 +25,7 @@
  */
 
 #include "py/obj.h"
-#include "filesystem.h"
+#include "microbit/filesystem.h"
 #include "py/objtuple.h"
 #include "py/objstr.h"
 #include "genhdr/mpversion.h"
@@ -84,6 +84,5 @@ static MP_DEFINE_CONST_DICT(_globals, _globals_table);
 
 const mp_obj_module_t os_module = {
     .base = { &mp_type_module },
-    .name = MP_QSTR_os,
     .globals = (mp_obj_dict_t*)&_globals,
 };

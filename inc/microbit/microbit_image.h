@@ -1,16 +1,42 @@
-#ifndef __MICROPY_INCLUDED_MICROBIT_IMAGE_H__
-#define __MICROPY_INCLUDED_MICROBIT_IMAGE_H__
+/*
+ * This file is part of the MicroPython project, http://micropython.org/
+ *
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2015 Mark Shannon
+ * Copyright (c) 2015-2017 Damien P. George
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+#ifndef MICROPY_INCLUDED_MICROBIT_IMAGE_H
+#define MICROPY_INCLUDED_MICROBIT_IMAGE_H
 
 #include "py/runtime.h"
-   
+
 #define MAX_BRIGHTNESS 9
 
-/** Monochrome images are immutable, which means that 
+/** Monochrome images are immutable, which means that
  * we only need one bit per pixel which saves quite a lot
  * of memory */
 
 /* we reserve a couple of bits, so we won't need to modify the
- * layout if we need to add more functionality or subtypes. */ 
+ * layout if we need to add more functionality or subtypes. */
 #define TYPE_AND_FLAGS \
     mp_obj_base_t base; \
     uint8_t five:1; \
@@ -25,7 +51,7 @@ typedef struct _monochrome_5by5_t {
     TYPE_AND_FLAGS;
     uint8_t pixel44: 1;
     uint8_t bits24[3];
-    
+
     /* This is an internal method it is up to the caller to validate the inputs */
     uint8_t getPixelValue(mp_int_t x, mp_int_t y);
 
@@ -48,15 +74,14 @@ typedef union _microbit_image_obj_t {
     image_base_t base;
     monochrome_5by5_t monochrome_5by5;
     greyscale_t greyscale;
-    
+
     mp_int_t height();
     mp_int_t width();
     greyscale_t *copy();
     greyscale_t *invert();
-    
+
     /* This is an internal method it is up to the caller to validate the inputs */
     uint8_t getPixelValue(mp_int_t x, mp_int_t y);
-    
 } microbit_image_obj_t;
 
 /** Return a facade object that presents the string as a sequence of images */
@@ -88,4 +113,4 @@ extern const monochrome_5by5_t microbit_const_image_heart_obj;
 microbit_image_obj_t *microbit_image_dim(microbit_image_obj_t *lhs, mp_float_t fval);
 microbit_image_obj_t *microbit_image_sum(microbit_image_obj_t *lhs, microbit_image_obj_t *rhs, bool add);
 
-#endif // __MICROPY_INCLUDED_MICROBIT_IMAGE_H__
+#endif // MICROPY_INCLUDED_MICROBIT_IMAGE_H
