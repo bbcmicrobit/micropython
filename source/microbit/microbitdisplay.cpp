@@ -134,11 +134,6 @@ static mp_uint_t async_delay = 1000;
 static mp_uint_t async_tick = 0;
 static bool async_clear = false;
 
-
-bool microbit_display_active_animation(void) {
-    return async_mode == ASYNC_MODE_ANIMATION;
-}
-
 STATIC void async_stop(void) {
     async_iterator = NULL;
     async_mode = ASYNC_MODE_STOPPED;
@@ -401,9 +396,9 @@ void microbit_display_animate(microbit_display_obj_t *self, mp_obj_t iterable, m
 // Delay in ms in between moving display one column to the left.
 #define DEFAULT_SCROLL_SPEED       150
 
-void microbit_display_scroll(microbit_display_obj_t *self, const char* str, bool wait) {
+void microbit_display_scroll(microbit_display_obj_t *self, const char* str) {
     mp_obj_t iterable = scrolling_string_image_iterable(str, strlen(str), NULL, false, false);
-    microbit_display_animate(self, iterable, DEFAULT_SCROLL_SPEED, false, wait);
+    microbit_display_animate(self, iterable, DEFAULT_SCROLL_SPEED, false, true);
 }
 
 

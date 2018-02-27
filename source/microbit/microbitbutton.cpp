@@ -43,16 +43,12 @@ static mp_uint_t pressed[2];
 static int8_t sigmas[8] = { 5, 5, 5, 5, 5, 5, 5, 5 };
 static bool debounced_high[8] = { true, true, true, true, true, true, true, true };
 
-bool microbit_button_is_pressed(const microbit_button_obj_t *self) {
-    /* Button is pressed if pin is low */
-    return !debounced_high[self->pin->number&7];
-}
-
-static mp_obj_t microbit_button_is_pressed_func(mp_obj_t self_in) {
+mp_obj_t microbit_button_is_pressed(mp_obj_t self_in) {
     microbit_button_obj_t *self = (microbit_button_obj_t*)self_in;
-    return mp_obj_new_bool(microbit_button_is_pressed(self));
+    /* Button is pressed if pin is low */
+    return mp_obj_new_bool(!debounced_high[self->pin->number&7]);
 }
-MP_DEFINE_CONST_FUN_OBJ_1(microbit_button_is_pressed_obj, microbit_button_is_pressed_func);
+MP_DEFINE_CONST_FUN_OBJ_1(microbit_button_is_pressed_obj, microbit_button_is_pressed);
 
 
 mp_obj_t microbit_button_get_presses(mp_obj_t self_in) {

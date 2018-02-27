@@ -84,7 +84,6 @@ extern const monochrome_5by5_t microbit_const_image_heart_obj;
 
 #define BLANK_IMAGE (microbit_image_obj_t *)(&microbit_blank_image)
 #define HEART_IMAGE (microbit_image_obj_t *)(&microbit_const_image_heart_obj)
-#define HAPPY_IMAGE (microbit_image_obj_t *)(&microbit_const_image_happy_obj)
 
 microbit_image_obj_t *microbit_image_dim(microbit_image_obj_t *lhs, mp_float_t fval);
 microbit_image_obj_t *microbit_image_sum(microbit_image_obj_t *lhs, microbit_image_obj_t *rhs, bool add);
