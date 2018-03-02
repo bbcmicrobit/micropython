@@ -69,6 +69,28 @@ extern const microbit_pinmode_t microbit_pinmodes[];
 #define microbit_pin_mode_i2c           (&microbit_pinmodes[MODE_I2C])
 #define microbit_pin_mode_spi           (&microbit_pinmodes[MODE_SPI])
 
+extern const microbit_pin_obj_t microbit_pins[];
+
+#define microbit_p0_obj microbit_pins[0]
+#define microbit_p1_obj microbit_pins[1]
+#define microbit_p2_obj microbit_pins[2]
+#define microbit_p3_obj microbit_pins[3]
+#define microbit_p4_obj microbit_pins[4]
+#define microbit_p5_obj microbit_pins[5]
+#define microbit_p6_obj microbit_pins[6]
+#define microbit_p7_obj microbit_pins[7]
+#define microbit_p8_obj microbit_pins[8]
+#define microbit_p9_obj microbit_pins[9]
+#define microbit_p10_obj microbit_pins[10]
+#define microbit_p11_obj microbit_pins[11]
+#define microbit_p12_obj microbit_pins[12]
+#define microbit_p13_obj microbit_pins[13]
+#define microbit_p14_obj microbit_pins[14]
+#define microbit_p15_obj microbit_pins[15]
+#define microbit_p16_obj microbit_pins[16]
+#define microbit_p19_obj microbit_pins[19]
+#define microbit_p20_obj microbit_pins[20]
+
 /** Can this pin be acquired? Safe to call in an interrupt. Not safe to call in an interrupt. */
 void microbit_obj_pin_fail_if_cant_acquire(const microbit_pin_obj_t *pin);
 
@@ -85,6 +107,8 @@ void microbit_obj_pin_acquire(const microbit_pin_obj_t *pin, const microbit_pinm
 bool microbit_pin_high_debounced(microbit_pin_obj_t *pin);
 
 const microbit_pinmode_t *microbit_pin_get_mode(const microbit_pin_obj_t *pin);
+
+const microbit_pin_obj_t *microbit_pin_from_number(uint32_t number);
 
 bool microbit_obj_pin_can_be_acquired(const microbit_pin_obj_t *pin);
 

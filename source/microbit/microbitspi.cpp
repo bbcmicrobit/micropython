@@ -35,7 +35,28 @@ extern "C" {
 typedef struct _microbit_spi_obj_t {
     mp_obj_base_t base;
     spi_t spi;
+    uint8_t p_sclk;
+    uint8_t p_mosi;
+    uint8_t p_miso;
+    bool initialised;
 } microbit_spi_obj_t;
+
+static void spi_pins_init(microbit_spi_obj_t *self) {
+    const microbit_pin_obj_t *p_mosi = microbit_pin_from_number(self->p_mosi);
+    const microbit_pin_obj_t *p_miso = microbit_pin_from_number(self->p_miso);
+    microbit_obj_pin_fail_if_cant_acquire(p_mosi);
+    microbit_obj_pin_fail_if_cant_acquire(p_miso);
+    microbit_obj_pin_acquire(microbit_pin_from_number(self->p_sclk), microbit_pin_mode_spi);
+    microbit_obj_pin_acquire(p_mosi, microbit_pin_mode_spi);
+    microbit_obj_pin_acquire(p_miso, microbit_pin_mode_spi);
+    self->initialised = true;
+}
+
+static void init_check(microbit_spi_obj_t *self) {
+    if (!self->initialised) {
+        nlr_raise(mp_obj_new_exception_msg(&mp_type_ValueError, "spi has not be initialised"));
+    }
+}
 
 STATIC mp_obj_t microbit_spi_init(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
     static const mp_arg_t allowed_args[] = {
@@ -56,21 +77,30 @@ STATIC mp_obj_t microbit_spi_init(mp_uint_t n_args, const mp_obj_t *pos_args, mp
         MP_ARRAY_SIZE(allowed_args), allowed_args, (mp_arg_val_t*)&args);
 
     // get pins
-    PinName p_sclk = (PinName)microbit_p13_obj.name;
-    PinName p_mosi = (PinName)microbit_p15_obj.name;
-    PinName p_miso = (PinName)microbit_p14_obj.name;
+    const microbit_pin_obj_t *p_sclk = &microbit_p13_obj;
+    const microbit_pin_obj_t *p_mosi = &microbit_p15_obj;
+    const microbit_pin_obj_t *p_miso = &microbit_p14_obj;
     if (args.sclk.u_obj != mp_const_none) {
-        p_sclk = microbit_obj_get_pin_name(args.sclk.u_obj);
+        p_sclk = microbit_obj_get_pin(args.sclk.u_obj);
     }
     if (args.mosi.u_obj != mp_const_none) {
-        p_mosi = microbit_obj_get_pin_name(args.mosi.u_obj);
+        p_mosi = microbit_obj_get_pin(args.mosi.u_obj);
     }
     if (args.miso.u_obj != mp_const_none) {
-        p_miso = microbit_obj_get_pin_name(args.miso.u_obj);
+        p_miso = microbit_obj_get_pin(args.miso.u_obj);
     }
+    if (self->initialised) {
+        microbit_obj_pin_free(microbit_pin_from_number(self->p_sclk));
+        microbit_obj_pin_free(microbit_pin_from_number(self->p_mosi));
+        microbit_obj_pin_free(microbit_pin_from_number(self->p_miso));
+    }
+    self->p_mosi = p_mosi->number;
+    self->p_miso = p_miso->number;
+    self->p_sclk = p_sclk->number;
+    spi_pins_init(self);
 
     // initialise the SPI
-    spi_init(&self->spi, p_mosi, p_miso, p_sclk, NC);
+    spi_init(&self->spi, (PinName)p_mosi->name, (PinName)p_miso->name, (PinName)p_sclk->name, NC);
     spi_format(&self->spi, args.bits.u_int, args.mode.u_int, 0);
     spi_frequency(&self->spi, args.baudrate.u_int);
 
@@ -81,6 +111,7 @@ MP_DEFINE_CONST_FUN_OBJ_KW(microbit_spi_init_obj, 1, microbit_spi_init);
 STATIC mp_obj_t microbit_spi_write(mp_obj_t self_in, mp_obj_t buf_in) {
     microbit_spi_obj_t *self = (microbit_spi_obj_t*)self_in;
     mp_buffer_info_t bufinfo;
+    init_check(self);
     mp_get_buffer_raise(buf_in, &bufinfo, MP_BUFFER_READ);
     const byte *buf = (const byte*)bufinfo.buf;
     for (uint i = 0; i < bufinfo.len; ++i, ++buf) {
@@ -93,6 +124,7 @@ MP_DEFINE_CONST_FUN_OBJ_2(microbit_spi_write_obj, microbit_spi_write);
 STATIC mp_obj_t microbit_spi_read(size_t n_args, const mp_obj_t *args) {
     microbit_spi_obj_t *self = (microbit_spi_obj_t*)args[0];
     vstr_t vstr;
+    init_check(self);
     vstr_init_len(&vstr, mp_obj_get_int(args[1]));
     mp_int_t byte_out = 0;
     if (n_args == 3) {
@@ -108,6 +140,7 @@ MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_spi_read_obj, 2, 3, microbit_spi_re
 STATIC mp_obj_t microbit_spi_write_readinto(mp_obj_t self_in, mp_obj_t write_buf, mp_obj_t read_buf) {
     microbit_spi_obj_t *self = (microbit_spi_obj_t*)self_in;
     mp_buffer_info_t write_bufinfo;
+    init_check(self);
     mp_get_buffer_raise(write_buf, &write_bufinfo, MP_BUFFER_READ);
     const byte *wr_buf = (const byte*)write_bufinfo.buf;
     mp_buffer_info_t read_bufinfo;
@@ -150,6 +183,10 @@ const mp_obj_type_t microbit_spi_type = {
 microbit_spi_obj_t microbit_spi_obj = {
     {&microbit_spi_type},
     .spi = {},
+    .p_sclk = 13,
+    .p_mosi = 15,
+    .p_miso = 14,
+    .initialised = false
 };
 
 }

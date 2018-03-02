@@ -33,6 +33,7 @@ extern "C" {
 #include "py/mphal.h"
 #include "modmicrobit.h"
 #include "microbitdisplay.h"
+#include "microbit/microbitpin.h"
 #include "microbitimage.h"
 
 extern uint32_t ticks;

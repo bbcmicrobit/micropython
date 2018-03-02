@@ -29,6 +29,7 @@
 #include "py/nlr.h"
 #include "py/obj.h"
 #include "microbit/modmicrobit.h"
+#include "microbit/microbitpin.h"
 
 STATIC const char *help_text =
 "Welcome to MicroPython on the micro:bit!\n"

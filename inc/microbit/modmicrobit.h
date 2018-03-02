@@ -32,26 +32,6 @@ extern const mp_obj_type_t microbit_ad_pin_type;
 extern const mp_obj_type_t microbit_dig_pin_type;
 extern const mp_obj_type_t microbit_touch_pin_type;
 
-extern const struct _microbit_pin_obj_t microbit_p0_obj;
-extern const struct _microbit_pin_obj_t microbit_p1_obj;
-extern const struct _microbit_pin_obj_t microbit_p2_obj;
-extern const struct _microbit_pin_obj_t microbit_p3_obj;
-extern const struct _microbit_pin_obj_t microbit_p4_obj;
-extern const struct _microbit_pin_obj_t microbit_p5_obj;
-extern const struct _microbit_pin_obj_t microbit_p6_obj;
-extern const struct _microbit_pin_obj_t microbit_p7_obj;
-extern const struct _microbit_pin_obj_t microbit_p8_obj;
-extern const struct _microbit_pin_obj_t microbit_p9_obj;
-extern const struct _microbit_pin_obj_t microbit_p10_obj;
-extern const struct _microbit_pin_obj_t microbit_p11_obj;
-extern const struct _microbit_pin_obj_t microbit_p12_obj;
-extern const struct _microbit_pin_obj_t microbit_p13_obj;
-extern const struct _microbit_pin_obj_t microbit_p14_obj;
-extern const struct _microbit_pin_obj_t microbit_p15_obj;
-extern const struct _microbit_pin_obj_t microbit_p16_obj;
-extern const struct _microbit_pin_obj_t microbit_p19_obj;
-extern const struct _microbit_pin_obj_t microbit_p20_obj;
-
 extern const mp_obj_type_t microbit_const_image_type;
 extern const struct _monochrome_5by5_t microbit_const_image_heart_obj;
 extern const struct _monochrome_5by5_t microbit_const_image_heart_small_obj;
