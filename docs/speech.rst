@@ -194,7 +194,7 @@ The table below lists the phonemes understood by the synthesiser.
     EH           b(e)g                     W        a(w)ay
     AE           S(a)m                     W        (wh)ale
     AA           p(o)t                     Y        (y)ou
-    AH           b(u)dget                  M        (S)am
+    AH           b(u)dget                  M        Sa(m)
     AO           t(al)k                    N        ma(n)
     OH           c(o)ne                    NX       so(ng)
     UH           b(oo)k                    B        (b)ad
