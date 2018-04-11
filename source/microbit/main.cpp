@@ -61,8 +61,18 @@ static void microbit_display_exception(mp_obj_t exc_in) {
                 mp_obj_print_helper(&print, exc->args->items[0], PRINT_STR);
             }
         }
+        // Allow ctrl-C to stop the scrolling message
+        mp_hal_set_interrupt_char(CHAR_CTRL_C);
         mp_hal_display_string(vstr_null_terminated_str(&vstr));
         vstr_clear(&vstr);
+        mp_hal_set_interrupt_char(-1);
+        // This is a variant of mp_handle_pending that swallows exceptions
+        #if MICROPY_ENABLE_SCHEDULER
+        #error Scheduler currently unsupported
+        #endif
+        if (MP_STATE_VM(mp_pending_exception) != MP_OBJ_NULL) {
+            MP_STATE_VM(mp_pending_exception) = MP_OBJ_NULL;
+        }
     }
 }
 
