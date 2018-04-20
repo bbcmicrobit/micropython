@@ -33,13 +33,16 @@ Classes
 
     .. py:method:: is_pressed()
 
-        Returns ``True`` if the specified button ``button`` is pressed, and
-        ``False`` otherwise.
+        Returns ``True`` if the specified button ``button`` is currently being
+        held down, and ``False`` otherwise.
 
     .. py:method:: was_pressed()
 
         Returns ``True`` or ``False`` to indicate if the button was pressed
-        since the device started or the last time this method was called.
+        (went from up to down) since the device started or the last time this
+        method was called.  Calling this method will clear the press state so
+        that the button must be pressed again before this method will return
+        ``True`` again.
 
     .. py:method:: get_presses()
 
