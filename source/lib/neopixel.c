@@ -79,6 +79,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "nrf_gpio.h"
 #include "lib/neopixel.h"
 
+extern void sendNeopixelBuffer(uint32_t pin, uint8_t* data_address, uint16_t num_leds);
+
 void neopixel_init(neopixel_strip_t *strip, uint8_t pin_num, uint16_t num_leds)
 {
 	strip->leds = (color_t*) malloc(sizeof(color_t) * num_leds);
@@ -107,41 +109,13 @@ void neopixel_clear(neopixel_strip_t *strip)
 
 void neopixel_show(neopixel_strip_t *strip)
 {
-	const uint8_t PIN =  strip->pin_num;
-	NRF_GPIO->OUTCLR = (1UL << PIN);
-	nrf_delay_us(50);
-	uint32_t irq_state = __get_PRIMASK();
-	__disable_irq();
-			for (int i = 0; i < strip->num_leds; i++)
-			{
-				for (int j = 0; j < 3; j++)
-				{
-					if ((strip->leds[i].grb[j] & 128) > 0)	{NEOPIXEL_SEND_ONE}
-					else	{NEOPIXEL_SEND_ZERO}
-					
-					if ((strip->leds[i].grb[j] & 64) > 0)	{NEOPIXEL_SEND_ONE}
-					else	{NEOPIXEL_SEND_ZERO}
-					
-					if ((strip->leds[i].grb[j] & 32) > 0)	{NEOPIXEL_SEND_ONE}
-					else	{NEOPIXEL_SEND_ZERO}
-					
-					if ((strip->leds[i].grb[j] & 16) > 0)	{NEOPIXEL_SEND_ONE}
-					else	{NEOPIXEL_SEND_ZERO}
-					
-					if ((strip->leds[i].grb[j] & 8) > 0)	{NEOPIXEL_SEND_ONE}
-					else	{NEOPIXEL_SEND_ZERO}
-					
-					if ((strip->leds[i].grb[j] & 4) > 0)	{NEOPIXEL_SEND_ONE}
-					else	{NEOPIXEL_SEND_ZERO}
-					
-					if ((strip->leds[i].grb[j] & 2) > 0)	{NEOPIXEL_SEND_ONE}
-					else	{NEOPIXEL_SEND_ZERO}
-					
-					if ((strip->leds[i].grb[j] & 1) > 0)	{NEOPIXEL_SEND_ONE}
-					else	{NEOPIXEL_SEND_ZERO}
-				}
-			}
-	__set_PRIMASK(irq_state);
+	NRF_GPIO->OUTCLR = (1UL << strip->pin_num);
+	uint8_t *data_address = (uint8_t*)strip->leds; /* The data is really just bytes */
+	uint16_t num_leds = strip->num_leds;
+	uint32_t pin = (1UL << strip->pin_num);
+
+	/* Call external assember to do the time critical pin waggling. Be aware that this runs with interrupts off*/
+	sendNeopixelBuffer(pin, data_address, num_leds);
 }
 
 uint8_t neopixel_set_color(neopixel_strip_t *strip, uint16_t index, uint8_t red, uint8_t green, uint8_t blue )
