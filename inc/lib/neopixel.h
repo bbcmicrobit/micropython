@@ -31,48 +31,15 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #include <stdbool.h>
 #include <stdint.h>
-#include "nrf_delay.h"
 #include "nrf_gpio.h"
 
 
-//These defines are timed specific to a series of if statements and will need to be changed
-//to compensate for different writing algorithms than the one in neopixel.c
-#define NEOPIXEL_SEND_ONE	NRF_GPIO->OUTSET = (1UL << PIN); \
-		__ASM ( \
-				" NOP\n\t" \
-				" NOP\n\t" \
-				" NOP\n\t" \
-				" NOP\n\t" \
-				" NOP\n\t" \
-				" NOP\n\t" \
-				" NOP\n\t" \
-				" NOP\n\t" \
-				" NOP\n\t" \
-			); \
-		NRF_GPIO->OUTCLR = (1UL << PIN); \
-
-#define NEOPIXEL_SEND_ZERO NRF_GPIO->OUTSET = (1UL << PIN); \
-		__ASM (  \
-				" NOP\n\t"  \
-			);  \
-		NRF_GPIO->OUTCLR = (1UL << PIN);  \
-		__ASM ( \
-				" NOP\n\t" \
-				" NOP\n\t" \
-				" NOP\n\t" \
-				" NOP\n\t" \
-				" NOP\n\t" \
-				" NOP\n\t" \
-				" NOP\n\t" \
-				" NOP\n\t" \
-			);
-		
-typedef union {
+typedef union{
 		struct {
 			uint8_t g, r, b;
-		}simple;
-    uint8_t grb[3];
-} color_t;
+		}simple ;
+    uint8_t grb[3] ;
+} color_t ;
 
 typedef struct _neopixel_strip_t {
 	uint8_t pin_num;
