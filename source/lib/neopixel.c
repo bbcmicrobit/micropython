@@ -79,6 +79,8 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "nrf_gpio.h"
 #include "lib/neopixel.h"
 
+extern void sendNeopixelBuffer( uint32_t pin, uint8_t* data_address, uint16_t num_leds);
+
 void neopixel_init(neopixel_strip_t *strip, uint8_t pin_num, uint16_t num_leds)
 {
 	strip->leds = (color_t*) malloc(sizeof(color_t) * num_leds);
@@ -106,84 +108,16 @@ void neopixel_clear(neopixel_strip_t *strip)
 }
 
 
-/*
-Be Aware - this function runs mostly with interrupts turned off
-*/
 void neopixel_show(neopixel_strip_t *strip)
 {
 	NRF_GPIO->OUTCLR = (1UL << strip->pin_num);
 	uint8_t* Data_address = (uint8_t*) strip->leds; /* This cast is because Dave is a lazy person - it really is byte at the end */
 	uint16_t num_leds = strip->num_leds;
 	uint32_t pin = (1UL << strip->pin_num);
-	//Store current status of registers we are likely to clobber.
-	__ASM("push {r0,r1,r2,r3,r4,r5,r6}\n\t");
+    
+    /* Call external assember to do the time critical pin waggling. Be aware that this runs with interrupts off*/
+    sendNeopixelBuffer(pin,  Data_address, num_leds);
 
-	//disable interrupts whilst we mess with timing critical waggling.
-	uint32_t irq_state = __get_PRIMASK();
-	__disable_irq();
-	/*
-	Setup the initial values
-	r1 = Pin mask in the GPIO register
-	r2 = GPIO clear register
-	r3 = GPIO SET
-	r4 = Address pointer for the data - we cast this as a byte earlier because it really is.
-	r5 = Length of the data (number of LEDS * 3 bytes per LED) - If trying to add RGB+W this sum might need to be done conditionally
-	r6 = Parallel to serial conversion mask
-
-	The asm loads the GPIO output address to write to in order to set a bit (0x50000508) into r3.
-	It then loads r2 by adding 4 to the value in r3 - the offset from there to the GPIO address to clear a bit.
-	*/
-
-	__ASM volatile("mov r3, %[value2]\n\t" 
-					"add r2, r3,#4\n\t" 
-					"mov r4, %[value3]\n\t" 
-					"mov r5, %[value4]\n\t"
-					"mov r1, %[value5]\n\t" :: [value2] "r" (&NRF_GPIO->OUTSET),
-											   [value3] "r" (Data_address), 
-											   [value4] "r" (num_leds*3), 
-											   [value5] "r" (pin): "r1", "r2", "r3","r4","r5");
-	/*
-	This code serialises the data bits for each LED.
-	The data byte is loaded in the common section (label .common) and then each bit is masked and tested for '0' (label .nextbit)
-	If it is a '0' we turn off the pin asap and then move to the code that advances to the next bit/byte. If a '1' we leave the pin on and do the same thing.
-	If the mask (r6) is still valid then we are still moving out the current byte, so repeat.
-	If it is '0' then we have done this byte and need to load the next byte from the pointer in r4. 
-	r5 contains the count of bytes - calculated above from num LEDs * 3 bytes per LED.
-	--If this code needs to do RGB+W LEDS then that will need to be addressed.
-	Once we run r5 down to '0' we exit the data shifting and return.
-	*/
-     __ASM volatile("b .start\n\t"
-	   
-	".nextbit:\n\t"
-		"str r1, [r3, #0]\n\t"
-		"tst r6, r0\n\t"
-		"bne .bitisone\n\t"
-		"str r1, [r2, #0]\n\t"
-	".bitisone:\n\t"
-		"lsr r6, #1\n\t"
-		"bne .justbit\n\t"
-	
-		"add r4, #1\n\t"
-		"sub r5, #1\n\t"
-		"beq .stop\n\t"
-		
-	".start:\n\t"
-		"movs r6, #0x80\n\t"
-		"nop\n\t"
-
-	".common:\n\t"
-		"str r1, [r2, #0]\n\t"
-		"ldrb r0, [r4,#0]\n\t"
-		"b .nextbit\n\t"
-
-	".justbit:\n\t"
-		"b .common\n\t"
-
-	".stop:\n\t"
-		"str r1, [r2, #0]\n\t"
-
-    "pop {r0,r1,r2,r3,r4,r5,r6}\n\t");
-    __set_PRIMASK(irq_state);
 }
 
 uint8_t neopixel_set_color(neopixel_strip_t *strip, uint16_t index, uint8_t red, uint8_t green, uint8_t blue )
