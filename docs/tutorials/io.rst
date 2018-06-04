@@ -45,7 +45,7 @@ when you plug in circuits and other devices via the pins.
 Bleeps and Bloops
 +++++++++++++++++
 
-The simplest thing we can attach to the device is a Piezo buzzer. We're going
+The simplest thing we can attach to the device is an active Piezo buzzer. We're going
 to use it for output.
 
 .. image:: piezo_buzzer.jpg
