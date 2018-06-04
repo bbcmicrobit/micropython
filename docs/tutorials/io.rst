@@ -54,10 +54,7 @@ of the oscillation.  In short, active buzzers are simple to use but produce only
 one tone, while passive buzzers are slightly more complicated to use but can 
 produce a variety of tones.
 
-
 .. image:: piezo_buzzer.jpg
-
-
 
 We're going to use an active piezo buzzer for output. To attach one to your BBC 
 micro:bit you should attach crocodile clips to pin 0 and GND (as shown below).
