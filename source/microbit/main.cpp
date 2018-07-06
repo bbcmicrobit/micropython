@@ -8,9 +8,11 @@
 // Global instances of the DAL components that we use
 MicroBitDisplay ubit_display;
 MicroPythonI2C ubit_i2c(I2C_SDA0, I2C_SCL0);
-MicroBitAccelerometer ubit_accelerometer(ubit_i2c);
-MicroBitCompass ubit_compass(ubit_i2c, ubit_accelerometer);
-MicroBitCompassCalibrator ubit_compass_calibrator(ubit_compass, ubit_accelerometer, ubit_display);
+
+// Global pointers to instances of DAL components that are created dynamically
+MicroBitAccelerometer *ubit_accelerometer;
+MicroBitCompass *ubit_compass;
+MicroBitCompassCalibrator *ubit_compass_calibrator;
 
 extern "C" {
 
@@ -27,8 +29,8 @@ extern "C" {
 void microbit_ticker(void) {
     // Update compass if it is calibrating, but not if it is still
     // updating as compass.idleTick() is not reentrant.
-    if (ubit_compass.isCalibrating() && !compass_updating) {
-        ubit_compass.idleTick();
+    if (ubit_compass->isCalibrating() && !compass_updating) {
+        ubit_compass->idleTick();
     }
 
     compass_up_to_date = false;
@@ -126,6 +128,11 @@ typedef struct _appended_script_t {
 #define APPENDED_SCRIPT ((const appended_script_t*)microbit_mp_appended_script())
 
 int main(void) {
+    // Create dynamically-allocated DAL components
+    ubit_accelerometer = &MicroBitAccelerometer::autoDetect(ubit_i2c);
+    ubit_compass = &MicroBitCompass::autoDetect(ubit_i2c);
+    ubit_compass_calibrator = new MicroBitCompassCalibrator(*ubit_compass, *ubit_accelerometer, ubit_display);
+
     for (;;) {
         extern uint32_t __StackTop;
         static uint32_t mp_heap[10240 / sizeof(uint32_t)];

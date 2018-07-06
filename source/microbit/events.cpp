@@ -56,7 +56,7 @@ int MicroPythonEventHandler::send(MicroBitEvent evt) {
 
         case MICROBIT_ID_COMPASS:
             if (evt.value == MICROBIT_COMPASS_EVT_CALIBRATE) {
-                ubit_compass_calibrator.calibrate(evt);
+                ubit_compass_calibrator->calibrateUX(evt);
             }
             break;
 
