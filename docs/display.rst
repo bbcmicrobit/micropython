@@ -85,6 +85,12 @@ Functions
 
     Returns ``True`` if the display is on, otherwise returns ``False``.
 
+.. py:function:: read_light_level()
+
+    Use the display's LEDs in reverse-bias mode to sense the amount of light
+    falling on the display.  Returns an integer between 0 and 255 representing
+    the light level, with larger meaning more light.
+
 Example
 =======
 
