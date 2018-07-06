@@ -26,6 +26,8 @@
 
 #include <string.h>
 #include "nrf_gpio.h"
+#include "MicroBitDisplay.h"
+#include "MicroBitLightSensor.h"
 
 extern "C" {
 
@@ -291,6 +293,65 @@ static const uint16_t render_timings[] =
 
 #define DISPLAY_TICKER_SLOT 1
 
+enum {
+    LIGHT_SENSOR_IDLE,
+    LIGHT_SENSOR_REQUEST_SAMPLE,
+    LIGHT_SENSOR_TAKING_SAMPLE,
+    LIGHT_SENSOR_HAVE_SAMPLE,
+};
+
+static MicroBitLightSensor *light_sensor_obj = NULL;
+static volatile uint8_t light_sensor_state = LIGHT_SENSOR_IDLE;
+static uint32_t light_sensor_last_reading_time = 0;
+
+static int light_sensor_read(void) {
+    // Create the light-sensor object if it doesn't yet exist
+    if (light_sensor_obj == NULL) {
+        light_sensor_obj = new MicroBitLightSensor(microbitMatrixMap);
+    }
+
+    // Depending on time since last call, take 1, 2 or 3 readings
+    int n;
+    uint32_t time = ticker_ticks_ms;
+    if (time - light_sensor_last_reading_time < 50) {
+        n = 1;
+    } else if (time - light_sensor_last_reading_time < 100) {
+        n = 2;
+    } else {
+        n = 3;
+    }
+
+    // Take readings so the object can average them out
+    for (int i = 0; i < n; ++i) {
+        light_sensor_state = LIGHT_SENSOR_REQUEST_SAMPLE;
+        while (light_sensor_state != LIGHT_SENSOR_HAVE_SAMPLE) {
+        }
+    }
+
+    // Record time of last reading
+    light_sensor_last_reading_time = ticker_ticks_ms;
+
+    // Get and return the light reading
+    return light_sensor_obj->read();
+}
+
+static bool light_sensor_busy(void) {
+    if (light_sensor_state == LIGHT_SENSOR_TAKING_SAMPLE) {
+        if (NRF_ADC->ENABLE == ADC_ENABLE_ENABLE_Enabled) {
+            return true;
+        }
+        light_sensor_state = LIGHT_SENSOR_HAVE_SAMPLE;
+    }
+    return false;
+}
+
+static void light_sensor_update(void) {
+    if (light_sensor_state == LIGHT_SENSOR_REQUEST_SAMPLE) {
+        light_sensor_obj->startSensing(MicroBitEvent(MICROBIT_ID_DISPLAY, MICROBIT_DISPLAY_EVT_LIGHT_SENSE, CREATE_ONLY));
+        light_sensor_state = LIGHT_SENSOR_TAKING_SAMPLE;
+    }
+}
+
 /* This is the PWM callback.  It is registered by the animation callback and
  * will unregister itself when all of the brightness steps are complete. */
 static int32_t callback(void) {
@@ -300,6 +361,7 @@ static int32_t callback(void) {
     brightness += 1;
     if (brightness == MAX_BRIGHTNESS) {
         clear_ticker_callback(DISPLAY_TICKER_SLOT);
+        light_sensor_update();
         return -1;
     }
     display->previous_brightness = brightness;
@@ -382,8 +444,14 @@ static void microbit_display_update(void) {
 /* This is the top-level animation/display callback.  It is not a registered
  * callback. */
 void microbit_display_tick(void) {
+    // We can't update the display if the light sensor is sampling
+    if (light_sensor_busy()) {
+        return;
+    }
+
     /* Do nothing if the display is not active. */
     if (!microbit_display_obj.active) {
+        light_sensor_update();
         return;
     }
 
@@ -393,6 +461,8 @@ void microbit_display_tick(void) {
     microbit_display_obj.previous_brightness = 0;
     if (microbit_display_obj.brightnesses & GREYSCALE_MASK) {
         set_ticker_callback(DISPLAY_TICKER_SLOT, callback, 1800);
+    } else {
+        light_sensor_update();
     }
 }
 
@@ -500,6 +570,12 @@ mp_obj_t microbit_display_is_on_func(mp_obj_t obj) {
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_display_is_on_obj, microbit_display_is_on_func);
 
+mp_obj_t microbit_display_read_light_level(mp_obj_t obj) {
+    (void)obj;
+    return MP_OBJ_NEW_SMALL_INT(light_sensor_read());
+}
+MP_DEFINE_CONST_FUN_OBJ_1(microbit_display_read_light_level_obj, microbit_display_read_light_level);
+
 void microbit_display_clear(void) {
     // Reset repeat state, cancel animation and clear screen.
     wakeup_event = false;
@@ -556,6 +632,7 @@ STATIC const mp_map_elem_t microbit_display_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_on),  (mp_obj_t)&microbit_display_on_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_off),  (mp_obj_t)&microbit_display_off_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_is_on),  (mp_obj_t)&microbit_display_is_on_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_read_light_level), (mp_obj_t)&microbit_display_read_light_level_obj },
 };
 
 STATIC MP_DEFINE_CONST_DICT(microbit_display_locals_dict, microbit_display_locals_dict_table);
