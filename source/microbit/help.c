@@ -106,6 +106,7 @@ STATIC const mp_doc_t help_table_instances[] = {
     {&microbit_display_on_obj, "Use on() to turn on the display.\n"},
     {&microbit_display_off_obj, "Use off() to turn off the display.\n"},
     {&microbit_display_is_on_obj, "Use is_on() to query if the micro:bit's display is on (True) or off (False).\n"},
+    {&microbit_display_read_light_level_obj, "Use read_light_level() to get the ambient light level, between 0 (dark) and 255 (bright).\n"},
     // Pins
     {&microbit_p0_obj, "micro:bit's pin 0 on the gold edge connector.\n"},
     {&microbit_p1_obj, "micro:bit's pin 1 on the gold edge connector.\n"},
