@@ -34,7 +34,7 @@
 #define _MP_STRINGIFY(x) #x
 #define MP_STRINGIFY(x) _MP_STRINGIFY(x)
 
-#define RELEASE "1.0"
+#define RELEASE "1.0.0-beta1"
 
 STATIC const qstr os_uname_info_fields[] = {
     MP_QSTR_sysname, MP_QSTR_nodename,
