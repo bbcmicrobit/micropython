@@ -34,7 +34,7 @@
 #define _MP_STRINGIFY(x) #x
 #define MP_STRINGIFY(x) _MP_STRINGIFY(x)
 
-#define RELEASE "1.0.0-beta1"
+#define RELEASE "1.0.0-beta.1"
 
 STATIC const qstr os_uname_info_fields[] = {
     MP_QSTR_sysname, MP_QSTR_nodename,
@@ -45,9 +45,9 @@ STATIC const MP_DEFINE_STR_OBJ(os_uname_info_nodename_obj, MICROPY_PY_SYS_PLATFO
 STATIC const MP_DEFINE_STR_OBJ(os_uname_info_release_obj, RELEASE);
 STATIC const MP_DEFINE_STR_OBJ(os_uname_info_version_obj,
     "micro:bit v" RELEASE
-    "-" MP_STRINGIFY(YOTTA_BUILD_VCS_DESCRIPTION)
+    "+" MP_STRINGIFY(YOTTA_BUILD_VCS_DESCRIPTION)
     #if YOTTA_BUILD_VCS_CLEAN == 0
-    "-dirty"
+    ".dirty"
     #endif
     " on " MP_STRINGIFY(YOTTA_BUILD_YEAR) "-" MP_STRINGIFY(YOTTA_BUILD_MONTH) "-" MP_STRINGIFY(YOTTA_BUILD_DAY)
     "; MicroPython " MICROPY_GIT_TAG " on " MICROPY_BUILD_DATE);
