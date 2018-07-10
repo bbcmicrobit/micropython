@@ -166,11 +166,11 @@ int main(void) {
         // mode.  If we are in "raw REPL" mode then this will be skipped.
         if (pyexec_mode_kind == PYEXEC_MODE_FRIENDLY_REPL) {
             file_descriptor_obj *main_module;
-            if (APPENDED_SCRIPT->header[0] == 'M' && APPENDED_SCRIPT->header[1] == 'P') {
+            if (main_module = microbit_file_open("main.py", 7, false, false)) {
+                do_file(main_module);
+            } else if (APPENDED_SCRIPT->header[0] == 'M' && APPENDED_SCRIPT->header[1] == 'P') {
                 // run appended script
                 do_strn(APPENDED_SCRIPT->str, APPENDED_SCRIPT->len);
-            } else if ((main_module = microbit_file_open("main.py", 7, false, false))) {
-                do_file(main_module);
             } else {
                 // from microbit import *
                 mp_import_all(mp_import_name(MP_QSTR_microbit, mp_const_empty_tuple, MP_OBJ_NEW_SMALL_INT(0)));
