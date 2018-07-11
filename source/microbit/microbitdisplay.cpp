@@ -529,11 +529,10 @@ mp_obj_t microbit_display_on_func(mp_obj_t obj) {
     microbit_obj_pin_acquire(&microbit_p7_obj, microbit_pin_mode_display);
     microbit_obj_pin_acquire(&microbit_p9_obj, microbit_pin_mode_display);
     microbit_obj_pin_acquire(&microbit_p10_obj, microbit_pin_mode_display);
-    /* Make sure all pins are in the correct state */
+    /* Make sure all pins are in the correct state, and also re-enable the
+     * display loop.  This will resume any animations in progress and
+     * display any static image. */
     microbit_display_init();
-    /* Re-enable the display loop.  This will resume any animations in
-     * progress and display any static image. */
-    self->active = true;
     return mp_const_none;
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_display_on_obj, microbit_display_on_func);
@@ -668,6 +667,8 @@ microbit_display_obj_t microbit_display_obj = {
 void microbit_display_init(void) {
     //  Set pins as output.
     nrf_gpio_range_cfg_output(MIN_COLUMN_PIN, MIN_COLUMN_PIN + COLUMN_COUNT + ROW_COUNT);
+    // Allow the display to update itself on the ticker callback.
+    microbit_display_obj.active = true;
 }
 
 }
