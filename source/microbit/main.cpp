@@ -166,7 +166,7 @@ int main(void) {
         // mode.  If we are in "raw REPL" mode then this will be skipped.
         if (pyexec_mode_kind == PYEXEC_MODE_FRIENDLY_REPL) {
             file_descriptor_obj *main_module;
-            if (main_module = microbit_file_open("main.py", 7, false, false)) {
+            if ((main_module = microbit_file_open("main.py", 7, false, false))) {
                 do_file(main_module);
             } else if (APPENDED_SCRIPT->header[0] == 'M' && APPENDED_SCRIPT->header[1] == 'P') {
                 // run appended script
