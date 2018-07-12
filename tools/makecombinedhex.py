@@ -22,7 +22,9 @@ def get_largest_addr(hexfile):
         if count == 2 and type == 4: # ext linear addr
             page = int(line[9:13], 16) << 16
         elif type == 0: # data
-            largest_addr = max(largest_addr, page + addr + count)
+            # only count pages in flash, not in the UICR
+            if page < 0x10000000:
+                largest_addr = max(largest_addr, page + addr + count)
     return largest_addr
 
 if __name__ == '__main__':
