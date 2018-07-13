@@ -584,7 +584,8 @@ void microbit_display_clear(void) {
     wait_for_event();
 }
 
-mp_obj_t microbit_display_clear_func(void) {
+mp_obj_t microbit_display_clear_func(mp_obj_t self) {
+    (void)self;
     microbit_display_clear();
     return mp_const_none;
 }
