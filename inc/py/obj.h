@@ -270,29 +270,29 @@ static inline bool mp_obj_is_integer(mp_const_obj_t o) { return MP_OBJ_IS_INT(o)
 // These macros are used to declare and define constant function objects
 // You can put "static" in front of the definitions to make them local
 
-#define MP_DECLARE_CONST_FUN_OBJ_0(obj_name) extern const mp_obj_fun_builtin_fixed_t obj_name
-#define MP_DECLARE_CONST_FUN_OBJ_1(obj_name) extern const mp_obj_fun_builtin_fixed_t obj_name
-#define MP_DECLARE_CONST_FUN_OBJ_2(obj_name) extern const mp_obj_fun_builtin_fixed_t obj_name
-#define MP_DECLARE_CONST_FUN_OBJ_3(obj_name) extern const mp_obj_fun_builtin_fixed_t obj_name
+// If using a C++ compiler then we can only initialise a const union with the
+// first member, and so we use distinct struct types for all possible cases
+
+#define MP_DECLARE_CONST_FUN_OBJ_0(obj_name) extern const mp_obj_fun_builtin_fixed0_t obj_name
+#define MP_DECLARE_CONST_FUN_OBJ_1(obj_name) extern const mp_obj_fun_builtin_fixed1_t obj_name
+#define MP_DECLARE_CONST_FUN_OBJ_2(obj_name) extern const mp_obj_fun_builtin_fixed2_t obj_name
+#define MP_DECLARE_CONST_FUN_OBJ_3(obj_name) extern const mp_obj_fun_builtin_fixed3_t obj_name
 #define MP_DECLARE_CONST_FUN_OBJ_VAR(obj_name) extern const mp_obj_fun_builtin_var_t obj_name
 #define MP_DECLARE_CONST_FUN_OBJ_VAR_BETWEEN(obj_name) extern const mp_obj_fun_builtin_var_t obj_name
-#define MP_DECLARE_CONST_FUN_OBJ_KW(obj_name) extern const mp_obj_fun_builtin_var_t obj_name
+#define MP_DECLARE_CONST_FUN_OBJ_KW(obj_name) extern const mp_obj_fun_builtin_kw_t obj_name
 
-#ifdef __cplusplus
-// If using a C++ compiler then we can only initialise a const union with the
-// first member, and so we use a cast to get the function pointer to initialise.
 #define MP_DEFINE_CONST_FUN_OBJ_0(obj_name, fun_name) \
-    const mp_obj_fun_builtin_fixed_t obj_name = \
+    const mp_obj_fun_builtin_fixed0_t obj_name = \
         {{&mp_type_fun_builtin_0}, fun_name}
 #define MP_DEFINE_CONST_FUN_OBJ_1(obj_name, fun_name) \
-    const mp_obj_fun_builtin_fixed_t obj_name = \
-        {{&mp_type_fun_builtin_1}, (mp_fun_0_t)fun_name}
+    const mp_obj_fun_builtin_fixed1_t obj_name = \
+        {{&mp_type_fun_builtin_1}, fun_name}
 #define MP_DEFINE_CONST_FUN_OBJ_2(obj_name, fun_name) \
-    const mp_obj_fun_builtin_fixed_t obj_name = \
-        {{&mp_type_fun_builtin_2}, (mp_fun_0_t)fun_name}
+    const mp_obj_fun_builtin_fixed2_t obj_name = \
+        {{&mp_type_fun_builtin_2}, fun_name}
 #define MP_DEFINE_CONST_FUN_OBJ_3(obj_name, fun_name) \
-    const mp_obj_fun_builtin_fixed_t obj_name = \
-        {{&mp_type_fun_builtin_3}, (mp_fun_0_t)fun_name}
+    const mp_obj_fun_builtin_fixed3_t obj_name = \
+        {{&mp_type_fun_builtin_3}, fun_name}
 #define MP_DEFINE_CONST_FUN_OBJ_VAR(obj_name, n_args_min, fun_name) \
     const mp_obj_fun_builtin_var_t obj_name = \
         {{&mp_type_fun_builtin_var}, false, n_args_min, MP_OBJ_FUN_ARGS_MAX, fun_name}
@@ -300,32 +300,8 @@ static inline bool mp_obj_is_integer(mp_const_obj_t o) { return MP_OBJ_IS_INT(o)
     const mp_obj_fun_builtin_var_t obj_name = \
         {{&mp_type_fun_builtin_var}, false, n_args_min, n_args_max, fun_name}
 #define MP_DEFINE_CONST_FUN_OBJ_KW(obj_name, n_args_min, fun_name) \
-    const mp_obj_fun_builtin_var_t obj_name = \
-        {{&mp_type_fun_builtin_var}, true, n_args_min, MP_OBJ_FUN_ARGS_MAX, (mp_fun_var_t)fun_name}
-#else
-// If using a C compiler then we can specify the member of a const union.
-#define MP_DEFINE_CONST_FUN_OBJ_0(obj_name, fun_name) \
-    const mp_obj_fun_builtin_fixed_t obj_name = \
-        {{&mp_type_fun_builtin_0}, .fun._0 = fun_name}
-#define MP_DEFINE_CONST_FUN_OBJ_1(obj_name, fun_name) \
-    const mp_obj_fun_builtin_fixed_t obj_name = \
-        {{&mp_type_fun_builtin_1}, .fun._1 = fun_name}
-#define MP_DEFINE_CONST_FUN_OBJ_2(obj_name, fun_name) \
-    const mp_obj_fun_builtin_fixed_t obj_name = \
-        {{&mp_type_fun_builtin_2}, .fun._2 = fun_name}
-#define MP_DEFINE_CONST_FUN_OBJ_3(obj_name, fun_name) \
-    const mp_obj_fun_builtin_fixed_t obj_name = \
-        {{&mp_type_fun_builtin_3}, .fun._3 = fun_name}
-#define MP_DEFINE_CONST_FUN_OBJ_VAR(obj_name, n_args_min, fun_name) \
-    const mp_obj_fun_builtin_var_t obj_name = \
-        {{&mp_type_fun_builtin_var}, false, n_args_min, MP_OBJ_FUN_ARGS_MAX, .fun.var = fun_name}
-#define MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(obj_name, n_args_min, n_args_max, fun_name) \
-    const mp_obj_fun_builtin_var_t obj_name = \
-        {{&mp_type_fun_builtin_var}, false, n_args_min, n_args_max, .fun.var = fun_name}
-#define MP_DEFINE_CONST_FUN_OBJ_KW(obj_name, n_args_min, fun_name) \
-    const mp_obj_fun_builtin_var_t obj_name = \
-        {{&mp_type_fun_builtin_var}, true, n_args_min, MP_OBJ_FUN_ARGS_MAX, .fun.kw = fun_name}
-#endif
+    const mp_obj_fun_builtin_kw_t obj_name = \
+        {{&mp_type_fun_builtin_var}, true, n_args_min, MP_OBJ_FUN_ARGS_MAX, fun_name}
 
 // These macros are used to define constant map/dict objects
 // You can put "static" in front of the definition to make it local
@@ -805,27 +781,43 @@ void mp_obj_slice_get(mp_obj_t self_in, mp_obj_t *start, mp_obj_t *stop, mp_obj_
 
 // functions
 
-typedef struct _mp_obj_fun_builtin_fixed_t {
+typedef struct _mp_obj_fun_builtin_fixed0_t {
     mp_obj_base_t base;
-    union {
-        mp_fun_0_t _0;
-        mp_fun_1_t _1;
-        mp_fun_2_t _2;
-        mp_fun_3_t _3;
-    } fun;
-} mp_obj_fun_builtin_fixed_t;
+    mp_fun_0_t fun;
+} mp_obj_fun_builtin_fixed0_t;
+
+typedef struct _mp_obj_fun_builtin_fixed1_t {
+    mp_obj_base_t base;
+    mp_fun_1_t fun;
+} mp_obj_fun_builtin_fixed1_t;
+
+typedef struct _mp_obj_fun_builtin_fixed2_t {
+    mp_obj_base_t base;
+    mp_fun_2_t fun;
+} mp_obj_fun_builtin_fixed2_t;
+
+typedef struct _mp_obj_fun_builtin_fixed3_t {
+    mp_obj_base_t base;
+    mp_fun_3_t fun;
+} mp_obj_fun_builtin_fixed3_t;
 
 #define MP_OBJ_FUN_ARGS_MAX (0xffff) // to set maximum value in n_args_max below
+
 typedef struct _mp_obj_fun_builtin_var_t {
     mp_obj_base_t base;
     bool is_kw : 1;
     mp_uint_t n_args_min : 15; // inclusive
     mp_uint_t n_args_max : 16; // inclusive
-    union {
-        mp_fun_var_t var;
-        mp_fun_kw_t kw;
-    } fun;
+    mp_fun_var_t fun;
 } mp_obj_fun_builtin_var_t;
+
+typedef struct _mp_obj_fun_builtin_kw_t {
+    mp_obj_base_t base;
+    bool is_kw : 1;
+    mp_uint_t n_args_min : 15; // inclusive
+    mp_uint_t n_args_max : 16; // inclusive
+    mp_fun_kw_t fun;
+} mp_obj_fun_builtin_kw_t;
 
 qstr mp_obj_fun_get_name(mp_const_obj_t fun);
 qstr mp_obj_code_get_name(const byte *code_info);
