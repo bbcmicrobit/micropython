@@ -52,7 +52,7 @@ void microbit_compass_init(void) {
 }
 
 mp_obj_t microbit_compass_is_calibrated(mp_obj_t self_in) {
-    microbit_compass_obj_t *self = (microbit_compass_obj_t*)self_in;
+    (void)self_in;
     return mp_obj_new_bool(ubit_compass->isCalibrated());
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_compass_is_calibrated_obj, microbit_compass_is_calibrated);
@@ -61,7 +61,7 @@ mp_obj_t microbit_compass_calibrate(mp_obj_t self_in) {
     // Calibration requires to pass control over to the DAL so it
     // can use the display to collect samples for the calibration.
     // It will do the calibration and then return here.
-    microbit_compass_obj_t *self = (microbit_compass_obj_t*)self_in;
+    (void)self_in;
     ticker_stop();
     //uBit.systemTicker.attach_us(&uBit, &MicroBit::systemTick, MICROBIT_DEFAULT_TICK_PERIOD * 1000); TODO what to replace with?
     ubit_display.enable();
@@ -88,7 +88,7 @@ mp_obj_t microbit_compass_calibrate(mp_obj_t self_in) {
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_compass_calibrate_obj, microbit_compass_calibrate);
 
 mp_obj_t microbit_compass_clear_calibration(mp_obj_t self_in) {
-    microbit_compass_obj_t *self = (microbit_compass_obj_t*)self_in;
+    (void)self_in;
     ubit_compass->clearCalibration();
     return mp_const_none;
 }
@@ -103,6 +103,7 @@ static void update(microbit_compass_obj_t *self) {
      * the main execution thread. This is extremely unlikely, so we just
      * accept that a slightly out-of-date result will be returned
      */
+    (void)self;
     if (!compass_up_to_date && !compass_updating) {
         compass_updating = true;
         ubit_compass->idleTick();
@@ -126,25 +127,25 @@ mp_obj_t microbit_compass_heading(mp_obj_t self_in) {
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_compass_heading_obj, microbit_compass_heading);
 
 mp_obj_t microbit_compass_get_x(mp_obj_t self_in) {
-    microbit_compass_obj_t *self = (microbit_compass_obj_t*)self_in;
+    (void)self_in;
     return mp_obj_new_int(ubit_compass->getX());
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_compass_get_x_obj, microbit_compass_get_x);
 
 mp_obj_t microbit_compass_get_y(mp_obj_t self_in) {
-    microbit_compass_obj_t *self = (microbit_compass_obj_t*)self_in;
+    (void)self_in;
     return mp_obj_new_int(ubit_compass->getY());
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_compass_get_y_obj, microbit_compass_get_y);
 
 mp_obj_t microbit_compass_get_z(mp_obj_t self_in) {
-    microbit_compass_obj_t *self = (microbit_compass_obj_t*)self_in;
+    (void)self_in;
     return mp_obj_new_int(ubit_compass->getZ());
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_compass_get_z_obj, microbit_compass_get_z);
 
 mp_obj_t microbit_compass_get_field_strength(mp_obj_t self_in) {
-    microbit_compass_obj_t *self = (microbit_compass_obj_t*)self_in;
+    (void)self_in;
     return mp_obj_new_int(ubit_compass->getFieldStrength());
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_compass_get_field_strength_obj, microbit_compass_get_field_strength);

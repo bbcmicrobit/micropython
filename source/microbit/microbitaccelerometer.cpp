@@ -52,6 +52,7 @@ static void update(microbit_accelerometer_obj_t *self) {
      * the main execution thread. This is extremely unlikely, so we just
      * accept that a slightly out-of-date result will be returned
      */
+    (void)self;
     if (!accelerometer_up_to_date && !accelerometer_updating) {
         accelerometer_up_to_date = true;
         accelerometer_updating = true;
@@ -77,25 +78,25 @@ void microbit_accelerometer_event_handler(const MicroBitEvent *evt) {
 }
 
 mp_obj_t microbit_accelerometer_get_x(mp_obj_t self_in) {
-    microbit_accelerometer_obj_t *self = (microbit_accelerometer_obj_t*)self_in;
+    (void)self_in;
     return mp_obj_new_int(ubit_accelerometer->getX());
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_accelerometer_get_x_obj, microbit_accelerometer_get_x);
 
 mp_obj_t microbit_accelerometer_get_y(mp_obj_t self_in) {
-    microbit_accelerometer_obj_t *self = (microbit_accelerometer_obj_t*)self_in;
+    (void)self_in;
     return mp_obj_new_int(ubit_accelerometer->getY());
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_accelerometer_get_y_obj, microbit_accelerometer_get_y);
 
 mp_obj_t microbit_accelerometer_get_z(mp_obj_t self_in) {
-    microbit_accelerometer_obj_t *self = (microbit_accelerometer_obj_t*)self_in;
+    (void)self_in;
     return mp_obj_new_int(ubit_accelerometer->getZ());
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_accelerometer_get_z_obj, microbit_accelerometer_get_z);
 
 mp_obj_t microbit_accelerometer_get_values(mp_obj_t self_in) {
-    microbit_accelerometer_obj_t *self = (microbit_accelerometer_obj_t*)self_in;
+    (void)self_in;
     mp_obj_tuple_t *tuple = (mp_obj_tuple_t *)mp_obj_new_tuple(3, NULL);
     Sample3D sample = ubit_accelerometer->getSample();
     tuple->items[0] = mp_obj_new_int(sample.x);
