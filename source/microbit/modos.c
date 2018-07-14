@@ -29,22 +29,12 @@
 #include "py/objtuple.h"
 #include "py/objstr.h"
 #include "genhdr/mpversion.h"
-#include YOTTA_BUILD_INFO_HEADER
-
-#define _MP_STRINGIFY(x) #x
-#define MP_STRINGIFY(x) _MP_STRINGIFY(x)
+#include "genhdr/microbitversion.h"
 
 #define RELEASE "1.0.0-beta.1"
 
-#if YOTTA_BUILD_VCS_CLEAN == 0
-#define DIRTY ".dirty"
-#else
-#define DIRTY ""
-#endif
-
 #define VERSION \
-    "micro:bit " MP_STRINGIFY(YOTTA_BUILD_VCS_DESCRIPTION) DIRTY \
-    " on " MP_STRINGIFY(YOTTA_BUILD_YEAR) "-" MP_STRINGIFY(YOTTA_BUILD_MONTH) "-" MP_STRINGIFY(YOTTA_BUILD_DAY) \
+    "micro:bit " RELEASE "+" MICROBIT_GIT_HASH " on " MICROBIT_BUILD_DATE \
     "; MicroPython " MICROPY_GIT_TAG " on " MICROPY_BUILD_DATE
 
 const char microbit_release_string[] = RELEASE;
