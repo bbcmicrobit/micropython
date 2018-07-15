@@ -46,7 +46,7 @@ STATIC const MP_DEFINE_STR_OBJ(os_uname_info_sysname_obj, MICROPY_PY_SYS_PLATFOR
 STATIC const MP_DEFINE_STR_OBJ(os_uname_info_nodename_obj, MICROPY_PY_SYS_PLATFORM);
 STATIC const MP_DEFINE_STR_OBJ(os_uname_info_release_obj, microbit_release_string);
 STATIC const MP_DEFINE_STR_OBJ(os_uname_info_version_obj, microbit_version_string);
-STATIC const MP_DEFINE_STR_OBJ(os_uname_info_machine_obj, MICROPY_HW_BOARD_NAME " with " MICROPY_HW_MCU_NAME);
+STATIC const MP_DEFINE_STR_OBJ(os_uname_info_machine_obj, MICROBIT_BOARD_NAME " with " MICROPY_HW_MCU_NAME);
 
 STATIC MP_DEFINE_ATTRTUPLE(
     os_uname_info_obj,
