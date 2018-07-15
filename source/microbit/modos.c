@@ -31,14 +31,12 @@
 #include "genhdr/mpversion.h"
 #include "genhdr/microbitversion.h"
 
-#define RELEASE "1.0.0-beta.1"
-
-#define VERSION \
-    "micro:bit " RELEASE "+" MICROBIT_GIT_HASH " on " MICROBIT_BUILD_DATE \
+#define MICROBIT_VERSION \
+    "micro:bit " MICROBIT_RELEASE "+" MICROBIT_GIT_HASH " on " MICROBIT_BUILD_DATE \
     "; MicroPython " MICROPY_GIT_TAG " on " MICROPY_BUILD_DATE
 
-const char microbit_release_string[] = RELEASE;
-const char microbit_version_string[] = VERSION;
+const char microbit_release_string[] = MICROBIT_RELEASE;
+const char microbit_version_string[] = MICROBIT_VERSION;
 
 STATIC const qstr os_uname_info_fields[] = {
     MP_QSTR_sysname, MP_QSTR_nodename,
