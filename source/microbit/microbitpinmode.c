@@ -97,7 +97,7 @@ const microbit_pinmode_t microbit_pinmodes[] = {
     [MODE_BUTTON]        = { MP_QSTR_button, pinmode_error },
     [MODE_MUSIC]         = { MP_QSTR_music, pinmode_error },
     [MODE_AUDIO_PLAY]    = { MP_QSTR_audio, noop },
-    [MODE_TOUCH]         = { MP_QSTR_touch, pinmode_error },
+    [MODE_TOUCH]         = { MP_QSTR_touch, noop },
     [MODE_I2C]           = { MP_QSTR_i2c, pinmode_error },
     [MODE_SPI]           = { MP_QSTR_spi, pinmode_error }
 };
