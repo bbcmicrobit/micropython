@@ -32,7 +32,7 @@
 #include "genhdr/microbitversion.h"
 
 #define MICROBIT_VERSION \
-    "micro:bit " MICROBIT_RELEASE "+" MICROBIT_GIT_HASH " on " MICROBIT_BUILD_DATE \
+    "micro:bit v" MICROBIT_RELEASE "+" MICROBIT_GIT_HASH " on " MICROBIT_BUILD_DATE \
     "; MicroPython " MICROPY_GIT_TAG " on " MICROPY_BUILD_DATE
 
 const char microbit_release_string[] = MICROBIT_RELEASE;
