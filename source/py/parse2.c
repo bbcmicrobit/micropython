@@ -132,8 +132,8 @@ STATIC const rule_t *rules[] = {
 typedef struct _rule_stack_t {
     size_t src_line : 8 * sizeof(size_t) - 8; // maximum bits storing source line number
     size_t rule_id : 8; // this must be large enough to fit largest rule number
-    size_t arg_i; // this dictates the maximum nodes in a "list" of things
-    size_t pt_off;
+    size_t arg_i : 16; // this dictates the maximum nodes in a "list" of things
+    size_t pt_off : 16;
 } rule_stack_t;
 
 typedef struct _mp_parse_chunk_t {
