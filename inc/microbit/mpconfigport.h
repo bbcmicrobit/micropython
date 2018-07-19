@@ -33,6 +33,8 @@
 
 // memory allocation policies
 #define MICROPY_ALLOC_GC_STACK_SIZE (32)
+#define MICROPY_ALLOC_PARSE_RULE_INIT (96)
+#define MICROPY_ALLOC_PARSE_RULE_INC (24)
 #define MICROPY_ALLOC_PATH_MAX      (64)
 #define MICROPY_QSTR_BYTES_IN_HASH  (1)
 
