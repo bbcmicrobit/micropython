@@ -49,12 +49,14 @@ void microbit_ticker(void) {
 static void microbit_display_exception(mp_obj_t exc_in) {
     mp_uint_t n, *values;
     mp_obj_exception_get_traceback(exc_in, &n, &values);
-    if (n >= 3) {
+    if (1) {
         vstr_t vstr;
         mp_print_t print;
         vstr_init_print(&vstr, 50, &print);
         #if MICROPY_ENABLE_SOURCE_LINE
-        mp_printf(&print, "line %u ", values[1]);
+        if (n >= 3) {
+            mp_printf(&print, "line %u ", values[1]);
+        }
         #endif
         if (mp_obj_is_native_exception_instance(exc_in)) {
             mp_obj_exception_t *exc = (mp_obj_exception_t*)MP_OBJ_TO_PTR(exc_in);
