@@ -42,14 +42,14 @@ Functions
 
 .. py:function:: get_y()
 
-    Gives the reading of the magnetic force on the ``x`` axis, as a
+    Gives the reading of the magnetic force on the ``y`` axis, as a
     positive or negative integer, depending on the direction of the
     force.
 
 
 .. py:function:: get_z()
 
-    Gives the reading of the magnetic force on the ``x`` axis, as a
+    Gives the reading of the magnetic force on the ``z`` axis, as a
     positive or negative integer, depending on the direction of the
     force.
 
