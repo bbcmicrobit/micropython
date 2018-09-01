@@ -4,8 +4,11 @@
 #include "microbit/filesystem.h"
 #include "microbit/microbitdal.h"
 #include "_newlib_version.h"
+#include "MicroBitButton.h"
 
-// Global instances of the DAL components that we use
+// Global instances of the mbed/DAL components that we use
+gpio_t reset_button_gpio;
+gpio_irq_t reset_button_gpio_irq;
 MicroBitDisplay ubit_display;
 MicroPythonI2C ubit_i2c(I2C_SDA0, I2C_SCL0);
 
@@ -25,6 +28,13 @@ extern "C" {
 #include "lib/utils/pyexec.h"
 #include "microbit/modmicrobit.h"
 #include "microbit/modmusic.h"
+
+void reset_button_handler(uint32_t data, gpio_irq_event event) {
+    (void)data;
+    if (event == IRQ_FALL) {
+        microbit_reset();
+    }
+}
 
 void microbit_ticker(void) {
     // Update compass if it is calibrating, but not if it is still
@@ -130,6 +140,12 @@ typedef struct _appended_script_t {
 #define APPENDED_SCRIPT ((const appended_script_t*)microbit_mp_appended_script())
 
 int main(void) {
+    // Configure the soft reset button
+    gpio_init_in(&reset_button_gpio, MICROBIT_PIN_BUTTON_RESET);
+    gpio_mode(&reset_button_gpio, PullUp);
+    gpio_irq_init(&reset_button_gpio_irq, MICROBIT_PIN_BUTTON_RESET, &reset_button_handler, 1 /* dummy, must be non-zero */);
+    gpio_irq_set(&reset_button_gpio_irq, IRQ_FALL, 1);
+
     // Create dynamically-allocated DAL components
     ubit_accelerometer = &MicroBitAccelerometer::autoDetect(ubit_i2c);
     ubit_compass = &MicroBitCompass::autoDetect(ubit_i2c);
