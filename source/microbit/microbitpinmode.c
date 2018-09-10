@@ -66,6 +66,12 @@ bool microbit_obj_pin_can_be_acquired(const microbit_pin_obj_t *pin) {
 
 bool microbit_obj_pin_acquire(const microbit_pin_obj_t *pin, const microbit_pinmode_t *new_mode) {
     const microbit_pinmode_t *current_mode = microbit_pin_get_mode(pin);
+
+    // The button mode is effectively a digital-in mode, so allow read_digital to work on a button
+    if (current_mode == microbit_pin_mode_button && new_mode == microbit_pin_mode_read_digital) {
+        return false;
+    }
+
     if (current_mode != new_mode) {
         current_mode->release(pin);
         set_mode(pin->number, new_mode);
