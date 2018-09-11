@@ -7,7 +7,7 @@
   "author": "Damien P George <damien.p.george@gmail.com>",
   "homepage": "http://micropython.org",
   "dependencies":{
-    "microbit-dal":"lancaster-university/microbit-dal#dal-integration-2"
+    "microbit-dal":"lancaster-university/microbit-dal#dal-integration-5"
   },
   "extraIncludes":[
     "inc",
