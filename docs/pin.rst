@@ -186,6 +186,8 @@ in ``read_digital`` mode with the given pull mode.
 
 .. note::
     Also note, the micro:bit has external weak (10M) pull-ups fitted on pins
-    0, 1 and 2 only, in order for the touch sensing to work. See the edge
-    connector data sheet here:
+    0, 1 and 2 only, in order for the touch sensing to work.
+    There are also external (10k) pull-ups fitted on pins 5 and 11, in order
+    for buttons A and B to work.
+    See the edge connector data sheet here:
     http://tech.microbit.org/hardware/edgeconnector_ds/
