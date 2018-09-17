@@ -3,10 +3,6 @@ MicroPython for the BBC micro:bit
 
 This is the source code for MicroPython running on the BBC micro:bit!
 
-To get involved with the community subscribe to the microbit@python.org
-mailing list (https://mail.python.org/mailman/listinfo/microbit). You need to
-be a member to post messages.
-
 Various things are in this repository, including:
 - Source code in source/ and inc/ directories.
 - Example Python programs in the examples/ directory.
