@@ -85,6 +85,7 @@ Projects related to MicroPython on the BBC micro:bit include:
    devguide/installation
    devguide/flashfirmware
    devguide/repl
+   devguide/hexformat
    devguide/devfaq
    devguide/contributing
 
