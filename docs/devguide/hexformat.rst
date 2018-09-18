@@ -62,7 +62,6 @@ build, and additional data is added to the hex file after.
 
 Running the ``make all`` command executes the following steps:
 
-- Interned strings are added to the ``qstrdefsport.h`` file
 - The ``tools/makeversionhdr.py`` script creates the ``microbitversion.h`` file with macros containing build information
 - Yotta builds the source and creates a bare hex file with just the firmware
 - The ``tools/adduicr.py`` script adds the UICR to the bare hex
