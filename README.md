@@ -3,6 +3,9 @@ MicroPython for the BBC micro:bit
 
 This is the source code for MicroPython running on the BBC micro:bit!
 
+To get involved with the micro:bit community join the Slack channel by signing up here:
+https://tech.microbit.org/get-involved/where-to-find/
+
 Various things are in this repository, including:
 - Source code in source/ and inc/ directories.
 - Example Python programs in the examples/ directory.
