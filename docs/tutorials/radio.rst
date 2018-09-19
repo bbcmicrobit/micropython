@@ -142,7 +142,7 @@ Armed with this knowledge, it's simple to make micro:bit fireflies like this:
 .. include:: ../../examples/radio.py
     :code: python
 
-The import stuff happens in the event loop. First, it checks if button A was
+The important stuff happens in the event loop. First, it checks if button A was
 pressed and, if it was, uses the radio to send the message "flash". Then it
 reads any messages from the message queue with ``radio.receive()``. If there is
 a message it sleeps a short, random period of time (to make the display more
