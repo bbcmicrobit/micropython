@@ -23,8 +23,9 @@ available to you.
 
 Explore, experiment and be fearless trying things out ~ for these are the
 attributes of a virtuoso coder. To encourage you we have hidden a number of
-Easter eggs in MicroPython and the code editors (both TouchDevelop and Mu).
-They're fun rewards for looking "under the hood" and "poking with a stick".
+`Easter eggs <https://en.wikipedia.org/wiki/Easter_egg_(media)>`_ in MicroPython
+and the Python code editors. They're fun rewards for looking "under the hood" and
+"poking with a stick".
 
 Such skill in Python is valuable: it's one of the world's most popular
 professional programming languages.
