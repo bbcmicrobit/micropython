@@ -7,7 +7,8 @@ The ``uart`` module lets you talk to a device connected to your board using
 a serial interface.
 
 .. note::
-    The internal uart buffer is hard coded to 64 bytes.
+    The internal UART RX buffer is 64 bytes, so make sure data is read before 
+    the buffer is full or some of the data might be lost.
 
 Functions
 =========
