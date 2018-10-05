@@ -61,6 +61,7 @@ Projects related to MicroPython on the BBC micro:bit include:
    microbit_micropython_api.rst
    microbit.rst
    accelerometer.rst
+   audio.rst
    ble.rst
    button.rst
    compass.rst
