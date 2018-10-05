@@ -113,7 +113,8 @@ Functions
 
 .. py:function:: stop(pin=microbit.pin0)
 
-    Stops all music playback on a given pin.
+    Stops all music playback on a given pin. If no pin is given eg.
+    ``music.stop(pin1)``, Pin0 is assumed.
 
 .. py:function:: reset()
 
