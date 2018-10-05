@@ -61,7 +61,9 @@ Functions
     
 .. note::
 
-    Gestures are not updated in the background so there needs to be constant calls to some accelerometer method to do the gesture detection. Usually gestures can be detected using a loop with a small `sleep() <https://microbit-micropython.readthedocs.io/en/latest/microbit.html?highlight=sleep>`_ delay.
+    Gestures are not updated in the background so there needs to be constant 
+    calls to some accelerometer method to do the gesture detection. Usually 
+    gestures can be detected using a loop with a small :func:`microbit.sleep` delay.
 
 Examples
 --------
