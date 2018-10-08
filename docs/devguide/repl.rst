@@ -9,13 +9,13 @@ in real-time as you write it.
 
 Accessing the REPL on the micro:bit will require you to:
 
-    * Determine the communication port identifier for the micro:bit
-    * Use a program to establish communication with the device
+* Determine the communication port identifier for the micro:bit
+* Use a program to establish communication with the device
 
-If you are a Windows user you'll need to install the correct drivers, the
-instructions for which are found here:
+For versions of Windows before 10 you might need to install the Mbed serial 
+driver, the instructions for which are found here:
 
-https://developer.mbed.org/handbook/Windows-serial-configuration
+https://os.mbed.com/docs/latest/tutorials/windows-serial-driver.html
 
 
 Using a serial communication program
@@ -55,8 +55,8 @@ micro:bit was assigned (e.g. ``/dev/ttyUSB0``).
 Communicating with the micro:bit
 --------------------------------
 
-Once you have found the port identifier you can use a program to communicate 
-with the micro:bit.
+Once you have found the port identifier you can use a serial terminal program 
+to communicate with the micro:bit.
 
 **Windows**
 
