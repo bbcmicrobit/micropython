@@ -63,7 +63,7 @@ Functions
    Read characters.  If ``nbytes`` is specified then read at most that many
    bytes.
 
-.. method:: uart.readall()
+.. method:: uart.read()
 
    Read as much data as possible.
 

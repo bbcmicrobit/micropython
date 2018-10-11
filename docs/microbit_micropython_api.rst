@@ -1,9 +1,6 @@
 micro:bit Micropython API
 *************************
 
-.. warning::
-    As we work towards a 1.0 release, this API is subject to frequent changes. This page reflects the current micro:bit API in a developer-friendly (but not necessarily kid-friendly) way. The tutorials associated with this documentation are a good place to start for non-developers looking for information.
-
 The microbit module
 ===================
 
@@ -29,6 +26,9 @@ There are a few functions available directly::
 The rest of the functionality is provided by objects and classes in the microbit module, as described below.
 
 Note that the API exposes integers only (ie no floats are needed, but they may be accepted).  We thus use milliseconds for the standard time unit.
+
+.. note::
+    You can see a list of all available modules by writing ``help('modules')`` in the REPL.
 
 Buttons
 -------
@@ -279,7 +279,7 @@ Use ``uart`` to communicate with a serial device connected to the device's I/O p
     # return (read) n incoming characters.
     uart.read(n)
     # return (read) as much incoming data as possible.
-    uart.readall()
+    uart.read()
     # return (read) all the characters to a newline character is reached.
     uart.readline()
     # read bytes into the referenced buffer.
