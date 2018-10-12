@@ -456,9 +456,18 @@ mp_lexer_t *microbit_file_lexer(qstr src_name, file_descriptor_obj *fd) {
     return mp_lexer_new(src_name, reader);
 }
 
-mp_lexer_t *mp_lexer_new_from_file(const char *filename) {
+void mp_reader_new_file(mp_reader_t *reader, const char *filename) {
     file_descriptor_obj *fd = microbit_file_open(filename, strlen(filename), false, false);
-    if (fd == NULL)
-        return NULL;
-    return microbit_file_lexer(qstr_from_str(filename), fd);
+    if (fd == NULL) {
+        mp_raise_OSError(MP_ENOENT);
+    }
+    reader->data = fd;
+    reader->readbyte = file_read_byte;
+    reader->close = (void(*)(void*))microbit_file_close;
+}
+
+mp_lexer_t *mp_lexer_new_from_file(const char *filename) {
+    mp_reader_t reader;
+    mp_reader_new_file(&reader, filename);
+    return mp_lexer_new(qstr_from_str(filename), reader);
 }

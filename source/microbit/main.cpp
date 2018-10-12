@@ -22,6 +22,7 @@ extern "C" {
 #include "py/stackctrl.h"
 #include "py/gc.h"
 #include "py/compile.h"
+#include "py/persistentcode.h"
 #include "py/runtime.h"
 #include "py/mphal.h"
 #include "lib/mp-readline/readline.h"
@@ -90,17 +91,27 @@ static void microbit_display_exception(mp_obj_t exc_in) {
     }
 }
 
-static void do_lexer(mp_lexer_t *lex) {
-    if (lex == NULL) {
+#define SOURCE_KIND_LEXER (0)
+#define SOURCE_KIND_MPY_FILE (1)
+
+static void do_exec(int source_kind, const void *source) {
+    if (source == NULL) {
         printf("MemoryError: lexer could not allocate memory\n");
         return;
     }
 
     nlr_buf_t nlr;
     if (nlr_push(&nlr) == 0) {
-        qstr source_name = lex->source_name;
-        mp_parse_tree_t parse_tree = mp_parse(lex, MP_PARSE_FILE_INPUT);
-        mp_obj_t module_fun = mp_compile(&parse_tree, source_name, MP_EMIT_OPT_NONE, false);
+        mp_obj_t module_fun;
+        if (source_kind == SOURCE_KIND_LEXER) {
+            mp_lexer_t *lex = (mp_lexer_t*)source;
+            qstr source_name = lex->source_name;
+            mp_parse_tree_t parse_tree = mp_parse(lex, MP_PARSE_FILE_INPUT);
+            module_fun = mp_compile(&parse_tree, source_name, MP_EMIT_OPT_NONE, false);
+        } else {
+            mp_raw_code_t *raw_code = mp_raw_code_load_file((const char *)source);
+            module_fun = mp_make_function_from_raw_code(raw_code, MP_OBJ_NULL, MP_OBJ_NULL);
+        }
         mp_hal_set_interrupt_char(3); // allow ctrl-C to interrupt us
         mp_call_function_0(module_fun);
         mp_hal_set_interrupt_char(-1); // disable interrupt
@@ -123,12 +134,12 @@ static void do_lexer(mp_lexer_t *lex) {
 
 static void do_strn(const char *src, size_t len) {
     mp_lexer_t *lex = mp_lexer_new_from_str_len(MP_QSTR___main__, src, len, 0);
-    do_lexer(lex);
+    do_exec(SOURCE_KIND_LEXER, lex);
 }
 
 static void do_file(file_descriptor_obj *fd) {
     mp_lexer_t *lex = microbit_file_lexer(MP_QSTR___main__, fd);
-    do_lexer(lex);
+    do_exec(SOURCE_KIND_LEXER, lex);
 }
 
 typedef struct _appended_script_t {
@@ -187,6 +198,8 @@ int main(void) {
             file_descriptor_obj *main_module;
             if ((main_module = microbit_file_open("main.py", 7, false, false))) {
                 do_file(main_module);
+            } else if (microbit_find_file("main.mpy", strlen("main.mpy")) != FILE_NOT_FOUND) {
+                do_exec(SOURCE_KIND_MPY_FILE, "main.mpy");
             } else if (APPENDED_SCRIPT->header[0] == 'M' && APPENDED_SCRIPT->header[1] == 'P') {
                 // run appended script
                 do_strn(APPENDED_SCRIPT->str, APPENDED_SCRIPT->len);
