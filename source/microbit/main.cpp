@@ -9,8 +9,8 @@
 // Global instances of the mbed/DAL components that we use
 gpio_t reset_button_gpio;
 gpio_irq_t reset_button_gpio_irq;
-MicroBitDisplay ubit_display;
-MicroPythonI2C ubit_i2c(I2C_SDA0, I2C_SCL0);
+MicroBitDisplay *ubit_display;
+MicroPythonI2C *ubit_i2c;
 
 // Global pointers to instances of DAL components that are created dynamically
 MicroBitAccelerometer *ubit_accelerometer;
@@ -147,13 +147,15 @@ int main(void) {
     gpio_irq_set(&reset_button_gpio_irq, IRQ_FALL, 1);
 
     // Create dynamically-allocated DAL components
-    ubit_accelerometer = &MicroBitAccelerometer::autoDetect(ubit_i2c);
-    ubit_compass = &MicroBitCompass::autoDetect(ubit_i2c);
-    ubit_compass_calibrator = new MicroBitCompassCalibrator(*ubit_compass, *ubit_accelerometer, ubit_display);
+    ubit_display = new MicroBitDisplay();
+    ubit_i2c = new MicroPythonI2C(I2C_SDA0, I2C_SCL0);
+    ubit_accelerometer = &MicroBitAccelerometer::autoDetect(*ubit_i2c);
+    ubit_compass = &MicroBitCompass::autoDetect(*ubit_i2c);
+    ubit_compass_calibrator = new MicroBitCompassCalibrator(*ubit_compass, *ubit_accelerometer, *ubit_display);
 
     for (;;) {
         extern uint32_t __StackTop;
-        static uint32_t mp_heap[10240 / sizeof(uint32_t)];
+        static uint32_t mp_heap[10368 / sizeof(uint32_t)];
 
         // Initialise memory regions: stack and MicroPython heap
         mp_stack_set_top(&__StackTop);
@@ -167,7 +169,7 @@ int main(void) {
 
         // Initialise the micro:bit peripherals
         microbit_seed_random();
-        ubit_display.disable();
+        ubit_display->disable();
         microbit_display_init();
         microbit_filesystem_init();
         microbit_pin_init();
