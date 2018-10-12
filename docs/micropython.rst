@@ -10,7 +10,7 @@ Functions
 
 .. py:function:: micropython.const(expr)
 
-    Used to declare that the expression is a constant so that the compile can 
+    Used to declare that the expression is a constant so that the compiler can 
     optimise it. The use of this function should be as follows:
 
     .. code-block:: python
@@ -81,8 +81,11 @@ Functions
 
 .. py:function:: micropython.kbd_intr(chr)
 
-    Returns ``True`` if the display is on, otherwise returns ``False``. Set the
-    character that will raise a KeyboardInterrupt exception. By default this is
-    set to 3 during script execution, corresponding to Ctrl-C. Passing -1 to 
-    this function will disable capture of Ctrl-C, and passing 3 will restore 
-    it.
+    Set the character that will raise a KeyboardInterrupt exception. By default
+    this is set to 3 during script execution, corresponding to Ctrl-C. Passing 
+    -1 to this function will disable capture of Ctrl-C, and passing 3 will 
+    restore it.
+
+    This function can be used to prevent the capturing of Ctrl-C on the 
+    incoming stream of characters that is usually used for the REPL, in case 
+    that stream is used for other purposes
