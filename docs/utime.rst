@@ -17,11 +17,9 @@ Functions
 
 .. method:: utime.sleep(seconds)
 
-    Sleep for the given number of seconds. Some boards may accept seconds as a 
-    floating-point number to sleep for a fractional number of seconds. Note that 
-    other boards may not accept a floating-point argument, for compatibility 
-    with them use :func:`utime.sleep_ms()` and :func:`utime.sleep_us()`
-    functions.
+    Sleep for the given number of seconds. You can use a floating-point number 
+    to sleep for a fractional number of seconds, or use the 
+    :func:`utime.sleep_ms()` and :func:`utime.sleep_us()` functions.
 
 
 .. method:: utime.sleep_ms(ms)
