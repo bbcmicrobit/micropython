@@ -9,17 +9,14 @@ unrestricted access to and control of hardware blocks on a system (like CPU,
 timers, buses, etc.). Used incorrectly, this can lead to malfunction, lockups, 
 crashes of your board, and in extreme cases, hardware damage.
 
-.. note::
-    All callbacks used by functions and class methods of the ``machine`` module
-    should be considered as executing in an interrupt context.
 
 Functions
 =========
 
 .. method:: machine.unique_id()
 
-    Returns a byte string with a unique identifier of a board/SoC. It will vary
-    from a board/SoC instance to another.
+    Returns a byte string with a unique identifier of a board. It will vary 
+    from one board instance to another.
 
 
 .. method:: machine.reset()

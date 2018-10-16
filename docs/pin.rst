@@ -144,7 +144,7 @@ its own to that.
     .. py:method::get_pull()
 
         Returns the pull configuration on a pin, which can be one of three 
-        possible values: ``NO_PULL``, ``PULL_DOWN``, or ``PULL_DOWN``. These 
+        possible values: ``NO_PULL``, ``PULL_DOWN``, or ``PULL_UP``. These 
         are set using the ``set_pull()`` method or automatically configured 
         when a pin mode requires it.
 
