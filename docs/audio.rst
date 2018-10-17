@@ -14,7 +14,7 @@ which means that it can reproduce frequencies up to 3.9kHz.
 Functions
 =========
 
-.. py:function:: play(source, wait=True, pins=(pin0, pin1))
+.. py:function:: play(source, wait=True, pin=pin0, return_pin=None)
 
     Play the source to completion.
 
@@ -22,7 +22,10 @@ Functions
 
     If ``wait`` is ``True``, this function will block until the source is exhausted.
 
-    ``pins`` specifies which pins the speaker is connected to.
+    ``pin`` specifies which pin the speaker is connected to.
+
+    ``return_pin`` specifies a differential pin to connect to the speaker
+    instead of ground.
 
 Classes
 =======
