@@ -15,24 +15,25 @@ Functions
 .. py:function:: get_x()
 
     Get the acceleration measurement in the ``x`` axis, as a positive or
-    negative integer, depending on the direction.
-
+    negative integer, depending on the direction. 
+    The measurement is given in milli-Newtons, for example +/- 2g will return +/- 2000mN. 
 
 .. py:function:: get_y()
 
     Get the acceleration measurement in the ``y`` axis, as a positive or
     negative integer, depending on the direction.
-
+    The measurement is given in milli-Newtons, for example +/- 2g will return +/- 2000mN. 
 
 .. py:function:: get_z()
 
     Get the acceleration measurement in the ``z`` axis, as a positive or
     negative integer, depending on the direction.
+    The measurement is given in milli-Newtons, for example +/- 2g will return +/- 2000mN. 
 
 .. py:function:: get_values()
 
     Get the acceleration measurements in all axes at once, as a three-element
-    tuple of integers ordered as X, Y, Z.
+    The measurement is given in milli-Newtons, for example +/- 2g will return +/- 2000mN. 
 
 .. py:function:: current_gesture()
 
