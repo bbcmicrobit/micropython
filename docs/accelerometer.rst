@@ -8,6 +8,9 @@ also provides convenience functions for detecting gestures. The
 recognised gestures are: ``up``, ``down``, ``left``, ``right``, ``face up``,
 ``face down``, ``freefall``, ``3g``, ``6g``, ``8g``, ``shake``.
 
+By default MicroPython sets the accelerometer to +/- 2g, and this can only be
+modified in the DAL layer below. The accelerometer returns a value in the range 
+0..1024 for each axis, which is then scaled accordingly.
 
 Functions
 =========
@@ -15,25 +18,26 @@ Functions
 .. py:function:: get_x()
 
     Get the acceleration measurement in the ``x`` axis, as a positive or
-    negative integer, depending on the direction. 
-    The measurement is given in milli-Newtons, for example +/- 2g will return +/- 2000mN. 
+    negative integer, depending on the direction. The measurement is given in 
+    milli-g, for example +/- 2g will return +/- 2000mg. 
 
 .. py:function:: get_y()
 
     Get the acceleration measurement in the ``y`` axis, as a positive or
-    negative integer, depending on the direction.
-    The measurement is given in milli-Newtons, for example +/- 2g will return +/- 2000mN. 
+    negative integer, depending on the direction.  The measurement is given in
+    milli-g, for example +/- 2g will return +/- 2000mg. 
 
 .. py:function:: get_z()
 
     Get the acceleration measurement in the ``z`` axis, as a positive or
-    negative integer, depending on the direction.
-    The measurement is given in milli-Newtons, for example +/- 2g will return +/- 2000mN. 
+    negative integer, depending on the direction.  The measurement is given in 
+    milli-g, for example +/- 2g will return +/- 2000mg. 
 
 .. py:function:: get_values()
 
     Get the acceleration measurements in all axes at once, as a three-element
-    The measurement is given in milli-Newtons, for example +/- 2g will return +/- 2000mN. 
+    The measurement is given in milli-g, for example +/- 2g will 
+    return +/- 2000mg. 
 
 .. py:function:: current_gesture()
 
