@@ -35,6 +35,11 @@ Functions
         * 57600
         * 115200
 
+    .. note::
+
+        The timeout for all UART reads depends on the baudrate and is otherwise
+        not changeable via Python.
+
     The ``bits`` defines the size of bytes being transmitted, and the board
     only supports 8. The ``parity`` parameter defines how parity is checked,
     and it can be ``None``, ``microbit.uart.ODD`` or ``microbit.uart.EVEN``.
@@ -89,3 +94,8 @@ Functions
    Write the buffer of bytes to the bus.
 
    Return value: number of bytes written or ``None`` on timeout.
+
+    .. note::
+
+        Sending ``0x03`` will KeyboardInterrupt your program. You can enable or
+        disable this using :func:`micropython.kbd_intr()`.
