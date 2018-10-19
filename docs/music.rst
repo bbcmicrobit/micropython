@@ -114,8 +114,9 @@ Functions
     frequency is set or ``stop`` is called (see below).
 
 .. py:function:: stop(pin=microbit.pin0)
-
-    Stops all music playback on a given pin.
+    
+    Stops all music playback on a given pin, eg. ``music.stop(pin1)``. 
+    If no pin is given, eg. ``music.stop()`` pin0 is assumed.
 
 .. py:function:: reset()
 
