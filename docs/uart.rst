@@ -63,6 +63,22 @@ Functions
    Read characters.  If ``nbytes`` is specified then read at most that many
    bytes.
 
+   .. note::
+
+        The timeout for all UART reads depends on the baudrate and is otherwise
+        not changeable via Python. The timeout, in milliseconds, is given by:
+        ``microbit_uart_timeout_char = 13000 / baudrate + 1``
+
+   .. note::
+
+        The internal UART RX buffer is 64 bytes, so make sure data is read 
+        before the buffer is full or some of the data might be lost.
+
+   .. note::
+
+        Sending ``0x03`` will KeyboardInterrupt your program. You can enable or
+        disable this using :func:`micropython.kbd_intr()`.
+
 .. method:: uart.readall()
 
    Read as much data as possible.
