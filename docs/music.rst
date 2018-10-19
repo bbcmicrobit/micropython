@@ -105,6 +105,8 @@ Functions
     milliseconds. For example, if the frequency is set to 440 and the length to
     1000 then we hear a standard concert A for one second.
 
+    Note that you can only play one pitch on one pin at any one time.
+
     If ``wait`` is set to ``True``, this function is blocking.
 
     If ``duration`` is negative the pitch is played continuously until either the
