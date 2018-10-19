@@ -141,13 +141,6 @@ its own to that.
         ``pin.PULL_DOWN`` or ``pin.NO_PULL`` (where ``pin`` is an instance of
         a pin). See below for discussion of default pull states.
 
-.. py:class:: MicroBitAnalogDigitalPin
-
-    .. py:method:: read_analog()
-
-        Read the voltage applied to the pin, and return it as an integer
-        between 0 (meaning 0V) and 1023 (meaning 3.3V).
-
     .. py:method:: write_analog(value)
 
         Output a PWM signal on the pin, with the duty cycle proportional to
@@ -163,6 +156,14 @@ its own to that.
 
         Set the period of the PWM signal being output to ``period`` in
         microseconds. The minimum valid value is 256µs.
+
+
+.. py:class:: MicroBitAnalogDigitalPin
+
+    .. py:method:: read_analog()
+
+        Read the voltage applied to the pin, and return it as an integer
+        between 0 (meaning 0V) and 1023 (meaning 3.3V).
 
 
 .. py:class:: MicroBitTouchPin
