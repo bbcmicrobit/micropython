@@ -74,6 +74,11 @@ Functions
         The internal UART RX buffer is 64 bytes, so make sure data is read 
         before the buffer is full or some of the data might be lost.
 
+   .. note::
+
+        Sending ``0x03`` will KeyboardInterrupt your program. You can enable or
+        disable this using :func:`micropython.kbd_intr()`.
+
 .. method:: uart.readall()
 
    Read as much data as possible.
@@ -100,8 +105,3 @@ Functions
    Write the buffer of bytes to the bus.
 
    Return value: number of bytes written or ``None`` on timeout.
-
-   .. note::
-
-        Sending ``0x03`` will KeyboardInterrupt your program. You can enable or
-        disable this using :func:`micropython.kbd_intr()`.
