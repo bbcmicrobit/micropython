@@ -13,7 +13,7 @@ the ``display`` API::
 
 There are four ways in which you can construct an image:
 
-Image() - create a blank 5x5 image
+- ``Image()`` - Create a blank 5x5 image
 
 Image(s) - create an image by parsing the string (single char returns that glyph)
 
