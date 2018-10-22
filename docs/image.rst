@@ -15,7 +15,8 @@ There are four ways in which you can construct an image:
 
 - ``Image()`` - Create a blank 5x5 image
 
-Image(s) - create an image by parsing the string (single char returns that glyph)
+- ``Image(string)`` - Create an image by parsing the string, a single character
+  returns that glyph
 
 Image(w, h) - create a blank image of given size
 
