@@ -58,6 +58,12 @@ Functions
 
     Return a tuple of the gesture history. The most recent is listed last.
     Also clears the gesture history before returning.
+    
+.. note::
+
+    Gestures are not updated in the background so there needs to be constant 
+    calls to some accelerometer method to do the gesture detection. Usually 
+    gestures can be detected using a loop with a small :func:`microbit.sleep` delay.
 
 Examples
 --------
