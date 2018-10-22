@@ -20,7 +20,7 @@ There are four ways in which you can construct an image:
 
 - ``Image(width, height)`` - Create a blank image of given size
 
-Image(w, h, data) - create an image from the given data
+- ``Image(width, height, buffer)`` - Create an image from the given buffer
 
 
 Classes
