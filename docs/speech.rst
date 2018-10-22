@@ -20,6 +20,18 @@ provided that you connect a speaker to your board as shown below:
 
 .. image:: speech.png
 
+.. warning::
+
+   WARNING!
+
+   Active/Powered speakers or a pizeo driver should be used.
+
+   Directly connecting a passive speaker can cause irreversible damage to your 
+   micro:bit. The moving voice coil in a passive speaker may generate 
+   `back-EMF (Electro-Motive Force) <https://en.wikipedia.org/wiki/Counter-electromotive_force`_ 
+   which can result in over-voltage or over-current destroying the micro:bit's 
+   output pin.
+
 .. note::
 
     This work is based upon the amazing reverse engineering efforts of
