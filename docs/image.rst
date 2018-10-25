@@ -51,7 +51,7 @@ Classes
 
     The other form creates an empty image with ``width`` columns and
     ``height`` rows. Optionally ``buffer`` can be an array of
-    ``width``×``height`` integers in range 0-9 to initialize the image:
+    ``width``×``height`` integers in range 0-9 to initialize the image::
    
         Image(2, 2, b'\x08\x08\x08\x08')
 
