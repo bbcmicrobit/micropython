@@ -54,7 +54,9 @@ Classes
     ``width``×``height`` integers in range 0-9 to initialize the image:
    
         Image(2, 2, b'\x08\x08\x08\x08')
-    or
+
+    or::
+
     	Image(2, 2, bytearray([9,9,9,9]))
 	
     Will create a 2 x 2 pixel image at full brightness.
