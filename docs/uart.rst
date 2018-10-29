@@ -42,7 +42,7 @@ Functions
     this board.
 
     If ``tx`` and ``rx`` are not specified then the internal USB-UART TX/RX pins
-    are used which connect to the USB serial convertor on the micro:bit, thus
+    are used which connect to the USB serial converter on the micro:bit, thus
     connecting the UART to your PC.  You can specify any other pins you want by
     passing the desired pin objects to the ``tx`` and ``rx`` parameters.
 
@@ -60,24 +60,32 @@ Functions
 
 .. method:: uart.read([nbytes])
 
-   Read characters.  If ``nbytes`` is specified then read at most that many
-   bytes.
+    Read characters.  If ``nbytes`` is specified then read at most that many
+    bytes, otherwise read as many bytes as possible.
 
-   .. note::
+    The return value is a bytes object. You can convert this object to a
+    string, and if there are non-ASCII characters you can also specify the
+    encoding::
+
+        msg_bytes = uart.read()
+        msg_str = str(msg, 'UTF-8')
+
+    .. note::
 
         The timeout for all UART reads depends on the baudrate and is otherwise
         not changeable via Python. The timeout, in milliseconds, is given by:
         ``microbit_uart_timeout_char = 13000 / baudrate + 1``
 
-   .. note::
+    .. note::
 
-        The internal UART RX buffer is 64 bytes, so make sure data is read 
+        The internal UART RX buffer is 64 bytes, so make sure data is read
         before the buffer is full or some of the data might be lost.
 
-   .. note::
+    .. warning::
 
-        Sending ``0x03`` will KeyboardInterrupt your program. You can enable or
-        disable this using :func:`micropython.kbd_intr()`.
+        Receiving ``0x03`` will stop your program by raising a Keyboard
+        Interrupt. You can enable or disable this using
+        :func:`micropython.kbd_intr()`.
 
 .. method:: uart.readall()
 
@@ -102,6 +110,10 @@ Functions
 
 .. method:: uart.write(buf)
 
-   Write the buffer of bytes to the bus.
+    Write the buffer to the bus, it can be a bytes object or a string::
 
-   Return value: number of bytes written or ``None`` on timeout.
+        uart.write('hello world')
+        uart.write(b'hello world')
+        uart.write(bytes([1, 2, 3]))
+
+    Return value: number of bytes written or ``None`` on timeout.
