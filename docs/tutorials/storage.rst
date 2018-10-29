@@ -8,7 +8,14 @@ switch the device off and on again.
 
 Happily MicroPython on the micro:bit allows you to do this with a very simple
 file system. Because of memory constraints **there is approximately 30k of
-storage available** on the file system.
+storage available** on the file system. 
+
+.. note::
+
+    The micropython file system should not be confused
+    with the micro:bit mass storage mode which presents the device as a USB drive. 
+    Mass storage mode is only intended for copying across a HEX file, so you won't
+    see files you create using the file system appearing on the MICROBIT drive.
 
 What is a file system?
 
