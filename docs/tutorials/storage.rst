@@ -12,10 +12,10 @@ storage available** on the file system.
 
 .. note::
 
-The micropython file system should not be confused
-with the micro:bit mass storage mode which presents the device as a USB drive. 
-Mass storage mode is only intended for copying across a HEX file, so you won't
-see files you create using the file system appearing on the MICROBIT drive.
+    The micropython file system should not be confused
+    with the micro:bit mass storage mode which presents the device as a USB drive. 
+    Mass storage mode is only intended for copying across a HEX file, so you won't
+    see files you create using the file system appearing on the MICROBIT drive.
 
 What is a file system?
 
