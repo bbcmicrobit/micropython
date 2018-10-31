@@ -191,7 +191,6 @@ in ``read_digital`` mode with the given pull mode.
     
     There are also external (10k) pull-ups fitted on pins 5 and 11, in order
     for buttons A and B to work.
-    
     GPIO pins are also used for the display. 6 of these are routed to the
     edge connector at 3, 4, 6, 7, 9. and 10. If you want to use these pins
     for another purpose, you may need to turn the `display off
