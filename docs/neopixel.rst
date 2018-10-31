@@ -3,17 +3,23 @@ NeoPixel
 
 .. py:module:: neopixel
 
-The ``neopixel`` module lets you use Neopixel (WS2812) individually addressable
-RGB LED strips with the Microbit. Note to use the ``neopixel`` module, you
+The ``neopixel`` module lets you use NeoPixel (WS2812) individually addressable
+RGB LED strips with the micro:bit. Note to use the ``neopixel`` module, you
 need to import it separately with::
 
     import neopixel
 
 .. note::
 
-    From our tests, the Microbit Neopixel module can drive up to around 256
-    Neopixels. Anything above that and you may experience weird bugs and
-    issues.
+    From our tests, the Microbit NeoPixel module can drive up to around 256
+    NeoPixels. Anything above that and you may experience weird bugs and
+    issues. As the micro:bit can only supply 90mA to external devices,
+    larger numbers of NeoPixels require an external power supply with common
+    ground.
+
+    NeoPixels are designed to work at 5V, but luckily they still function using
+    the 3V supply of the BBC micro:bit. Please note that the micro:bit edge
+    connector should not be connected to anything supplying 5V.
 
 
 NeoPixels are fun strips of multi-coloured programmable LEDs. This module
@@ -25,7 +31,10 @@ art and games such as the demo shown below.
 To connect a strip of neopixels you'll need to attach the micro:bit as shown
 below (assuming you want to drive the pixels from pin 0 - you can connect
 neopixels to pins 1 and 2 too). The label on the crocodile clip tells you where
-to attach the other end on the neopixel strip.
+to attach the other end on the neopixel strip. The VDD pin may be labelled
+as something else on some variants of neopixels - for example "V+". In some
+cases it may be called "+5V" and it is only safe to use this if you have no
+other 5V devices connected.
 
 .. warning::
 
