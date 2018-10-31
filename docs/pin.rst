@@ -188,11 +188,14 @@ in ``read_digital`` mode with the given pull mode.
 .. note::
     The micro:bit has external weak (10M) pull-ups fitted on pins
     0, 1 and 2 only, in order for the touch sensing to work.
+    
     There are also external (10k) pull-ups fitted on pins 5 and 11, in order
     for buttons A and B to work.
+    
     GPIO pins are also used for the display. 6 of these are routed to the
     edge connector at 3, 4, 6, 7, 9. and 10. If you want to use these pins
     for another purpose, you may need to turn the `display off
     <https://microbit-micropython.readthedocs.io/en/latest/display.html#microbit.display.off>`_.
+    
     See the `edge connector data sheet
     <http://tech.microbit.org/hardware/edgeconnector_ds>`_.
