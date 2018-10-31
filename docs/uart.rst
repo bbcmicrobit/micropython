@@ -56,16 +56,23 @@ Functions
 
 .. method:: uart.any()
 
-   Return ``True`` if any characters waiting, else ``False``.
+   Return ``True`` if any data is waiting, else ``False``.
 
 .. method:: uart.read([nbytes])
 
-    Read characters.  If ``nbytes`` is specified then read at most that many
+    Read bytes.  If ``nbytes`` is specified then read at most that many
     bytes, otherwise read as many bytes as possible.
 
-    The return value is a bytes object. You can convert this object to a
-    string, and if there are non-ASCII characters you can also specify the
-    encoding::
+    Return value: a bytes object or ``None`` on timeout.
+
+    A bytes object contains a sequence of bytes. Because
+    `ASCII <https://en.wikipedia.org/wiki/ASCII>`_ characters can fit in
+    single bytes this type of object is often used to represent simple text
+    and offers methods to manipulate it as such, e.g. you can display the text
+    using the ``print()`` function.
+
+    You can also convert this object into a string object, and if there are
+    non-ASCII characters present the encoding can be specified::
 
         msg_bytes = uart.read()
         msg_str = str(msg, 'UTF-8')
