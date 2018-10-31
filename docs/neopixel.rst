@@ -34,7 +34,7 @@ neopixels to pins 1 and 2 too). The label on the crocodile clip tells you where
 to attach the other end on the neopixel strip. The VDD pin may be labelled
 as something else on some variants of neopixels - for example "V+". In some
 cases it may be called "+5V" and it is only safe to use this if you have no
-other 5V devices connected. 
+other 5V devices connected.
 
 .. warning::
 
