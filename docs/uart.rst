@@ -81,14 +81,10 @@ Functions
 
 .. method:: uart.readall()
 
-    .. deprecated:: 1.0
-        Use :func:`uart.read()` instead.
+    Removed since version 1.0.
 
-    .. rst-class:: strike
-
-        Read as much data as possible.
-
-        Return value: a bytes object or ``None`` on timeout.
+    Instead, use :func:`uart.read()` with no arguments, which will read as much data
+    as possible.
 
 .. method:: uart.readinto(buf[, nbytes])
 

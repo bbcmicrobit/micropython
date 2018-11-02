@@ -352,10 +352,3 @@ if not on_rtd:  # only import and set the theme if we're building docs locally
     html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 # otherwise, readthedocs.org uses their theme by default, so no need to specify it
-
-
-# Sphinx will call this function as a normal extension during application setup
-def setup(app):
-    # Adding a custom css file
-    # https://docs.readthedocs.io/en/latest/guides/adding-custom-css.html
-    app.add_stylesheet('custom-style.css')
