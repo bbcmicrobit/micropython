@@ -81,9 +81,10 @@ Functions
 
 .. method:: uart.readall()
 
-   Read as much data as possible.
+    Removed since version 1.0.
 
-   Return value: a bytes object or ``None`` on timeout.
+    Instead, use :func:`uart.read()` with no arguments, which will read as much data
+    as possible.
 
 .. method:: uart.readinto(buf[, nbytes])
 
