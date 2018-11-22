@@ -203,6 +203,7 @@ represents):
     * ``Image.SKULL``
     * ``Image.UMBRELLA``
     * ``Image.SNAKE``
+    * ``Image.SCISSORS``
 
 Finally, related collections of images have been grouped together::
 

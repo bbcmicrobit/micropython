@@ -190,6 +190,7 @@ extern const struct _monochrome_5by5_t microbit_const_image_giraffe_obj;
 extern const struct _monochrome_5by5_t microbit_const_image_skull_obj;
 extern const struct _monochrome_5by5_t microbit_const_image_umbrella_obj;
 extern const struct _monochrome_5by5_t microbit_const_image_snake_obj;
+extern const struct _monochrome_5by5_t microbit_const_image_scissors_obj;
 
 /****************************************************************/
 // microbit.display object

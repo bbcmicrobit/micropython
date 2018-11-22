@@ -70,6 +70,7 @@ Here's a list of the built-in images:
     * ``Image.SKULL``
     * ``Image.UMBRELLA``
     * ``Image.SNAKE``
+    * ``Image.SCISSORS``
 
 There's quite a lot! Why not modify the code that makes the micro:bit look
 happy to see what some of the other built-in images look like? (Just replace
