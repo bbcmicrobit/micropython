@@ -141,6 +141,32 @@ its own to that.
         ``pin.PULL_DOWN`` or ``pin.NO_PULL`` (where ``pin`` is an instance of
         a pin). See below for discussion of default pull states.
 
+
+    .. py:method::get_pull()
+
+        Returns the pull configuration on a pin, which can be one of three 
+        possible values: ``NO_PULL``, ``PULL_DOWN``, or ``PULL_UP``. These 
+        are set using the ``set_pull()`` method or automatically configured 
+        when a pin mode requires it.
+
+    .. py:method::get_mode()
+
+        Returns the pin mode. When a pin is used for a specific function, like 
+        writing a digital value, or reading an analog value, the pin mode 
+        changes. Pins can have one of the following modes: ``MODE_UNUSED``, 
+        ``MODE_WRITE_ANALOG``, ``MODE_READ_DIGITAL``, ``MODE_WRITE_DIGITAL``, 
+        ``MODE_DISPLAY``, ``MODE_BUTTON``, ``MODE_MUSIC``, ``MODE_AUDIO_PLAY``,
+        ``MODE_TOUCH``, ``MODE_I2C``, ``MODE_SPI``.
+
+
+.. py:class:: MicroBitAnalogDigitalPin
+
+    .. py:method:: read_analog()
+
+        Read the voltage applied to the pin, and return it as an integer
+        between 0 (meaning 0V) and 1023 (meaning 3.3V).
+
+
     .. py:method:: write_analog(value)
 
         Output a PWM signal on the pin, with the duty cycle proportional to
