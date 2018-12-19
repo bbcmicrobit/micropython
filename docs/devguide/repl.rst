@@ -81,13 +81,26 @@ In PuTTY:
 Open Terminal and type ``screen /dev/cu.usbmodem1422 115200``, replacing 
 ``/dev/cu.usbmodem1422`` with the port you found earlier. This will open the 
 micro:bit's serial output and show all messages received from the device. To 
-exit, press Ctrl-A then Ctrl-D.
+exit, press Ctrl-A then Ctrl-\ and answer Yes to the question. There are many
+ways back to a command prompt including Ctrl-A then Ctrl-D this will detatch
+screen. All serial output from the micro:bit will still be received by ``screen``.
+Restart screen by typing ``screen -r``. All methods back to a command prompt 
+except Exit leaves a lock on ``/dev/cu.usbmodem1422`` preventing the use of microfs
+(``ufs``) to access files on the micro:bit.  Typing ``screen`` results in rather 
+unhelpful error output ``[screen is terminating]``
 
 
 **Linux**
 
 Using the ``screen`` program, type ``screen /dev/ttyUSB0 115200``, replacing 
-``/dev/ttyUSB0`` with the port you found earlier.
+``/dev/ttyUSB0`` with the port you found earlier.  To exit, press Ctrl-A then
+\ and answer Yes to the question. There are many ways back to a command 
+prompt including Ctrl-A then Ctrl-D this will detatch screen. All serial output
+from the micro:bit will still be received by ``screen``. Restart screen by 
+typing ``screen -r``. All methods back to a command prompt except Exit leaves
+a lock on ``/dev/ttyUSB0`` (or the port you found earlier) preventing the use of microfs
+(``ufs``) to access files on the micro:bit.  Typing ``screen`` results in rather 
+unhelpful error output ``[screen is terminating]``
 
 Using ``picocom``, type ``picocom /dev/ttyACM0 -b 115200``, again replacing 
-``/dev/ttyACM0`` with the port you found earlier. 
+``/dev/ttyACM0`` with the port you found earlier. To exit, press Ctrl-A then Ctrl-Q
