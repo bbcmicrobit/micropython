@@ -86,8 +86,8 @@ ways back to a command prompt including Ctrl-A then Ctrl-D this will detatch
 screen. All serial output from the micro:bit will still be received by ``screen``.
 Restart screen by typing ``screen -r``. All methods back to a command prompt 
 except Exit leaves a lock on ``/dev/cu.usbmodem1422`` preventing the use of microfs
-(``ufs``) to access files on the micro:bit.  Typing ``screen`` results in rather 
-unhelpful error output ``[screen is terminating]``
+(``ufs``) to access files on the micro:bit.  Typing ``screen /dev/cu.usbmodem1422 115200`` 
+results in rather unhelpful error output ``[screen is terminating]``
 
 
 **Linux**
@@ -99,8 +99,8 @@ prompt including Ctrl-A then Ctrl-D this will detatch screen. All serial output
 from the micro:bit will still be received by ``screen``. Restart screen by 
 typing ``screen -r``. All methods back to a command prompt except Exit leaves
 a lock on ``/dev/ttyUSB0`` (or the port you found earlier) preventing the use of microfs
-(``ufs``) to access files on the micro:bit.  Typing ``screen`` results in rather 
-unhelpful error output ``[screen is terminating]``
+(``ufs``) to access files on the micro:bit.  Typing ``screen /dev/ttyUSB0 115200`` 
+results in rather unhelpful error output ``[screen is terminating]``
 
 Using ``picocom``, type ``picocom /dev/ttyACM0 -b 115200``, again replacing 
 ``/dev/ttyACM0`` with the port you found earlier. To exit, press Ctrl-A then Ctrl-Q
