@@ -104,4 +104,6 @@ accessing it. You can restart screen by typing ``screen -r``. Typing
 ``[screen is terminating]``
 
 Using ``picocom``, type ``picocom /dev/ttyACM0 -b 115200``, again replacing
-``/dev/ttyACM0`` with the port you found earlier. To exit, press Ctrl-A then Ctrl-Q.
+``/dev/ttyACM0`` with the port you found earlier.
+
+To exit, press Ctrl-A then Ctrl-Q.
