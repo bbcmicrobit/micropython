@@ -84,7 +84,7 @@ micro:bit's serial output and show all messages received from the device.
 
 To exit, press Ctrl-A then Ctrl-\\ and answer Yes to the question. There are many
 ways back to a command prompt including Ctrl-A then Ctrl-D, which will detach
-screen. All serial output from the micro:bit will still be received by ``screen``.
+screen, but the serial port with still be locked, preventing other applications from accessing it.
 You can then restart screen by typing ``screen -r``.
 except Exit leaves a lock on ``/dev/cu.usbmodem1422`` preventing the use of microfs
 (``ufs``) to access files on the micro:bit.  Typing ``screen /dev/cu.usbmodem1422 115200`` 
