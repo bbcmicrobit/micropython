@@ -105,4 +105,4 @@ a lock on ``/dev/ttyUSB0`` (or the port you found earlier) preventing the use of
 results in rather unhelpful error output ``[screen is terminating]``
 
 Using ``picocom``, type ``picocom /dev/ttyACM0 -b 115200``, again replacing 
-``/dev/ttyACM0`` with the port you found earlier. To exit, press Ctrl-A then Ctrl-Q
+``/dev/ttyACM0`` with the port you found earlier. To exit, press Ctrl-A then Ctrl-Q.
