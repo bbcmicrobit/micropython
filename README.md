@@ -30,7 +30,7 @@ directory. Unzip it and change to that directory
 ```
 cd ~/Downloads
 unzip micropython-master.zip
-cd micropython-master`
+cd micropython-master
 ```
 
 Once all packages are installed, use yotta and the provided Makefile to build.
