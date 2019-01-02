@@ -96,7 +96,7 @@ Using the ``screen`` program, type ``screen /dev/ttyUSB0 115200``, replacing
 ``/dev/ttyUSB0`` with the port you found earlier.
 
 To exit, press Ctrl-A then \\ and answer Yes to the question. There are many
-ways back to a command prompt including Ctrl-A then Ctrl-D, which will detatch
+ways back to a command prompt including Ctrl-A then Ctrl-D, which will detach
 screen. All serial output from the micro:bit will still be received by
 ``screen``, the serial port will be locked, preventing other applications from
 accessing it. You can restart screen by typing ``screen -r``. Typing
