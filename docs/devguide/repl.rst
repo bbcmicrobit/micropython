@@ -86,8 +86,7 @@ To exit, press Ctrl-A then Ctrl-\\ and answer Yes to the question. There are
 many ways back to a command prompt including Ctrl-A then Ctrl-D, which will
 detach screen, but the serial port with still be locked, preventing other
 applications from accessing it. You can then restart screen by typing
-``screen -r``. Typing ``screen /dev/cu.usbmodem1422 115200`` results in rather
-unhelpful error output ``[screen is terminating]``
+``screen -r``.
 
 
 **Linux**
@@ -99,9 +98,7 @@ To exit, press Ctrl-A then \\ and answer Yes to the question. There are many
 ways back to a command prompt including Ctrl-A then Ctrl-D, which will detach
 screen. All serial output from the micro:bit will still be received by
 ``screen``, the serial port will be locked, preventing other applications from
-accessing it. You can restart screen by typing ``screen -r``. Typing
-``screen /dev/ttyUSB0 115200`` results in rather unhelpful error output
-``[screen is terminating]``
+accessing it. You can restart screen by typing ``screen -r``.
 
 Using ``picocom``, type ``picocom /dev/ttyACM0 -b 115200``, again replacing
 ``/dev/ttyACM0`` with the port you found earlier.
