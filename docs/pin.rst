@@ -135,37 +135,27 @@ its own to that.
 
         Set the pin to high if ``value`` is 1, or to low, if it is 0.
 
-    .. py:method::set_pull(value)
+    .. py:method:: set_pull(value)
 
         Set the pull state to one of three possible values: ``pin.PULL_UP``,
         ``pin.PULL_DOWN`` or ``pin.NO_PULL`` (where ``pin`` is an instance of
         a pin). See below for discussion of default pull states.
 
+    .. py:method:: get_pull()
 
-    .. py:method::get_pull()
-
-        Returns the pull configuration on a pin, which can be one of three 
-        possible values: ``NO_PULL``, ``PULL_DOWN``, or ``PULL_UP``. These 
-        are set using the ``set_pull()`` method or automatically configured 
+        Returns the pull configuration on a pin, which can be one of three
+        possible values: ``NO_PULL``, ``PULL_DOWN``, or ``PULL_UP``. These
+        are set using the ``set_pull()`` method or automatically configured
         when a pin mode requires it.
 
-    .. py:method::get_mode()
+    .. py:method:: get_mode()
 
-        Returns the pin mode. When a pin is used for a specific function, like 
-        writing a digital value, or reading an analog value, the pin mode 
-        changes. Pins can have one of the following modes: ``MODE_UNUSED``, 
-        ``MODE_WRITE_ANALOG``, ``MODE_READ_DIGITAL``, ``MODE_WRITE_DIGITAL``, 
+        Returns the pin mode. When a pin is used for a specific function, like
+        writing a digital value, or reading an analog value, the pin mode
+        changes. Pins can have one of the following modes: ``MODE_UNUSED``,
+        ``MODE_WRITE_ANALOG``, ``MODE_READ_DIGITAL``, ``MODE_WRITE_DIGITAL``,
         ``MODE_DISPLAY``, ``MODE_BUTTON``, ``MODE_MUSIC``, ``MODE_AUDIO_PLAY``,
         ``MODE_TOUCH``, ``MODE_I2C``, ``MODE_SPI``.
-
-
-.. py:class:: MicroBitAnalogDigitalPin
-
-    .. py:method:: read_analog()
-
-        Read the voltage applied to the pin, and return it as an integer
-        between 0 (meaning 0V) and 1023 (meaning 3.3V).
-
 
     .. py:method:: write_analog(value)
 
@@ -182,6 +172,10 @@ its own to that.
 
         Set the period of the PWM signal being output to ``period`` in
         microseconds. The minimum valid value is 256µs.
+
+    .. py:method:: get_analog_period_microseconds()
+
+        Returns the configured period of the PWM signal in microseconds.
 
 
 .. py:class:: MicroBitAnalogDigitalPin
@@ -218,10 +212,14 @@ in ``read_digital`` mode with the given pull mode.
     There are also external (10k) pull-ups fitted on pins 5 and 11, in order
     for buttons A and B to work.
 
+    For more info see the `edge connector data sheet
+    <http://tech.microbit.org/hardware/edgeconnector_ds>`_.
+
+.. note::
     GPIO pins are also used for the display. 6 of these are routed to the
     edge connector at 3, 4, 6, 7, 9. and 10. If you want to use these pins
     for another purpose, you may need to turn the `display off
     <https://microbit-micropython.readthedocs.io/en/latest/display.html#microbit.display.off>`_.
 
-    See the `edge connector data sheet
+    For more info see the `edge connector data sheet
     <http://tech.microbit.org/hardware/edgeconnector_ds>`_.
