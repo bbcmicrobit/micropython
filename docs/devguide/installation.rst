@@ -83,10 +83,10 @@ The following commands should install the toolchain on a modern Debian/Ubuntu
 variant::
 
   sudo add-apt-repository -y ppa:team-gcc-arm-embedded
-  sudo add-apt-repository -y ppa:pmiller-opensource/ppa
   sudo apt-get update
-  sudo apt-get install cmake ninja-build gcc-arm-none-eabi srecord libssl-dev
-  pip3 install yotta
+  sudo apt-get install gcc-arm-embedded
+  sudo apt-get install cmake ninja-build srecord libssl-dev
+  sudo -H pip3 install yotta
 
 In order to make development life a bit easier, you can (on Ubuntu) add yourself
 to the ``dialout`` group, which grants write access to the serial device

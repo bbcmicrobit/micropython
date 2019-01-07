@@ -17,13 +17,15 @@ with an ARM compiler toolchain (eg arm-none-eabi-gcc and friends).
 Ubuntu users can install the needed packages using:
 ```
 sudo add-apt-repository -y ppa:team-gcc-arm-embedded
-sudo add-apt-repository -y ppa:pmiller-opensource/ppa
 sudo apt-get update
-sudo apt-get install cmake ninja-build gcc-arm-none-eabi srecord libssl-dev
-pip3 install yotta
+sudo apt-get install gcc-arm-embedded
+sudo apt-get install cmake ninja-build srecord libssl-dev
+sudo -H pip3 install yotta
 ```
 
-Once all packages are installed, use yotta and the provided Makefile to build.
+Once all packages are installed run
+`git clone https://github.com/bbcmicrobit/micropython` to get the source code.
+The move to the created directory and use yotta and the provided Makefile to build.
 You might need need an Arm Mbed account to complete some of the yotta commands,
 if so, you could be prompted to create one as a part of the process.
 
