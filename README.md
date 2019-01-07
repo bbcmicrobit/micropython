@@ -17,10 +17,20 @@ with an ARM compiler toolchain (eg arm-none-eabi-gcc and friends).
 Ubuntu users can install the needed packages using:
 ```
 sudo add-apt-repository -y ppa:team-gcc-arm-embedded
-sudo add-apt-repository -y ppa:pmiller-opensource/ppa
 sudo apt-get update
-sudo apt-get install cmake ninja-build gcc-arm-none-eabi srecord libssl-dev
-pip3 install yotta
+sudo apt-get install gcc-arm-embedded
+sudo apt-get install cmake ninja-build srecord libssl-dev
+sudo -H pip3 install yotta
+```
+
+Download the project, clicking the `Download or clone` button above, then select 
+`Download zip`. This will place a `micropython-master.zip` in your `~/Dowloads`
+directory. Unzip it and change to that directory
+
+```
+cd ~/Downloads
+unzip micropython-master.zip
+cd micropython-master
 ```
 
 Once all packages are installed, use yotta and the provided Makefile to build.
@@ -77,3 +87,4 @@ from your PC, eg:
     $ ./tools/pyboard.py /dev/ttyACM0 examples/conway.py
 
 Be brave! Break things! Learn and have fun!
+
