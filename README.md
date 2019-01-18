@@ -23,19 +23,12 @@ sudo apt-get install cmake ninja-build srecord libssl-dev
 sudo -H pip3 install yotta
 ```
 
-Download the project, clicking the `Download or clone` button above, then select 
-`Download zip`. This will place a `micropython-master.zip` in your `~/Dowloads`
-directory. Unzip it and change to that directory
-
-```
-cd ~/Downloads
-unzip micropython-master.zip
-cd micropython-master
-```
-
-Once all packages are installed, use yotta and the provided Makefile to build.
-You might need need an Arm Mbed account to complete some of the yotta commands,
-if so, you could be prompted to create one as a part of the process.
+Once all packages are installed,
+`git clone https://github.com/bbcmicrobit/micropython` or click <b>Clone or
+download</b> above and unzip it. Move to the created directory and use yotta 
+and the provided Makefile to build. You might need need an Arm Mbed account to
+complete some of the yotta commands, if so, you could be prompted to create one
+as a part of the process.
 
 - Use target bbc-microbit-classic-gcc-nosd:
 
