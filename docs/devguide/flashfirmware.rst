@@ -10,15 +10,15 @@ Use yotta to build.
 
 Use target bbc-microbit-classic-gcc-nosd::
 
-  yt target bbc-microbit-classic-gcc-nosd
+  yotta target bbc-microbit-classic-gcc-nosd
 
 Run yotta update to fetch remote assets::
 
-  yt up
+  yotta up
 
 Start the build with either yotta::
 
-  yt build
+  yotta build
 
 ...or use the Makefile::
 
