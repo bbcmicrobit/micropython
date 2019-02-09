@@ -58,3 +58,16 @@ const mp_obj_tuple_t microbit_const_image_all_arrows_tuple_obj = {
         (mp_obj_t)&microbit_const_image_arrow_nw_obj
     }
 };
+
+const mp_obj_tuple_t microbit_const_image_all_dice_tuple_obj = {
+    {&mp_type_tuple},
+    .len = 6,
+    .items = {
+        (mp_obj_t)&microbit_const_image_dice1_obj,
+        (mp_obj_t)&microbit_const_image_dice2_obj,
+        (mp_obj_t)&microbit_const_image_dice3_obj,
+        (mp_obj_t)&microbit_const_image_dice4_obj,
+        (mp_obj_t)&microbit_const_image_dice5_obj,
+        (mp_obj_t)&microbit_const_image_dice6_obj
+    }
+};

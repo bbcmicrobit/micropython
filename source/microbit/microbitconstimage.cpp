@@ -312,6 +312,56 @@ IMAGE_T microbit_const_image_arrow_nw_obj = SMALL_IMAGE(
     0,0,0,0,1
 );
 
+// dice
+
+IMAGE_T microbit_const_image_dice1_obj = SMALL_IMAGE(
+    0,0,0,0,0,
+    0,0,0,0,0,
+    0,0,1,0,0,
+    0,0,0,0,0,
+    0,0,0,0,0
+);
+
+IMAGE_T microbit_const_image_dice2_obj = SMALL_IMAGE(
+    1,0,0,0,0,
+    0,0,0,0,0,
+    0,0,0,0,0,
+    0,0,0,0,0,
+    0,0,0,0,1
+);
+
+IMAGE_T microbit_const_image_dice3_obj = SMALL_IMAGE(
+    0,0,0,0,1,
+    0,0,0,0,0,
+    0,0,1,0,0,
+    0,0,0,0,0,
+    1,0,0,0,0
+);
+
+IMAGE_T microbit_const_image_dice4_obj = SMALL_IMAGE(
+    1,0,0,0,1,
+    0,0,0,0,0,
+    0,0,0,0,0,
+    0,0,0,0,0,
+    1,0,0,0,1
+);
+
+IMAGE_T microbit_const_image_dice5_obj = SMALL_IMAGE(
+    1,0,0,0,1,
+    0,0,0,0,0,
+    0,0,1,0,0,
+    0,0,0,0,0,
+    1,0,0,0,1
+);
+
+IMAGE_T microbit_const_image_dice6_obj = SMALL_IMAGE(
+    1,0,0,0,1,
+    0,0,0,0,0,
+    1,0,0,0,1,
+    0,0,0,0,0,
+    1,0,0,0,1
+);
+
 // geometry
 
 IMAGE_T microbit_const_image_triangle_obj = SMALL_IMAGE(
