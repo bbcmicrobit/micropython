@@ -174,6 +174,8 @@ represents):
     * ``Image.ARROW_N``, ``Image.ARROW_NE``, ``Image.ARROW_E``,
       ``Image.ARROW_SE``, ``Image.ARROW_S``, ``Image.ARROW_SW``,
       ``Image.ARROW_W``, ``Image.ARROW_NW``
+    * ``Image.DICE1``, ``Image.DICE2``, ``Image.DICE3``, ``Image.DICE4``,
+      ``Image.DICE5``, ``Image.DICE6``
     * ``Image.TRIANGLE``
     * ``Image.TRIANGLE_LEFT``
     * ``Image.CHESSBOARD``
@@ -208,6 +210,7 @@ Finally, related collections of images have been grouped together::
 
     * ``Image.ALL_CLOCKS``
     * ``Image.ALL_ARROWS``
+    * ``Image.ALL_DICE``
 
 
 Operations
