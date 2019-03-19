@@ -20,9 +20,6 @@ If you're a new programmer, teacher or unsure where to start, begin with the tut
 
 .. image:: comic.png
 
-To get involved with the community subscribe to the microbit@python.org
-mailing list (https://mail.python.org/mailman/listinfo/microbit).
-
 .. note::
 
     This project is under active development. Please help other
