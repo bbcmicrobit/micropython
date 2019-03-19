@@ -3,7 +3,6 @@
 #include "microbit/memory.h"
 #include "microbit/filesystem.h"
 #include "microbit/microbitdal.h"
-#include "_newlib_version.h"
 #include "MicroBitButton.h"
 
 // Global instances of the mbed/DAL components that we use
