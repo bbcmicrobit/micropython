@@ -42,7 +42,7 @@ Using audio
 ===========
 
 You will need a sound source, as input to the ``play`` function. You can generate your own, like in
-``examples/waveforms.py`` or you can use the sound sources provided by modules like ``synth``.
+``examples/waveforms.py``.
 
 
 Technical Details
