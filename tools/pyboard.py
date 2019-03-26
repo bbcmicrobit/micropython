@@ -18,7 +18,8 @@ Or:
 Then:
 
     pyb.enter_raw_repl()
-    pyb.exec('pyb.LED(1).on()')
+    pyb.exec('import microbit')
+    pyb.exec('microbit.display.show(Image.HEART)')
     pyb.exit_raw_repl()
 
 Note: if using Python2 then pyb.exec must be written as pyb.exec_.
