@@ -52,7 +52,7 @@ Technical Details
     You don't need to understand this section to use the ``audio`` module.
     It is just here in case you wanted to know how it works.
 
-The ``audio`` module consumes samples at 7812.5 kHz, and uses linear interpolation to
+The ``audio`` module consumes samples at 7812.5 Hz, and uses linear interpolation to
 output a PWM signal at 32.5 kHz, which gives tolerable sound quality.
 
 The function ``play`` fully copies all data from each ``AudioFrame`` before it
