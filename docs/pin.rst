@@ -43,13 +43,13 @@ module:``microbit.pin0`` - ``microbit.pin20``.
 +-----+---------+----------+
 |  5  | Digital | Button A |
 +-----+---------+----------+
-|  6  | Digital | Row 2    |
+|  6  | Digital | Column 9 |
 +-----+---------+----------+
-|  7  | Digital | Row 1    |
+|  7  | Digital | Column 8 |
 +-----+---------+----------+
 |  8  | Digital |          |
 +-----+---------+----------+
-|  9  | Digital | Row 3    |
+|  9  | Digital | Column 7 |
 +-----+---------+----------+
 |  10 | Analog  | Column 3 |
 +-----+---------+----------+
@@ -57,11 +57,11 @@ module:``microbit.pin0`` - ``microbit.pin20``.
 +-----+---------+----------+
 |  12 | Digital |          |
 +-----+---------+----------+
-|  13 | Digital | SPI MOSI |
+|  13 | Digital | SPI SCK  |
 +-----+---------+----------+
 |  14 | Digital | SPI MISO |
 +-----+---------+----------+
-|  15 | Digital | SPI SCK  |
+|  15 | Digital | SPI MOSI |
 +-----+---------+----------+
 |  16 | Digital |          |
 +-----+---------+----------+
