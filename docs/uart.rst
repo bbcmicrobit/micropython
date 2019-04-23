@@ -6,6 +6,20 @@ UART
 The ``uart`` module lets you talk to a device connected to your board using
 a serial interface.
 
+This allows to :
+
+    * display debug information
+    * interact with the program
+    * control a serial port device
+but
+
+    * the REPL interface is lost
+    * the file transfer interface too
+
+Nevertheless, the programming interface stays functional and a program not using
+the serial port can be downloaded to restore these.
+Also, typing a ''Ctrl-C'' stops the program and starts the REPL interface on the
+serial port.
 
 Functions
 =========
