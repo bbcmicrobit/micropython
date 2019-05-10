@@ -30,13 +30,13 @@ if so, you could be prompted to create one as a part of the process.
 - Use target bbc-microbit-classic-gcc-nosd:
 
   ```
-  yt target bbc-microbit-classic-gcc-nosd
+  yotta target bbc-microbit-classic-gcc-nosd
   ```
 
 - Run yotta update to fetch remote assets:
 
   ```
-  yt up
+  yotta up
   ```
 
 - Start the build:

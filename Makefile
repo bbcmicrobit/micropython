@@ -16,7 +16,7 @@ $(HEX_FINAL): yotta $(VER_ADDR_FILE)
 	@size $(HEX_SRC:.hex=)
 
 yotta: $(MBIT_VER_FILE)
-	@yt build
+	@yotta build
 
 $(MBIT_VER_FILE): FORCE
 	python tools/makeversionhdr.py $(MBIT_VER_FILE)
