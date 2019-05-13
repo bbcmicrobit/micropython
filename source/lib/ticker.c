@@ -90,18 +90,22 @@ void FastTicker_IRQHandler(void) {
     ticker_callback_ptr *call = callbacks;
     if (ticker->EVENTS_COMPARE[0]) {
         ticker->EVENTS_COMPARE[0] = 0;
+        ticker->TASKS_CAPTURE[0] = 1;
         ticker->CC[0] += call[0]()*MICROSECONDS_PER_TICK;
     }
     if (ticker->EVENTS_COMPARE[1]) {
         ticker->EVENTS_COMPARE[1] = 0;
+        ticker->TASKS_CAPTURE[1] = 1;
         ticker->CC[1] += call[1]()*MICROSECONDS_PER_TICK;
     }
     if (ticker->EVENTS_COMPARE[2]) {
         ticker->EVENTS_COMPARE[2] = 0;
+        ticker->TASKS_CAPTURE[2] = 1;
         ticker->CC[2] += call[2]()*MICROSECONDS_PER_TICK;
     }
     if (ticker->EVENTS_COMPARE[3]) {
         ticker->EVENTS_COMPARE[3] = 0;
+        ticker->TASKS_CAPTURE[3] = 1;
         ticker->CC[3] += MICROSECONDS_PER_MACRO_TICK;
         ticker_ticks_ms += MILLISECONDS_PER_MACRO_TICK;
         NVIC_SetPendingIRQ(SlowTicker_IRQn);
