@@ -568,6 +568,7 @@ STATIC const mp_map_elem_t microbit_image_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_SKULL), (mp_obj_t)&microbit_const_image_skull_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_UMBRELLA), (mp_obj_t)&microbit_const_image_umbrella_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_SNAKE), (mp_obj_t)&microbit_const_image_snake_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_SCISSORS), (mp_obj_t)&microbit_const_image_scissors_obj },
 };
 
 STATIC MP_DEFINE_CONST_DICT(microbit_image_locals_dict, microbit_image_locals_dict_table);

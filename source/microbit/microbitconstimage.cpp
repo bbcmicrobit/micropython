@@ -556,4 +556,12 @@ IMAGE_T microbit_const_image_snake_obj = SMALL_IMAGE(
     0,0,0,0,0
 );
 
+IMAGE_T microbit_const_image_scissors_obj = SMALL_IMAGE(
+    1,1,0,0,1,
+    1,1,0,1,0,
+    0,0,1,0,0,
+    1,1,0,1,0,
+    1,1,0,0,1
+);
+
 }
