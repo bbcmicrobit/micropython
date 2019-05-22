@@ -43,13 +43,13 @@ module:``microbit.pin0`` - ``microbit.pin20``.
 +-----+---------+----------+
 |  5  | Digital | Button A |
 +-----+---------+----------+
-|  6  | Digital | Row 2    |
+|  6  | Digital | Column 9 |
 +-----+---------+----------+
-|  7  | Digital | Row 1    |
+|  7  | Digital | Column 8 |
 +-----+---------+----------+
 |  8  | Digital |          |
 +-----+---------+----------+
-|  9  | Digital | Row 3    |
+|  9  | Digital | Column 7 |
 +-----+---------+----------+
 |  10 | Analog  | Column 3 |
 +-----+---------+----------+
@@ -57,11 +57,11 @@ module:``microbit.pin0`` - ``microbit.pin20``.
 +-----+---------+----------+
 |  12 | Digital |          |
 +-----+---------+----------+
-|  13 | Digital | SPI MOSI |
+|  13 | Digital | SPI SCK  |
 +-----+---------+----------+
 |  14 | Digital | SPI MISO |
 +-----+---------+----------+
-|  15 | Digital | SPI SCK  |
+|  15 | Digital | SPI MOSI |
 +-----+---------+----------+
 |  16 | Digital |          |
 +-----+---------+----------+
@@ -141,12 +141,31 @@ its own to that.
         ``pin.PULL_DOWN`` or ``pin.NO_PULL`` (where ``pin`` is an instance of
         a pin). See below for discussion of default pull states.
 
+
+    .. py:method::get_pull()
+
+        Returns the pull configuration on a pin, which can be one of three 
+        possible values: ``NO_PULL``, ``PULL_DOWN``, or ``PULL_UP``. These 
+        are set using the ``set_pull()`` method or automatically configured 
+        when a pin mode requires it.
+
+    .. py:method::get_mode()
+
+        Returns the pin mode. When a pin is used for a specific function, like 
+        writing a digital value, or reading an analog value, the pin mode 
+        changes. Pins can have one of the following modes: ``MODE_UNUSED``, 
+        ``MODE_WRITE_ANALOG``, ``MODE_READ_DIGITAL``, ``MODE_WRITE_DIGITAL``, 
+        ``MODE_DISPLAY``, ``MODE_BUTTON``, ``MODE_MUSIC``, ``MODE_AUDIO_PLAY``,
+        ``MODE_TOUCH``, ``MODE_I2C``, ``MODE_SPI``.
+
+
 .. py:class:: MicroBitAnalogDigitalPin
 
     .. py:method:: read_analog()
 
         Read the voltage applied to the pin, and return it as an integer
         between 0 (meaning 0V) and 1023 (meaning 3.3V).
+
 
     .. py:method:: write_analog(value)
 
@@ -163,6 +182,14 @@ its own to that.
 
         Set the period of the PWM signal being output to ``period`` in
         microseconds. The minimum valid value is 256µs.
+
+
+.. py:class:: MicroBitAnalogDigitalPin
+
+    .. py:method:: read_analog()
+
+        Read the voltage applied to the pin, and return it as an integer
+        between 0 (meaning 0V) and 1023 (meaning 3.3V).
 
 
 .. py:class:: MicroBitTouchPin
@@ -185,7 +212,16 @@ in ``read_digital`` mode with the given pull mode.
 
 
 .. note::
-    Also note, the micro:bit has external weak (10M) pull-ups fitted on pins
-    0, 1 and 2 only, in order for the touch sensing to work. See the edge
-    connector data sheet here:
-    http://tech.microbit.org/hardware/edgeconnector_ds/
+    The micro:bit has external weak (10M) pull-ups fitted on pins
+    0, 1 and 2 only, in order for the touch sensing to work.
+
+    There are also external (10k) pull-ups fitted on pins 5 and 11, in order
+    for buttons A and B to work.
+
+    GPIO pins are also used for the display. 6 of these are routed to the
+    edge connector at 3, 4, 6, 7, 9. and 10. If you want to use these pins
+    for another purpose, you may need to turn the `display off
+    <https://microbit-micropython.readthedocs.io/en/latest/display.html#microbit.display.off>`_.
+
+    See the `edge connector data sheet
+    <http://tech.microbit.org/hardware/edgeconnector_ds>`_.

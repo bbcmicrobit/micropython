@@ -35,23 +35,23 @@ Functions
 
 .. py:function:: get_x()
 
-    Gives the reading of the magnetic force on the ``x`` axis, as a
-    positive or negative integer, depending on the direction of the
-    force.
+    Gives the reading of the magnetic field strength on the ``x`` axis in nano 
+    tesla, as a positive or negative integer, depending on the direction of the
+    field.
 
 
 .. py:function:: get_y()
 
-    Gives the reading of the magnetic force on the ``x`` axis, as a
-    positive or negative integer, depending on the direction of the
-    force.
+    Gives the reading of the magnetic field strength on the ``y`` axis in nano 
+    tesla, as a positive or negative integer, depending on the direction of the
+    field.
 
 
 .. py:function:: get_z()
 
-    Gives the reading of the magnetic force on the ``x`` axis, as a
-    positive or negative integer, depending on the direction of the
-    force.
+    Gives the reading of the magnetic field strength on the ``z`` axis in nano 
+    tesla, as a positive or negative integer, depending on the direction of the
+    field.
 
 
 .. py:function:: heading()
@@ -64,7 +64,7 @@ Functions
 .. py:function:: get_field_strength()
 
     Returns an integer indication of the magnitude of the magnetic field around
-    the device.
+    the device in nano tesla.
 
 
 Example

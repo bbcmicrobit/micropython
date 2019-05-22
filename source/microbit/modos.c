@@ -29,12 +29,14 @@
 #include "py/objtuple.h"
 #include "py/objstr.h"
 #include "genhdr/mpversion.h"
-#include YOTTA_BUILD_INFO_HEADER
+#include "genhdr/microbitversion.h"
 
-#define _MP_STRINGIFY(x) #x
-#define MP_STRINGIFY(x) _MP_STRINGIFY(x)
+#define MICROBIT_VERSION \
+    "micro:bit v" MICROBIT_RELEASE "+" MICROBIT_GIT_HASH " on " MICROBIT_BUILD_DATE \
+    "; MicroPython " MICROPY_GIT_TAG " on " MICROPY_BUILD_DATE
 
-#define RELEASE "1.0"
+const char microbit_release_string[] = MICROBIT_RELEASE;
+const char microbit_version_string[] = MICROBIT_VERSION;
 
 STATIC const qstr os_uname_info_fields[] = {
     MP_QSTR_sysname, MP_QSTR_nodename,
@@ -42,16 +44,9 @@ STATIC const qstr os_uname_info_fields[] = {
 };
 STATIC const MP_DEFINE_STR_OBJ(os_uname_info_sysname_obj, MICROPY_PY_SYS_PLATFORM);
 STATIC const MP_DEFINE_STR_OBJ(os_uname_info_nodename_obj, MICROPY_PY_SYS_PLATFORM);
-STATIC const MP_DEFINE_STR_OBJ(os_uname_info_release_obj, RELEASE);
-STATIC const MP_DEFINE_STR_OBJ(os_uname_info_version_obj,
-    "micro:bit v" RELEASE
-    "-" MP_STRINGIFY(YOTTA_BUILD_VCS_DESCRIPTION)
-    #if YOTTA_BUILD_VCS_CLEAN == 0
-    "-dirty"
-    #endif
-    " on " MP_STRINGIFY(YOTTA_BUILD_YEAR) "-" MP_STRINGIFY(YOTTA_BUILD_MONTH) "-" MP_STRINGIFY(YOTTA_BUILD_DAY)
-    "; MicroPython " MICROPY_GIT_TAG " on " MICROPY_BUILD_DATE);
-STATIC const MP_DEFINE_STR_OBJ(os_uname_info_machine_obj, MICROPY_HW_BOARD_NAME " with " MICROPY_HW_MCU_NAME);
+STATIC const MP_DEFINE_STR_OBJ(os_uname_info_release_obj, microbit_release_string);
+STATIC const MP_DEFINE_STR_OBJ(os_uname_info_version_obj, microbit_version_string);
+STATIC const MP_DEFINE_STR_OBJ(os_uname_info_machine_obj, MICROBIT_BOARD_NAME " with " MICROPY_HW_MCU_NAME);
 
 STATIC MP_DEFINE_ATTRTUPLE(
     os_uname_info_obj,

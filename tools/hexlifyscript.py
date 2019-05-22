@@ -14,7 +14,15 @@ import binascii
 import fileinput
 
 
+IHEX_TYPE_DATA = 0
+IHEX_TYPE_EXT_LIN_ADDR = 4
+
 SCRIPT_ADDR = 0x3e000 # magic start address in flash of script
+
+def make_ihex_record(addr, type, data):
+    record = struct.pack('>BHB', len(data), addr & 0xffff, type) + data
+    checksum = (-(sum(record))) & 0xff
+    return ':%s%02X' % (str(binascii.hexlify(record), 'utf8').upper(), checksum)
 
 def hexlify_script(script):
     # add header, pad to multiple of 16 bytes
@@ -26,13 +34,10 @@ def hexlify_script(script):
     output = []
     addr = SCRIPT_ADDR
     assert(SCRIPT_ADDR >> 16 == 3) # 0x0003 is hard coded in line below
-    output.append(':020000040003F7') # extended linear address, 0x0003
+    output.append(make_ihex_record(0, IHEX_TYPE_EXT_LIN_ADDR, b'\x00\x03'))
     for i in range(0, len(data), 16):
         chunk = data[i:min(i + 16, len(data))]
-        chunk = struct.pack('>BHB', len(chunk), addr & 0xffff, 0) + chunk
-        checksum = (-(sum(chunk))) & 0xff
-        hexline = ':%s%02X' % (str(binascii.hexlify(chunk), 'utf8').upper(), checksum)
-        output.append(hexline)
+        output.append(make_ihex_record(addr, IHEX_TYPE_DATA, chunk))
         addr += 16
 
     return '\n'.join(output)

@@ -53,9 +53,9 @@
 STATIC mp_obj_t fun_builtin_0_call(mp_obj_t self_in, size_t n_args, size_t n_kw, const mp_obj_t *args) {
     (void)args;
     assert(MP_OBJ_IS_TYPE(self_in, &mp_type_fun_builtin_0));
-    mp_obj_fun_builtin_fixed_t *self = MP_OBJ_TO_PTR(self_in);
+    mp_obj_fun_builtin_fixed0_t *self = MP_OBJ_TO_PTR(self_in);
     mp_arg_check_num(n_args, n_kw, 0, 0, false);
-    return self->fun._0();
+    return self->fun();
 }
 
 const mp_obj_type_t mp_type_fun_builtin_0 = {
@@ -67,9 +67,9 @@ const mp_obj_type_t mp_type_fun_builtin_0 = {
 
 STATIC mp_obj_t fun_builtin_1_call(mp_obj_t self_in, size_t n_args, size_t n_kw, const mp_obj_t *args) {
     assert(MP_OBJ_IS_TYPE(self_in, &mp_type_fun_builtin_1));
-    mp_obj_fun_builtin_fixed_t *self = MP_OBJ_TO_PTR(self_in);
+    mp_obj_fun_builtin_fixed1_t *self = MP_OBJ_TO_PTR(self_in);
     mp_arg_check_num(n_args, n_kw, 1, 1, false);
-    return self->fun._1(args[0]);
+    return self->fun(args[0]);
 }
 
 const mp_obj_type_t mp_type_fun_builtin_1 = {
@@ -81,9 +81,9 @@ const mp_obj_type_t mp_type_fun_builtin_1 = {
 
 STATIC mp_obj_t fun_builtin_2_call(mp_obj_t self_in, size_t n_args, size_t n_kw, const mp_obj_t *args) {
     assert(MP_OBJ_IS_TYPE(self_in, &mp_type_fun_builtin_2));
-    mp_obj_fun_builtin_fixed_t *self = MP_OBJ_TO_PTR(self_in);
+    mp_obj_fun_builtin_fixed2_t *self = MP_OBJ_TO_PTR(self_in);
     mp_arg_check_num(n_args, n_kw, 2, 2, false);
-    return self->fun._2(args[0], args[1]);
+    return self->fun(args[0], args[1]);
 }
 
 const mp_obj_type_t mp_type_fun_builtin_2 = {
@@ -95,9 +95,9 @@ const mp_obj_type_t mp_type_fun_builtin_2 = {
 
 STATIC mp_obj_t fun_builtin_3_call(mp_obj_t self_in, size_t n_args, size_t n_kw, const mp_obj_t *args) {
     assert(MP_OBJ_IS_TYPE(self_in, &mp_type_fun_builtin_3));
-    mp_obj_fun_builtin_fixed_t *self = MP_OBJ_TO_PTR(self_in);
+    mp_obj_fun_builtin_fixed3_t *self = MP_OBJ_TO_PTR(self_in);
     mp_arg_check_num(n_args, n_kw, 3, 3, false);
-    return self->fun._3(args[0], args[1], args[2]);
+    return self->fun(args[0], args[1], args[2]);
 }
 
 const mp_obj_type_t mp_type_fun_builtin_3 = {
@@ -121,12 +121,12 @@ STATIC mp_obj_t fun_builtin_var_call(mp_obj_t self_in, size_t n_args, size_t n_k
         mp_map_t kw_args;
         mp_map_init_fixed_table(&kw_args, n_kw, args + n_args);
 
-        return self->fun.kw(n_args, args, &kw_args);
+        return ((mp_obj_fun_builtin_kw_t*)self)->fun(n_args, args, &kw_args);
 
     } else {
         // function takes a variable number of arguments, but no keywords
 
-        return self->fun.var(n_args, args);
+        return self->fun(n_args, args);
     }
 }
 

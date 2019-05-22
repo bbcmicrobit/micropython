@@ -22,8 +22,17 @@ def get_largest_addr(hexfile):
         if count == 2 and type == 4: # ext linear addr
             page = int(line[9:13], 16) << 16
         elif type == 0: # data
-            largest_addr = max(largest_addr, page + addr + count)
+            # only count pages in flash, not in the UICR
+            if page < 0x10000000:
+                largest_addr = max(largest_addr, page + addr + count)
     return largest_addr
+
+def find_uicr_line(hexfile):
+    for i, line in enumerate(hexfile):
+        # UICR from 0x10001000 so we expect an extended linear address record
+        if ':020000041000EA' in line:
+            return i
+    return None
 
 if __name__ == '__main__':
     arg_parser = argparse.ArgumentParser(description='Produce combined hex firmware for the micro:bit.')
@@ -44,13 +53,14 @@ if __name__ == '__main__':
     with open(args.script[0], 'rb') as f:
         script = hexlifyscript.hexlify_script(f.read())
 
-    # print head of firmware
-    for line in firmware[:-2]:
+    # print lines until UICR area or the start linear address record
+    firmware_end = find_uicr_line(firmware) or len(firmware) - 2
+    for line in firmware[:firmware_end]:
         print(line, end='', file=args.output)
 
     # print script
     print(script, file=args.output)
 
-    # print tail of firmware
-    print(firmware[-2], end='', file=args.output)
-    print(firmware[-1], end='', file=args.output)
+    # print rest of hex file
+    for line in firmware[firmware_end:]:
+        print(line, end='', file=args.output)

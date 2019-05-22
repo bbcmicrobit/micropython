@@ -33,6 +33,8 @@
 
 // memory allocation policies
 #define MICROPY_ALLOC_GC_STACK_SIZE (32)
+#define MICROPY_ALLOC_PARSE_RULE_INIT (96)
+#define MICROPY_ALLOC_PARSE_RULE_INC (24)
 #define MICROPY_ALLOC_PATH_MAX      (64)
 #define MICROPY_QSTR_BYTES_IN_HASH  (1)
 
@@ -162,8 +164,9 @@ void mp_hal_stdout_tx_strn_cooked(const char *str, mp_uint_t len);
 // We need to provide a declaration/definition of alloca()
 #include <alloca.h>
 
-#define MICROPY_HAL_H "mphal.h"
-#define MICROPY_HW_BOARD_NAME "micro:bit"
+#define MICROBIT_RELEASE "1.0.1"
+#define MICROBIT_BOARD_NAME "micro:bit"
+#define MICROPY_HW_BOARD_NAME MICROBIT_BOARD_NAME " v" MICROBIT_RELEASE
 #define MICROPY_HW_MCU_NAME "nRF51822"
 
 // Toolchain seems to be missing M_PI

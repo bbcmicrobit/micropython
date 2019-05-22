@@ -33,7 +33,6 @@ extern "C" {
 
 typedef struct _microbit_accelerometer_obj_t {
     mp_obj_base_t base;
-    MicroBitAccelerometer *accelerometer;
 } microbit_accelerometer_obj_t;
 
 volatile bool accelerometer_up_to_date = false;
@@ -53,10 +52,11 @@ static void update(microbit_accelerometer_obj_t *self) {
      * the main execution thread. This is extremely unlikely, so we just
      * accept that a slightly out-of-date result will be returned
      */
+    (void)self;
     if (!accelerometer_up_to_date && !accelerometer_updating) {
         accelerometer_up_to_date = true;
         accelerometer_updating = true;
-        self->accelerometer->idleTick();
+        ubit_accelerometer->idleTick();
         accelerometer_updating = false;
     }
 }
@@ -78,33 +78,30 @@ void microbit_accelerometer_event_handler(const MicroBitEvent *evt) {
 }
 
 mp_obj_t microbit_accelerometer_get_x(mp_obj_t self_in) {
-    microbit_accelerometer_obj_t *self = (microbit_accelerometer_obj_t*)self_in;
-    update(self);
-    return mp_obj_new_int(self->accelerometer->getX());
+    (void)self_in;
+    return mp_obj_new_int(ubit_accelerometer->getX());
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_accelerometer_get_x_obj, microbit_accelerometer_get_x);
 
 mp_obj_t microbit_accelerometer_get_y(mp_obj_t self_in) {
-    microbit_accelerometer_obj_t *self = (microbit_accelerometer_obj_t*)self_in;
-    update(self);
-    return mp_obj_new_int(self->accelerometer->getY());
+    (void)self_in;
+    return mp_obj_new_int(ubit_accelerometer->getY());
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_accelerometer_get_y_obj, microbit_accelerometer_get_y);
 
 mp_obj_t microbit_accelerometer_get_z(mp_obj_t self_in) {
-    microbit_accelerometer_obj_t *self = (microbit_accelerometer_obj_t*)self_in;
-    update(self);
-    return mp_obj_new_int(self->accelerometer->getZ());
+    (void)self_in;
+    return mp_obj_new_int(ubit_accelerometer->getZ());
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_accelerometer_get_z_obj, microbit_accelerometer_get_z);
 
 mp_obj_t microbit_accelerometer_get_values(mp_obj_t self_in) {
-    microbit_accelerometer_obj_t *self = (microbit_accelerometer_obj_t*)self_in;
+    (void)self_in;
     mp_obj_tuple_t *tuple = (mp_obj_tuple_t *)mp_obj_new_tuple(3, NULL);
-    update(self);
-    tuple->items[0] = mp_obj_new_int(self->accelerometer->getX());
-    tuple->items[1] = mp_obj_new_int(self->accelerometer->getY());
-    tuple->items[2] = mp_obj_new_int(self->accelerometer->getZ());
+    Sample3D sample = ubit_accelerometer->getSample();
+    tuple->items[0] = mp_obj_new_int(sample.x);
+    tuple->items[1] = mp_obj_new_int(sample.y);
+    tuple->items[2] = mp_obj_new_int(sample.z);
     return tuple;
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_accelerometer_get_values_obj, microbit_accelerometer_get_values);
@@ -137,7 +134,7 @@ STATIC uint32_t gesture_from_obj(mp_obj_t gesture_in) {
 mp_obj_t microbit_accelerometer_current_gesture(mp_obj_t self_in) {
     microbit_accelerometer_obj_t *self = (microbit_accelerometer_obj_t*)self_in;
     update(self);
-    return MP_OBJ_NEW_QSTR(gesture_name_map[self->accelerometer->getGesture()]);
+    return MP_OBJ_NEW_QSTR(gesture_name_map[ubit_accelerometer->getGesture()]);
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_accelerometer_current_gesture_obj, microbit_accelerometer_current_gesture);
 
@@ -145,7 +142,7 @@ mp_obj_t microbit_accelerometer_is_gesture(mp_obj_t self_in, mp_obj_t gesture_in
     microbit_accelerometer_obj_t *self = (microbit_accelerometer_obj_t*)self_in;
     uint32_t gesture = gesture_from_obj(gesture_in);
     update(self);
-    return mp_obj_new_bool(self->accelerometer->getGesture() == gesture);
+    return mp_obj_new_bool(ubit_accelerometer->getGesture() == gesture);
 }
 MP_DEFINE_CONST_FUN_OBJ_2(microbit_accelerometer_is_gesture_obj, microbit_accelerometer_is_gesture);
 
@@ -209,7 +206,6 @@ const mp_obj_type_t microbit_accelerometer_type = {
 
 const microbit_accelerometer_obj_t microbit_accelerometer_obj = {
     {&microbit_accelerometer_type},
-    .accelerometer = &ubit_accelerometer,
 };
 
 }

@@ -11,6 +11,18 @@ the ``display`` API::
 
 .. image:: image-smile.png
 
+There are four ways in which you can construct an image:
+
+- ``Image()`` - Create a blank 5x5 image
+
+- ``Image(string)`` - Create an image by parsing the string, a single character
+  returns that glyph
+
+- ``Image(width, height)`` - Create a blank image of given size
+
+- ``Image(width, height, buffer)`` - Create an image from the given buffer
+
+
 Classes
 =======
 
@@ -39,8 +51,19 @@ Classes
 
     The other form creates an empty image with ``width`` columns and
     ``height`` rows. Optionally ``buffer`` can be an array of
-    ``width``×``height`` integers in range 0-9 to initialize the image.
+    ``width``×``height`` integers in range 0-9 to initialize the image::
+   
+        Image(2, 2, b'\x08\x08\x08\x08')
 
+    or::
+
+    	Image(2, 2, bytearray([9,9,9,9]))
+	
+    Will create a 2 x 2 pixel image at full brightness.
+    
+    .. note::
+    
+        Keyword arguments cannot be passed to ``buffer``.
 
     .. py:method:: width()
 

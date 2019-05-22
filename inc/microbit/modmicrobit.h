@@ -276,6 +276,7 @@ MP_DECLARE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_display_set_pixel_obj);
 MP_DECLARE_CONST_FUN_OBJ_1(microbit_display_on_obj);
 MP_DECLARE_CONST_FUN_OBJ_1(microbit_display_off_obj);
 MP_DECLARE_CONST_FUN_OBJ_1(microbit_display_is_on_obj);
+MP_DECLARE_CONST_FUN_OBJ_1(microbit_display_read_light_level_obj);
 MP_DECLARE_CONST_FUN_OBJ_1(microbit_pin_read_digital_obj);
 MP_DECLARE_CONST_FUN_OBJ_2(microbit_pin_write_digital_obj);
 MP_DECLARE_CONST_FUN_OBJ_1(microbit_pin_read_analog_obj);

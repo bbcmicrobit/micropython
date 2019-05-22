@@ -66,6 +66,12 @@ bool microbit_obj_pin_can_be_acquired(const microbit_pin_obj_t *pin) {
 
 bool microbit_obj_pin_acquire(const microbit_pin_obj_t *pin, const microbit_pinmode_t *new_mode) {
     const microbit_pinmode_t *current_mode = microbit_pin_get_mode(pin);
+
+    // The button mode is effectively a digital-in mode, so allow read_digital to work on a button
+    if (current_mode == microbit_pin_mode_button && new_mode == microbit_pin_mode_read_digital) {
+        return false;
+    }
+
     if (current_mode != new_mode) {
         current_mode->release(pin);
         set_mode(pin->number, new_mode);
@@ -97,7 +103,7 @@ const microbit_pinmode_t microbit_pinmodes[] = {
     [MODE_BUTTON]        = { MP_QSTR_button, pinmode_error },
     [MODE_MUSIC]         = { MP_QSTR_music, pinmode_error },
     [MODE_AUDIO_PLAY]    = { MP_QSTR_audio, noop },
-    [MODE_TOUCH]         = { MP_QSTR_touch, pinmode_error },
+    [MODE_TOUCH]         = { MP_QSTR_touch, noop },
     [MODE_I2C]           = { MP_QSTR_i2c, pinmode_error },
     [MODE_SPI]           = { MP_QSTR_spi, pinmode_error }
 };

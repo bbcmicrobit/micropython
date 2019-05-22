@@ -108,8 +108,8 @@ MP_DEFINE_CONST_FUN_OBJ_2(microbit_pin_set_pull_obj, microbit_pin_set_pull);
 mp_obj_t microbit_pin_get_pull(mp_obj_t self_in) {
     microbit_pin_obj_t *self = (microbit_pin_obj_t*)self_in;
     const microbit_pinmode_t *mode = microbit_pin_get_mode(self);
-    /* Pull only applies in an read digital mode */
-    if (mode != microbit_pin_mode_read_digital) {
+    /* Pull only applies in an read digital mode (and button mode behaves like that too) */
+    if (mode != microbit_pin_mode_read_digital && mode != microbit_pin_mode_button) {
         pinmode_error(self);
     }
     uint32_t pull = (NRF_GPIO->PIN_CNF[self->name] >> GPIO_PIN_CNF_PULL_Pos) & PULL_MASK;
@@ -182,7 +182,7 @@ mp_obj_t microbit_pin_is_touched(mp_obj_t self_in) {
     const microbit_pinmode_t *mode = microbit_pin_get_mode(self);
     if (mode != microbit_pin_mode_touch && mode != microbit_pin_mode_button) {
         microbit_obj_pin_acquire(self, microbit_pin_mode_touch);
-        nrf_gpio_cfg_input(self->name, NRF_GPIO_PIN_PULLUP);
+        nrf_gpio_cfg_input(self->name, NRF_GPIO_PIN_NOPULL);
     }
     /* Pin is touched if it is low after debouncing */
     return mp_obj_new_bool(!microbit_pin_high_debounced(self));

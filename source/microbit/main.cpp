@@ -3,14 +3,18 @@
 #include "microbit/memory.h"
 #include "microbit/filesystem.h"
 #include "microbit/microbitdal.h"
-#include "_newlib_version.h"
+#include "MicroBitButton.h"
 
-// Global instances of the DAL components that we use
+// Global instances of the mbed/DAL components that we use
+gpio_t reset_button_gpio;
+gpio_irq_t reset_button_gpio_irq;
 MicroBitDisplay ubit_display;
 MicroPythonI2C ubit_i2c(I2C_SDA0, I2C_SCL0);
-MicroBitAccelerometer ubit_accelerometer(ubit_i2c);
-MicroBitCompass ubit_compass(ubit_i2c, ubit_accelerometer);
-MicroBitCompassCalibrator ubit_compass_calibrator(ubit_compass, ubit_accelerometer, ubit_display);
+
+// Global pointers to instances of DAL components that are created dynamically
+MicroBitAccelerometer *ubit_accelerometer;
+MicroBitCompass *ubit_compass;
+MicroBitCompassCalibrator *ubit_compass_calibrator;
 
 extern "C" {
 
@@ -24,11 +28,18 @@ extern "C" {
 #include "microbit/modmicrobit.h"
 #include "microbit/modmusic.h"
 
+void reset_button_handler(uint32_t data, gpio_irq_event event) {
+    (void)data;
+    if (event == IRQ_FALL) {
+        microbit_reset();
+    }
+}
+
 void microbit_ticker(void) {
     // Update compass if it is calibrating, but not if it is still
     // updating as compass.idleTick() is not reentrant.
-    if (ubit_compass.isCalibrating() && !compass_updating) {
-        ubit_compass.idleTick();
+    if (ubit_compass->isCalibrating() && !compass_updating) {
+        ubit_compass->idleTick();
     }
 
     compass_up_to_date = false;
@@ -47,12 +58,14 @@ void microbit_ticker(void) {
 static void microbit_display_exception(mp_obj_t exc_in) {
     mp_uint_t n, *values;
     mp_obj_exception_get_traceback(exc_in, &n, &values);
-    if (n >= 3) {
+    if (1) {
         vstr_t vstr;
         mp_print_t print;
         vstr_init_print(&vstr, 50, &print);
         #if MICROPY_ENABLE_SOURCE_LINE
-        mp_printf(&print, "line %u ", values[1]);
+        if (n >= 3) {
+            mp_printf(&print, "line %u ", values[1]);
+        }
         #endif
         if (mp_obj_is_native_exception_instance(exc_in)) {
             mp_obj_exception_t *exc = (mp_obj_exception_t*)MP_OBJ_TO_PTR(exc_in);
@@ -61,8 +74,18 @@ static void microbit_display_exception(mp_obj_t exc_in) {
                 mp_obj_print_helper(&print, exc->args->items[0], PRINT_STR);
             }
         }
+        // Allow ctrl-C to stop the scrolling message
+        mp_hal_set_interrupt_char(CHAR_CTRL_C);
         mp_hal_display_string(vstr_null_terminated_str(&vstr));
         vstr_clear(&vstr);
+        mp_hal_set_interrupt_char(-1);
+        // This is a variant of mp_handle_pending that swallows exceptions
+        #if MICROPY_ENABLE_SCHEDULER
+        #error Scheduler currently unsupported
+        #endif
+        if (MP_STATE_VM(mp_pending_exception) != MP_OBJ_NULL) {
+            MP_STATE_VM(mp_pending_exception) = MP_OBJ_NULL;
+        }
     }
 }
 
@@ -116,15 +139,20 @@ typedef struct _appended_script_t {
 #define APPENDED_SCRIPT ((const appended_script_t*)microbit_mp_appended_script())
 
 int main(void) {
+    // Configure the soft reset button
+    gpio_init_in(&reset_button_gpio, MICROBIT_PIN_BUTTON_RESET);
+    gpio_mode(&reset_button_gpio, PullUp);
+    gpio_irq_init(&reset_button_gpio_irq, MICROBIT_PIN_BUTTON_RESET, &reset_button_handler, 1 /* dummy, must be non-zero */);
+    gpio_irq_set(&reset_button_gpio_irq, IRQ_FALL, 1);
+
+    // Create dynamically-allocated DAL components
+    ubit_accelerometer = &MicroBitAccelerometer::autoDetect(ubit_i2c);
+    ubit_compass = &MicroBitCompass::autoDetect(ubit_i2c);
+    ubit_compass_calibrator = new MicroBitCompassCalibrator(*ubit_compass, *ubit_accelerometer, ubit_display);
+
     for (;;) {
         extern uint32_t __StackTop;
-#if __NEWLIB__ > 2 || (__NEWLIB__ == 2 && (__NEWLIB_MINOR__ > 4 || (__NEWLIB_MINOR == 4 && __NEWLIB_PATCHLEVEL > 0)))
-        // newlib >2.4.0 uses more RAM for locale data.
-#warning "Detected newlib >2.4.0 so reducing heap by 300 bytes. See https://github.com/bbcmicrobit/micropython/issues/363 for details."
-        static uint32_t mp_heap[9940 / sizeof(uint32_t)];
-#else
         static uint32_t mp_heap[10240 / sizeof(uint32_t)];
-#endif
 
         // Initialise memory regions: stack and MicroPython heap
         mp_stack_set_top(&__StackTop);
@@ -156,11 +184,11 @@ int main(void) {
         // mode.  If we are in "raw REPL" mode then this will be skipped.
         if (pyexec_mode_kind == PYEXEC_MODE_FRIENDLY_REPL) {
             file_descriptor_obj *main_module;
-            if (APPENDED_SCRIPT->header[0] == 'M' && APPENDED_SCRIPT->header[1] == 'P') {
+            if ((main_module = microbit_file_open("main.py", 7, false, false))) {
+                do_file(main_module);
+            } else if (APPENDED_SCRIPT->header[0] == 'M' && APPENDED_SCRIPT->header[1] == 'P') {
                 // run appended script
                 do_strn(APPENDED_SCRIPT->str, APPENDED_SCRIPT->len);
-            } else if ((main_module = microbit_file_open("main.py", 7, false, false))) {
-                do_file(main_module);
             } else {
                 // from microbit import *
                 mp_import_all(mp_import_name(MP_QSTR_microbit, mp_const_empty_tuple, MP_OBJ_NEW_SMALL_INT(0)));
