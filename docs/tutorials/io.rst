@@ -45,14 +45,19 @@ when you plug in circuits and other devices via the pins.
 Bleeps and Bloops
 +++++++++++++++++
 
-The simplest thing we can attach to the device is a Piezo buzzer. We're going
-to use it for output.
+The simplest thing we can attach to the device is a Piezo buzzer. There are two 
+types of piezo buzzers. The simplest type to use are called active buzzers. 
+Active buzzers contain an oscillator that produces a tone at a predetermined
+pitch when a current is passed through them.  Passive buzzers require an 
+oscillating current to be passed through them to produce a tone at the frequency
+of the oscillation.  In short, active buzzers are simple to use but produce only
+one tone, while passive buzzers are slightly more complicated to use but can 
+produce a variety of tones.
 
 .. image:: piezo_buzzer.jpg
 
-These small devices play a high-pitched bleep when connected to a circuit. To
-attach one to your BBC micro:bit you should attach crocodile clips to pin 0 and
-GND (as shown below).
+We're going to use an active piezo buzzer for output. To attach one to your BBC 
+micro:bit you should attach crocodile clips to pin 0 and GND (as shown below).
 
 .. image:: pin0-gnd.png
 
