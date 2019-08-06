@@ -363,6 +363,23 @@ mp_obj_t microbit_image_get_pixel(mp_obj_t self_in, mp_obj_t x_in, mp_obj_t y_in
 }
 MP_DEFINE_CONST_FUN_OBJ_3(microbit_image_get_pixel_obj, microbit_image_get_pixel);
 
+
+mp_obj_t microbit_image_get_str(mp_obj_t self_in) {
+	microbit_image_obj_t *self = (microbit_image_obj_t*)self_in;
+	mp_int_t len = (self->width() + 1) * self->height();
+    byte *buf = m_new(byte, len);
+    byte *c = buf;
+    for (int y = 0; y < self->height(); ++y) {
+        for (int x = 0; x < self->width(); ++x) {
+            *c++ = "0123456789"[self->getPixelValue(x, y)];
+        }
+        *c++ = ':';
+    }
+	return mp_obj_new_str(buf, len, true);
+}
+MP_DEFINE_CONST_FUN_OBJ_2(microbit_image_get_pixel_obj);
+
+
 /* Raise an exception if not mutable */
 static void check_mutability(microbit_image_obj_t *self) {
     if (self->base.five) {
@@ -502,6 +519,7 @@ STATIC const mp_map_elem_t microbit_image_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_invert), (mp_obj_t)&microbit_image_invert_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_fill), (mp_obj_t)&microbit_image_fill_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_blit), (mp_obj_t)&microbit_image_blit_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_get_str), (mp_obj_t)&microbit_image_get_str_obj },
 
     { MP_OBJ_NEW_QSTR(MP_QSTR_HEART), (mp_obj_t)&microbit_const_image_heart_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_HEART_SMALL), (mp_obj_t)&microbit_const_image_heart_small_obj },
