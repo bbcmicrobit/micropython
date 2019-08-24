@@ -217,6 +217,9 @@ Finally, the ``put`` sub-command puts a file from your computer onto the
 connected device (it's named after the ``put`` command that's part of FTP that
 serves the same function).
 
+.. note::
+    The ufs get and put commands only operate on one file at a time.
+
 Mainly main.py
 ++++++++++++++
 
