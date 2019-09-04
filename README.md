@@ -14,7 +14,16 @@ Various things are in this repository, including:
 The source code is a yotta application and needs yotta to build, along
 with an ARM compiler toolchain (eg arm-none-eabi-gcc and friends).
 
-Ubuntu users can install the needed packages using:
+Ubuntu 18.04 users should install the arm-embedded target, build tools, Python 2, Pip2, and yotta, and activate the new path:
+```
+sudo add-apt-repository -y ppa:team-gcc-arm-embedded/ppa
+sudo apt update
+sudo apt install -y gcc-arm-embedded cmake ninja-build srecord libssl-dev python-pip
+pip2 install yotta
+source ~/.profile
+```
+
+Ubuntu 16.04 (and earlier) users can install the needed packages using:
 ```
 sudo add-apt-repository -y ppa:team-gcc-arm-embedded
 sudo add-apt-repository -y ppa:pmiller-opensource/ppa
@@ -23,9 +32,12 @@ sudo apt-get install cmake ninja-build gcc-arm-none-eabi srecord libssl-dev
 pip3 install yotta
 ```
 
-Once all packages are installed, use yotta and the provided Makefile to build.
-You might need need an Arm Mbed account to complete some of the yotta commands,
-if so, you could be prompted to create one as a part of the process.
+Once all packages are installed, clone and/or switch to the folder of this repository, then use yotta (yt) and the repo's included Makefile to build.  _You might need need an Arm Mbed account to complete some of the yotta commands, if so, you could be prompted to create one as a part of the process._
+
+- Switch to BBC MicroPython git repo folder:
+  ```
+  cd <bbcmicrobit/micropython_folder>
+  ```
 
 - Use target bbc-microbit-classic-gcc-nosd:
 
