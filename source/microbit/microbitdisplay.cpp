@@ -668,7 +668,7 @@ microbit_display_obj_t microbit_display_obj = {
 
 void microbit_display_init(void) {
     //  Set pins as output.
-    nrf_gpio_range_cfg_output(MIN_COLUMN_PIN, MIN_COLUMN_PIN + COLUMN_COUNT + ROW_COUNT);
+    nrf_gpio_range_cfg_output(MIN_COLUMN_PIN, MIN_COLUMN_PIN + COLUMN_COUNT + ROW_COUNT - 1);
 }
 
 }
