@@ -3,9 +3,7 @@ Contributing
 
 Hey! Many thanks for wanting to improve MicroPython on the micro:bit.
 
-Contributions are welcome without prejudice from *anyone* irrespective of
-age, gender, religion, race or sexuality. Good quality code and engagement
-with respect, humour and intelligence wins every time.
+Contributions are welcome without prejudice from *anyone* irrespective of age, disability, gender, race, religion and belief, or sexual orientation. Good quality code and engagement with respect, humour and intelligence wins every time.
 
 * If you're from a background which isn't well-represented in most geeky groups, get involved - *we want to help you make a difference*.
 * If you're from a background which *is* well-represented in most geeky groups, get involved - *we want your help making a difference*.
