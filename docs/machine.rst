@@ -64,7 +64,7 @@ Functions
     original state, before :func:`machine.disable_irq()` was called.
 
 
-.. method:: machine.enable_irq()
+.. method:: machine.enable_irq(state)
 
     Re-enable interrupt requests. The *state* parameter should be the value 
     that was returned from the most recent call to the
