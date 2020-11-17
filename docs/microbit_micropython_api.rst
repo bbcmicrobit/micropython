@@ -70,10 +70,35 @@ The LED display is exposed via the `display` object::
     # written messages).
     display.scroll(string, delay=400)
 
+Microphone **V2**
+----------
+
+This Microphone is accessed via the `microphone` object::
+
+    # Value to represent loud sound events, like clapping or shouting.
+    LOUD = "loud"
+    # Value to represent quiet sound events, like speaking or background music.
+    QUIET = "quiet"
+    # The name of the last recorded sound event, `loud` or `quiet`.
+    current_sound()
+    # A sound event,  such as `microphone.LOUD` or `microphone.QUIET`. 
+    # Returns`true` if sound was heard at least once since the last
+    # call, otherwise `false`.
+    was_sound(event)
+    # A tuple of the event history. The most recent is listed last.
+    # Also clears the sound event history before returning.
+    get_sounds()
+    # The threshold level in the range 0-255. For example,
+    # `set_threshold(microphone.LOUD, 250)` will only trigger if the
+    # sound is very loud (>= 250).
+    set_threshold()
+    # A representation of the sound pressure level in the range 0 to 255.
+    sound_level()
+
 Pins
 ----
 
-Provide digital and analog input and output functionality, for the pins in the connector. Some pins are connected internally to the I/O that drives the LED matrix and the buttons.
+Provide digital and analog input and output functionality, for the pins in the connector, the **V2** logo and the **V2** speaker. Some pins are connected internally to the I/O that drives the LED matrix and the buttons.
 
 Each pin is provided as an object directly in the ``microbit`` module.  This keeps the API relatively flat, making it very easy to use:
 
@@ -85,6 +110,8 @@ Each pin is provided as an object directly in the ``microbit`` module.  This kee
     * *Warning: P17-P18 (inclusive) are unavailable.*
     * pin19
     * pin20
+    * pin_logo **V2**
+    * pin_speaker **V2**
 
 Each of these pins are instances of the ``MicroBitPin`` class, which offers the following API::
 
@@ -104,6 +131,28 @@ Each of these pins are instances of the ``MicroBitPin`` class, which offers the 
     pin.set_analog_period_microseconds(int)
     # returns boolean
     pin.is_touched()
+
+Except in the case of the pins marked **V2**, which offers the following API:
+    
+    **pin_logo**
+    # returns boolean
+    pin_logo.is_touched()
+
+    **pin_speaker**
+    # value can be 0, 1, False, True
+    pin.write_digital(value)
+    # returns either 1 or 0
+    pin.read_digital()
+    # value is between 0 and 1023
+    pin.write_analog(value)
+    # returns an integer between 0 and 1023
+    pin.read_analog()
+    # sets the period of the PWM output of the pin in milliseconds
+    # (see https://en.wikipedia.org/wiki/Pulse-width_modulation)
+    pin.set_analog_period(int)
+    # sets the period of the PWM output of the pin in microseconds
+    # (see https://en.wikipedia.org/wiki/Pulse-width_modulation)
+    pin.set_analog_period_microseconds(int)
 
 Images
 ------
