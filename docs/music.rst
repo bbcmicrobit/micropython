@@ -3,13 +3,15 @@ Music
 
 .. py:module:: music
 
-This is the ``music`` module. You can use it to play simple tunes, provided
-that you connect a speaker to your board. By default the ``music`` module
-expects the speaker to be connected via pin 0:
+This is the ``music`` module and you can use it to create and play melodies.
+By default sound output will be via the built-in speaker **V2** and via the 
+edge connector on pin 0. You can connect a wired headphones or a speaker to
+pin 0 and GND on the edge connector to hear the sound:
 
 .. image:: music-pins.png
 
-This arrangement can be overridden (as discussed below).
+You can change the default pin configuration to disable the built-in speaker
+or output sound on another pin.
 
 To access this module you need to::
 
@@ -77,7 +79,7 @@ Functions
 
     Gets the current tempo as a tuple of integers: ``(ticks, bpm)``.
 
-.. py:function:: play(music, pin=microbit.pin0, wait=True, loop=False)
+.. py:function:: play(music, pin=microbit.pin_speaker, wait=True, loop=False)
 
     Plays ``music`` containing the musical DSL defined above.
 
@@ -92,7 +94,14 @@ Functions
     their defaults before the music (whatever it may be) is played.
 
     An optional argument to specify the output pin can be used to override the
-    default of ``microbit.pin0``.
+    default of ``microbit.pin0``. If you have the latest micro:bit, you can
+    use ``microbit.pin_speaker``**V2**.
+
+    .. note::
+        Using this argument will disable the default functionality on the
+        **V2** board, so ``pin=microbit.pin0`` will only output on the 
+        edge connector and ``pin=microbit.pin_speaker`` will only use
+        the built-in speaker.
 
     If ``wait`` is set to ``True``, this function is blocking.
 
@@ -115,8 +124,8 @@ Functions
 
 .. py:function:: stop(pin=microbit.pin0)
     
-    Stops all music playback on a given pin, eg. ``music.stop(pin1)``. 
-    If no pin is given, eg. ``music.stop()`` pin0 is assumed.
+    Stops all music playback on a given pin, eg. ``music.stop(pin_speaker)``
+    **V2**. If no pin is given, eg. ``music.stop()`` pin0 is assumed.
 
 .. py:function:: reset()
 

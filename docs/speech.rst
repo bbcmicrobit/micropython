@@ -1,21 +1,12 @@
 Speech
 ******
 
-.. warning::
-
-    WARNING! This is still work in progress; we reserve the right to change this API as development continues.
-
-    The quality of the speech is not great, merely "good enough". Given the
-    constraints of the device you may encounter memory errors and / or
-    unexpected extra sounds during playback. It's early days and we're
-    improving the code for the speech synthesiser all the time. Bug reports
-    and pull requests are most welcome.
-
-
 .. py:module:: speech
 
-This module makes microbit talk, sing and make other speech like sounds
-provided that you connect a speaker to your board as shown below:
+This module makes the micro:bit talk, sing and make other speech like sounds.
+By default sound output will be via the built-in speaker **V2** and via the 
+edge connector on pin 0. You can connect a wired headphones or a speaker to
+pin 0 and GND on the edge connector to hear the sound:
 
 .. image:: speech.png
 
