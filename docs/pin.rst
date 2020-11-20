@@ -24,7 +24,7 @@ depending upon the digital reading on pin 0::
 Pin Functions
 =============
 
-`Edge connector and pinout <https://tech.microbit.org/hardware/edgeconnector/#edge-connector-pins)>`_
+`Edge connector and pinout <https://tech.microbit.org/hardware/edgeconnector/#edge-connector-pins>`_
 
 Those pins are available as attributes on the ``microbit``
 module:``microbit.pin0`` - ``microbit.pin20``.
@@ -80,6 +80,7 @@ in MicroPython, but that are not available via the edge connector:
 
 - ``pin_logo`` - A touch sensitive logo pin on the front of the micro:bit. which by 
 default is set to capacative touch mode.
+
 - ``pin_speaker`` - A pin to control the sound output of the micro:bit speaker.
 
 
@@ -209,7 +210,7 @@ its own to that.
 
         .. note::
             The default touch mode for the pins on the edge connector is 
-            `resistive`. The default for the logo pin **V2** is capacative.
+            `resistive`. The default for the logo pin **V2** is `capacative`.
 
         **Resitive touch**
         This test is done by measuring how much resistance there is between the
@@ -219,7 +220,7 @@ its own to that.
 
         **Capacative touch**
         This test is done by interacting with the electric field of a capacitor
-        using the a finger as a conductor.`Capacative touch 
+        using the a finger as a conductor.`Capacative touch
         <https://www.allaboutcircuits.com/technical-articles/introduction-to-capacitive-touch-sensing/>`_
         does not require you to make a ground connection as part of a circuit.
  

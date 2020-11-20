@@ -22,6 +22,9 @@ There are a few functions available directly::
     panic(error_code)
     # resets the micro:bit.
     reset()
+    # sets the output volume (0-255) of the micro:bit speaker **V2** and
+    external speaker or heaphones connected to the edge connector pins.
+    set_volume(128) **V2**
 
 The rest of the functionality is provided by objects and classes in the microbit module, as described below.
 
@@ -76,12 +79,12 @@ Microphone **V2**
 This Microphone is accessed via the `microphone` object::
 
     # Value to represent loud sound events, like clapping or shouting.
-    LOUD = "loud"
+    SoundEvent.LOUD = "loud"
     # Value to represent quiet sound events, like speaking or background music.
-    QUIET = "quiet"
+    SoundEvent.QUIET = "quiet"
     # The name of the last recorded sound event, `loud` or `quiet`.
     current_sound()
-    # A sound event,  such as `microphone.LOUD` or `microphone.QUIET`. 
+    # A sound event,  such as `SoundEvent.LOUD` or `SoundEvent.QUIET`. 
     # Returns`true` if sound was heard at least once since the last
     # call, otherwise `false`.
     was_sound(event)
@@ -89,7 +92,7 @@ This Microphone is accessed via the `microphone` object::
     # Also clears the sound event history before returning.
     get_sounds()
     # The threshold level in the range 0-255. For example,
-    # `set_threshold(microphone.LOUD, 250)` will only trigger if the
+    # `set_threshold(SoundEvent.LOUD, 250)` will only trigger if the
     # sound is very loud (>= 250).
     set_threshold()
     # A representation of the sound pressure level in the range 0 to 255.
@@ -314,6 +317,26 @@ There is an I2C bus on the micro:bit that is exposed via the `i2c` object.  It h
     i2c.read(addr, n, repeat=False)
     # write buf to device with addr; repeat=True means a stop bit won't be sent.
     i2c.write(addr, buf, repeat=False)
+
+Sounds **V2**
+------
+
+A set of expressive sounds are available to the micro:bit **V2** and can be
+accessed via the ``audio`` module.
+
+# built-in sounds
+
+Sound.GIGGLE
+Sound.HAPPY
+Sound.HELLO
+Sound.MYSTERIOUS
+Sound.SAD
+Sound.SLIDE
+Sound.SOARING
+Sound.SPRING
+Sound.TWINKLE
+Sound.YAWN
+
 
 UART
 ----

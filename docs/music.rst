@@ -95,7 +95,7 @@ Functions
 
     An optional argument to specify the output pin can be used to override the
     default of ``microbit.pin0``. If you have the latest micro:bit, you can
-    use ``microbit.pin_speaker``**V2**.
+    use ``microbit.pin_speaker`` **V2**.
 
     .. note::
         Using this argument will disable the default functionality on the

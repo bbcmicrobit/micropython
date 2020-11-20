@@ -21,11 +21,10 @@ Functions
 
     Play the source to completion.
 
-    ``source`` is an iterable, each element of which must be an ``AudioFrame``.
+    ``source`` is an iterable, each element of which must be an ``AudioFrame``
+    or built-in ``Sound``.
 
     If ``wait`` is ``True``, this function will block until the source is exhausted.
-
-    ``pin`` specifies which pin the speaker is connected to.
 
     As with the music module, you can use the optional ``pin`` argument to specify the 
     output pin can be used to override the default of ``microbit.pin0``. 
@@ -41,6 +40,15 @@ Functions
     ``return_pin`` specifies a differential edge connector pin to connect 
     to an exteernal speaker instead of ground.
 
+.. py:function:: is_playing()
+
+    Return ``True`` if audio is playing, otherwise
+    return ``False``.
+
+.. py:function:: stop()
+    
+    Stops all audio playback.
+
 Classes
 =======
 
@@ -55,9 +63,23 @@ Classes
 Using audio
 ===========
 
-You will need a sound source, as input to the ``play`` function. You can generate your own, like in
-``examples/waveforms.py``.
+You will need a sound source, as input to the ``play`` function. You can use
+the built-in sounds **V2** or generate your own, like in ``examples/waveforms.py``.
 
+Built-in sounds **V2**
+---------------
+
+
+    * ``Sound.GIGGLE``
+    * ``Sound.HAPPY``
+    * ``Sound.HELLO``
+    * ``Sound.MYSTERIOUS``
+    * ``Sound.SAD``
+    * ``Sound.SLIDE``
+    * ``Sound.SOARING``
+    * ``Sound.SPRING``
+    * ``Sound.TWINKLE``
+    * ``Sound.YAWN``
 
 Technical Details
 =================
