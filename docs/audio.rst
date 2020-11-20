@@ -3,8 +3,11 @@ Audio
 
 .. py:module:: audio
 
-This module allows you play sounds from a speaker attached to the Microbit.
-In order to use the audio module you will need to provide a sound source.
+This module allows you to play your own sounds. By default sound output
+will be via the built-in speaker **V2** and via the edge connector on
+pin 0. You can connect a wired headphones or a speaker to pin 0 and GND
+on the edge connector to hear the sounds. In order to use the audio module
+you will need to provide a sound source.
 
 A sound source is an iterable (sequence, like list or tuple, or a generator) of
 frames, each of 32 samples.
@@ -14,7 +17,7 @@ which means that it can reproduce frequencies up to 3.9kHz.
 Functions
 =========
 
-.. py:function:: play(source, wait=True, pin=pin0, return_pin=None)
+.. py:function:: play(source, wait=True, pin=pin_speaker, return_pin=None)
 
     Play the source to completion.
 
@@ -24,8 +27,19 @@ Functions
 
     ``pin`` specifies which pin the speaker is connected to.
 
-    ``return_pin`` specifies a differential pin to connect to the speaker
-    instead of ground.
+    As with the music module, you can use the optional ``pin`` argument to specify the 
+    output pin can be used to override the default of ``microbit.pin0``. 
+    If you have the latest micro:bit, you can use ``microbit.pin_speaker``
+    **V2**.
+
+    .. note::
+        Using this argument will disable the default functionality on the
+        **V2** board, so ``pin=microbit.pin0`` will only output on the 
+        edge connector and ``pin=microbit.pin_speaker`` will only use
+        the built-in speaker.
+
+    ``return_pin`` specifies a differential edge connector pin to connect 
+    to an exteernal speaker instead of ground.
 
 Classes
 =======
