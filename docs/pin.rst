@@ -79,7 +79,7 @@ The latest micro:bit device **V2** has two additional pins that you can access
 in MicroPython, but that are not available via the edge connector:
 
 - ``pin_logo`` - A touch sensitive logo pin on the front of the micro:bit. which by 
-default is set to capacative touch mode.
+default is set to capacitive touch mode.
 
 - ``pin_speaker`` - A pin to control the sound output of the micro:bit speaker.
 
@@ -210,7 +210,7 @@ its own to that.
 
         .. note::
             The default touch mode for the pins on the edge connector is 
-            `resistive`. The default for the logo pin **V2** is `capacative`.
+            `resistive`. The default for the logo pin **V2** is `capacitive`.
 
         **Resitive touch**
         This test is done by measuring how much resistance there is between the
@@ -218,10 +218,10 @@ its own to that.
         a reliable reading using a finger you may need to touch the ground pin
         with another part of your body, for example your other hand.
 
-        **Capacative touch**
+        **Capacitive touch**
         This test is done by interacting with the electric field of a capacitor
-        using the a finger as a conductor.`Capacative touch
-        <https://www.allaboutcircuits.com/technical-articles/introduction-to-capacitive-touch-sensing/>`_
+        using the a finger as a conductor. `Capacitive touch
+        <https://www.allaboutcircuits.com/technical-articles/introduction-to-capacitive-touch-sensing>`_
         does not require you to make a ground connection as part of a circuit.
  
 The pull mode for a pin is automatically configured when the pin changes to an
