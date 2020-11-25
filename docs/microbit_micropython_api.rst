@@ -324,19 +324,18 @@ Sounds **V2**
 A set of expressive sounds are available to the micro:bit **V2** and can be
 accessed via the ``audio`` module.
 
-# built-in sounds
+**Built-in sounds**
 
-Sound.GIGGLE
-Sound.HAPPY
-Sound.HELLO
-Sound.MYSTERIOUS
-Sound.SAD
-Sound.SLIDE
-Sound.SOARING
-Sound.SPRING
-Sound.TWINKLE
-Sound.YAWN
-
+``Sound.GIGGLE``
+``Sound.HAPPY``
+``Sound.HELLO``
+``Sound.MYSTERIOUS``
+``Sound.SAD``
+``Sound.SLIDE``
+``Sound.SOARING``
+``Sound.SPRING``
+``Sound.TWINKLE``
+``Sound.YAWN``
 
 UART
 ----
