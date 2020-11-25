@@ -38,7 +38,7 @@ Functions
         the built-in speaker.
 
     ``return_pin`` specifies a differential edge connector pin to connect 
-    to an exteernal speaker instead of ground.
+    to an external speaker instead of ground.
 
 .. py:function:: is_playing()
 
@@ -69,6 +69,7 @@ the built-in sounds **V2** or generate your own, like in ``examples/waveforms.py
 Built-in sounds **V2**
 ---------------
 
+The built-in sounds can be called using ``audio.play(Sound.NAME)``.
 
     * ``Sound.GIGGLE``
     * ``Sound.HAPPY``
