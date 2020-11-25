@@ -135,13 +135,15 @@ Each of these pins are instances of the ``MicroBitPin`` class, which offers the 
     # returns boolean
     pin.is_touched()
 
-Except in the case of the pins marked **V2**, which offers the following API:
+Except in the case of the pins marked **V2**, which offers the following API::
     
     **pin_logo**
+
     # returns boolean
     pin_logo.is_touched()
 
     **pin_speaker**
+    
     # value can be 0, 1, False, True
     pin.write_digital(value)
     # returns either 1 or 0
