@@ -79,7 +79,7 @@ Microphone **V2**
 The Microphone is accessed via the `microphone` object::
 
     # Value to represent the transition of sound events, from `quiet` to `loud`
-    like clapping or shouting.
+    # like clapping or shouting.
     SoundEvent.LOUD = "loud"
     # Value to represent the transition of sound events, from `loud` to `quiet`
     like speaking or background music.
