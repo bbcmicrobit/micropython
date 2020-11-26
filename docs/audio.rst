@@ -18,9 +18,9 @@ Functions
 
     Play the source to completion.
 
-    ``source`` can be a built-in ``Sound`` or from the ``microbit`` module or
-    generate your own an
-    interable, each element of which must be an ``AudioFrame``.
+    ``source`` can be a built-in ``Sound`` from the ``microbit`` module or
+    an interable, each element of which must be an ``AudioFrame`` as described
+    below.
 
     If ``wait`` is ``True``, this function will block until the source is
     exhausted.
