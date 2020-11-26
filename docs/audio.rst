@@ -17,7 +17,7 @@ which means that it can reproduce frequencies up to 3.9kHz.
 Functions
 =========
 
-.. py:function:: play(source, wait=True, pin=pin_speaker, return_pin=None)
+.. py:function:: play(source, wait=True, pin=pin0, return_pin=None)
                  play(source, wait=True, pin=(pin_speaker, pin=0))
 
     Play the source to completion.
@@ -44,7 +44,8 @@ Functions
         ``pin=microbit.pin_speaker`` will only use the built-in speaker.
 
     ``return_pin`` specifies a differential edge connector pin to connect 
-    to an external speaker instead of ground.
+    to an external speaker instead of ground. This is ignored for the **V2**
+    revision.
 
 .. py:function:: is_playing()
 
