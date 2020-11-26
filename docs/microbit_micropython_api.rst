@@ -82,7 +82,7 @@ This Microphone is accessed via the `microphone` object::
     SoundEvent.LOUD = "loud"
     # Value to represent quiet sound events, like speaking or background music.
     SoundEvent.QUIET = "quiet"
-    # The name of the last recorded sound event, `loud` or `quiet`.
+    # The name of the last recorded sound event.
     current_sound()
     # A sound event,  such as `SoundEvent.LOUD` or `SoundEvent.QUIET`. 
     # Returns`true` if sound was heard at least once since the last
