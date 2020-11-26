@@ -42,8 +42,7 @@ Functions
 
 .. py:function:: is_playing()
 
-    Return ``True`` if audio is playing, otherwise
-    return ``False``.
+    Return ``True`` if audio is playing, otherwise return ``False``.
 
 .. py:function:: stop()
     
@@ -108,4 +107,3 @@ Example
 
 .. include:: ../examples/waveforms.py
     :code: python
-
