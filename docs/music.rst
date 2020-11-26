@@ -4,14 +4,14 @@ Music
 .. py:module:: music
 
 This is the ``music`` module and you can use it to create and play melodies.
-By default sound output will be via the built-in speaker **V2** and via the 
-edge connector on pin 0. You can connect a wired headphones or a speaker to
+By default sound output will be via the edge connector on pin 0 and the
+built-in speaker **V2**. You can connect a wired headphones or a speaker to
 pin 0 and GND on the edge connector to hear the sound:
 
 .. image:: music-pins.png
 
-You can change the default pin configuration to disable the built-in speaker
-or output sound on another pin.
+You can also disable/enable the built-in speaker or output sound on another
+pin.
 
 To access this module you need to::
 
@@ -99,9 +99,9 @@ Functions
 
     .. note::
         Using this argument will disable the default functionality on the
-        **V2** board, so ``pin=microbit.pin0`` will only output on the 
-        edge connector and ``pin=microbit.pin_speaker`` will only use
-        the built-in speaker.
+        **V2** board where the sound is mirrored on speaker and pin0, so
+        ``pin=microbit.pin0`` will only output on the edge connector and
+        ``pin=microbit.pin_speaker`` will only use the built-in speaker.
 
     If ``wait`` is set to ``True``, this function is blocking.
 

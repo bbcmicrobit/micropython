@@ -4,8 +4,8 @@ Speech
 .. py:module:: speech
 
 This module makes the micro:bit talk, sing and make other speech like sounds.
-By default sound output will be via the built-in speaker **V2** and via the 
-edge connector on pin 0. You can connect a wired headphones or a speaker to
+By default sound output will be via the edge connector on pin 0 and the
+built-in speaker **V2**. You can connect a wired headphones or a speaker to
 pin 0 and GND on the edge connector to hear the sound:
 
 .. image:: speech.png
@@ -59,9 +59,9 @@ Functions
 
     .. note::
         Using this argument will disable the default functionality on the
-        **V2** board, so ``pin=microbit.pin0`` will only output on the 
-        edge connector and ``pin=microbit.pin_speaker`` will only use
-        the built-in speaker.
+        **V2** board where the sound is mirrored on speaker and pin0, so
+        ``pin=microbit.pin0`` will only output on the edge connector and
+        ``pin=microbit.pin_speaker`` will only use the built-in speaker.
 
 .. py:function:: say(words, \*, pitch=64, speed=72, mouth=128, throat=128)
 

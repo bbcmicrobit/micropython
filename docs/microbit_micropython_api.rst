@@ -23,7 +23,7 @@ There are a few functions available directly::
     # resets the micro:bit.
     reset()
     # sets the output volume (0-255) of the micro:bit speaker **V2** and
-    external speaker or heaphones connected to the edge connector pins.
+    external speaker or headphones connected to the edge connector pins.
     set_volume(128)    # V2
 
 The rest of the functionality is provided by objects and classes in the microbit module, as described below.
@@ -76,32 +76,36 @@ The LED display is exposed via the `display` object::
 Microphone **V2**
 ----------
 
-This Microphone is accessed via the `microphone` object::
+The Microphone is accessed via the `microphone` object::
 
-    # Value to represent loud sound events, like clapping or shouting.
+    # Value to represent the transition of sound events, from `quiet` to `loud`
+    like clapping or shouting.
     SoundEvent.LOUD = "loud"
-    # Value to represent quiet sound events, like speaking or background music.
+    # Value to represent the transition of sound events, from `loud` to `quiet`
+    like speaking or background music.
     SoundEvent.QUIET = "quiet"
     # The name of the last recorded sound event.
-    current_sound()
+    current_event()
     # A sound event,  such as `SoundEvent.LOUD` or `SoundEvent.QUIET`. 
     # Returns`true` if sound was heard at least once since the last
     # call, otherwise `false`.
-    was_sound(event)
+    was_event(event)
     # A tuple of the event history. The most recent is listed last.
     # Also clears the sound event history before returning.
-    get_sounds()
+    get_events()
     # The threshold level in the range 0-255. For example,
     # `set_threshold(SoundEvent.LOUD, 250)` will only trigger if the
     # sound is very loud (>= 250).
-    set_threshold()
+    set_threshold(128)
     # A representation of the sound pressure level in the range 0 to 255.
     sound_level()
 
 Pins
 ----
 
-Provide digital and analog input and output functionality, for the pins in the connector, the **V2** logo and the **V2** speaker. Some pins are connected internally to the I/O that drives the LED matrix and the buttons.
+Provide digital and analog input and output functionality, for the pins in the
+connector, the **V2** logo and the **V2** speaker. Some pins are connected
+internally to the I/O that drives the LED matrix and the buttons.
 
 Each pin is provided as an object directly in the ``microbit`` module.  This keeps the API relatively flat, making it very easy to use:
 
@@ -144,6 +148,10 @@ Except in the case of the pins marked **V2**, which offers the following API::
 
     **pin_speaker**
     
+    # disable the built-in speaker
+    pin_speaker.disable()
+    # enable the built-in speaker
+    pin_speaker.enable()
     # value can be 0, 1, False, True
     pin.write_digital(value)
     # returns either 1 or 0

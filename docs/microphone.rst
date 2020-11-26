@@ -3,8 +3,8 @@ Microphone **V2**
 
 .. py::module:: microbit
 
-This object lets you access the on-board microphone available on the **V2**
-micro:bit version. It can be used to respond to sound. The microphone input
+This object lets you access the built-in microphone available on the
+micro:bit **V2**. It can be used to respond to sound. The microphone input
 is located on the front of the board alongside a microphone activity LED,
 which is lit when the microphone is in use.
 
@@ -46,7 +46,7 @@ Classes
 
     Returns the name of the last recorded sound event, ``loud`` or ``quiet``.
 
-.. py:function:: was_event(SoundEvent.LOUD)
+.. py:function:: was_event(event)
 
     Parameter: A sound event,  such as ``SoundEvent.LOUD`` or ``SoundEvent.QUIET``.
     
@@ -59,7 +59,7 @@ Classes
 
     Also clears the sound event history before returning.
 
-.. py:function:: set_threshold()
+.. py:function:: set_threshold(event, value)
 
     Parameter: A sound event, such as ``SoundEvent.LOUD`` or ``SoundEvent.QUIET``.
     
@@ -79,5 +79,51 @@ Example
 
 An example that runs through some of the functions of the microphone API
 
-.. include:: ../examples/microphone.py
-    :code: python
+:code: python
+
+    # Basic test for microphone.  This test should update the display when
+    # Button A is pressed and a loud or quiet sound *is* heard, printing the
+    # results. On Button B this test should update the display when a loud or
+    # quiet sound *was* heard, printing the results. On shake this should print
+    # the last sounds heard, you should try this test whilst making a loud sound 
+    # and a quiet one before you shake.
+
+    from microbit import *
+
+    display.clear()
+    sound = microphone.current_event()
+
+    while True:
+        if button_a.is_pressed():
+            if microphone.current_event() == SoundEvent.LOUD:
+                display.show(Image.SQUARE)
+                uart.write('isLoud\n')
+            elif microphone.current_event() == SoundEvent.QUIET:
+                display.show(Image.SQUARE_SMALL)
+                uart.write('isQuiet\n')
+            sleep(500)
+        display.clear()
+        if button_b.is_pressed():
+            if microphone.was_event(SoundEvent.LOUD):
+                display.show(Image.SQUARE)
+                uart.write('wasLoud\n')
+            elif microphone.was_event(SoundEvent.QUIET):
+                display.show(Image.SQUARE_SMALL)
+                uart.write('wasQuiet\n')
+            else:
+                display.clear()
+            sleep(500)
+        display.clear()
+        if accelerometer.was_gesture('shake'):
+            sounds = microphone.get_events()
+            soundLevel = microphone.sound_level()
+            print(soundLevel)
+            for sound in sounds:
+                if sound == SoundEvent.LOUD:
+                    display.show(Image.SQUARE)
+                elif sound == SoundEvent.QUIET:
+                    display.show(Image.SQUARE_SMALL)
+                else:
+                    display.clear()
+                print(sound)
+                sleep(500)

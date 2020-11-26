@@ -67,9 +67,9 @@ module:``microbit.pin0`` - ``microbit.pin20``.
 |  16 | Digital |          |                 |
 +-----+---------+----------+-----------------+
 +-----+---------+----------+-----------------+
-|  19 | Digital | I2C SCL  |                 |
+|  19 | Digital | I2C SCL  | I2C SCL         |
 +-----+---------+----------+-----------------+
-|  20 | Digital | I2C SDA  |                 |
+|  20 | Digital | I2C SDA  | I2C SDA         |
 +-----+---------+----------+-----------------+
 
 The above table summarizes the pins available, their types (see below) and what
@@ -78,8 +78,8 @@ they are internally connected to.
 The latest micro:bit device **V2** has two additional pins that you can access
 in MicroPython, but that are not available via the edge connector:
 
-- ``pin_logo`` - A touch sensitive logo pin on the front of the micro:bit. which by 
-default is set to capacitive touch mode.
+- ``pin_logo`` - A touch sensitive logo pin on the front of the micro:bit,
+which by default is set to capacitive touch mode.
 
 - ``pin_speaker`` - A pin to control the sound output of the micro:bit speaker.
 
@@ -220,7 +220,7 @@ its own to that.
 
         **Capacitive touch**
         This test is done by interacting with the electric field of a capacitor
-        using the a finger as a conductor. `Capacitive touch
+        using a finger as a conductor. `Capacitive touch
         <https://www.allaboutcircuits.com/technical-articles/introduction-to-capacitive-touch-sensing>`_
         does not require you to make a ground connection as part of a circuit.
  
@@ -238,9 +238,9 @@ in ``read_digital`` mode with the given pull mode.
     There are also external (10k) pull-ups fitted on pins 5 and 11, in order
     for buttons A and B to work.
 
-    GPIO pins are also used for the display. 6 of these are routed to the
-    edge connector at 3, 4, 6, 7, 9. and 10. If you want to use these pins
-    for another purpose, you may need to turn the `display off
+    GPIO pins are also used for the display, as described in the table above.
+    If you want to use these pins for another purpose, you may need to turn
+    the `display off
     <https://microbit-micropython.readthedocs.io/en/latest/display.html#microbit.display.off>`_.
 
     See the `edge connector data sheet
