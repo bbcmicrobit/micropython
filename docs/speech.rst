@@ -54,8 +54,8 @@ Functions
 
     As with the music module, you can use an optional argument to specify the 
     output pin can be used to override the default of ``microbit.pin0``. 
-    If you have the latest micro:bit, you can use ``microbit.pin_speaker``
-    **V2**.
+    If you have the latest micro:bit **V2**, you can use
+    ``microbit.pin_speaker``.
 
     .. note::
         Using this argument will disable the default functionality on the

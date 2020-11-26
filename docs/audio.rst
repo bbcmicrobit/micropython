@@ -22,8 +22,9 @@ Functions
 
     Play the source to completion.
 
-    ``source`` is an iterable, each element of which must be an ``AudioFrame``
-    or built-in ``Sound``.
+    ``source`` can be a built-in ``Sound`` or from the ``microbit`` module or
+    generate your own an
+    interable, each element of which must be an ``AudioFrame``.
 
     If ``wait`` is ``True``, this function will block until the source is
     exhausted.
