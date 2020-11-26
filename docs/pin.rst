@@ -79,7 +79,7 @@ The latest micro:bit device **V2** has two additional pins that you can access
 in MicroPython, but that are not available via the edge connector:
 
 * ``pin_logo`` - A touch sensitive logo pin on the front of the micro:bit,
-which by default is set to capacitive touch mode.
+  which by default is set to capacitive touch mode.
 
 * ``pin_speaker`` - A pin to control the sound output of the micro:bit speaker.
 
