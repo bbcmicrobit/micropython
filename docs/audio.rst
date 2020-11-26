@@ -66,7 +66,7 @@ You will need a sound source, as input to the ``play`` function. You can use
 the built-in sounds **V2** or generate your own, like in ``examples/waveforms.py``.
 
 Built-in sounds **V2**
----------------
+----------------------
 
 The built-in sounds can be called using ``audio.play(Sound.NAME)``.
 
