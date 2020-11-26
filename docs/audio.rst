@@ -35,7 +35,7 @@ Functions
     ``microbit.pin_speaker`` **V2**.
 
     The pin argument can also take a tuple of two pins, for example
-    ``pin=(pin_speaker, pin=0)`` which would output sound on the built-in
+    ``pin=(pin_speaker, pin0)`` which would output sound on the built-in
     speaker and pin 0.
 
     .. note::
