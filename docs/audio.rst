@@ -17,8 +17,8 @@ which means that it can reproduce frequencies up to 3.9kHz.
 Functions
 =========
 
-.. py:function:: play(source, wait=True, pin=pin0, return_pin=None) .. **V1**
-                 play(source, wait=True, pin=(pin_speaker, pin0)) .. **V2**
+.. py:function:: play(source, wait=True, pin=pin0, return_pin=None)
+                 play(source, wait=True, pin=(pin_speaker, pin0))
 
     Play the source to completion.
 
