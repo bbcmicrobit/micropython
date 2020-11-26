@@ -32,7 +32,7 @@ Functions
         the accelerometer and compass stop working, as they are connected
         internally to those pins. This warning does not apply to the **V2**
         revision of the micro:bit as this has `separate I²C lines <https://tech.microbit.org/hardware/i2c/>`_
-        for the motion sensr and the edge connector.
+        for the motion sensors and the edge connector.
         
 
 
