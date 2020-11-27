@@ -1,7 +1,7 @@
 Microphone **V2**
 *****************
 
-.. py::module:: microbit
+.. py:module:: microbit.microphone
 
 This object lets you access the built-in microphone available on the
 micro:bit **V2**. It can be used to respond to sound. The microphone input
@@ -41,6 +41,9 @@ Classes
 
     Value to represent quiet sound events, like speaking or background music
     ``SoundEvent.QUIET`` = ``quiet``.
+
+Functions
+=========
 
 .. py:function:: current_event()
 
