@@ -36,13 +36,6 @@ Functions
                 ``pin=(pin_speaker, pin0)`` which would output sound on the
                 built-in speaker and pin 0.
 
-                .. note::
-                    Using this argument will disable the default functionality
-                    on the **V2** board where the sound is mirrored on speaker
-                    and pin0, so ``pin=microbit.pin0`` will only output on the
-                    edge connector and ``pin=microbit.pin_speaker`` will only
-                    use the built-in speaker.
-
     :Param return_pin: specifies a differential edge connector pin to connect
                        to an external speaker instead of ground. This is
                        ignored for the **V2** revision.
