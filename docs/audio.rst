@@ -18,7 +18,7 @@ Functions
 
     Play the source to completion.
 
-    :Param source: ``Sound`` or iterable of ``AudioFrame``
+    :param source: ``Sound`` or iterable of ``AudioFrame``
     
     * ``Sound``- The ``microbit`` module contains a list of built-in sounds
     that your can pass to ``audio.play()``.
@@ -27,13 +27,13 @@ Functions
     ``AudioFrame`` elements as described
     below.
 
-    :Param wait: If ``wait`` is ``True``, this function will block until the
-    source is exhausted.
+    :param wait: If ``wait`` is ``True``, this function will block until the
+                 source is exhausted.
 
-    :Param pin: As with the music module, you can use the optional ``pin``
-    argument to specify the output pin can be used to override the default of
-    ``microbit.pin0``. If you have the latest micro:bit **V2**, you can use
-    ``microbit.pin_speaker``.
+    :param pin: As with the music module, you can use the optional ``pin``
+                argument to specify the output pin can be used to override the
+                default of ``microbit.pin0``. If you have the latest micro:bit
+                **V2**, you can use ``microbit.pin_speaker``.
 
     The pin argument can also take a tuple of two pins, for example
     ``pin=(pin_speaker, pin0)`` which would output sound on the built-in
