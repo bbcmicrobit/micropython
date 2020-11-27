@@ -80,10 +80,10 @@ The Microphone is accessed via the `microphone` object::
 
     # Value to represent the transition of sound events, from `quiet` to `loud`
     # like clapping or shouting.
-    SoundEvent.LOUD = "loud"
+    SoundEvent.LOUD = SoundEvent('loud')
     # Value to represent the transition of sound events, from `loud` to `quiet`
     # like speaking or background music.
-    SoundEvent.QUIET = "quiet"
+    SoundEvent.QUIET = SoundEvent('quiet')
     # The name of the last recorded sound event.
     current_event()
     # A sound event,  such as `SoundEvent.LOUD` or `SoundEvent.QUIET`. 
