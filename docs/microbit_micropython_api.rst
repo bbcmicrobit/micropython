@@ -23,7 +23,7 @@ There are a few functions available directly::
     # resets the micro:bit.
     reset()
     # sets the output volume (0-255) of the micro:bit speaker **V2** and
-    external speaker or headphones connected to the edge connector pins.
+    # external speaker or headphones connected to the edge connector pins.
     set_volume(128)    # V2
 
 The rest of the functionality is provided by objects and classes in the microbit module, as described below.
