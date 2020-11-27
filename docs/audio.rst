@@ -18,17 +18,22 @@ Functions
 
     Play the source to completion.
 
-    ``source`` can be a built-in ``Sound`` from the ``microbit`` module or
-    an interable, each element of which must be an ``AudioFrame`` as described
+    :Param source: ``Sound`` or iterable of ``AudioFrame``
+    
+    * ``Sound``- The ``microbit`` module contains a list of built-in sounds
+    that your can pass to ``audio.play()``.
+    
+    * ``AudioFrame`` - the source agrument can also be an iterable of
+    ``AudioFrame`` elements as described
     below.
 
-    If ``wait`` is ``True``, this function will block until the source is
-    exhausted.
+    :Param wait: If ``wait`` is ``True``, this function will block until the
+    source is exhausted.
 
-    As with the music module, you can use the optional ``pin`` argument to
-    specify the output pin can be used to override the default of
-    ``microbit.pin0``. If you have the latest micro:bit, you can use
-    ``microbit.pin_speaker`` **V2**.
+    :Param pin: As with the music module, you can use the optional ``pin``
+    argument to specify the output pin can be used to override the default of
+    ``microbit.pin0``. If you have the latest micro:bit **V2**, you can use
+    ``microbit.pin_speaker``.
 
     The pin argument can also take a tuple of two pins, for example
     ``pin=(pin_speaker, pin0)`` which would output sound on the built-in
@@ -40,7 +45,7 @@ Functions
         ``pin=microbit.pin0`` will only output on the edge connector and
         ``pin=microbit.pin_speaker`` will only use the built-in speaker.
 
-    ``return_pin`` specifies a differential edge connector pin to connect 
+    :Param return_pin: specifies a differential edge connector pin to connect
     to an external speaker instead of ground. This is ignored for the **V2**
     revision.
 
