@@ -62,7 +62,7 @@ Classes
     :maxdepth: 1
 
     image.rst
-    sound
+    :ref: `sound`
 
 
 Modules
