@@ -19,6 +19,7 @@ Functions
     Play the source to completion.
 
     :param source: ``Sound`` or iterable of ``AudioFrame``
+                   
                    * ``Sound``- The ``microbit`` module contains a list of
                    built-in sounds that your can pass to ``audio.play()``.
                    * ``AudioFrame`` - the source agrument can also be an
