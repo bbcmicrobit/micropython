@@ -36,7 +36,7 @@ Functions
                 ``pin=(pin_speaker, pin0)`` which would output sound on the
                 built-in speaker and pin 0.
 
-    :Param return_pin: specifies a differential edge connector pin to connect
+    :param return_pin: specifies a differential edge connector pin to connect
                        to an external speaker instead of ground. This is
                        ignored for the **V2** revision.
 
