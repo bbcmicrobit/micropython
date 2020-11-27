@@ -70,8 +70,6 @@ You will need a sound source, as input to the ``play`` function. You can use
 the built-in sounds **V2** from the ``microbit`` module, ``microbit.Sound``, or
 generate your own, like in ``examples/waveforms.py``.
 
-.. _sound
-
 Built-in sounds **V2**
 ----------------------
 
@@ -95,18 +93,20 @@ Technical Details
     You don't need to understand this section to use the ``audio`` module.
     It is just here in case you wanted to know how it works.
 
-The ``audio`` module consumes ``AudioFrame`` samples at 7812.5 Hz, and uses linear interpolation to
-output a PWM signal at 32.5 kHz, which gives tolerable sound quality.
+The ``audio`` module consumes ``AudioFrame`` samples at 7812.5 Hz, and uses
+linear interpolation to output a PWM signal at 32.5 kHz, which gives tolerable
+sound quality.
 
 The function ``play`` fully copies all data from each ``AudioFrame`` before it
-calls ``next()`` for the next frame, so a sound source can use the same ``AudioFrame``
-repeatedly.
+calls ``next()`` for the next frame, so a sound source can use the same
+``AudioFrame`` repeatedly.
 
-The ``audio`` module has an internal 64 sample buffer from which it reads samples.
-When reading reaches the start or the mid-point of the buffer, it triggers a callback to
-fetch the next ``AudioFrame`` which is then copied into the buffer.
-This means that a sound source has under 4ms to compute the next ``AudioFrame``,
-and for reliable operation needs to take less 2ms (which is 32000 cycles, so should be plenty).
+The ``audio`` module has an internal 64 sample buffer from which it reads
+samples. When reading reaches the start or the mid-point of the buffer, it
+triggers a callback to fetch the next ``AudioFrame`` which is then copied into
+the buffer. This means that a sound source has under 4ms to compute the next
+``AudioFrame``, and for reliable operation needs to take less 2ms (which is
+32000 cycles, so should be plenty).
 
 
 Example

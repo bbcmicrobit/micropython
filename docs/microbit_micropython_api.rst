@@ -136,36 +136,25 @@ Each of these pins are instances of the ``MicroBitPin`` class, which offers the 
     # sets the period of the PWM output of the pin in microseconds
     # (see https://en.wikipedia.org/wiki/Pulse-width_modulation)
     pin.set_analog_period_microseconds(int)
-    # returns boolean
+    # returns boolean for touch pins; 0,1 and 2
     pin.is_touched()
 
 Except in the case of the pins marked **V2**, which offers the following API::
     
-    **pin_logo**
+pin_logo::
 
-    # returns boolean
+    # returns boolean for logo touch pin
     pin_logo.is_touched()
 
-    **pin_speaker**
+pin_speaker::
     
+As above `MicroBitPin` class, but does not include pin.is_touched() and
+includes:
+
     # disable the built-in speaker
     pin_speaker.disable()
     # enable the built-in speaker
     pin_speaker.enable()
-    # value can be 0, 1, False, True
-    pin.write_digital(value)
-    # returns either 1 or 0
-    pin.read_digital()
-    # value is between 0 and 1023
-    pin.write_analog(value)
-    # returns an integer between 0 and 1023
-    pin.read_analog()
-    # sets the period of the PWM output of the pin in milliseconds
-    # (see https://en.wikipedia.org/wiki/Pulse-width_modulation)
-    pin.set_analog_period(int)
-    # sets the period of the PWM output of the pin in microseconds
-    # (see https://en.wikipedia.org/wiki/Pulse-width_modulation)
-    pin.set_analog_period_microseconds(int)
 
 Images
 ------
@@ -328,11 +317,13 @@ There is an I2C bus on the micro:bit that is exposed via the `i2c` object.  It h
     # write buf to device with addr; repeat=True means a stop bit won't be sent.
     i2c.write(addr, buf, repeat=False)
 
+.. _sound
+
 Sounds **V2**
 ------
 
 A set of expressive sounds are available to the micro:bit **V2** and can be
-accessed via the ``audio`` module.
+accessed via the ``microbit`` module and played with the ``audio`` module.
 
 **Built-in sounds**
 

@@ -60,7 +60,8 @@ Classes
 
 .. toctree::
     :maxdepth: 1
-
+    
+    audio
     image.rst
     :ref: `sound`
 
