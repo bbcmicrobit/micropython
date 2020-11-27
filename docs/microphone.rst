@@ -19,21 +19,6 @@ Sound events
 The microphone can respond to a pre-defined set of sound events that are
 based on the amplitude and wavelength of the sound.
 
-These sound events are identified by strings passed as method arguments and
-return values. These strings are also stored as `MicrobitMicrophone` class
-variables as a handy way to identify what events are available.
-
-Classes
-=======
-.. py:class:: MicrobitMicrophone
-
-    .. note::
-        The ``MicrobitMicroPhone`` class documented here can be accessed via 
-        the microbit module as ``microbit.microphone``. It cannot be
-        initialised on it's own.
-
-    Represents the microphone.
-
 .. py:class:: SoundEvent  
 
     Value to represent loud sound events, like clapping or shouting
@@ -80,9 +65,7 @@ Functions
 Example
 =======
 
-An example that runs through some of the functions of the microphone API
-
-:code: python
+An example that runs through some of the functions of the microphone API::
 
     # Basic test for microphone.  This test should update the display when
     # Button A is pressed and a loud or quiet sound *is* heard, printing the

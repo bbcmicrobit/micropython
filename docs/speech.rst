@@ -45,7 +45,8 @@ Functions
     that can be further hand-edited to improve accuracy, inflection and
     emphasis.
 
-.. py:function:: pronounce(phonemes, \*, pitch=64, speed=72, mouth=128, throat=128, pin=microbit.pin_speaker)
+.. py:function:: pronounce(phonemes, \*, pitch=64, speed=72, mouth=128, throat=128, pin=pin0)
+                 pronounce(phonemes, pin=(pin_speaker, pin0))
 
     Pronounce the phonemes in the string ``phonemes``. See below for details of
     how to use phonemes to finely control the output of the speech synthesiser.
@@ -56,12 +57,6 @@ Functions
     output pin can be used to override the default of ``microbit.pin0``. 
     If you have the latest micro:bit **V2**, you can use
     ``microbit.pin_speaker``.
-
-    .. note::
-        Using this argument will disable the default functionality on the
-        **V2** board where the sound is mirrored on speaker and pin0, so
-        ``pin=microbit.pin0`` will only output on the edge connector and
-        ``pin=microbit.pin_speaker`` will only use the built-in speaker.
 
 .. py:function:: say(words, \*, pitch=64, speed=72, mouth=128, throat=128)
 

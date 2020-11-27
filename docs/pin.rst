@@ -5,8 +5,8 @@ Input/Output Pins
 
 The pins are your board's way to communicate with external devices connected to
 it. There are 19 pins for your disposal, numbered 0-16 and 19-20. Pins 17 and
-18 are not available. There is also a ``pin_logo`` **V2** and ``pin_speaker`` **V2**
-available to use with the latest micro:bit device.
+18 are not available. There is also a ``pin_logo`` **V2** and ``pin_speaker``
+**V2** available to use with the latest micro:bit device.
 
 For example, the script below will change the display on the micro:bit
 depending upon the digital reading on pin 0::

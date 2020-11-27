@@ -80,6 +80,7 @@ Functions
     Gets the current tempo as a tuple of integers: ``(ticks, bpm)``.
 
 .. py:function:: play(music, pin=microbit.pin_speaker, wait=True, loop=False)
+                 play(music, wait=True, pin=(pin_speaker, pin0))
 
     Plays ``music`` containing the musical DSL defined above.
 
@@ -97,11 +98,9 @@ Functions
     default of ``microbit.pin0``. If you have the latest micro:bit, you can
     use ``microbit.pin_speaker`` **V2**.
 
-    .. note::
-        Using this argument will disable the default functionality on the
-        **V2** board where the sound is mirrored on speaker and pin0, so
-        ``pin=microbit.pin0`` will only output on the edge connector and
-        ``pin=microbit.pin_speaker`` will only use the built-in speaker.
+    The pin argument can also take a tuple of two pins, for example
+    ``pin=(pin_speaker, pin0)`` which would output sound on the built-in
+    speaker and pin 0.
 
     If ``wait`` is set to ``True``, this function is blocking.
 

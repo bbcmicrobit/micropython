@@ -74,7 +74,7 @@ The LED display is exposed via the `display` object::
     display.scroll(string, delay=400)
 
 Microphone **V2**
-----------
+-----------------
 
 The Microphone is accessed via the `microphone` object::
 
@@ -84,20 +84,20 @@ The Microphone is accessed via the `microphone` object::
     # Value to represent the transition of sound events, from `loud` to `quiet`
     # like speaking or background music.
     SoundEvent.QUIET = SoundEvent('quiet')
-    # The name of the last recorded sound event.
+    # Returns the name of the last recorded sound event.
     current_event()
     # A sound event,  such as `SoundEvent.LOUD` or `SoundEvent.QUIET`. 
     # Returns`true` if sound was heard at least once since the last
     # call, otherwise `false`.
     was_event(event)
-    # A tuple of the event history. The most recent is listed last.
+    # Returns a tuple of the event history. The most recent is listed last.
     # Also clears the sound event history before returning.
     get_events()
     # The threshold level in the range 0-255. For example,
     # `set_threshold(SoundEvent.LOUD, 250)` will only trigger if the
     # sound is very loud (>= 250).
     set_threshold(128)
-    # A representation of the sound pressure level in the range 0 to 255.
+    # Returns a representation of the sound pressure level in the range 0 to 255.
     sound_level()
 
 Pins
@@ -136,7 +136,8 @@ Each of these pins are instances of the ``MicroBitPin`` class, which offers the 
     # sets the period of the PWM output of the pin in microseconds
     # (see https://en.wikipedia.org/wiki/Pulse-width_modulation)
     pin.set_analog_period_microseconds(int)
-    # returns boolean for touch pins; 0,1 and 2
+    # Only available for touch pins 0, 1, and 2. Returns boolean if the pin
+    # is touched
     pin.is_touched()
 
 Except in the case of the pins marked **V2**, which offers the following API::
@@ -146,10 +147,10 @@ pin_logo::
     # returns boolean for logo touch pin
     pin_logo.is_touched()
 
-pin_speaker::
+pin_speaker:
     
 As above `MicroBitPin` class, but does not include pin.is_touched() and
-includes:
+includes::
 
     # disable the built-in speaker
     pin_speaker.disable()
@@ -320,8 +321,6 @@ There is an I2C bus on the micro:bit that is exposed via the `i2c` object.  It h
     i2c.read(addr, n, repeat=False)
     # write buf to device with addr; repeat=True means a stop bit won't be sent.
     i2c.write(addr, buf, repeat=False)
-
-.. _sound
 
 Sounds **V2**
 ------

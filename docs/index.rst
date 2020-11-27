@@ -37,13 +37,15 @@ tutorials.
 
 Projects related to MicroPython on the BBC micro:bit include:
 
-* `micro:bit Python Editor <https://python.microbit.org>`_ - a simple
-   browser-based code editor, designed to help teachers and learners get the
-   most out of text-based programming on the micro:bit.
-* `Mu <https://codewith.mu>`_ - a simple offline code editor for kids, teachers
-   and beginner programmers.
-* `uFlash <https://uflash.readthedocs.io/en/latest/>`_ - a command line tool
-   for flashing raw Python scripts onto a BBC micro:bit.
+* `micro:bit Python Editor <https://python.microbit.org>`_ A simple
+  browser-based code editor, designed to help teachers and learners get the
+  most out of text-based programming on the micro:bit.
+
+* `Mu <https://codewith.mu>`_ A simple offline code editor for kids, teachers
+  and beginner programmers.
+
+* `uFlash <https://uflash.readthedocs.io/en/latest/>`_ A command line tool
+  for flashing raw Python scripts onto a BBC micro:bit.
 
 .. toctree::
     :maxdepth: 2

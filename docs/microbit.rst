@@ -60,10 +60,10 @@ Classes
 
 .. toctree::
     :maxdepth: 1
-    
-    audio
+
+    Audio V2 <audio.rst>
     image.rst
-    sound :ref: `sound`
+    Sound <microbit_micropython_api.rst>
 
 
 Modules
