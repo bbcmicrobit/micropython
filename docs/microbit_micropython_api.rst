@@ -74,7 +74,7 @@ The LED display is exposed via the `display` object::
     display.scroll(string, delay=400)
 
 Microphone **V2**
-----------
+-----------------
 
 The Microphone is accessed via the `microphone` object::
 
