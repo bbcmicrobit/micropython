@@ -19,13 +19,10 @@ Functions
     Play the source to completion.
 
     :param source: ``Sound`` or iterable of ``AudioFrame``
-    
-    * ``Sound``- The ``microbit`` module contains a list of built-in sounds
-    that your can pass to ``audio.play()``.
-    
-    * ``AudioFrame`` - the source agrument can also be an iterable of
-    ``AudioFrame`` elements as described
-    below.
+                   * ``Sound``- The ``microbit`` module contains a list of
+                   built-in sounds that your can pass to ``audio.play()``.
+                   * ``AudioFrame`` - the source agrument can also be an
+                   iterable of ``AudioFrame`` elements as described below.
 
     :param wait: If ``wait`` is ``True``, this function will block until the
                  source is exhausted.
@@ -35,19 +32,20 @@ Functions
                 default of ``microbit.pin0``. If you have the latest micro:bit
                 **V2**, you can use ``microbit.pin_speaker``.
 
-    The pin argument can also take a tuple of two pins, for example
-    ``pin=(pin_speaker, pin0)`` which would output sound on the built-in
-    speaker and pin 0.
+                The pin argument can also take a tuple of two pins, for example
+                ``pin=(pin_speaker, pin0)`` which would output sound on the
+                built-in speaker and pin 0.
 
-    .. note::
-        Using this argument will disable the default functionality on the
-        **V2** board where the sound is mirrored on speaker and pin0, so
-        ``pin=microbit.pin0`` will only output on the edge connector and
-        ``pin=microbit.pin_speaker`` will only use the built-in speaker.
+                .. note::
+                    Using this argument will disable the default functionality
+                    on the **V2** board where the sound is mirrored on speaker
+                    and pin0, so ``pin=microbit.pin0`` will only output on the
+                    edge connector and ``pin=microbit.pin_speaker`` will only
+                    use the built-in speaker.
 
     :Param return_pin: specifies a differential edge connector pin to connect
-    to an external speaker instead of ground. This is ignored for the **V2**
-    revision.
+                       to an external speaker instead of ground. This is
+                       ignored for the **V2** revision.
 
 .. py:function:: is_playing()
 
