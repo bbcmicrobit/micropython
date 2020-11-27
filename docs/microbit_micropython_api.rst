@@ -325,7 +325,7 @@ There is an I2C bus on the micro:bit that is exposed via the `i2c` object.  It h
 Sounds **V2**
 ------
 
-A set of expressive sounds are available to the micro:bit **V2** and can be
+A set of expressive sounds are available to the micro:bit **V2**. They can be
 accessed via the ``microbit`` module and played with the ``audio`` module.
 
 **Built-in sounds**
