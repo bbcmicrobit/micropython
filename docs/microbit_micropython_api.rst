@@ -208,60 +208,64 @@ Images API::
     # returns a new image created by multiplying the brightness of each pixel by n
     image * n
 
-    # built-in images.
-    Image.HEART
-    Image.HEART_SMALL
-    Image.HAPPY
-    Image.SMILE
-    Image.SAD
-    Image.CONFUSED
-    Image.ANGRY
-    Image.ASLEEP
-    Image.SURPRISED
-    Image.SILLY
-    Image.FABULOUS
-    Image.MEH
-    Image.YES
-    Image.NO
-    Image.CLOCK12 # clock at 12 o' clock
-    Image.CLOCK11
-    ... # many clocks (Image.CLOCKn)
-    Image.CLOCK1 # clock at 1 o'clock
-    Image.ARROW_N
-    ... # arrows pointing N, NE, E, SE, S, SW, W, NW (microbit.Image.ARROW_direction)
-    Image.ARROW_NW
-    Image.TRIANGLE
-    Image.TRIANGLE_LEFT
-    Image.CHESSBOARD
-    Image.DIAMOND
-    Image.DIAMOND_SMALL
-    Image.SQUARE
-    Image.SQUARE_SMALL
-    Image.RABBIT
-    Image.COW
-    Image.MUSIC_CROTCHET
-    Image.MUSIC_QUAVER
-    Image.MUSIC_QUAVERS
-    Image.PITCHFORK
-    Image.XMAS
-    Image.PACMAN
-    Image.TARGET
-    Image.TSHIRT
-    Image.ROLLERSKATE
-    Image.DUCK
-    Image.HOUSE
-    Image.TORTOISE
-    Image.BUTTERFLY
-    Image.STICKFIGURE
-    Image.GHOST
-    Image.SWORD
-    Image.GIRAFFE
-    Image.SKULL
-    Image.UMBRELLA
-    Image.SNAKE
-    # built-in lists - useful for animations, e.g. display.show(Image.ALL_CLOCKS)
-    Image.ALL_CLOCKS
-    Image.ALL_ARROWS
+**Built-in images**
+
+``Image.HEART``
+``Image.HEART_SMALL``
+``Image.HAPPY``
+``Image.SMILE``
+``Image.SAD``
+``Image.CONFUSED``
+``Image.ANGRY``
+``Image.ASLEEP``
+``Image.SURPRISED``
+``Image.SILLY``
+``Image.FABULOUS``
+``Image.MEH``
+``Image.YES``
+``Image.NO``
+``Image.CLOCK12`` clock at 12 o' clock
+...
+``Image.CLOCK1``  clock at 1 o'clock
+``Image.ARROW_N`` arrows pointing N, NE, E, SE, S, SW, W, NW
+(microbit.Image.ARROW_direction)
+...
+``Image.ARROW_NW``
+``Image.TRIANGLE``
+``Image.TRIANGLE_LEFT``
+``Image.CHESSBOARD``
+``Image.DIAMOND``
+``Image.DIAMOND_SMALL``
+``Image.SQUARE``
+``Image.SQUARE_SMALL``
+``Image.RABBIT``
+``Image.COW``
+``Image.MUSIC_CROTCHET``
+``Image.MUSIC_QUAVER``
+``Image.MUSIC_QUAVERS``
+``Image.PITCHFORK``
+``Image.XMAS``
+``Image.PACMAN``
+``Image.TARGET``
+``Image.TSHIRT``
+``Image.ROLLERSKATE``
+``Image.DUCK``
+``Image.HOUSE``
+``Image.TORTOISE``
+``Image.BUTTERFLY``
+``Image.STICKFIGURE``
+``Image.GHOST``
+``Image.SWORD``
+``Image.GIRAFFE``
+``Image.SKULL``
+``Image.UMBRELLA``
+``Image.SNAKE``
+
+**built-in image lists** - useful for animations, e.g.
+display.show(Image.ALL_CLOCKS)
+
+``Image.ALL_CLOCKS``
+``Image.ALL_ARROWS``
 
 The accelerometer
 -----------------
