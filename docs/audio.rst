@@ -4,7 +4,7 @@ Audio
 .. py:module:: audio
 
 This module allows you to play your own sounds. If you are using a micro:bit
-**V2**, ``audio` is also part of the ``microbit`` module.
+**V2**, ``audio`` is also part of the ``microbit`` module.
 
 By default sound output will be via the edge connector on pin 0 and the
 built-in speaker **V2**. You can connect a wired headphones or a speaker to
@@ -18,12 +18,11 @@ Functions
 
     Play the source to completion.
 
-    :param source: ``Sound`` or iterable of ``AudioFrame``
-                   
-                   * ``Sound``- The ``microbit`` module contains a list of
-                   built-in sounds that your can pass to ``audio.play()``.
-                   * ``AudioFrame`` - the source agrument can also be an
-                   iterable of ``AudioFrame`` elements as described below.
+    :param source: ``Sound``- The ``microbit`` module contains a list of
+                     built-in sounds that your can pass to ``audio.play()``.
+
+    :param source: ``AudioFrame`` - the source agrument can also be an
+                     iterable of ``AudioFrame`` elements as described below.
 
     :param wait: If ``wait`` is ``True``, this function will block until the
                  source is exhausted.
@@ -32,7 +31,6 @@ Functions
                 argument to specify the output pin can be used to override the
                 default of ``microbit.pin0``. If you have the latest micro:bit
                 **V2**, you can use ``microbit.pin_speaker``.
-
                 The pin argument can also take a tuple of two pins, for example
                 ``pin=(pin_speaker, pin0)`` which would output sound on the
                 built-in speaker and pin 0.
@@ -72,16 +70,16 @@ Built-in sounds **V2**
 
 The built-in sounds can be called using ``audio.play(Sound.NAME)``.
 
-    * ``Sound.GIGGLE``
-    * ``Sound.HAPPY``
-    * ``Sound.HELLO``
-    * ``Sound.MYSTERIOUS``
-    * ``Sound.SAD``
-    * ``Sound.SLIDE``
-    * ``Sound.SOARING``
-    * ``Sound.SPRING``
-    * ``Sound.TWINKLE``
-    * ``Sound.YAWN``
+* ``Sound.GIGGLE``
+* ``Sound.HAPPY``
+* ``Sound.HELLO``
+* ``Sound.MYSTERIOUS``
+* ``Sound.SAD``
+* ``Sound.SLIDE``
+* ``Sound.SOARING``
+* ``Sound.SPRING``
+* ``Sound.TWINKLE``
+* ``Sound.YAWN``
 
 Technical Details
 =================

@@ -52,14 +52,13 @@ Functions
     :param event: a sound event, such as ``SoundEvent.LOUD`` or ``SoundEvent.QUIET``.
     
     :param value: The threshold level in the range 0-255.
-    
                   For example, ``set_threshold(SoundEvent.LOUD, 250)`` will
                   only trigger if the sound is very loud (>= 250).
 
 .. py:function:: sound_level()
 
     :return: a representation of the sound pressure level in the range 0 to
-    255.
+             255.
 
 
 Example
