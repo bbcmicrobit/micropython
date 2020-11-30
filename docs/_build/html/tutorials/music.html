@@ -1,0 +1,416 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Music &mdash; BBC micro:bit MicroPython 1.0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Random" href="random.html" />
+    <link rel="prev" title="Input/Output" href="io.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> BBC micro:bit MicroPython
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="introduction.html">Introduction</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="hello.html">Hello, World!</a></li>
+<li class="toctree-l2"><a class="reference internal" href="images.html">Images</a></li>
+<li class="toctree-l2"><a class="reference internal" href="buttons.html">Buttons</a></li>
+<li class="toctree-l2"><a class="reference internal" href="io.html">Input/Output</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Music</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#wolfgang-amadeus-microbit">Wolfgang Amadeus Microbit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sound-effects">Sound Effects</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="random.html">Random</a></li>
+<li class="toctree-l2"><a class="reference internal" href="movement.html">Movement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gestures.html">Gestures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="direction.html">Direction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="storage.html">Storage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="speech.html">Speech</a></li>
+<li class="toctree-l2"><a class="reference internal" href="network.html">Network</a></li>
+<li class="toctree-l2"><a class="reference internal" href="radio.html">Radio</a></li>
+<li class="toctree-l2"><a class="reference internal" href="next.html">Next Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="hello.html">Hello, World!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="images.html">Images</a></li>
+<li class="toctree-l1"><a class="reference internal" href="buttons.html">Buttons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="io.html">Input/Output</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Music</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#wolfgang-amadeus-microbit">Wolfgang Amadeus Microbit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sound-effects">Sound Effects</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="random.html">Random</a></li>
+<li class="toctree-l1"><a class="reference internal" href="movement.html">Movement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gestures.html">Gestures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="direction.html">Direction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="storage.html">Storage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="speech.html">Speech</a></li>
+<li class="toctree-l1"><a class="reference internal" href="network.html">Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="radio.html">Radio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="next.html">Next Steps</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../microbit_micropython_api.html">micro:bit Micropython API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../microbit.html">Microbit Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../accelerometer.html">Accelerometer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../audio.html">Audio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ble.html">Bluetooth</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../button.html">Buttons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../compass.html">Compass</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../display.html">Display</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../filesystem.html">Local Persistent File System</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../i2c.html">I²C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../image.html">Image</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../machine.html">Machine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../microphone.html">Microphone <strong>V2</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../micropython.html">MicroPython</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../music.html">Music</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../neopixel.html">NeoPixel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../os.html">The <code class="docutils literal notranslate"><span class="pre">os</span></code>  Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pin.html">Input/Output Pins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../radio.html">Radio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../random.html">Random Number Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../speech.html">Speech</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../spi.html">SPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../uart.html">UART</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utime.html">utime</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Developer Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../devguide/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devguide/flashfirmware.html">Flashing Firmware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devguide/repl.html">Accessing the REPL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devguide/hexformat.html">Firmware Hex File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devguide/devfaq.html">Developer FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devguide/contributing.html">Contributing</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">BBC micro:bit MicroPython</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="introduction.html">Introduction</a> &raquo;</li>
+        
+      <li>Music</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/tutorials/music.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="music">
+<h1>Music<a class="headerlink" href="#music" title="Permalink to this headline">¶</a></h1>
+<p>MicroPython on the BBC micro:bit comes with a powerful music and sound module.
+It’s very easy to generate bleeps and bloops from the device <em>if you attach a
+speaker</em>. Use crocodile clips to attach pin 0 and GND to the positive and
+negative inputs on the speaker - it doesn’t matter which way round they are
+connected to the speaker.</p>
+<img alt="../_images/pin0-gnd.png" src="../_images/pin0-gnd.png" />
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Do not attempt this with a Piezo buzzer - such buzzers are only able to
+play a single tone.</p>
+</div>
+<p>Let’s play some music:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">music</span>
+
+<span class="n">music</span><span class="o">.</span><span class="n">play</span><span class="p">(</span><span class="n">music</span><span class="o">.</span><span class="n">NYAN</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Notice that we import the <code class="docutils literal notranslate"><span class="pre">music</span></code> module. It contains methods used to make
+and control sound.</p>
+<p>MicroPython has quite a lot of built-in melodies. Here’s a complete list:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">music.DADADADUM</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">music.ENTERTAINER</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">music.PRELUDE</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">music.ODE</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">music.NYAN</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">music.RINGTONE</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">music.FUNK</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">music.BLUES</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">music.BIRTHDAY</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">music.WEDDING</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">music.FUNERAL</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">music.PUNCHLINE</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">music.PYTHON</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">music.BADDY</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">music.CHASE</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">music.BA_DING</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">music.WAWAWAWAA</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">music.JUMP_UP</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">music.JUMP_DOWN</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">music.POWER_UP</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">music.POWER_DOWN</span></code></li>
+</ul>
+<p>Take the example code and change the melody. Which one is your favourite? How
+would you use such tunes as signals or cues?</p>
+<div class="section" id="wolfgang-amadeus-microbit">
+<h2>Wolfgang Amadeus Microbit<a class="headerlink" href="#wolfgang-amadeus-microbit" title="Permalink to this headline">¶</a></h2>
+<p>Creating your own tunes is easy!</p>
+<p>Each note has a name (like <code class="docutils literal notranslate"><span class="pre">C#</span></code> or <code class="docutils literal notranslate"><span class="pre">F</span></code>), an octave (telling MicroPython how
+high or low the note should be played) and a duration (how
+long it lasts through time). Octaves are indicated by a number ~ 0 is the
+lowest octave, 4 contains middle C and 8 is about as high as you’ll ever need
+unless you’re making music for dogs. Durations are also expressed as numbers.
+The higher the value of the duration the longer it will last. Such
+values are related to each other - for instance, a duration of <code class="docutils literal notranslate"><span class="pre">4</span></code> will last
+twice as long as a duration <code class="docutils literal notranslate"><span class="pre">2</span></code> (and so on). If you use the note name <code class="docutils literal notranslate"><span class="pre">R</span></code>
+then MicroPython will play a rest (i.e. silence) for the specified duration.</p>
+<p>Each note is expressed as a string of characters like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">NOTE</span><span class="p">[</span><span class="n">octave</span><span class="p">][:</span><span class="n">duration</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>For example, <code class="docutils literal notranslate"><span class="pre">&quot;A1:4&quot;</span></code> refers to the note named <code class="docutils literal notranslate"><span class="pre">A</span></code> in octave number <code class="docutils literal notranslate"><span class="pre">1</span></code>
+to be played for a duration of <code class="docutils literal notranslate"><span class="pre">4</span></code>.</p>
+<p>Make a list of notes to create a melody (it’s equivalent to creating an
+animation with a list of images). For example, here’s how to make MicroPython
+play opening of “Frere Jaques”:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">music</span>
+
+<span class="n">tune</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;C4:4&quot;</span><span class="p">,</span> <span class="s2">&quot;D4:4&quot;</span><span class="p">,</span> <span class="s2">&quot;E4:4&quot;</span><span class="p">,</span> <span class="s2">&quot;C4:4&quot;</span><span class="p">,</span> <span class="s2">&quot;C4:4&quot;</span><span class="p">,</span> <span class="s2">&quot;D4:4&quot;</span><span class="p">,</span> <span class="s2">&quot;E4:4&quot;</span><span class="p">,</span> <span class="s2">&quot;C4:4&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;E4:4&quot;</span><span class="p">,</span> <span class="s2">&quot;F4:4&quot;</span><span class="p">,</span> <span class="s2">&quot;G4:8&quot;</span><span class="p">,</span> <span class="s2">&quot;E4:4&quot;</span><span class="p">,</span> <span class="s2">&quot;F4:4&quot;</span><span class="p">,</span> <span class="s2">&quot;G4:8&quot;</span><span class="p">]</span>
+<span class="n">music</span><span class="o">.</span><span class="n">play</span><span class="p">(</span><span class="n">tune</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>MicroPython helps you to simplify such melodies. It’ll remember the octave
+and duration values until you next change them. As a result, the example
+above can be re-written as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">music</span>
+
+<span class="n">tune</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;C4:4&quot;</span><span class="p">,</span> <span class="s2">&quot;D&quot;</span><span class="p">,</span> <span class="s2">&quot;E&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;D&quot;</span><span class="p">,</span> <span class="s2">&quot;E&quot;</span><span class="p">,</span> <span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="s2">&quot;E&quot;</span><span class="p">,</span> <span class="s2">&quot;F&quot;</span><span class="p">,</span> <span class="s2">&quot;G:8&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;E:4&quot;</span><span class="p">,</span> <span class="s2">&quot;F&quot;</span><span class="p">,</span> <span class="s2">&quot;G:8&quot;</span><span class="p">]</span>
+<span class="n">music</span><span class="o">.</span><span class="n">play</span><span class="p">(</span><span class="n">tune</span><span class="p">)</span>
+</pre></div>
+</div>
+<p class="last">Notice how the octave and duration values only change when they have to.
+It’s a lot less typing and simpler to read.</p>
+</div>
+</div>
+<div class="section" id="sound-effects">
+<h2>Sound Effects<a class="headerlink" href="#sound-effects" title="Permalink to this headline">¶</a></h2>
+<p>MicroPython lets you make tones that are not musical notes. For example, here’s
+how to create a Police siren effect:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">music</span>
+
+<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">freq</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">880</span><span class="p">,</span> <span class="mi">1760</span><span class="p">,</span> <span class="mi">16</span><span class="p">):</span>
+        <span class="n">music</span><span class="o">.</span><span class="n">pitch</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">freq</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1760</span><span class="p">,</span> <span class="mi">880</span><span class="p">,</span> <span class="o">-</span><span class="mi">16</span><span class="p">):</span>
+        <span class="n">music</span><span class="o">.</span><span class="n">pitch</span><span class="p">(</span><span class="n">freq</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Notice how the <code class="docutils literal notranslate"><span class="pre">music.pitch</span></code> <em>method</em> is used in this instance. It expects a
+frequency. For example, the frequency of <code class="docutils literal notranslate"><span class="pre">440</span></code> is the same as a concert <code class="docutils literal notranslate"><span class="pre">A</span></code>
+used to tune a symphony orchestra.</p>
+<p>In the example above the <code class="docutils literal notranslate"><span class="pre">range</span></code> function is used to generate ranges of
+numeric values. These numbers are used to define the pitch of the tone. The
+three arguments for the <code class="docutils literal notranslate"><span class="pre">range</span></code> function are the start value, end value and
+step size. Therefore, the first use of <code class="docutils literal notranslate"><span class="pre">range</span></code> is saying, in English, “create
+a range of numbers between 880 and 1760 in steps of 16”. The second use of
+<code class="docutils literal notranslate"><span class="pre">range</span></code> is saying, “create a range of values between 1760 and 880 in steps of
+-16”. This is how we get a range of frequencies that go up and down in pitch
+like a siren.</p>
+<p>Because the siren should last forever it’s wrapped in an infinite <code class="docutils literal notranslate"><span class="pre">while</span></code>
+loop.</p>
+<p>Importantly, we have introduced a new sort of a loop inside the <code class="docutils literal notranslate"><span class="pre">while</span></code>
+loop: the <code class="docutils literal notranslate"><span class="pre">for</span></code> loop. In English it’s like saying, “for each item in some
+collection, do some activity with it”. Specifically in the example above, it’s
+saying, “for each frequency in the specified range of frequencies, play the
+pitch of that frequency for 6 milliseconds”. Notice how the thing to do for
+each item in a for loop is indented (as discussed earlier) so Python knows
+exactly which code to run to handle the individual items.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="random.html" class="btn btn-neutral float-right" title="Random" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="io.html" class="btn btn-neutral float-left" title="Input/Output" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2015-2020, Multiple authors
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

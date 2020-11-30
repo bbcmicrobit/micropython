@@ -52,8 +52,8 @@ These are both objects and have the following methods::
     # returns the running total of button presses, and resets this counter to zero
     button.get_presses()
 
-The LED display
----------------
+Display
+-------
 
 The LED display is exposed via the `display` object::
 
@@ -73,10 +73,9 @@ The LED display is exposed via the `display` object::
     # written messages).
     display.scroll(string, delay=400)
 
-Microphone **V2**
+SoundEvent **V2**
 -----------------
-
-The Microphone is accessed via the `microphone` object::
+Sound events describe changes in the sound heard by the microphone.
 
     # Value to represent the transition of sound events, from `quiet` to `loud`
     # like clapping or shouting.
@@ -84,6 +83,12 @@ The Microphone is accessed via the `microphone` object::
     # Value to represent the transition of sound events, from `loud` to `quiet`
     # like speaking or background music.
     SoundEvent.QUIET = SoundEvent('quiet')
+
+Microphone **V2**
+-----------------
+
+The Microphone is accessed via the `microphone` object::
+
     # Returns the name of the last recorded sound event.
     current_event()
     # A sound event,  such as `SoundEvent.LOUD` or `SoundEvent.QUIET`. 
@@ -268,8 +273,8 @@ display.show(Image.ALL_CLOCKS)
 ``Image.ALL_CLOCKS``
 ``Image.ALL_ARROWS``
 
-The accelerometer
------------------
+Accelerometer
+-------------
 
 The accelerometer is accessed via the ``accelerometer`` object::
 
@@ -294,8 +299,8 @@ The accelerometer is accessed via the ``accelerometer`` object::
 The recognised gestures are: ``up``, ``down``, ``left``, ``right``, ``face up``, ``face down``, ``freefall``, ``3g``, ``6g``, ``8g``, ``shake``.
 
 
-The compass
------------
+Compass
+-------
 
 The compass is accessed via the `compass` object::
 
@@ -322,8 +327,8 @@ There is an I2C bus on the micro:bit that is exposed via the `i2c` object.  It h
     # write buf to device with addr; repeat=True means a stop bit won't be sent.
     i2c.write(addr, buf, repeat=False)
 
-Sounds **V2**
-------
+Sound **V2**
+------------
 
 A set of expressive sounds are available to the micro:bit **V2**. They can be
 accessed via the ``microbit`` module and played with the ``audio`` module.

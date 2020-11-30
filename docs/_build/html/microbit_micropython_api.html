@@ -1,0 +1,651 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>micro:bit Micropython API &mdash; BBC micro:bit MicroPython 1.0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Microbit Module" href="microbit.html" />
+    <link rel="prev" title="Next Steps" href="tutorials/next.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> BBC micro:bit MicroPython
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/hello.html">Hello, World!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/images.html">Images</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/buttons.html">Buttons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/io.html">Input/Output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/music.html">Music</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/random.html">Random</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/movement.html">Movement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/gestures.html">Gestures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/direction.html">Direction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/storage.html">Storage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/speech.html">Speech</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/network.html">Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/radio.html">Radio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/next.html">Next Steps</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">micro:bit Micropython API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#the-microbit-module">The microbit module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#buttons">Buttons</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#display">Display</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#soundevent-v2">SoundEvent <strong>V2</strong></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#microphone-v2">Microphone <strong>V2</strong></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pins">Pins</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#images">Images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#accelerometer">Accelerometer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#compass">Compass</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#i2c-bus">I2C bus</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sound-v2">Sound <strong>V2</strong></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#uart">UART</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="reference internal" href="microbit.html">Microbit Module</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="microbit.html#functions">Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="microbit.html#attributes">Attributes</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="microbit.html#classes">Classes</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="audio.html">Audio V2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="image.html">Image</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Sound</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#the-microbit-module">The microbit module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="microbit.html#modules">Modules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="accelerometer.html">Accelerometer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="audio.html">Audio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ble.html">Bluetooth</a></li>
+<li class="toctree-l1"><a class="reference internal" href="button.html">Buttons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="compass.html">Compass</a></li>
+<li class="toctree-l1"><a class="reference internal" href="display.html">Display</a></li>
+<li class="toctree-l1"><a class="reference internal" href="filesystem.html">Local Persistent File System</a></li>
+<li class="toctree-l1"><a class="reference internal" href="i2c.html">I²C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="image.html">Image</a></li>
+<li class="toctree-l1"><a class="reference internal" href="machine.html">Machine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="microphone.html">Microphone <strong>V2</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="micropython.html">MicroPython</a></li>
+<li class="toctree-l1"><a class="reference internal" href="music.html">Music</a></li>
+<li class="toctree-l1"><a class="reference internal" href="neopixel.html">NeoPixel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="os.html">The <code class="docutils literal notranslate"><span class="pre">os</span></code>  Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pin.html">Input/Output Pins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="radio.html">Radio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="random.html">Random Number Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="speech.html">Speech</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spi.html">SPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="uart.html">UART</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utime.html">utime</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Developer Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="devguide/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devguide/flashfirmware.html">Flashing Firmware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devguide/repl.html">Accessing the REPL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devguide/hexformat.html">Firmware Hex File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devguide/devfaq.html">Developer FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devguide/contributing.html">Contributing</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">BBC micro:bit MicroPython</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>micro:bit Micropython API</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/microbit_micropython_api.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="micro-bit-micropython-api">
+<h1>micro:bit Micropython API<a class="headerlink" href="#micro-bit-micropython-api" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="the-microbit-module">
+<h2>The microbit module<a class="headerlink" href="#the-microbit-module" title="Permalink to this headline">¶</a></h2>
+<p>Everything directly related to interacting with the hardware lives in the <cite>microbit</cite> module.  For ease of use it’s recommended you start all scripts with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">microbit</span> <span class="kn">import</span> <span class="o">*</span>
+</pre></div>
+</div>
+<p>The following documentation assumes you have done this.</p>
+<p>There are a few functions available directly:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># sleep for the given number of milliseconds.</span>
+<span class="n">sleep</span><span class="p">(</span><span class="n">ms</span><span class="p">)</span>
+<span class="c1"># returns the number of milliseconds since the micro:bit was last switched on.</span>
+<span class="n">running_time</span><span class="p">()</span>
+<span class="c1"># makes the micro:bit enter panic mode (this usually happens when the DAL runs</span>
+<span class="c1"># out of memory, and causes a sad face to be drawn on the display). The error</span>
+<span class="c1"># code can be any arbitrary integer value.</span>
+<span class="n">panic</span><span class="p">(</span><span class="n">error_code</span><span class="p">)</span>
+<span class="c1"># resets the micro:bit.</span>
+<span class="n">reset</span><span class="p">()</span>
+<span class="c1"># sets the output volume (0-255) of the micro:bit speaker **V2** and</span>
+<span class="c1"># external speaker or headphones connected to the edge connector pins.</span>
+<span class="n">set_volume</span><span class="p">(</span><span class="mi">128</span><span class="p">)</span>    <span class="c1"># V2</span>
+</pre></div>
+</div>
+<p>The rest of the functionality is provided by objects and classes in the microbit module, as described below.</p>
+<p>Note that the API exposes integers only (ie no floats are needed, but they may be accepted).  We thus use milliseconds for the standard time unit.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You can see a list of all available modules by writing <code class="docutils literal notranslate"><span class="pre">help('modules')</span></code> in the REPL.</p>
+</div>
+<div class="section" id="buttons">
+<h3>Buttons<a class="headerlink" href="#buttons" title="Permalink to this headline">¶</a></h3>
+<p>There are 2 buttons:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">button_a</span>
+<span class="n">button_b</span>
+</pre></div>
+</div>
+<p>These are both objects and have the following methods:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># returns True or False to indicate if the button is pressed at the time of</span>
+<span class="c1"># the method call.</span>
+<span class="n">button</span><span class="o">.</span><span class="n">is_pressed</span><span class="p">()</span>
+<span class="c1"># returns True or False to indicate if the button was pressed since the device</span>
+<span class="c1"># started or the last time this method was called.</span>
+<span class="n">button</span><span class="o">.</span><span class="n">was_pressed</span><span class="p">()</span>
+<span class="c1"># returns the running total of button presses, and resets this counter to zero</span>
+<span class="n">button</span><span class="o">.</span><span class="n">get_presses</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="display">
+<h3>Display<a class="headerlink" href="#display" title="Permalink to this headline">¶</a></h3>
+<p>The LED display is exposed via the <cite>display</cite> object:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># gets the brightness of the pixel (x,y). Brightness can be from 0 (the pixel</span>
+<span class="c1"># is off) to 9 (the pixel is at maximum brightness).</span>
+<span class="n">display</span><span class="o">.</span><span class="n">get_pixel</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="c1"># sets the brightness of the pixel (x,y) to val (between 0 [off] and 9 [max</span>
+<span class="c1"># brightness], inclusive).</span>
+<span class="n">display</span><span class="o">.</span><span class="n">set_pixel</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+<span class="c1"># clears the display.</span>
+<span class="n">display</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+<span class="c1"># shows the image.</span>
+<span class="n">display</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">wait</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">loop</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">clear</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="c1"># shows each image or letter in the iterable, with delay ms. in between each.</span>
+<span class="n">display</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">iterable</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">wait</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">loop</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">clear</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="c1"># scrolls a string across the display (more exciting than display.show for</span>
+<span class="c1"># written messages).</span>
+<span class="n">display</span><span class="o">.</span><span class="n">scroll</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="mi">400</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="soundevent-v2">
+<h3>SoundEvent <strong>V2</strong><a class="headerlink" href="#soundevent-v2" title="Permalink to this headline">¶</a></h3>
+<p>Sound events describe changes in the sound heard by the microphone.</p>
+<blockquote>
+<div># Value to represent the transition of sound events, from <cite>quiet</cite> to <cite>loud</cite>
+# like clapping or shouting.
+SoundEvent.LOUD = SoundEvent(‘loud’)
+# Value to represent the transition of sound events, from <cite>loud</cite> to <cite>quiet</cite>
+# like speaking or background music.
+SoundEvent.QUIET = SoundEvent(‘quiet’)</div></blockquote>
+</div>
+<div class="section" id="microphone-v2">
+<h3>Microphone <strong>V2</strong><a class="headerlink" href="#microphone-v2" title="Permalink to this headline">¶</a></h3>
+<p>The Microphone is accessed via the <cite>microphone</cite> object:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Returns the name of the last recorded sound event.</span>
+<span class="n">current_event</span><span class="p">()</span>
+<span class="c1"># A sound event,  such as `SoundEvent.LOUD` or `SoundEvent.QUIET`.</span>
+<span class="c1"># Returns`true` if sound was heard at least once since the last</span>
+<span class="c1"># call, otherwise `false`.</span>
+<span class="n">was_event</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+<span class="c1"># Returns a tuple of the event history. The most recent is listed last.</span>
+<span class="c1"># Also clears the sound event history before returning.</span>
+<span class="n">get_events</span><span class="p">()</span>
+<span class="c1"># The threshold level in the range 0-255. For example,</span>
+<span class="c1"># `set_threshold(SoundEvent.LOUD, 250)` will only trigger if the</span>
+<span class="c1"># sound is very loud (&gt;= 250).</span>
+<span class="n">set_threshold</span><span class="p">(</span><span class="mi">128</span><span class="p">)</span>
+<span class="c1"># Returns a representation of the sound pressure level in the range 0 to 255.</span>
+<span class="n">sound_level</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="pins">
+<h3>Pins<a class="headerlink" href="#pins" title="Permalink to this headline">¶</a></h3>
+<p>Provide digital and analog input and output functionality, for the pins in the
+connector, the <strong>V2</strong> logo and the <strong>V2</strong> speaker. Some pins are connected
+internally to the I/O that drives the LED matrix and the buttons.</p>
+<p>Each pin is provided as an object directly in the <code class="docutils literal notranslate"><span class="pre">microbit</span></code> module.  This keeps the API relatively flat, making it very easy to use:</p>
+<blockquote>
+<div><ul class="simple">
+<li>pin0</li>
+<li>pin1</li>
+<li>…</li>
+<li>pin15</li>
+<li>pin16</li>
+<li><em>Warning: P17-P18 (inclusive) are unavailable.</em></li>
+<li>pin19</li>
+<li>pin20</li>
+<li>pin_logo <strong>V2</strong></li>
+<li>pin_speaker <strong>V2</strong></li>
+</ul>
+</div></blockquote>
+<p>Each of these pins are instances of the <code class="docutils literal notranslate"><span class="pre">MicroBitPin</span></code> class, which offers the following API:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># value can be 0, 1, False, True</span>
+<span class="n">pin</span><span class="o">.</span><span class="n">write_digital</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+<span class="c1"># returns either 1 or 0</span>
+<span class="n">pin</span><span class="o">.</span><span class="n">read_digital</span><span class="p">()</span>
+<span class="c1"># value is between 0 and 1023</span>
+<span class="n">pin</span><span class="o">.</span><span class="n">write_analog</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+<span class="c1"># returns an integer between 0 and 1023</span>
+<span class="n">pin</span><span class="o">.</span><span class="n">read_analog</span><span class="p">()</span>
+<span class="c1"># sets the period of the PWM output of the pin in milliseconds</span>
+<span class="c1"># (see https://en.wikipedia.org/wiki/Pulse-width_modulation)</span>
+<span class="n">pin</span><span class="o">.</span><span class="n">set_analog_period</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="c1"># sets the period of the PWM output of the pin in microseconds</span>
+<span class="c1"># (see https://en.wikipedia.org/wiki/Pulse-width_modulation)</span>
+<span class="n">pin</span><span class="o">.</span><span class="n">set_analog_period_microseconds</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="c1"># Only available for touch pins 0, 1, and 2. Returns boolean if the pin</span>
+<span class="c1"># is touched</span>
+<span class="n">pin</span><span class="o">.</span><span class="n">is_touched</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Except in the case of the pins marked <strong>V2</strong>, which offers the following API:</p>
+<p>pin_logo:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># returns boolean for logo touch pin</span>
+<span class="n">pin_logo</span><span class="o">.</span><span class="n">is_touched</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>pin_speaker:</p>
+<p>As above <cite>MicroBitPin</cite> class, but does not include pin.is_touched() and
+includes:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># disable the built-in speaker</span>
+<span class="n">pin_speaker</span><span class="o">.</span><span class="n">disable</span><span class="p">()</span>
+<span class="c1"># enable the built-in speaker</span>
+<span class="n">pin_speaker</span><span class="o">.</span><span class="n">enable</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="images">
+<h3>Images<a class="headerlink" href="#images" title="Permalink to this headline">¶</a></h3>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You don’t always need to create one of these yourself - you can access the
+image shown on the display directly with <cite>display.image</cite>. <cite>display.image</cite>
+is just an instance of <cite>Image</cite>, so you can use all of the same methods.</p>
+</div>
+<p>Images API:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># creates an empty 5x5 image</span>
+<span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="p">()</span>
+<span class="c1"># create an image from a string - each character in the string represents an</span>
+<span class="c1"># LED - 0 (or space) is off and 9 is maximum brightness. The colon &quot;:&quot;</span>
+<span class="c1"># indicates the end of a line.</span>
+<span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="p">(</span><span class="s1">&#39;90009:09090:00900:09090:90009:&#39;</span><span class="p">)</span>
+<span class="c1"># create an empty image of given size</span>
+<span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">)</span>
+<span class="c1"># initialises an Image with the specified width and height. The buffer</span>
+<span class="c1"># should be an array of length width * height</span>
+<span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="p">(</span><span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">buffer</span><span class="p">)</span>
+
+<span class="c1"># methods</span>
+<span class="c1"># returns the image&#39;s width (most often 5)</span>
+<span class="n">image</span><span class="o">.</span><span class="n">width</span><span class="p">()</span>
+<span class="c1"># returns the image&#39;s height (most often 5)</span>
+<span class="n">image</span><span class="o">.</span><span class="n">height</span><span class="p">()</span>
+<span class="c1"># sets the pixel at the specified position (between 0 and 9). May fail for</span>
+<span class="c1"># constant images.</span>
+<span class="n">image</span><span class="o">.</span><span class="n">set_pixel</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+<span class="c1"># gets the pixel at the specified position (between 0 and 9)</span>
+<span class="n">image</span><span class="o">.</span><span class="n">get_pixel</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="c1"># returns a new image created by shifting the picture left &#39;n&#39; times.</span>
+<span class="n">image</span><span class="o">.</span><span class="n">shift_left</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="c1"># returns a new image created by shifting the picture right &#39;n&#39; times.</span>
+<span class="n">image</span><span class="o">.</span><span class="n">shift_right</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="c1"># returns a new image created by shifting the picture up &#39;n&#39; times.</span>
+<span class="n">image</span><span class="o">.</span><span class="n">shift_up</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="c1"># returns a new image created by shifting the picture down &#39;n&#39; times.</span>
+<span class="n">image</span><span class="o">.</span><span class="n">shift_down</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="c1"># get a compact string representation of the image</span>
+<span class="nb">repr</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+<span class="c1"># get a more readable string representation of the image</span>
+<span class="nb">str</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+
+<span class="c1">#operators</span>
+<span class="c1"># returns a new image created by superimposing the two images</span>
+<span class="n">image</span> <span class="o">+</span> <span class="n">image</span>
+<span class="c1"># returns a new image created by multiplying the brightness of each pixel by n</span>
+<span class="n">image</span> <span class="o">*</span> <span class="n">n</span>
+</pre></div>
+</div>
+<p><strong>Built-in images</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">Image.HEART</span></code>
+<code class="docutils literal notranslate"><span class="pre">Image.HEART_SMALL</span></code>
+<code class="docutils literal notranslate"><span class="pre">Image.HAPPY</span></code>
+<code class="docutils literal notranslate"><span class="pre">Image.SMILE</span></code>
+<code class="docutils literal notranslate"><span class="pre">Image.SAD</span></code>
+<code class="docutils literal notranslate"><span class="pre">Image.CONFUSED</span></code>
+<code class="docutils literal notranslate"><span class="pre">Image.ANGRY</span></code>
+<code class="docutils literal notranslate"><span class="pre">Image.ASLEEP</span></code>
+<code class="docutils literal notranslate"><span class="pre">Image.SURPRISED</span></code>
+<code class="docutils literal notranslate"><span class="pre">Image.SILLY</span></code>
+<code class="docutils literal notranslate"><span class="pre">Image.FABULOUS</span></code>
+<code class="docutils literal notranslate"><span class="pre">Image.MEH</span></code>
+<code class="docutils literal notranslate"><span class="pre">Image.YES</span></code>
+<code class="docutils literal notranslate"><span class="pre">Image.NO</span></code>
+<code class="docutils literal notranslate"><span class="pre">Image.CLOCK12</span></code> clock at 12 o’ clock
+…
+<code class="docutils literal notranslate"><span class="pre">Image.CLOCK1</span></code>  clock at 1 o’clock
+<code class="docutils literal notranslate"><span class="pre">Image.ARROW_N</span></code> arrows pointing N, NE, E, SE, S, SW, W, NW
+(microbit.Image.ARROW_direction)
+…
+<code class="docutils literal notranslate"><span class="pre">Image.ARROW_NW</span></code>
+<code class="docutils literal notranslate"><span class="pre">Image.TRIANGLE</span></code>
+<code class="docutils literal notranslate"><span class="pre">Image.TRIANGLE_LEFT</span></code>
+<code class="docutils literal notranslate"><span class="pre">Image.CHESSBOARD</span></code>
+<code class="docutils literal notranslate"><span class="pre">Image.DIAMOND</span></code>
+<code class="docutils literal notranslate"><span class="pre">Image.DIAMOND_SMALL</span></code>
+<code class="docutils literal notranslate"><span class="pre">Image.SQUARE</span></code>
+<code class="docutils literal notranslate"><span class="pre">Image.SQUARE_SMALL</span></code>
+<code class="docutils literal notranslate"><span class="pre">Image.RABBIT</span></code>
+<code class="docutils literal notranslate"><span class="pre">Image.COW</span></code>
+<code class="docutils literal notranslate"><span class="pre">Image.MUSIC_CROTCHET</span></code>
+<code class="docutils literal notranslate"><span class="pre">Image.MUSIC_QUAVER</span></code>
+<code class="docutils literal notranslate"><span class="pre">Image.MUSIC_QUAVERS</span></code>
+<code class="docutils literal notranslate"><span class="pre">Image.PITCHFORK</span></code>
+<code class="docutils literal notranslate"><span class="pre">Image.XMAS</span></code>
+<code class="docutils literal notranslate"><span class="pre">Image.PACMAN</span></code>
+<code class="docutils literal notranslate"><span class="pre">Image.TARGET</span></code>
+<code class="docutils literal notranslate"><span class="pre">Image.TSHIRT</span></code>
+<code class="docutils literal notranslate"><span class="pre">Image.ROLLERSKATE</span></code>
+<code class="docutils literal notranslate"><span class="pre">Image.DUCK</span></code>
+<code class="docutils literal notranslate"><span class="pre">Image.HOUSE</span></code>
+<code class="docutils literal notranslate"><span class="pre">Image.TORTOISE</span></code>
+<code class="docutils literal notranslate"><span class="pre">Image.BUTTERFLY</span></code>
+<code class="docutils literal notranslate"><span class="pre">Image.STICKFIGURE</span></code>
+<code class="docutils literal notranslate"><span class="pre">Image.GHOST</span></code>
+<code class="docutils literal notranslate"><span class="pre">Image.SWORD</span></code>
+<code class="docutils literal notranslate"><span class="pre">Image.GIRAFFE</span></code>
+<code class="docutils literal notranslate"><span class="pre">Image.SKULL</span></code>
+<code class="docutils literal notranslate"><span class="pre">Image.UMBRELLA</span></code>
+<code class="docutils literal notranslate"><span class="pre">Image.SNAKE</span></code></p>
+<p><strong>built-in image lists</strong> - useful for animations, e.g.
+display.show(Image.ALL_CLOCKS)</p>
+<p><code class="docutils literal notranslate"><span class="pre">Image.ALL_CLOCKS</span></code>
+<code class="docutils literal notranslate"><span class="pre">Image.ALL_ARROWS</span></code></p>
+</div>
+<div class="section" id="accelerometer">
+<h3>Accelerometer<a class="headerlink" href="#accelerometer" title="Permalink to this headline">¶</a></h3>
+<p>The accelerometer is accessed via the <code class="docutils literal notranslate"><span class="pre">accelerometer</span></code> object:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># read the X axis of the device. Measured in milli-g.</span>
+<span class="n">accelerometer</span><span class="o">.</span><span class="n">get_x</span><span class="p">()</span>
+<span class="c1"># read the Y axis of the device. Measured in milli-g.</span>
+<span class="n">accelerometer</span><span class="o">.</span><span class="n">get_y</span><span class="p">()</span>
+<span class="c1"># read the Z axis of the device. Measured in milli-g.</span>
+<span class="n">accelerometer</span><span class="o">.</span><span class="n">get_z</span><span class="p">()</span>
+<span class="c1"># get tuple of all three X, Y and Z readings (listed in that order).</span>
+<span class="n">accelerometer</span><span class="o">.</span><span class="n">get_values</span><span class="p">()</span>
+<span class="c1"># return the name of the current gesture.</span>
+<span class="n">accelerometer</span><span class="o">.</span><span class="n">current_gesture</span><span class="p">()</span>
+<span class="c1"># return True or False to indicate if the named gesture is currently active.</span>
+<span class="n">accelerometer</span><span class="o">.</span><span class="n">is_gesture</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+<span class="c1"># return True or False to indicate if the named gesture was active since the</span>
+<span class="c1"># last call.</span>
+<span class="n">accelerometer</span><span class="o">.</span><span class="n">was_gesture</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+<span class="c1"># return a tuple of the gesture history. The most recent is listed last.</span>
+<span class="n">accelerometer</span><span class="o">.</span><span class="n">get_gestures</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The recognised gestures are: <code class="docutils literal notranslate"><span class="pre">up</span></code>, <code class="docutils literal notranslate"><span class="pre">down</span></code>, <code class="docutils literal notranslate"><span class="pre">left</span></code>, <code class="docutils literal notranslate"><span class="pre">right</span></code>, <code class="docutils literal notranslate"><span class="pre">face</span> <span class="pre">up</span></code>, <code class="docutils literal notranslate"><span class="pre">face</span> <span class="pre">down</span></code>, <code class="docutils literal notranslate"><span class="pre">freefall</span></code>, <code class="docutils literal notranslate"><span class="pre">3g</span></code>, <code class="docutils literal notranslate"><span class="pre">6g</span></code>, <code class="docutils literal notranslate"><span class="pre">8g</span></code>, <code class="docutils literal notranslate"><span class="pre">shake</span></code>.</p>
+</div>
+<div class="section" id="compass">
+<h3>Compass<a class="headerlink" href="#compass" title="Permalink to this headline">¶</a></h3>
+<p>The compass is accessed via the <cite>compass</cite> object:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># calibrate the compass (this is needed to get accurate readings).</span>
+<span class="n">compass</span><span class="o">.</span><span class="n">calibrate</span><span class="p">()</span>
+<span class="c1"># return a numeric indication of degrees offset from &quot;north&quot;.</span>
+<span class="n">compass</span><span class="o">.</span><span class="n">heading</span><span class="p">()</span>
+<span class="c1"># return an numeric indication of the strength of magnetic field around</span>
+<span class="c1"># the micro:bit.</span>
+<span class="n">compass</span><span class="o">.</span><span class="n">get_field_strength</span><span class="p">()</span>
+<span class="c1"># returns True or False to indicate if the compass is calibrated.</span>
+<span class="n">compass</span><span class="o">.</span><span class="n">is_calibrated</span><span class="p">()</span>
+<span class="c1"># resets the compass to a pre-calibration state.</span>
+<span class="n">compass</span><span class="o">.</span><span class="n">clear_calibration</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="i2c-bus">
+<h3>I2C bus<a class="headerlink" href="#i2c-bus" title="Permalink to this headline">¶</a></h3>
+<p>There is an I2C bus on the micro:bit that is exposed via the <cite>i2c</cite> object.  It has the following methods:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># read n bytes from device with addr; repeat=True means a stop bit won&#39;t</span>
+<span class="c1"># be sent.</span>
+<span class="n">i2c</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">repeat</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="c1"># write buf to device with addr; repeat=True means a stop bit won&#39;t be sent.</span>
+<span class="n">i2c</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">addr</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="n">repeat</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="sound-v2">
+<h3>Sound <strong>V2</strong><a class="headerlink" href="#sound-v2" title="Permalink to this headline">¶</a></h3>
+<p>A set of expressive sounds are available to the micro:bit <strong>V2</strong>. They can be
+accessed via the <code class="docutils literal notranslate"><span class="pre">microbit</span></code> module and played with the <code class="docutils literal notranslate"><span class="pre">audio</span></code> module.</p>
+<p><strong>Built-in sounds</strong></p>
+<p><code class="docutils literal notranslate"><span class="pre">Sound.GIGGLE</span></code>
+<code class="docutils literal notranslate"><span class="pre">Sound.HAPPY</span></code>
+<code class="docutils literal notranslate"><span class="pre">Sound.HELLO</span></code>
+<code class="docutils literal notranslate"><span class="pre">Sound.MYSTERIOUS</span></code>
+<code class="docutils literal notranslate"><span class="pre">Sound.SAD</span></code>
+<code class="docutils literal notranslate"><span class="pre">Sound.SLIDE</span></code>
+<code class="docutils literal notranslate"><span class="pre">Sound.SOARING</span></code>
+<code class="docutils literal notranslate"><span class="pre">Sound.SPRING</span></code>
+<code class="docutils literal notranslate"><span class="pre">Sound.TWINKLE</span></code>
+<code class="docutils literal notranslate"><span class="pre">Sound.YAWN</span></code></p>
+</div>
+<div class="section" id="uart">
+<h3>UART<a class="headerlink" href="#uart" title="Permalink to this headline">¶</a></h3>
+<p>Use <code class="docutils literal notranslate"><span class="pre">uart</span></code> to communicate with a serial device connected to the device’s I/O pins:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># set up communication (use pins 0 [TX] and 1 [RX]) with a baud rate of 9600.</span>
+<span class="n">uart</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
+<span class="c1"># return True or False to indicate if there are incoming characters waiting to</span>
+<span class="c1"># be read.</span>
+<span class="n">uart</span><span class="o">.</span><span class="n">any</span><span class="p">()</span>
+<span class="c1"># return (read) n incoming characters.</span>
+<span class="n">uart</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="c1"># return (read) as much incoming data as possible.</span>
+<span class="n">uart</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="c1"># return (read) all the characters to a newline character is reached.</span>
+<span class="n">uart</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+<span class="c1"># read bytes into the referenced buffer.</span>
+<span class="n">uart</span><span class="o">.</span><span class="n">readinto</span><span class="p">(</span><span class="n">buffer</span><span class="p">)</span>
+<span class="c1"># write bytes from the buffer to the connected device.</span>
+<span class="n">uart</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">buffer</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="microbit.html" class="btn btn-neutral float-right" title="Microbit Module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="tutorials/next.html" class="btn btn-neutral float-left" title="Next Steps" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2015-2020, Multiple authors
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

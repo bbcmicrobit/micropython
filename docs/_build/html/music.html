@@ -1,0 +1,469 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Music &mdash; BBC micro:bit MicroPython 1.0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="NeoPixel" href="neopixel.html" />
+    <link rel="prev" title="MicroPython" href="micropython.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> BBC micro:bit MicroPython
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/hello.html">Hello, World!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/images.html">Images</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/buttons.html">Buttons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/io.html">Input/Output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/music.html">Music</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/random.html">Random</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/movement.html">Movement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/gestures.html">Gestures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/direction.html">Direction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/storage.html">Storage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/speech.html">Speech</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/network.html">Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/radio.html">Radio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/next.html">Next Steps</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="microbit_micropython_api.html">micro:bit Micropython API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="microbit.html">Microbit Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="accelerometer.html">Accelerometer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="audio.html">Audio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ble.html">Bluetooth</a></li>
+<li class="toctree-l1"><a class="reference internal" href="button.html">Buttons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="compass.html">Compass</a></li>
+<li class="toctree-l1"><a class="reference internal" href="display.html">Display</a></li>
+<li class="toctree-l1"><a class="reference internal" href="filesystem.html">Local Persistent File System</a></li>
+<li class="toctree-l1"><a class="reference internal" href="i2c.html">I²C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="image.html">Image</a></li>
+<li class="toctree-l1"><a class="reference internal" href="machine.html">Machine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="microphone.html">Microphone <strong>V2</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="micropython.html">MicroPython</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Music</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#musical-notation">Musical Notation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#functions">Functions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#built-in-melodies">Built in Melodies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#example">Example</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="neopixel.html">NeoPixel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="os.html">The <code class="docutils literal notranslate"><span class="pre">os</span></code>  Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pin.html">Input/Output Pins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="radio.html">Radio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="random.html">Random Number Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="speech.html">Speech</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spi.html">SPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="uart.html">UART</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utime.html">utime</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Developer Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="devguide/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devguide/flashfirmware.html">Flashing Firmware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devguide/repl.html">Accessing the REPL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devguide/hexformat.html">Firmware Hex File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devguide/devfaq.html">Developer FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devguide/contributing.html">Contributing</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">BBC micro:bit MicroPython</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Music</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/music.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-music">
+<span id="music"></span><h1>Music<a class="headerlink" href="#module-music" title="Permalink to this headline">¶</a></h1>
+<p>This is the <code class="docutils literal notranslate"><span class="pre">music</span></code> module and you can use it to create and play melodies.
+By default sound output will be via the edge connector on pin 0 and the
+built-in speaker <strong>V2</strong>. You can connect a wired headphones or a speaker to
+pin 0 and GND on the edge connector to hear the sound:</p>
+<img alt="_images/music-pins.png" src="_images/music-pins.png" />
+<p>You can also disable/enable the built-in speaker or output sound on another
+pin.</p>
+<p>To access this module you need to:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">music</span>
+</pre></div>
+</div>
+<p>We assume you have done this for the examples below.</p>
+<div class="section" id="musical-notation">
+<h2>Musical Notation<a class="headerlink" href="#musical-notation" title="Permalink to this headline">¶</a></h2>
+<p>An individual note is specified thus:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">NOTE</span><span class="p">[</span><span class="n">octave</span><span class="p">][:</span><span class="n">duration</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>For example, <code class="docutils literal notranslate"><span class="pre">A1:4</span></code> refers to the note “A” in octave 1 that lasts for four
+ticks (a tick is an arbitrary length of time defined by a tempo setting
+function - see below). If the note name <code class="docutils literal notranslate"><span class="pre">R</span></code> is used then it is treated as a
+rest (silence).</p>
+<p>Accidentals (flats and sharps) are denoted by the <code class="docutils literal notranslate"><span class="pre">b</span></code> (flat - a lower case b)
+and <code class="docutils literal notranslate"><span class="pre">#</span></code> (sharp - a hash symbol). For example, <code class="docutils literal notranslate"><span class="pre">Ab</span></code> is A-flat and <code class="docutils literal notranslate"><span class="pre">C#</span></code> is
+C-sharp.</p>
+<p><strong>Note names are case-insensitive.</strong></p>
+<p>The <code class="docutils literal notranslate"><span class="pre">octave</span></code> and <code class="docutils literal notranslate"><span class="pre">duration</span></code> parameters are states that carry over to
+subsequent notes until re-specified. The default states are <code class="docutils literal notranslate"><span class="pre">octave</span> <span class="pre">=</span> <span class="pre">4</span></code>
+(containing middle C) and <code class="docutils literal notranslate"><span class="pre">duration</span> <span class="pre">=</span> <span class="pre">4</span></code> (a crotchet, given the default tempo
+settings - see below).</p>
+<p>For example, if 4 ticks is a crotchet, the following list is crotchet, quaver,
+quaver, crotchet based arpeggio:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="s1">&#39;c1:4&#39;</span><span class="p">,</span> <span class="s1">&#39;e:2&#39;</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="s1">&#39;c2:4&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>The opening of Beethoven’s 5th Symphony would be encoded thus:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="s1">&#39;r4:2&#39;</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="s1">&#39;eb:8&#39;</span><span class="p">,</span> <span class="s1">&#39;r:2&#39;</span><span class="p">,</span> <span class="s1">&#39;f&#39;</span><span class="p">,</span> <span class="s1">&#39;f&#39;</span><span class="p">,</span> <span class="s1">&#39;f&#39;</span><span class="p">,</span> <span class="s1">&#39;d:8&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>The definition and scope of an octave conforms to the table listed <a class="reference external" href="https://en.wikipedia.org/wiki/Scientific_pitch_notation#Table_of_note_frequencies">on this
+page about scientific pitch notation</a>.  For example, middle “C” is <code class="docutils literal notranslate"><span class="pre">'c4'</span></code> and
+concert “A” (440) is <code class="docutils literal notranslate"><span class="pre">'a4'</span></code>. Octaves start on the note “C”.</p>
+</div>
+<div class="section" id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="music.set_tempo">
+<code class="descclassname">music.</code><code class="descname">set_tempo</code><span class="sig-paren">(</span><em>ticks=4</em>, <em>bpm=120</em><span class="sig-paren">)</span><a class="headerlink" href="#music.set_tempo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the approximate tempo for playback.</p>
+<p>A number of ticks (expressed as an integer) constitute a beat. Each beat is to be played at a certain frequency per minute (expressed as the more familiar BPM - beats per minute - also as an integer).</p>
+<p>Suggested default values allow the following useful behaviour:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">music.set_tempo()</span></code> - reset the tempo to default of ticks = 4, bpm = 120</li>
+<li><code class="docutils literal notranslate"><span class="pre">music.set_tempo(ticks=8)</span></code> - change the “definition” of a beat</li>
+<li><code class="docutils literal notranslate"><span class="pre">music.set_tempo(bpm=180)</span></code> - just change the tempo</li>
+</ul>
+<p>To work out the length of a tick in milliseconds is very simple arithmetic: <code class="docutils literal notranslate"><span class="pre">60000/bpm/ticks_per_beat</span></code> . For the default values that’s <code class="docutils literal notranslate"><span class="pre">60000/120/4</span> <span class="pre">=</span> <span class="pre">125</span> <span class="pre">milliseconds</span></code> or <code class="docutils literal notranslate"><span class="pre">1</span> <span class="pre">beat</span> <span class="pre">=</span> <span class="pre">500</span> <span class="pre">milliseconds</span></code>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="music.get_tempo">
+<code class="descclassname">music.</code><code class="descname">get_tempo</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#music.get_tempo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets the current tempo as a tuple of integers: <code class="docutils literal notranslate"><span class="pre">(ticks,</span> <span class="pre">bpm)</span></code>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="music.play">
+<code class="descclassname">music.</code><code class="descname">play</code><span class="sig-paren">(</span><em>music</em>, <em>pin=microbit.pin_speaker</em>, <em>wait=True</em>, <em>loop=False</em><span class="sig-paren">)</span><a class="headerlink" href="#music.play" title="Permalink to this definition">¶</a></dt>
+<dt>
+<code class="descclassname">music.</code><code class="descname">play</code><span class="sig-paren">(</span><em>music</em>, <em>wait=True</em>, <em>pin=(pin_speaker</em>, <em>pin0)</em><span class="sig-paren">)</span></dt>
+<dd><p>Plays <code class="docutils literal notranslate"><span class="pre">music</span></code> containing the musical DSL defined above.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">music</span></code> is a string it is expected to be a single note such as,
+<code class="docutils literal notranslate"><span class="pre">'c1:4'</span></code>.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">music</span></code> is specified as a list of notes (as defined in the section on
+the musical DSL, above) then they are played one after the other to perform
+a melody.</p>
+<p>In both cases, the <code class="docutils literal notranslate"><span class="pre">duration</span></code> and <code class="docutils literal notranslate"><span class="pre">octave</span></code> values are reset to
+their defaults before the music (whatever it may be) is played.</p>
+<p>An optional argument to specify the output pin can be used to override the
+default of <code class="docutils literal notranslate"><span class="pre">microbit.pin0</span></code>. If you have the latest micro:bit, you can
+use <code class="docutils literal notranslate"><span class="pre">microbit.pin_speaker</span></code> <strong>V2</strong>.</p>
+<p>The pin argument can also take a tuple of two pins, for example
+<code class="docutils literal notranslate"><span class="pre">pin=(pin_speaker,</span> <span class="pre">pin0)</span></code> which would output sound on the built-in
+speaker and pin 0.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">wait</span></code> is set to <code class="docutils literal notranslate"><span class="pre">True</span></code>, this function is blocking.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">loop</span></code> is set to <code class="docutils literal notranslate"><span class="pre">True</span></code>, the tune repeats until <code class="docutils literal notranslate"><span class="pre">stop</span></code> is called
+(see below) or the blocking call is interrupted.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="music.pitch">
+<code class="descclassname">music.</code><code class="descname">pitch</code><span class="sig-paren">(</span><em>frequency</em>, <em>duration=-1</em>, <em>pin=microbit.pin0</em>, <em>wait=True</em><span class="sig-paren">)</span><a class="headerlink" href="#music.pitch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plays a pitch at the integer frequency given for the specified number of
+milliseconds. For example, if the frequency is set to 440 and the length to
+1000 then we hear a standard concert A for one second.</p>
+<p>Note that you can only play one pitch on one pin at any one time.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">wait</span></code> is set to <code class="docutils literal notranslate"><span class="pre">True</span></code>, this function is blocking.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">duration</span></code> is negative the pitch is played continuously until either the
+blocking call is interrupted or, in the case of a background call, a new
+frequency is set or <code class="docutils literal notranslate"><span class="pre">stop</span></code> is called (see below).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="music.stop">
+<code class="descclassname">music.</code><code class="descname">stop</code><span class="sig-paren">(</span><em>pin=microbit.pin0</em><span class="sig-paren">)</span><a class="headerlink" href="#music.stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stops all music playback on a given pin, eg. <code class="docutils literal notranslate"><span class="pre">music.stop(pin_speaker)</span></code>
+<strong>V2</strong>. If no pin is given, eg. <code class="docutils literal notranslate"><span class="pre">music.stop()</span></code> pin0 is assumed.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="music.reset">
+<code class="descclassname">music.</code><code class="descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#music.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resets the state of the following attributes in the following way:</p>
+<blockquote>
+<div><ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">ticks</span> <span class="pre">=</span> <span class="pre">4</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">bpm</span> <span class="pre">=</span> <span class="pre">120</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">duration</span> <span class="pre">=</span> <span class="pre">4</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">octave</span> <span class="pre">=</span> <span class="pre">4</span></code></li>
+</ul>
+</div></blockquote>
+</dd></dl>
+
+<div class="section" id="built-in-melodies">
+<h3>Built in Melodies<a class="headerlink" href="#built-in-melodies" title="Permalink to this headline">¶</a></h3>
+<p>For the purposes of education and entertainment, the module contains several
+example tunes that are expressed as Python lists. They can be used like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">music</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">music</span><span class="o">.</span><span class="n">play</span><span class="p">(</span><span class="n">music</span><span class="o">.</span><span class="n">NYAN</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>All the tunes are either out of copyright, composed by Nicholas H.Tollervey and
+released to the public domain or have an unknown composer and are covered by a
+fair (educational) use provision.</p>
+<p>They are:</p>
+<blockquote>
+<div><ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">DADADADUM</span></code> - the opening to Beethoven’s 5th Symphony in C minor.</li>
+<li><code class="docutils literal notranslate"><span class="pre">ENTERTAINER</span></code> - the opening fragment of Scott Joplin’s Ragtime classic “The Entertainer”.</li>
+<li><code class="docutils literal notranslate"><span class="pre">PRELUDE</span></code> - the opening of the first Prelude in C Major of J.S.Bach’s 48 Preludes and Fugues.</li>
+<li><code class="docutils literal notranslate"><span class="pre">ODE</span></code> - the “Ode to Joy” theme from Beethoven’s 9th Symphony in D minor.</li>
+<li><code class="docutils literal notranslate"><span class="pre">NYAN</span></code> - the Nyan Cat theme (<a class="reference external" href="http://www.nyan.cat/">http://www.nyan.cat/</a>). The composer is unknown. This is fair use for educational porpoises (as they say in New York).</li>
+<li><code class="docutils literal notranslate"><span class="pre">RINGTONE</span></code> - something that sounds like a mobile phone ringtone. To be used to indicate an incoming message.</li>
+<li><code class="docutils literal notranslate"><span class="pre">FUNK</span></code> - a funky bass line for secret agents and criminal masterminds.</li>
+<li><code class="docutils literal notranslate"><span class="pre">BLUES</span></code> - a boogie-woogie 12-bar blues walking bass.</li>
+<li><code class="docutils literal notranslate"><span class="pre">BIRTHDAY</span></code> - “Happy Birthday to You…” for copyright status see: <a class="reference external" href="http://www.bbc.co.uk/news/world-us-canada-34332853">http://www.bbc.co.uk/news/world-us-canada-34332853</a></li>
+<li><code class="docutils literal notranslate"><span class="pre">WEDDING</span></code> - the bridal chorus from Wagner’s opera “Lohengrin”.</li>
+<li><code class="docutils literal notranslate"><span class="pre">FUNERAL</span></code> - the “funeral march” otherwise known as Frédéric Chopin’s Piano Sonata No. 2 in B♭ minor, Op. 35.</li>
+<li><code class="docutils literal notranslate"><span class="pre">PUNCHLINE</span></code> - a fun fragment that signifies a joke has been made.</li>
+<li><code class="docutils literal notranslate"><span class="pre">PYTHON</span></code> - John Philip Sousa’s march “Liberty Bell” aka, the theme for “Monty Python’s Flying Circus” (after which the Python programming language is named).</li>
+<li><code class="docutils literal notranslate"><span class="pre">BADDY</span></code> - silent movie era entrance of a baddy.</li>
+<li><code class="docutils literal notranslate"><span class="pre">CHASE</span></code> - silent movie era chase scene.</li>
+<li><code class="docutils literal notranslate"><span class="pre">BA_DING</span></code> - a short signal to indicate something has happened.</li>
+<li><code class="docutils literal notranslate"><span class="pre">WAWAWAWAA</span></code> - a very sad trombone.</li>
+<li><code class="docutils literal notranslate"><span class="pre">JUMP_UP</span></code> - for use in a game, indicating upward movement.</li>
+<li><code class="docutils literal notranslate"><span class="pre">JUMP_DOWN</span></code> - for use in a game, indicating downward movement.</li>
+<li><code class="docutils literal notranslate"><span class="pre">POWER_UP</span></code> - a fanfare to indicate an achievement unlocked.</li>
+<li><code class="docutils literal notranslate"><span class="pre">POWER_DOWN</span></code> - a sad fanfare to indicate an achievement lost.</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="example">
+<h3>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h3>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    music.py</span>
+<span class="sd">    ~~~~~~~~</span>
+
+<span class="sd">    Plays a simple tune using the Micropython music module.</span>
+<span class="sd">    This example requires a speaker/buzzer/headphones connected to P0 and GND,</span>
+<span class="sd">    or the latest micro:bit device with built-in speaker.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">microbit</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">import</span> <span class="nn">music</span>
+
+<span class="c1"># play Prelude in C.</span>
+<span class="n">notes</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s1">&#39;c4:1&#39;</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="s1">&#39;c5&#39;</span><span class="p">,</span> <span class="s1">&#39;e5&#39;</span><span class="p">,</span> <span class="s1">&#39;g4&#39;</span><span class="p">,</span> <span class="s1">&#39;c5&#39;</span><span class="p">,</span> <span class="s1">&#39;e5&#39;</span><span class="p">,</span> <span class="s1">&#39;c4&#39;</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="s1">&#39;c5&#39;</span><span class="p">,</span> <span class="s1">&#39;e5&#39;</span><span class="p">,</span> <span class="s1">&#39;g4&#39;</span><span class="p">,</span> <span class="s1">&#39;c5&#39;</span><span class="p">,</span> <span class="s1">&#39;e5&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;c4&#39;</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;d5&#39;</span><span class="p">,</span> <span class="s1">&#39;f5&#39;</span><span class="p">,</span> <span class="s1">&#39;a4&#39;</span><span class="p">,</span> <span class="s1">&#39;d5&#39;</span><span class="p">,</span> <span class="s1">&#39;f5&#39;</span><span class="p">,</span> <span class="s1">&#39;c4&#39;</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;d5&#39;</span><span class="p">,</span> <span class="s1">&#39;f5&#39;</span><span class="p">,</span> <span class="s1">&#39;a4&#39;</span><span class="p">,</span> <span class="s1">&#39;d5&#39;</span><span class="p">,</span> <span class="s1">&#39;f5&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;b3&#39;</span><span class="p">,</span> <span class="s1">&#39;d4&#39;</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="s1">&#39;d5&#39;</span><span class="p">,</span> <span class="s1">&#39;f5&#39;</span><span class="p">,</span> <span class="s1">&#39;g4&#39;</span><span class="p">,</span> <span class="s1">&#39;d5&#39;</span><span class="p">,</span> <span class="s1">&#39;f5&#39;</span><span class="p">,</span> <span class="s1">&#39;b3&#39;</span><span class="p">,</span> <span class="s1">&#39;d4&#39;</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="s1">&#39;d5&#39;</span><span class="p">,</span> <span class="s1">&#39;f5&#39;</span><span class="p">,</span> <span class="s1">&#39;g4&#39;</span><span class="p">,</span> <span class="s1">&#39;d5&#39;</span><span class="p">,</span> <span class="s1">&#39;f5&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;c4&#39;</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="s1">&#39;c5&#39;</span><span class="p">,</span> <span class="s1">&#39;e5&#39;</span><span class="p">,</span> <span class="s1">&#39;g4&#39;</span><span class="p">,</span> <span class="s1">&#39;c5&#39;</span><span class="p">,</span> <span class="s1">&#39;e5&#39;</span><span class="p">,</span> <span class="s1">&#39;c4&#39;</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="s1">&#39;c5&#39;</span><span class="p">,</span> <span class="s1">&#39;e5&#39;</span><span class="p">,</span> <span class="s1">&#39;g4&#39;</span><span class="p">,</span> <span class="s1">&#39;c5&#39;</span><span class="p">,</span> <span class="s1">&#39;e5&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;c4&#39;</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;e5&#39;</span><span class="p">,</span> <span class="s1">&#39;a5&#39;</span><span class="p">,</span> <span class="s1">&#39;a4&#39;</span><span class="p">,</span> <span class="s1">&#39;e5&#39;</span><span class="p">,</span> <span class="s1">&#39;a5&#39;</span><span class="p">,</span> <span class="s1">&#39;c4&#39;</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;e5&#39;</span><span class="p">,</span> <span class="s1">&#39;a5&#39;</span><span class="p">,</span> <span class="s1">&#39;a4&#39;</span><span class="p">,</span> <span class="s1">&#39;e5&#39;</span><span class="p">,</span> <span class="s1">&#39;a5&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;c4&#39;</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="s1">&#39;f#&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;d5&#39;</span><span class="p">,</span> <span class="s1">&#39;f#4&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;d5&#39;</span><span class="p">,</span> <span class="s1">&#39;c4&#39;</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="s1">&#39;f#&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;d5&#39;</span><span class="p">,</span> <span class="s1">&#39;f#4&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;d5&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;b3&#39;</span><span class="p">,</span> <span class="s1">&#39;d4&#39;</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="s1">&#39;d5&#39;</span><span class="p">,</span> <span class="s1">&#39;g5&#39;</span><span class="p">,</span> <span class="s1">&#39;g4&#39;</span><span class="p">,</span> <span class="s1">&#39;d5&#39;</span><span class="p">,</span> <span class="s1">&#39;g5&#39;</span><span class="p">,</span> <span class="s1">&#39;b3&#39;</span><span class="p">,</span> <span class="s1">&#39;d4&#39;</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="s1">&#39;d5&#39;</span><span class="p">,</span> <span class="s1">&#39;g5&#39;</span><span class="p">,</span> <span class="s1">&#39;g4&#39;</span><span class="p">,</span> <span class="s1">&#39;d5&#39;</span><span class="p">,</span> <span class="s1">&#39;g5&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;b3&#39;</span><span class="p">,</span> <span class="s1">&#39;c4&#39;</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="s1">&#39;c5&#39;</span><span class="p">,</span> <span class="s1">&#39;e4&#39;</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="s1">&#39;c5&#39;</span><span class="p">,</span> <span class="s1">&#39;b3&#39;</span><span class="p">,</span> <span class="s1">&#39;c4&#39;</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="s1">&#39;c5&#39;</span><span class="p">,</span> <span class="s1">&#39;e4&#39;</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="s1">&#39;c5&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;a3&#39;</span><span class="p">,</span> <span class="s1">&#39;c4&#39;</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="s1">&#39;c5&#39;</span><span class="p">,</span> <span class="s1">&#39;e4&#39;</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="s1">&#39;c5&#39;</span><span class="p">,</span> <span class="s1">&#39;a3&#39;</span><span class="p">,</span> <span class="s1">&#39;c4&#39;</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="s1">&#39;c5&#39;</span><span class="p">,</span> <span class="s1">&#39;e4&#39;</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="s1">&#39;c5&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;d3&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;d4&#39;</span><span class="p">,</span> <span class="s1">&#39;f#&#39;</span><span class="p">,</span> <span class="s1">&#39;c5&#39;</span><span class="p">,</span> <span class="s1">&#39;d4&#39;</span><span class="p">,</span> <span class="s1">&#39;f#&#39;</span><span class="p">,</span> <span class="s1">&#39;c5&#39;</span><span class="p">,</span> <span class="s1">&#39;d3&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;d4&#39;</span><span class="p">,</span> <span class="s1">&#39;f#&#39;</span><span class="p">,</span> <span class="s1">&#39;c5&#39;</span><span class="p">,</span> <span class="s1">&#39;d4&#39;</span><span class="p">,</span> <span class="s1">&#39;f#&#39;</span><span class="p">,</span> <span class="s1">&#39;c5&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;g3&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;d4&#39;</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;g3&#39;</span><span class="p">,</span> <span class="s1">&#39;b3&#39;</span><span class="p">,</span> <span class="s1">&#39;d4&#39;</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span>
+<span class="p">]</span>
+
+<span class="n">music</span><span class="o">.</span><span class="n">play</span><span class="p">(</span><span class="n">notes</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="neopixel.html" class="btn btn-neutral float-right" title="NeoPixel" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="micropython.html" class="btn btn-neutral float-left" title="MicroPython" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2015-2020, Multiple authors
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
