@@ -32,33 +32,34 @@ Functions
 
 .. py:function:: current_event()
 
-    :return: the name of the last recorded ``SoundEvent``,
-             ``SoundEvent.LOUD('loud')`` or ``SoundEvent.QUIET('quiet')``.
+    * **return**: the name of the last recorded ``SoundEvent``,
+      ``SoundEvent.LOUD('loud')`` or ``SoundEvent.QUIET('quiet')``.
 
 .. py:function:: was_event(event)
 
-    :param event: a sound event,  such as ``SoundEvent.LOUD`` or
-               ``SoundEvent.QUIET``.
-    :return: ``true`` if sound was heard at least once since the last call,
-             otherwise ``false``.
+    * **event**: a sound event,  such as ``SoundEvent.LOUD`` or
+      ``SoundEvent.QUIET``.
+    * **return**: ``true`` if sound was heard at least once since the last
+      call, otherwise ``false``.
 
 .. py:function:: get_events():
 
-    :return: a tuple of the event history. The most recent is listed last.
-             Also clears the sound event history before returning.
+    * **return**: a tuple of the event history. The most recent is listed last.
+      Also clears the sound event history before returning.
 
 .. py:function:: set_threshold(event, value)
 
-    :param event: a sound event, such as ``SoundEvent.LOUD`` or ``SoundEvent.QUIET``.
+    * **event**: a sound event, such as ``SoundEvent.LOUD`` or
+      ``SoundEvent.QUIET``.
     
-    :param value: The threshold level in the range 0-255.
-                  For example, ``set_threshold(SoundEvent.LOUD, 250)`` will
-                  only trigger if the sound is very loud (>= 250).
+    * **value**: The threshold level in the range 0-255. For example,
+      ``set_threshold(SoundEvent.LOUD, 250)`` will only trigger if the sound is
+      very loud (>= 250).
 
 .. py:function:: sound_level()
 
-    :return: a representation of the sound pressure level in the range 0 to
-             255.
+    * **return**: a representation of the sound pressure level in the range 0 to
+    255.
 
 
 Example

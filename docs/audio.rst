@@ -18,26 +18,25 @@ Functions
 
     Play the source to completion.
 
-    :param source: ``Sound``- The ``microbit`` module contains a list of
-                     built-in sounds that your can pass to ``audio.play()``.
+    * **source**: ``Sound`` - The ``microbit`` module contains a list of
+      built-in sounds that your can pass to ``audio.play()``.
 
-    :param source: ``AudioFrame`` - the source agrument can also be an
-                     iterable of ``AudioFrame`` elements as described below.
+    * **source**: ``AudioFrame`` - The source agrument can also be an iterable
+      of ``AudioFrame`` elements as described below.
 
-    :param wait: If ``wait`` is ``True``, this function will block until the
-                 source is exhausted.
+    * **wait**: If ``wait`` is ``True``, this function will block until the
+      source is exhausted.
 
-    :param pin: As with the music module, you can use the optional ``pin``
-                argument to specify the output pin can be used to override the
-                default of ``microbit.pin0``. If you have the latest micro:bit
-                **V2**, you can use ``microbit.pin_speaker``.
-                The pin argument can also take a tuple of two pins, for example
-                ``pin=(pin_speaker, pin0)`` which would output sound on the
-                built-in speaker and pin 0.
+    * **pin**: As with the music module, you can use the optional ``pin``
+      argument to specify the output pin can be used to override the
+      default of ``microbit.pin0``. If you have the latest micro:bit **V2**,
+      you can use ``microbit.pin_speaker``. The pin argument can also take a
+      tuple of two pins, for example ``pin=(pin_speaker, pin0)`` which would
+      output sound on the built-in speaker and pin 0.
 
-    :param return_pin: specifies a differential edge connector pin to connect
-                       to an external speaker instead of ground. This is
-                       ignored for the **V2** revision.
+    * **return_pin**: specifies a differential edge connector pin to connect
+      to an external speaker instead of ground. This is ignored for the **V2**
+      revision.
 
 .. py:function:: is_playing()
 
