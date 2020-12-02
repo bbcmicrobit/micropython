@@ -230,13 +230,6 @@ Images API::
 ``Image.MEH``
 ``Image.YES``
 ``Image.NO``
-``Image.CLOCK12`` clock at 12 o' clock
-...
-``Image.CLOCK1``  clock at 1 o'clock
-``Image.ARROW_N`` arrows pointing N, NE, E, SE, S, SW, W, NW
-(microbit.Image.ARROW_direction)
-...
-``Image.ARROW_NW``
 ``Image.TRIANGLE``
 ``Image.TRIANGLE_LEFT``
 ``Image.CHESSBOARD``
@@ -267,8 +260,20 @@ Images API::
 ``Image.UMBRELLA``
 ``Image.SNAKE``
 
-**built-in image lists** - useful for animations, e.g.
-display.show(Image.ALL_CLOCKS)
+Clock:
+
+``Image.CLOCK1`` ``Image.CLOCK2`` ``Image.CLOCK3`` ``Image.CLOCK4``
+``Image.CLOCK5`` ``Image.CLOCK6`` ``Image.CLOCK7`` ``Image.CLOCK8``
+``Image.CLOCK9`` ``Image.CLOCK10`` ``Image.CLOCK11`` ``Image.CLOCK12``
+
+Arrows:
+
+``Image.ARROW_N`` ``Image.ARROW_NE`` ``Image.ARROW_E`` ``Image.ARROW_SE``
+``Image.ARROW_S`` ``Image.ARROW_SW`` ``Image.ARROW_W`` ``Image.ARROW_NW``
+
+Built-in image lists:
+
+These will display an animation.
 
 ``Image.ALL_CLOCKS``
 ``Image.ALL_ARROWS``
