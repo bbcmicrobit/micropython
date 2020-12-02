@@ -46,7 +46,7 @@ Functions
     emphasis.
 
 .. py:function:: pronounce(phonemes, \*, pitch=64, speed=72, mouth=128, throat=128, pin=pin0)
-                 pronounce(phonemes, pin=(pin_speaker, pin0))
+                 pronounce(phonemes, \*, pitch=64, speed=72, mouth=128, throat=128, pin=(pin_speaker, pin0))
 
     Pronounce the phonemes in the string ``phonemes``. See below for details of
     how to use phonemes to finely control the output of the speech synthesiser.
@@ -58,14 +58,20 @@ Functions
     If you have the latest micro:bit **V2**, you can use
     ``microbit.pin_speaker``.
 
-.. py:function:: say(words, \*, pitch=64, speed=72, mouth=128, throat=128)
+    The pin argument can also take a tuple of two pins, for example
+    ``pin=(pin_speaker, pin0)`` which would output sound on the built-in
+    speaker and pin 0.
+
+.. py:function:: say(words, \*, pitch=64, speed=72, mouth=128, throat=128, pin=pin0)
+                 say(words, \*, pitch=64, speed=72, mouth=128, throat=128, pin=(pin_speaker, pin0))
 
     Say the English words in the string ``words``. The result is semi-accurate
     for English. Override the optional pitch, speed, mouth and throat
     settings to change the timbre (quality) of the voice. This is a short-hand
     equivalent of: ``speech.pronounce(speech.translate(words))``
 
-.. py:function:: sing(phonemes, \*, pitch=64, speed=72, mouth=128, throat=128)
+.. py:function:: sing(phonemes, \*, pitch=64, speed=72, mouth=128, throat=128, pin=pin0)
+                 sing(phonemes, \*, pitch=64, speed=72, mouth=128, throat=128, pin=(pin_speaker, pin0))
 
     Sing the phonemes contained in the string ``phonemes``. Changing the pitch
     and duration of the note is described below. Override the optional pitch,

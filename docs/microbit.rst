@@ -63,7 +63,7 @@ Classes
 
     Audio V2 <audio.rst>
     image.rst
-    Sound <microbit_micropython_api.rst>
+    Sound <audio.rst>
 
 
 Modules

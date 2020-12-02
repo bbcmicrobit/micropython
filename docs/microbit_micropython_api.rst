@@ -75,7 +75,7 @@ The LED display is exposed via the `display` object::
 
 SoundEvent **V2**
 -----------------
-Sound events describe changes in the sound heard by the microphone.
+Sound events describe changes in the sound heard by the microphone::
 
     # Value to represent the transition of sound events, from `quiet` to `loud`
     # like clapping or shouting.
@@ -154,7 +154,7 @@ pin_logo::
 
 pin_speaker:
     
-As above `MicroBitPin` class, but does not include pin.is_touched() and
+As above ``MicroBitPin`` class, but does not include ``pin.is_touched()`` and
 includes::
 
     # disable the built-in speaker

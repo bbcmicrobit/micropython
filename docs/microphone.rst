@@ -17,15 +17,9 @@ which is lit when the microphone is in use.
 Sound events
 ============
 The microphone can respond to a pre-defined set of sound events that are
-based on the amplitude and wavelength of the sound.
-
-.. py:class:: SoundEvent  
-
-    Value to represent loud sound events, like clapping or shouting
-    ``SoundEvent.LOUD`` = ``SoundEvent.LOUD('loud')``.
-
-    Value to represent quiet sound events, like speaking or background music
-    ``SoundEvent.QUIET`` = ``SoundEvent.QUIET('quiet')``.
+based on the amplitude and wavelength of the sound. The ``SoundEvent`` class
+is already instantiated and can be used with the ``microphone`` methods
+documented below.
 
 Functions
 =========
@@ -45,7 +39,7 @@ Functions
 .. py:function:: get_events():
 
     * **return**: a tuple of the event history. The most recent is listed last.
-      Also clears the sound event history before returning.
+      ``get_events()`` also clears the sound event history before returning.
 
 .. py:function:: set_threshold(event, value)
 
@@ -59,7 +53,7 @@ Functions
 .. py:function:: sound_level()
 
     * **return**: a representation of the sound pressure level in the range 0 to
-    255.
+      255.
 
 
 Example
