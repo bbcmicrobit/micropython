@@ -123,7 +123,7 @@ Functions
     frequency is set or ``stop`` is called (see below).
 
 .. py:function:: stop(pin=pin0)
-                 stop(pin=(pin_speaker, pin0)
+                 stop(pin=(pin_speaker, pin0))
     
     Stops all music playback on a given pin, eg. ``music.stop(pin_speaker)``
     **V2**. If no pin is given, eg. ``music.stop()`` pin0 is assumed.
