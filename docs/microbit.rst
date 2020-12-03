@@ -62,6 +62,7 @@ Classes
     :maxdepth: 1
 
     image.rst
+    Sound <audio.rst>
 
 
 Modules
@@ -70,9 +71,11 @@ Modules
 .. toctree::
     :maxdepth: 1
 
-    display.rst
-    uart.rst
-    spi.rst
-    i2c.rst
     accelerometer.rst
+    Audio V2 <audio.rst>
     compass.rst
+    display.rst
+    i2c.rst
+    microphone.rst
+    spi.rst
+    uart.rst

@@ -8,15 +8,24 @@ BBC micro:bit MicroPython documentation
 
 Welcome!
 
-The BBC micro:bit is a small computing device for children. One of the
-languages it understands is the popular Python programming language. The
-version of Python that runs on the BBC micro:bit is called MicroPython.
+The `BBC micro:bit <https://microbit.org>`_ is a small computing device for
+children. One of the languages it understands is the popular Python programming
+language. The version of Python that runs on the BBC micro:bit is called
+MicroPython.
 
 This documentation includes lessons for teachers
 and API documentation for developers (check out the index on the left). We hope
 you enjoy developing for the BBC micro:bit using MicroPython.
 
-If you're a new programmer, teacher or unsure where to start, begin with the tutorials.
+.. note::
+
+    The BBC micro:bit MicroPython documentation contains information for all 
+    versions of the micro:bit board. Where functionality is applicable only
+    to the latest device, you will see a note or comment marking this as 
+    **V2**.
+
+If you're a new programmer, teacher or unsure where to start, begin with the
+tutorials.
 
 .. image:: comic.png
 
@@ -28,8 +37,15 @@ If you're a new programmer, teacher or unsure where to start, begin with the tut
 
 Projects related to MicroPython on the BBC micro:bit include:
 
-* `Mu <https://github.com/ntoll/mu>`_ - a simple code editor for kids, teachers and beginner programmers. Probably the easiest way for people to program MicroPython on the BBC micro:bit.
-* `uFlash <https://uflash.readthedocs.io/en/latest/>`_ - a command line tool for flashing raw Python scripts onto a BBC micro:bit.
+* `micro:bit Python Editor <https://python.microbit.org>`_ A simple
+  browser-based code editor, designed to help teachers and learners get the
+  most out of text-based programming on the micro:bit.
+
+* `Mu <https://codewith.mu>`_ A simple offline code editor for kids, teachers
+  and beginner programmers.
+
+* `uFlash <https://uflash.readthedocs.io/en/latest/>`_ A command line tool
+  for flashing raw Python scripts onto a BBC micro:bit.
 
 .. toctree::
     :maxdepth: 2
@@ -67,6 +83,7 @@ Projects related to MicroPython on the BBC micro:bit include:
    i2c.rst
    image.rst
    machine.rst
+   microphone.rst
    micropython.rst
    music.rst
    neopixel.rst
