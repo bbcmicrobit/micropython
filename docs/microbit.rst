@@ -83,6 +83,7 @@ Classes
     :maxdepth: 1
 
     image.rst
+    Sound <audio.rst>
 
 
 Modules
@@ -92,8 +93,10 @@ Modules
     :maxdepth: 1
 
     accelerometer.rst
+    Audio V2 <audio.rst>
     compass.rst
     display.rst
     i2c.rst
+    microphone.rst
     spi.rst
     uart.rst
