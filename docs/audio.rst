@@ -14,7 +14,7 @@ Functions
 =========
 
 .. py:function:: play(source, wait=True, pin=pin0, return_pin=None)
-                 play(source, wait=True, pin=(pin_speaker, pin0))
+                 play(source, wait=True, pin=(pin_speaker, pin0), return_pin=None)
 
     Play the source to completion.
 
