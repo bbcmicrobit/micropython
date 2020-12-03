@@ -95,10 +95,8 @@ Functions
     their defaults before the music (whatever it may be) is played.
 
     An optional argument to specify the output pin can be used to override the
-    default of ``microbit.pin0``. If you have the latest micro:bit, you can
-    use ``microbit.pin_speaker`` **V2**.
-
-    The pin argument can also take a tuple of two pins, for example
+    default of ``microbit.pin0``. With micro:bit **V2** you can use
+    ``microbit.pin_speaker`` or a tuple of two pins, for example
     ``pin=(pin_speaker, pin0)`` which would output sound on the built-in
     speaker and pin 0.
 
