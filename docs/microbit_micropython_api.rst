@@ -335,7 +335,7 @@ Sound **V2**
 ------------
 
 A set of expressive sounds are available to the micro:bit **V2**. They can be
-accessed via the ``microbit`` module and played with the ``audio`` module.
+accessed via the ``microbit`` module and played with the :doc:`audio <audio>` module.
 
 **Built-in sounds**
 

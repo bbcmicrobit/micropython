@@ -45,7 +45,7 @@ Functions
     that can be further hand-edited to improve accuracy, inflection and
     emphasis.
 
-.. py:function:: pronounce(phonemes, \*, pitch=64, speed=72, mouth=128, throat=128, pin=pin0)
+.. py:function:: pronounce(phonemes, \*, pitch=64, speed=72, mouth=128, throat=128)
                  pronounce(phonemes, \*, pitch=64, speed=72, mouth=128, throat=128, pin=(pin_speaker, pin0))
 
     Pronounce the phonemes in the string ``phonemes``. See below for details of
@@ -62,7 +62,7 @@ Functions
     ``pin=(pin_speaker, pin0)`` which would output sound on the built-in
     speaker and pin 0.
 
-.. py:function:: say(words, \*, pitch=64, speed=72, mouth=128, throat=128, pin=pin0)
+.. py:function:: say(words, \*, pitch=64, speed=72, mouth=128, throat=128)
                  say(words, \*, pitch=64, speed=72, mouth=128, throat=128, pin=(pin_speaker, pin0))
 
     Say the English words in the string ``words``. The result is semi-accurate
@@ -70,7 +70,7 @@ Functions
     settings to change the timbre (quality) of the voice. This is a short-hand
     equivalent of: ``speech.pronounce(speech.translate(words))``
 
-.. py:function:: sing(phonemes, \*, pitch=64, speed=72, mouth=128, throat=128, pin=pin0)
+.. py:function:: sing(phonemes, \*, pitch=64, speed=72, mouth=128, throat=128)
                  sing(phonemes, \*, pitch=64, speed=72, mouth=128, throat=128, pin=(pin_speaker, pin0))
 
     Sing the phonemes contained in the string ``phonemes``. Changing the pitch

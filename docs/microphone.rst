@@ -17,9 +17,16 @@ which is lit when the microphone is in use.
 Sound events
 ============
 The microphone can respond to a pre-defined set of sound events that are
-based on the amplitude and wavelength of the sound. The ``SoundEvent`` class
-is already instantiated and can be used with the ``microphone`` methods
-documented below.
+based on the amplitude and wavelength of the sound. 
+
+These sound events are represented by instances of the ``SoundEvent`` class,
+accessible via variables in ``microbit.SoundEvent``:
+
+- ``microbit.SoundEvent.QUIET``: Represents the transition of sound events,
+  from ``loud`` to ``quiet`` like speaking or background music.
+
+- ``microbit.SoundEvent.LOUD``: Represents the transition of sound events,
+  from ``quiet`` to ``loud`` like clapping or shouting.
 
 Functions
 =========
@@ -34,7 +41,15 @@ Functions
     * **event**: a sound event,  such as ``SoundEvent.LOUD`` or
       ``SoundEvent.QUIET``.
     * **return**: ``true`` if sound was heard at least once since the last
-      call, otherwise ``false``.
+      call, otherwise ``false``. ``was_event()`` also clears the sound
+      event history before returning.
+
+.. py:function:: is_event(event)
+
+    * **event**: a sound event,  such as ``SoundEvent.LOUD`` or
+      ``SoundEvent.QUIET``.
+    * **return**: ``true`` if sound event is the most recent since the last
+      call, otherwise ``false``. It does not clear the sound event history.
 
 .. py:function:: get_events()
 
