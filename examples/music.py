@@ -3,7 +3,8 @@
     ~~~~~~~~
 
     Plays a simple tune using the Micropython music module.
-    This example requires a speaker/buzzer/headphones connected to P0 and GND.
+    This example requires a speaker/buzzer/headphones connected to P0 and GND,
+    or the latest micro:bit device with built-in speaker.
 """
 from microbit import *
 import music
