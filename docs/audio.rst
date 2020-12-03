@@ -3,32 +3,47 @@ Audio
 
 .. py:module:: audio
 
-This module allows you play sounds from a speaker attached to the micro:bit.
+This module allows you play sounds with the micro:bit.
+
+By default sound output will be via the edge connector on pin 0 and the
+built-in speaker **V2**. You can connect a wired headphones or a speaker to
+pin 0 and GND on the edge connector to hear the sounds.
 
 The ``audio`` module can be imported as ``import audio`` or accessed via
 the ``microbit`` module as ``microbit.audio``.
-
-In order to use the audio module you will need to provide a sound source.
-
-A sound source is an iterable (sequence, like list or tuple, or a generator) of
-frames, each of 32 samples.
-The ``audio`` modules plays samples at the rate of 7812.5 samples per second,
-which means that it can reproduce frequencies up to 3.9kHz.
 
 Functions
 =========
 
 .. py:function:: play(source, wait=True, pin=pin0, return_pin=None)
+                 play(source, wait=True, pin=(pin_speaker, pin0), return_pin=None)
 
     Play the source to completion.
 
-    :param source: An iterable sound source, each element of which must be
-        an ``AudioFrame``.
+    :param source: ``Sound``: The ``microbit`` module contains a list of
+      built-in sounds that your can pass to ``audio.play()``.
+
+      ``AudioFrame``: The source agrument can also be an iterable
+      of ``AudioFrame`` elements as described below.
     :param wait: If ``wait`` is ``True``, this function will block until the
         source is exhausted.
-    :param pin: Specifies which pin the speaker is connected to.
-    :param return_pin: Specifies a differential pin to connect to the speaker
-        instead of ground.
+    :param pin: As with the music module, you can use the optional ``pin``
+      argument to specify the output pin can be used to override the
+      default of ``microbit.pin0``. If you have the latest micro:bit **V2**,
+      you can use ``microbit.pin_speaker``. The pin argument can also take a
+      tuple of two pins, for example ``pin=(pin_speaker, pin0)`` which would
+      output sound on the built-in speaker and pin 0.
+    :param return_pin: specifies a differential edge connector pin to connect
+      to an external speaker instead of ground. This is ignored for the **V2**
+      revision.
+
+.. py:function:: is_playing()
+
+    :returns: ``True`` if audio is playing, otherwise returns ``False``.
+
+.. py:function:: stop()
+
+    Stops all audio playback.
 
 Classes
 =======
@@ -52,9 +67,25 @@ Classes
 Using audio
 ===========
 
-You will need a sound source, as input to the ``play`` function. You can generate your own, like in
-``examples/waveforms.py``.
+You will need a sound source, as input to the ``play`` function. You can use
+the built-in sounds **V2** from the ``microbit`` module, ``microbit.Sound``, or
+generate your own, like in ``examples/waveforms.py``.
 
+Built-in sounds **V2**
+----------------------
+
+The built-in sounds can be called using ``audio.play(Sound.NAME)``.
+
+* ``Sound.GIGGLE``
+* ``Sound.HAPPY``
+* ``Sound.HELLO``
+* ``Sound.MYSTERIOUS``
+* ``Sound.SAD``
+* ``Sound.SLIDE``
+* ``Sound.SOARING``
+* ``Sound.SPRING``
+* ``Sound.TWINKLE``
+* ``Sound.YAWN``
 
 Technical Details
 =================

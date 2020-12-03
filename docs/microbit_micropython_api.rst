@@ -26,6 +26,9 @@ There are a few functions available directly::
     panic(error_code)
     # resets the micro:bit.
     reset()
+    # sets the output volume (0-255) of the micro:bit speaker **V2** and
+    # external speaker or headphones connected to the edge connector pins.
+    set_volume(128)    # V2
 
 The rest of the functionality is provided by objects and classes in the microbit module, as described below.
 
@@ -74,11 +77,43 @@ The LED display is exposed via the `display` object::
     # written messages).
     display.scroll(string, delay=400)
 
+SoundEvent **V2**
+-----------------
+Sound events describe changes in the sound heard by the microphone::
+
+    # Value to represent the transition of sound events, from `quiet` to `loud`
+    # like clapping or shouting.
+    SoundEvent.LOUD = SoundEvent('loud')
+    # Value to represent the transition of sound events, from `loud` to `quiet`
+    # like speaking or background music.
+    SoundEvent.QUIET = SoundEvent('quiet')
+
+Microphone **V2**
+-----------------
+
+The Microphone is accessed via the `microphone` object::
+
+    # Returns the name of the last recorded sound event.
+    current_event()
+    # A sound event,  such as `SoundEvent.LOUD` or `SoundEvent.QUIET`. 
+    # Returns`true` if sound was heard at least once since the last
+    # call, otherwise `false`.
+    was_event(event)
+    # Returns a tuple of the event history. The most recent is listed last.
+    # Also clears the sound event history before returning.
+    get_events()
+    # The threshold level in the range 0-255. For example,
+    # `set_threshold(SoundEvent.LOUD, 250)` will only trigger if the
+    # sound is very loud (>= 250).
+    set_threshold(128)
+    # Returns a representation of the sound pressure level in the range 0 to 255.
+    sound_level()
+
 Pins
 ----
 
 Provide digital and analog input and output functionality, for the pins in the
-connector. Some pins are connected
+connector, the **V2** logo and the **V2** speaker. Some pins are connected
 internally to the I/O that drives the LED matrix and the buttons.
 
 Each pin is provided as an object directly in the ``microbit`` module.  This
@@ -92,6 +127,8 @@ keeps the API relatively flat, making it very easy to use:
     * *Warning: P17-P18 (inclusive) are unavailable.*
     * pin19
     * pin20
+    * pin_logo **V2**
+    * pin_speaker **V2**
 
 Each of these pins are instances of the ``MicroBitPin`` class, which offers the following API::
 
@@ -112,6 +149,21 @@ Each of these pins are instances of the ``MicroBitPin`` class, which offers the 
     # Only available for touch pins 0, 1, and 2. Returns boolean if the pin
     # is touched
     pin.is_touched()
+
+Except in the case of the pins marked **V2**, which offers the following API:
+
+pin_logo::
+
+    # returns boolean for logo touch pin
+    pin_logo.is_touched()
+
+pin_speaker, as the above ``MicroBitPin`` class, but does not include
+``pin.is_touched()`` and includes::
+
+    # disable the built-in speaker
+    pin_speaker.disable()
+    # enable the built-in speaker
+    pin_speaker.enable()
 
 Images
 ------
@@ -276,6 +328,25 @@ There is an I2C bus on the micro:bit that is exposed via the `i2c` object.  It h
     i2c.read(addr, n, repeat=False)
     # write buf to device with addr; repeat=True means a stop bit won't be sent.
     i2c.write(addr, buf, repeat=False)
+
+Sound **V2**
+------------
+
+A set of expressive sounds are available to the micro:bit **V2**. They can be
+accessed via the ``microbit`` module and played with the :doc:`audio <audio>` module.
+
+**Built-in sounds**
+
+``Sound.GIGGLE``
+``Sound.HAPPY``
+``Sound.HELLO``
+``Sound.MYSTERIOUS``
+``Sound.SAD``
+``Sound.SLIDE``
+``Sound.SOARING``
+``Sound.SPRING``
+``Sound.TWINKLE``
+``Sound.YAWN``
 
 UART
 ----

@@ -5,7 +5,8 @@ Input/Output Pins
 
 The pins are your board's way to communicate with external devices connected to
 it. There are 19 pins for your disposal, numbered 0-16 and 19-20. Pins 17 and
-18 are not available.
+18 are not available. There is also a ``pin_logo`` **V2** and ``pin_speaker``
+**V2** available to use with the latest micro:bit device.
 
 For example, the script below will change the display on the micro:bit
 depending upon the digital reading on pin 0::
@@ -23,54 +24,65 @@ depending upon the digital reading on pin 0::
 Pin Functions
 =============
 
-.. image:: pinout.png
+`Edge connector and pinout <https://tech.microbit.org/hardware/edgeconnector/#edge-connector-pins>`_
 
 This table summarises the pins available, their types and what
 they are internally connected to. The pins are available as attributes on the
 ``microbit`` module: ``microbit.pin0`` - ``microbit.pin20``.
 
-+-----+---------+----------+
-| Pin | Type    | Function |
-+=====+=========+==========+
-|  0  | Touch   | Pad 0    |
-+-----+---------+----------+
-|  1  | Touch   | Pad 1    |
-+-----+---------+----------+
-|  2  | Touch   | Pad 2    |
-+-----+---------+----------+
-|  3  | Analog  | Column 1 |
-+-----+---------+----------+
-|  4  | Analog  | Column 2 |
-+-----+---------+----------+
-|  5  | Digital | Button A |
-+-----+---------+----------+
-|  6  | Digital | Column 9 |
-+-----+---------+----------+
-|  7  | Digital | Column 8 |
-+-----+---------+----------+
-|  8  | Digital |          |
-+-----+---------+----------+
-|  9  | Digital | Column 7 |
-+-----+---------+----------+
-|  10 | Analog  | Column 3 |
-+-----+---------+----------+
-|  11 | Digital | Button B |
-+-----+---------+----------+
-|  12 | Digital |          |
-+-----+---------+----------+
-|  13 | Digital | SPI SCK  |
-+-----+---------+----------+
-|  14 | Digital | SPI MISO |
-+-----+---------+----------+
-|  15 | Digital | SPI MOSI |
-+-----+---------+----------+
-|  16 | Digital |          |
-+-----+---------+----------+
-+-----+---------+----------+
-|  19 | Digital | I2C SCL  |
-+-----+---------+----------+
-|  20 | Digital | I2C SDA  |
-+-----+---------+----------+
++-----+---------+----------+-----------------+
+| Pin | Type    | Function | Function **V2** |
++=====+=========+==========+=================+
+|  0  | Touch   | Pad 0    | Pad 0           |
++-----+---------+----------+-----------------+
+|  1  | Touch   | Pad 1    | Pad 1           |
++-----+---------+----------+-----------------+
+|  2  | Touch   | Pad 2    | Pad 2           |
++-----+---------+----------+-----------------+
+|  3  | Analog  | Column 1 | Column 3        |
++-----+---------+----------+-----------------+
+|  4  | Analog  | Column 2 | Column 1        |
++-----+---------+----------+-----------------+
+|  5  | Digital | Button A | Button A        |
++-----+---------+----------+-----------------+
+|  6  | Digital | Column 9 | Column 4        |
++-----+---------+----------+-----------------+
+|  7  | Digital | Column 8 | Column 2        |
++-----+---------+----------+-----------------+
+|  8  | Digital |          |                 |
++-----+---------+----------+-----------------+
+|  9  | Digital | Column 7 |                 |
++-----+---------+----------+-----------------+
+|  10 | Analog  | Column 3 | Column 5        |
++-----+---------+----------+-----------------+
+|  11 | Digital | Button B | Button B        |
++-----+---------+----------+-----------------+
+|  12 | Digital |          |                 |
++-----+---------+----------+-----------------+
+|  13 | Digital | SPI SCK  | SPI SCK         |
++-----+---------+----------+-----------------+
+|  14 | Digital | SPI MISO | SPI MISO        |
++-----+---------+----------+-----------------+
+|  15 | Digital | SPI MOSI | SPI MOSI        |
++-----+---------+----------+-----------------+
+|  16 | Digital |          |                 |
++-----+---------+----------+-----------------+
++-----+---------+----------+-----------------+
+|  19 | Digital | I2C SCL  | I2C SCL         |
++-----+---------+----------+-----------------+
+|  20 | Digital | I2C SDA  | I2C SDA         |
++-----+---------+----------+-----------------+
+
+The above table summarizes the pins available, their types (see below) and what
+they are internally connected to.
+
+The latest micro:bit device **V2** has two additional pins that you can access
+in MicroPython, but that are not available via the edge connector:
+
+* ``pin_logo`` - A touch sensitive logo pin on the front of the micro:bit,
+  which by default is set to capacitive touch mode.
+
+* ``pin_speaker`` - A pin to control the sound output of the micro:bit speaker.
 
 
 Pulse-Width Modulation
@@ -191,11 +203,22 @@ its own to that.
         Return ``True`` if the pin is being touched with a finger, otherwise
         return ``False``.
 
+        .. note::
+            The default touch mode for the pins on the edge connector is 
+            `resistive`. The default for the logo pin **V2** is `capacitive`.
+
+        **Resitive touch**
         This test is done by measuring how much resistance there is between the
         pin and ground.  A low resistance gives a reading of ``True``.  To get
         a reliable reading using a finger you may need to touch the ground pin
         with another part of your body, for example your other hand.
 
+        **Capacitive touch**
+        This test is done by interacting with the electric field of a capacitor
+        using a finger as a conductor. `Capacitive touch
+        <https://www.allaboutcircuits.com/technical-articles/introduction-to-capacitive-touch-sensing>`_
+        does not require you to make a ground connection as part of a circuit.
+ 
 The pull mode for a pin is automatically configured when the pin changes to an
 input mode. Input modes are when you call ``read_analog`` / ``read_digital`` /
 ``is_touched``. The default pull mode for these is, respectively, ``NO_PULL``,
