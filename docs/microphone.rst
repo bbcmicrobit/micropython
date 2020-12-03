@@ -36,7 +36,7 @@ Functions
     * **return**: ``true`` if sound was heard at least once since the last
       call, otherwise ``false``.
 
-.. py:function:: get_events():
+.. py:function:: get_events()
 
     * **return**: a tuple of the event history. The most recent is listed last.
       ``get_events()`` also clears the sound event history before returning.
