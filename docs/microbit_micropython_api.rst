@@ -271,9 +271,8 @@ Arrows:
 ``Image.ARROW_N`` ``Image.ARROW_NE`` ``Image.ARROW_E`` ``Image.ARROW_SE``
 ``Image.ARROW_S`` ``Image.ARROW_SW`` ``Image.ARROW_W`` ``Image.ARROW_NW``
 
-Built-in image lists:
-
-These will display an animation.
+The following are Python lists of images, useful for automatically displaying an
+animation or manually iterating through them.
 
 ``Image.ALL_CLOCKS``
 ``Image.ALL_ARROWS``
