@@ -17,6 +17,13 @@ This documentation includes lessons for teachers
 and API documentation for developers (check out the index on the left). We hope
 you enjoy developing for the BBC micro:bit using MicroPython.
 
+.. note::
+
+    The BBC micro:bit MicroPython documentation contains information for all 
+    versions of the micro:bit board. Where functionality is applicable only
+    to the latest device, you will see a note or comment marking this as 
+    **V2**.
+
 If you're a new programmer, teacher or unsure where to start, begin with the
 :ref:`Tutorials <Tutorials>` and use the `micro:bit Python Editor <https://python.microbit.org>`_
 to program the micro:bit. 
@@ -77,6 +84,7 @@ Projects related to MicroPython on the BBC micro:bit include:
    i2c.rst
    image.rst
    machine.rst
+   microphone.rst
    micropython.rst
    music.rst
    neopixel.rst
