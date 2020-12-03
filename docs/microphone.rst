@@ -26,8 +26,8 @@ Functions
 
 .. py:function:: current_event()
 
-    * **return**: the name of the last recorded ``SoundEvent``,
-      ``SoundEvent.LOUD('loud')`` or ``SoundEvent.QUIET('quiet')``.
+    * **return**: the name of the last recorded sound event,
+      ``SoundEvent('loud')`` or ``SoundEvent('quiet')``.
 
 .. py:function:: was_event(event)
 
