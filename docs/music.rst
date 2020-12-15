@@ -80,7 +80,6 @@ Functions
     Gets the current tempo as a tuple of integers: ``(ticks, bpm)``.
 
 .. py:function:: play(music, pin=pin0, wait=True, loop=False)
-                 play(music, pin=(pin_speaker, pin0) wait=True,loop=False)
 
     Plays ``music`` containing the musical DSL defined above.
 
@@ -95,18 +94,14 @@ Functions
     their defaults before the music (whatever it may be) is played.
 
     An optional argument to specify the output pin can be used to override the
-    default of ``microbit.pin0``. With micro:bit **V2** you can use
-    ``microbit.pin_speaker`` or a tuple of two pins, for example
-    ``pin=(pin_speaker, pin0)`` which would output sound on the built-in
-    speaker and pin 0.
+    default of ``microbit.pin0``.
 
     If ``wait`` is set to ``True``, this function is blocking.
 
     If ``loop`` is set to ``True``, the tune repeats until ``stop`` is called
     (see below) or the blocking call is interrupted.
 
-.. py:function:: pitch(frequency, duration=-1, pin=microbit.pin0, wait=True)
-                 pitch(frequency, duration=-1, pin=(pin_speaker, pin0), wait=True)
+.. py:function:: pitch(frequency, duration=-1, pin=pin0, wait=True)
 
     Plays a pitch at the integer frequency given for the specified number of
     milliseconds. For example, if the frequency is set to 440 and the length to
@@ -120,11 +115,11 @@ Functions
     blocking call is interrupted or, in the case of a background call, a new
     frequency is set or ``stop`` is called (see below).
 
-.. py:function:: stop(pin=pin0)
-                 stop(pin=(pin_speaker, pin0))
+.. py:function:: stop(pin=pin1)
     
-    Stops all music playback on a given pin, eg. ``music.stop(pin_speaker)``
-    **V2**. If no pin is given, eg. ``music.stop()`` pin0 is assumed.
+    Stops all music playback on the built-in speaker and an optional pin, eg.
+    ``music.stop(pin1)``. If no pin is given, eg. ``music.stop()`` all playback
+    pins are assumed.
 
 .. py:function:: reset()
 
