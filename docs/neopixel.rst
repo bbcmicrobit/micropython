@@ -55,7 +55,8 @@ Classes
 
     Initialise a new strip of ``n`` number of neopixel LEDs controlled via pin
     ``pin``. For **V2** micro:bit boards that support RGBW neopixels, a third
-    value can be passed to ``NeoPixel`` to indicate the number of positions
+    value can be passed to ``NeoPixel`` to indicate the number of bytes per
+    pixel is 4 rather than the default of 3.
     
     Each pixel is addressed by a position (starting from 0). Neopixels
     are given RGB (red, green, blue) / RGBW (red, green, blue, white) **V2**
