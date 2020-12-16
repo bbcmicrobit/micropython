@@ -7,8 +7,8 @@ This module allows you to play your own sounds. If you are using a micro:bit
 **V2**, ``audio`` is also part of the ``microbit`` module.
 
 By default sound output will be via the edge connector on pin 0 and the
-built-in speaker **V2**. You can connect wired headphones or a speaker to
-pin 0 and GND on the edge connector to hear the sounds.
+:doc:`built-in speaker <speaker>` **V2**. You can connect wired headphones or
+a speaker to pin 0 and GND on the edge connector to hear the sounds.
 
 Functions
 =========
