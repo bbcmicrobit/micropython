@@ -351,9 +351,11 @@ The speaker is enabled by default and can be accessed using the ``speaker`` obje
 can be turned off or on::
 
     # disable the built-in speaker
-    speaker.disable()
+    speaker.off()
     # enable the built-in speaker
-    speaker.enable()
+    speaker.on()
+    # returns True or False to indicate if the speaker is on or off
+    speaker.is_on()
 
 
 UART
