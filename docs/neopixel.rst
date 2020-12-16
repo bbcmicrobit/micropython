@@ -14,7 +14,7 @@ need to import it separately with::
     From our tests, the micro:bit NeoPixel module can drive up to around 256
     NeoPixels. Anything above that and you may experience weird bugs and
     issues. The micro:bit can only supply 90mA **V1** or 190mA **V2**  to
-    external devices,larger numbers of NeoPixels require an external power
+    external devices, larger numbers of NeoPixels require an external power
     supply with common ground.
 
     NeoPixels are designed to work at 5V, but luckily they still function using
