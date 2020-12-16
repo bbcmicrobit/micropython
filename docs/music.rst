@@ -5,7 +5,7 @@ Music
 
 This is the ``music`` module and you can use it to create and play melodies.
 By default sound output will be via the edge connector on pin 0 and the
-built-in speaker **V2**. You can connect a wired headphones or a speaker to
+built-in speaker **V2**. You can connect wired headphones or a speaker to
 pin 0 and GND on the edge connector to hear the sound:
 
 .. image:: music-pins.png
