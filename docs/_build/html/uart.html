@@ -1,0 +1,420 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>UART &mdash; BBC micro:bit MicroPython 1.0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Bluetooth" href="ble.html" />
+    <link rel="prev" title="SPI" href="spi.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> BBC micro:bit MicroPython
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/hello.html">Hello, World!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/images.html">Images</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/buttons.html">Buttons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/io.html">Input/Output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/music.html">Music</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/random.html">Random</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/movement.html">Movement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/gestures.html">Gestures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/direction.html">Direction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/storage.html">Storage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/speech.html">Speech</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/network.html">Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/radio.html">Radio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/next.html">Next Steps</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="microbit_micropython_api.html">micro:bit Micropython API</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="microbit.html">Microbit Module</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="microbit.html#functions">Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="microbit.html#attributes">Attributes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="microbit.html#classes">Classes</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="microbit.html#modules">Modules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="accelerometer.html">Accelerometer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="audio.html">Audio V2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="compass.html">Compass</a></li>
+<li class="toctree-l3"><a class="reference internal" href="display.html">Display</a></li>
+<li class="toctree-l3"><a class="reference internal" href="i2c.html">I²C</a></li>
+<li class="toctree-l3"><a class="reference internal" href="microphone.html">Microphone <strong>V2</strong></a></li>
+<li class="toctree-l3"><a class="reference internal" href="spi.html">SPI</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">UART</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#functions">Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="accelerometer.html">Accelerometer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="audio.html">Audio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ble.html">Bluetooth</a></li>
+<li class="toctree-l1"><a class="reference internal" href="button.html">Buttons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="compass.html">Compass</a></li>
+<li class="toctree-l1"><a class="reference internal" href="display.html">Display</a></li>
+<li class="toctree-l1"><a class="reference internal" href="filesystem.html">Local Persistent File System</a></li>
+<li class="toctree-l1"><a class="reference internal" href="i2c.html">I²C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="image.html">Image</a></li>
+<li class="toctree-l1"><a class="reference internal" href="machine.html">Machine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="microphone.html">Microphone <strong>V2</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="micropython.html">MicroPython</a></li>
+<li class="toctree-l1"><a class="reference internal" href="music.html">Music</a></li>
+<li class="toctree-l1"><a class="reference internal" href="neopixel.html">NeoPixel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="os.html">The <code class="docutils literal notranslate"><span class="pre">os</span></code>  Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pin.html">Input/Output Pins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="radio.html">Radio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="random.html">Random Number Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="speech.html">Speech</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spi.html">SPI</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">UART</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#functions">Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="utime.html">utime</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Developer Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="devguide/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devguide/flashfirmware.html">Flashing Firmware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devguide/repl.html">Accessing the REPL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devguide/hexformat.html">Firmware Hex File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devguide/devfaq.html">Developer FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devguide/contributing.html">Contributing</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">BBC micro:bit MicroPython</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="microbit.html">Microbit Module</a> &raquo;</li>
+        
+      <li>UART</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/uart.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-microbit.uart">
+<span id="uart"></span><h1>UART<a class="headerlink" href="#module-microbit.uart" title="Permalink to this headline">¶</a></h1>
+<p>The <code class="docutils literal notranslate"><span class="pre">uart</span></code> module lets you talk to a device connected to your board using
+a serial interface.</p>
+<div class="section" id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<dl class="method">
+<dt id="microbit.uart.init">
+<code class="descclassname">microbit.uart.</code><code class="descname">init</code><span class="sig-paren">(</span><em>baudrate=9600</em>, <em>bits=8</em>, <em>parity=None</em>, <em>stop=1</em>, <em>*</em>, <em>tx=None</em>, <em>rx=None</em><span class="sig-paren">)</span><a class="headerlink" href="#microbit.uart.init" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize serial communication with the specified parameters on the
+specified <code class="docutils literal notranslate"><span class="pre">tx</span></code> and <code class="docutils literal notranslate"><span class="pre">rx</span></code> pins. Note that for correct communication, the parameters
+have to be the same on both communicating devices.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Initializing the UART on external pins will cause the Python console on
+USB to become unaccessible, as it uses the same hardware. To bring the
+console back you must reinitialize the UART without passing anything for
+<code class="docutils literal notranslate"><span class="pre">tx</span></code> or <code class="docutils literal notranslate"><span class="pre">rx</span></code> (or passing <code class="docutils literal notranslate"><span class="pre">None</span></code> to these arguments).  This means
+that calling <code class="docutils literal notranslate"><span class="pre">uart.init(115200)</span></code> is enough to restore the Python console.</p>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">baudrate</span></code> defines the speed of communication. Common baud
+rates include:</p>
+<blockquote>
+<div><ul class="simple">
+<li>9600</li>
+<li>14400</li>
+<li>19200</li>
+<li>28800</li>
+<li>38400</li>
+<li>57600</li>
+<li>115200</li>
+</ul>
+</div></blockquote>
+<p>The <code class="docutils literal notranslate"><span class="pre">bits</span></code> defines the size of bytes being transmitted, and the board
+only supports 8. The <code class="docutils literal notranslate"><span class="pre">parity</span></code> parameter defines how parity is checked,
+and it can be <code class="docutils literal notranslate"><span class="pre">None</span></code>, <code class="docutils literal notranslate"><span class="pre">microbit.uart.ODD</span></code> or <code class="docutils literal notranslate"><span class="pre">microbit.uart.EVEN</span></code>.
+The <code class="docutils literal notranslate"><span class="pre">stop</span></code> parameter tells the number of stop bits, and has to be 1 for
+this board.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">tx</span></code> and <code class="docutils literal notranslate"><span class="pre">rx</span></code> are not specified then the internal USB-UART TX/RX pins
+are used which connect to the USB serial converter on the micro:bit, thus
+connecting the UART to your PC.  You can specify any other pins you want by
+passing the desired pin objects to the <code class="docutils literal notranslate"><span class="pre">tx</span></code> and <code class="docutils literal notranslate"><span class="pre">rx</span></code> parameters.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">When connecting the device, make sure you “cross” the wires – the TX
+pin on your board needs to be connected with the RX pin on the device,
+and the RX pin – with the TX pin on the device. Also make sure the
+ground pins of both devices are connected.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="microbit.uart.uart.any">
+<code class="descclassname">uart.</code><code class="descname">any</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#microbit.uart.uart.any" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return <code class="docutils literal notranslate"><span class="pre">True</span></code> if any data is waiting, else <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="microbit.uart.uart.read">
+<code class="descclassname">uart.</code><code class="descname">read</code><span class="sig-paren">(</span><span class="optional">[</span><em>nbytes</em><span class="optional">]</span><span class="sig-paren">)</span><a class="headerlink" href="#microbit.uart.uart.read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read bytes.  If <code class="docutils literal notranslate"><span class="pre">nbytes</span></code> is specified then read at most that many
+bytes, otherwise read as many bytes as possible.</p>
+<p>Return value: a bytes object or <code class="docutils literal notranslate"><span class="pre">None</span></code> on timeout.</p>
+<p>A bytes object contains a sequence of bytes. Because
+<a class="reference external" href="https://en.wikipedia.org/wiki/ASCII">ASCII</a> characters can fit in
+single bytes this type of object is often used to represent simple text
+and offers methods to manipulate it as such, e.g. you can display the text
+using the <code class="docutils literal notranslate"><span class="pre">print()</span></code> function.</p>
+<p>You can also convert this object into a string object, and if there are
+non-ASCII characters present the encoding can be specified:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">msg_bytes</span> <span class="o">=</span> <span class="n">uart</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="n">msg_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="s1">&#39;UTF-8&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The timeout for all UART reads depends on the baudrate and is otherwise
+not changeable via Python. The timeout, in milliseconds, is given by:
+<code class="docutils literal notranslate"><span class="pre">microbit_uart_timeout_char</span> <span class="pre">=</span> <span class="pre">13000</span> <span class="pre">/</span> <span class="pre">baudrate</span> <span class="pre">+</span> <span class="pre">1</span></code></p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The internal UART RX buffer is 64 bytes, so make sure data is read
+before the buffer is full or some of the data might be lost.</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Receiving <code class="docutils literal notranslate"><span class="pre">0x03</span></code> will stop your program by raising a Keyboard
+Interrupt. You can enable or disable this using
+<code class="xref py py-func docutils literal notranslate"><span class="pre">micropython.kbd_intr()</span></code>.</p>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="microbit.uart.uart.readall">
+<code class="descclassname">uart.</code><code class="descname">readall</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#microbit.uart.uart.readall" title="Permalink to this definition">¶</a></dt>
+<dd><p>Removed since version 1.0.</p>
+<p>Instead, use <a class="reference internal" href="#microbit.uart.uart.read" title="microbit.uart.uart.read"><code class="xref py py-func docutils literal notranslate"><span class="pre">uart.read()</span></code></a> with no arguments, which will read as much data
+as possible.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="microbit.uart.uart.readinto">
+<code class="descclassname">uart.</code><code class="descname">readinto</code><span class="sig-paren">(</span><em>buf</em><span class="optional">[</span>, <em>nbytes</em><span class="optional">]</span><span class="sig-paren">)</span><a class="headerlink" href="#microbit.uart.uart.readinto" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read bytes into the <code class="docutils literal notranslate"><span class="pre">buf</span></code>.  If <code class="docutils literal notranslate"><span class="pre">nbytes</span></code> is specified then read at most
+that many bytes.  Otherwise, read at most <code class="docutils literal notranslate"><span class="pre">len(buf)</span></code> bytes.</p>
+<p>Return value: number of bytes read and stored into <code class="docutils literal notranslate"><span class="pre">buf</span></code> or <code class="docutils literal notranslate"><span class="pre">None</span></code> on
+timeout.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="microbit.uart.uart.readline">
+<code class="descclassname">uart.</code><code class="descname">readline</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#microbit.uart.uart.readline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read a line, ending in a newline character.</p>
+<p>Return value: the line read or <code class="docutils literal notranslate"><span class="pre">None</span></code> on timeout. The newline character is
+included in the returned bytes.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="microbit.uart.uart.write">
+<code class="descclassname">uart.</code><code class="descname">write</code><span class="sig-paren">(</span><em>buf</em><span class="sig-paren">)</span><a class="headerlink" href="#microbit.uart.uart.write" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write the buffer to the bus, it can be a bytes object or a string:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">uart</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;hello world&#39;</span><span class="p">)</span>
+<span class="n">uart</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">b</span><span class="s1">&#39;hello world&#39;</span><span class="p">)</span>
+<span class="n">uart</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">bytes</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">]))</span>
+</pre></div>
+</div>
+<p>Return value: number of bytes written or <code class="docutils literal notranslate"><span class="pre">None</span></code> on timeout.</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="ble.html" class="btn btn-neutral float-right" title="Bluetooth" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="spi.html" class="btn btn-neutral float-left" title="SPI" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2015-2020, Multiple authors
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

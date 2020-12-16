@@ -1,0 +1,510 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Images &mdash; BBC micro:bit MicroPython 1.0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Buttons" href="buttons.html" />
+    <link rel="prev" title="Hello, World!" href="hello.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> BBC micro:bit MicroPython
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="introduction.html">Introduction</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="hello.html">Hello, World!</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Images</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#diy-images">DIY Images</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#animation">Animation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="buttons.html">Buttons</a></li>
+<li class="toctree-l2"><a class="reference internal" href="io.html">Input/Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="music.html">Music</a></li>
+<li class="toctree-l2"><a class="reference internal" href="random.html">Random</a></li>
+<li class="toctree-l2"><a class="reference internal" href="movement.html">Movement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gestures.html">Gestures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="direction.html">Direction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="storage.html">Storage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="speech.html">Speech</a></li>
+<li class="toctree-l2"><a class="reference internal" href="network.html">Network</a></li>
+<li class="toctree-l2"><a class="reference internal" href="radio.html">Radio</a></li>
+<li class="toctree-l2"><a class="reference internal" href="next.html">Next Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="hello.html">Hello, World!</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Images</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#diy-images">DIY Images</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#animation">Animation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="buttons.html">Buttons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="io.html">Input/Output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="music.html">Music</a></li>
+<li class="toctree-l1"><a class="reference internal" href="random.html">Random</a></li>
+<li class="toctree-l1"><a class="reference internal" href="movement.html">Movement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gestures.html">Gestures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="direction.html">Direction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="storage.html">Storage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="speech.html">Speech</a></li>
+<li class="toctree-l1"><a class="reference internal" href="network.html">Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="radio.html">Radio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="next.html">Next Steps</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../microbit_micropython_api.html">micro:bit Micropython API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../microbit.html">Microbit Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../accelerometer.html">Accelerometer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../audio.html">Audio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ble.html">Bluetooth</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../button.html">Buttons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../compass.html">Compass</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../display.html">Display</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../filesystem.html">Local Persistent File System</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../i2c.html">I²C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../image.html">Image</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../machine.html">Machine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../microphone.html">Microphone <strong>V2</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../micropython.html">MicroPython</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../music.html">Music</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../neopixel.html">NeoPixel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../os.html">The <code class="docutils literal notranslate"><span class="pre">os</span></code>  Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pin.html">Input/Output Pins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../radio.html">Radio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../random.html">Random Number Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../speech.html">Speech</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../spi.html">SPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../uart.html">UART</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utime.html">utime</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Developer Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../devguide/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devguide/flashfirmware.html">Flashing Firmware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devguide/repl.html">Accessing the REPL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devguide/hexformat.html">Firmware Hex File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devguide/devfaq.html">Developer FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devguide/contributing.html">Contributing</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">BBC micro:bit MicroPython</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="introduction.html">Introduction</a> &raquo;</li>
+        
+      <li>Images</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/tutorials/images.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="images">
+<h1>Images<a class="headerlink" href="#images" title="Permalink to this headline">¶</a></h1>
+<p>MicroPython is about as good at art as you can be if the only thing you have is
+a 5x5 grid of red LEDs (light emitting diodes - the things that light up on the
+front of the device). MicroPython gives you quite a lot of control over the
+display so you can create all sorts of interesting effects.</p>
+<p>MicroPython comes with lots of built-in pictures to show on the display.
+For example, to make the device appear happy you type:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">microbit</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="n">display</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">Image</span><span class="o">.</span><span class="n">HAPPY</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>I suspect you can remember what the first line does. The second line uses the
+<code class="docutils literal notranslate"><span class="pre">display</span></code> object to <code class="docutils literal notranslate"><span class="pre">show</span></code> a built-in image. The happy image we want to
+display is a part of the <code class="docutils literal notranslate"><span class="pre">Image</span></code> object and called <code class="docutils literal notranslate"><span class="pre">HAPPY</span></code>. We tell
+<code class="docutils literal notranslate"><span class="pre">show</span></code> to use it by putting it between the parenthesis (<code class="docutils literal notranslate"><span class="pre">(</span></code> and <code class="docutils literal notranslate"><span class="pre">)</span></code>).</p>
+<img alt="../_images/happy.png" src="../_images/happy.png" />
+<p>Here’s a list of the built-in images:</p>
+<blockquote>
+<div><ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">Image.HEART</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.HEART_SMALL</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.HAPPY</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.SMILE</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.SAD</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.CONFUSED</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.ANGRY</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.ASLEEP</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.SURPRISED</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.SILLY</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.FABULOUS</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.MEH</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.YES</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.NO</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.CLOCK12</span></code>, <code class="docutils literal notranslate"><span class="pre">Image.CLOCK11</span></code>, <code class="docutils literal notranslate"><span class="pre">Image.CLOCK10</span></code>, <code class="docutils literal notranslate"><span class="pre">Image.CLOCK9</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Image.CLOCK8</span></code>, <code class="docutils literal notranslate"><span class="pre">Image.CLOCK7</span></code>, <code class="docutils literal notranslate"><span class="pre">Image.CLOCK6</span></code>, <code class="docutils literal notranslate"><span class="pre">Image.CLOCK5</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Image.CLOCK4</span></code>, <code class="docutils literal notranslate"><span class="pre">Image.CLOCK3</span></code>, <code class="docutils literal notranslate"><span class="pre">Image.CLOCK2</span></code>, <code class="docutils literal notranslate"><span class="pre">Image.CLOCK1</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.ARROW_N</span></code>, <code class="docutils literal notranslate"><span class="pre">Image.ARROW_NE</span></code>, <code class="docutils literal notranslate"><span class="pre">Image.ARROW_E</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Image.ARROW_SE</span></code>, <code class="docutils literal notranslate"><span class="pre">Image.ARROW_S</span></code>, <code class="docutils literal notranslate"><span class="pre">Image.ARROW_SW</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Image.ARROW_W</span></code>, <code class="docutils literal notranslate"><span class="pre">Image.ARROW_NW</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.TRIANGLE</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.TRIANGLE_LEFT</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.CHESSBOARD</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.DIAMOND</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.DIAMOND_SMALL</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.SQUARE</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.SQUARE_SMALL</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.RABBIT</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.COW</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.MUSIC_CROTCHET</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.MUSIC_QUAVER</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.MUSIC_QUAVERS</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.PITCHFORK</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.XMAS</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.PACMAN</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.TARGET</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.TSHIRT</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.ROLLERSKATE</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.DUCK</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.HOUSE</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.TORTOISE</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.BUTTERFLY</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.STICKFIGURE</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.GHOST</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.SWORD</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.GIRAFFE</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.SKULL</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.UMBRELLA</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.SNAKE</span></code></li>
+</ul>
+</div></blockquote>
+<p>There’s quite a lot! Why not modify the code that makes the micro:bit look
+happy to see what some of the other built-in images look like? (Just replace
+<code class="docutils literal notranslate"><span class="pre">Image.HAPPY</span></code> with one of the built-in images listed above.)</p>
+<div class="section" id="diy-images">
+<h2>DIY Images<a class="headerlink" href="#diy-images" title="Permalink to this headline">¶</a></h2>
+<p>Of course, you want to make your own image to display on the micro:bit, right?</p>
+<p>That’s easy.</p>
+<p>Each LED pixel on the physical display can be set to one of ten values. If a
+pixel is set to <code class="docutils literal notranslate"><span class="pre">0</span></code> (zero) then it’s off. It literally has zero brightness.
+However, if it is set to <code class="docutils literal notranslate"><span class="pre">9</span></code> then it is at its brightest level. The values
+<code class="docutils literal notranslate"><span class="pre">1</span></code> to <code class="docutils literal notranslate"><span class="pre">8</span></code> represent the brightness levels between off (<code class="docutils literal notranslate"><span class="pre">0</span></code>) and full on
+(<code class="docutils literal notranslate"><span class="pre">9</span></code>).</p>
+<p>Armed with this information, it’s possible to create a new image like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">microbit</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="n">boat</span> <span class="o">=</span> <span class="n">Image</span><span class="p">(</span><span class="s2">&quot;05050:&quot;</span>
+             <span class="s2">&quot;05050:&quot;</span>
+             <span class="s2">&quot;05050:&quot;</span>
+             <span class="s2">&quot;99999:&quot;</span>
+             <span class="s2">&quot;09990&quot;</span><span class="p">)</span>
+
+<span class="n">display</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">boat</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>(When run, the device should display an old-fashioned “Blue Peter” sailing ship
+with the masts dimmer than the boat’s hull.)</p>
+<p>Have you figured out how to draw a picture? Have you noticed that each line of
+the physical display is represented by a line of numbers ending in <code class="docutils literal notranslate"><span class="pre">:</span></code> and
+enclosed between <code class="docutils literal notranslate"><span class="pre">&quot;</span></code> double quotes? Each number specifies a brightness.
+There are five lines of five numbers so it’s possible to specify the individual
+brightness for each of the five pixels on each of the five lines on the
+physical display. That’s how to create a new image.</p>
+<p>Simple!</p>
+<p>In fact, you don’t need to write this over several lines. If you think you can
+keep track of each line, you can rewrite it like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">boat</span> <span class="o">=</span> <span class="n">Image</span><span class="p">(</span><span class="s2">&quot;05050:05050:05050:99999:09990&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="animation">
+<h2>Animation<a class="headerlink" href="#animation" title="Permalink to this headline">¶</a></h2>
+<p>Static images are fun, but it’s even more fun to make them move. This is also
+amazingly simple to do with MicroPython ~ just use a list of images!</p>
+<p>Here is a shopping list:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Eggs</span>
+<span class="n">Bacon</span>
+<span class="n">Tomatoes</span>
+</pre></div>
+</div>
+<p>Here’s how you’d represent this list in Python:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">shopping</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Eggs&quot;</span><span class="p">,</span> <span class="s2">&quot;Bacon&quot;</span><span class="p">,</span> <span class="s2">&quot;Tomatoes&quot;</span> <span class="p">]</span>
+</pre></div>
+</div>
+<p>I’ve simply created a list called <code class="docutils literal notranslate"><span class="pre">shopping</span></code> and it contains three items.
+Python knows it’s a list because it’s enclosed in square brackets (<code class="docutils literal notranslate"><span class="pre">[</span></code> and
+<code class="docutils literal notranslate"><span class="pre">]</span></code>). Items in the list are separated by a comma (<code class="docutils literal notranslate"><span class="pre">,</span></code>) and in this instance
+the items are three strings of characters: <code class="docutils literal notranslate"><span class="pre">&quot;Eggs&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;Bacon&quot;</span></code> and
+<code class="docutils literal notranslate"><span class="pre">&quot;Tomatoes&quot;</span></code>. We know they are strings of characters because they’re enclosed
+in quotation marks <code class="docutils literal notranslate"><span class="pre">&quot;</span></code>.</p>
+<p>You can store anything in a list with Python. Here’s a list of numbers:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">primes</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">13</span><span class="p">,</span> <span class="mi">17</span><span class="p">,</span> <span class="mi">19</span><span class="p">]</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Numbers don’t need to be quoted since they represent a value (rather than a
+string of characters). It’s the difference between <code class="docutils literal notranslate"><span class="pre">2</span></code> (the numeric value
+2) and <code class="docutils literal notranslate"><span class="pre">&quot;2&quot;</span></code> (the character/digit representing the number 2). Don’t worry
+if this doesn’t make sense right now. You’ll soon get used to it.</p>
+</div>
+<p>It’s even possible to store different sorts of things in the same list:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mixed_up_list</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;hello!&quot;</span><span class="p">,</span> <span class="mf">1.234</span><span class="p">,</span> <span class="n">Image</span><span class="o">.</span><span class="n">HAPPY</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Notice that last item? It was an image!</p>
+<p>We can tell MicroPython to animate a list of images. Luckily we have a
+couple of lists of images already built in. They’re called <code class="docutils literal notranslate"><span class="pre">Image.ALL_CLOCKS</span></code>
+and <code class="docutils literal notranslate"><span class="pre">Image.ALL_ARROWS</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">microbit</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="n">display</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">Image</span><span class="o">.</span><span class="n">ALL_CLOCKS</span><span class="p">,</span> <span class="n">loop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>As with a single image, we use <code class="docutils literal notranslate"><span class="pre">display.show</span></code> to show it on the
+device’s display. However, we tell MicroPython to use <code class="docutils literal notranslate"><span class="pre">Image.ALL_CLOCKS</span></code> and
+it understands that it needs to show each image in the list, one after the
+other. We also tell MicroPython to keep looping over the list of images (so
+the animation lasts forever) by saying <code class="docutils literal notranslate"><span class="pre">loop=True</span></code>. Furthermore, we tell it
+that we want the delay between each image to be only 100 milliseconds (a tenth
+of a second) with the argument <code class="docutils literal notranslate"><span class="pre">delay=100</span></code>.</p>
+<p>Can you work out how to animate over the <code class="docutils literal notranslate"><span class="pre">Image.ALL_ARROWS</span></code> list? How do you
+avoid looping forever (hint: the opposite of <code class="docutils literal notranslate"><span class="pre">True</span></code> is <code class="docutils literal notranslate"><span class="pre">False</span></code> although
+the default value for <code class="docutils literal notranslate"><span class="pre">loop</span></code> is <code class="docutils literal notranslate"><span class="pre">False</span></code>)? Can you change the speed of the
+animation?</p>
+<p>Finally, here’s how to create your own animation. In my example I’m going to
+make my boat sink into the bottom of the display:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">microbit</span> <span class="kn">import</span> <span class="o">*</span>
+
+<span class="n">boat1</span> <span class="o">=</span> <span class="n">Image</span><span class="p">(</span><span class="s2">&quot;05050:&quot;</span>
+              <span class="s2">&quot;05050:&quot;</span>
+              <span class="s2">&quot;05050:&quot;</span>
+              <span class="s2">&quot;99999:&quot;</span>
+              <span class="s2">&quot;09990&quot;</span><span class="p">)</span>
+
+<span class="n">boat2</span> <span class="o">=</span> <span class="n">Image</span><span class="p">(</span><span class="s2">&quot;00000:&quot;</span>
+              <span class="s2">&quot;05050:&quot;</span>
+              <span class="s2">&quot;05050:&quot;</span>
+              <span class="s2">&quot;05050:&quot;</span>
+              <span class="s2">&quot;99999&quot;</span><span class="p">)</span>
+
+<span class="n">boat3</span> <span class="o">=</span> <span class="n">Image</span><span class="p">(</span><span class="s2">&quot;00000:&quot;</span>
+              <span class="s2">&quot;00000:&quot;</span>
+              <span class="s2">&quot;05050:&quot;</span>
+              <span class="s2">&quot;05050:&quot;</span>
+              <span class="s2">&quot;05050&quot;</span><span class="p">)</span>
+
+<span class="n">boat4</span> <span class="o">=</span> <span class="n">Image</span><span class="p">(</span><span class="s2">&quot;00000:&quot;</span>
+              <span class="s2">&quot;00000:&quot;</span>
+              <span class="s2">&quot;00000:&quot;</span>
+              <span class="s2">&quot;05050:&quot;</span>
+              <span class="s2">&quot;05050&quot;</span><span class="p">)</span>
+
+<span class="n">boat5</span> <span class="o">=</span> <span class="n">Image</span><span class="p">(</span><span class="s2">&quot;00000:&quot;</span>
+              <span class="s2">&quot;00000:&quot;</span>
+              <span class="s2">&quot;00000:&quot;</span>
+              <span class="s2">&quot;00000:&quot;</span>
+              <span class="s2">&quot;05050&quot;</span><span class="p">)</span>
+
+<span class="n">boat6</span> <span class="o">=</span> <span class="n">Image</span><span class="p">(</span><span class="s2">&quot;00000:&quot;</span>
+              <span class="s2">&quot;00000:&quot;</span>
+              <span class="s2">&quot;00000:&quot;</span>
+              <span class="s2">&quot;00000:&quot;</span>
+              <span class="s2">&quot;00000&quot;</span><span class="p">)</span>
+
+<span class="n">all_boats</span> <span class="o">=</span> <span class="p">[</span><span class="n">boat1</span><span class="p">,</span> <span class="n">boat2</span><span class="p">,</span> <span class="n">boat3</span><span class="p">,</span> <span class="n">boat4</span><span class="p">,</span> <span class="n">boat5</span><span class="p">,</span> <span class="n">boat6</span><span class="p">]</span>
+<span class="n">display</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">all_boats</span><span class="p">,</span> <span class="n">delay</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Here’s how the code works:</p>
+<ul class="simple">
+<li>I create six <code class="docutils literal notranslate"><span class="pre">boat</span></code> images in exactly the same way I described above.</li>
+<li>Then, I put them all into a list that I call <code class="docutils literal notranslate"><span class="pre">all_boats</span></code>.</li>
+<li>Finally, I ask <code class="docutils literal notranslate"><span class="pre">display.show</span></code> to animate the list with a delay of 200 milliseconds.</li>
+<li>Since I’ve not set <code class="docutils literal notranslate"><span class="pre">loop=True</span></code> the boat will only sink once (thus making my animation scientifically accurate). :-)</li>
+</ul>
+<p>What would you animate? Can you animate special effects? How would you make an
+image fade out and then fade in again?</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="buttons.html" class="btn btn-neutral float-right" title="Buttons" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="hello.html" class="btn btn-neutral float-left" title="Hello, World!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2015-2020, Multiple authors
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

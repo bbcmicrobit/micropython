@@ -1,0 +1,334 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Firmware Hex File &mdash; BBC micro:bit MicroPython 1.0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Developer FAQ" href="devfaq.html" />
+    <link rel="prev" title="Accessing the REPL" href="repl.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> BBC micro:bit MicroPython
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/hello.html">Hello, World!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/images.html">Images</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/buttons.html">Buttons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/io.html">Input/Output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/music.html">Music</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/random.html">Random</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/movement.html">Movement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/gestures.html">Gestures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/direction.html">Direction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/storage.html">Storage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/speech.html">Speech</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/network.html">Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/radio.html">Radio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/next.html">Next Steps</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../microbit_micropython_api.html">micro:bit Micropython API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../microbit.html">Microbit Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../accelerometer.html">Accelerometer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../audio.html">Audio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ble.html">Bluetooth</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../button.html">Buttons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../compass.html">Compass</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../display.html">Display</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../filesystem.html">Local Persistent File System</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../i2c.html">I²C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../image.html">Image</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../machine.html">Machine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../microphone.html">Microphone <strong>V2</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../micropython.html">MicroPython</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../music.html">Music</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../neopixel.html">NeoPixel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../os.html">The <code class="docutils literal notranslate"><span class="pre">os</span></code>  Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pin.html">Input/Output Pins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../radio.html">Radio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../random.html">Random Number Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../speech.html">Speech</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../spi.html">SPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../uart.html">UART</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utime.html">utime</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Developer Guide</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="flashfirmware.html">Flashing Firmware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="repl.html">Accessing the REPL</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Firmware Hex File</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#appended-script-format">Appended script format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#uicr-format">UICR format</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#steps-to-create-the-firmware-hex-file">Steps to create the firmware.hex file</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="devfaq.html">Developer FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">BBC micro:bit MicroPython</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Firmware Hex File</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/devguide/hexformat.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="firmware-hex-file">
+<span id="hexformat"></span><h1>Firmware Hex File<a class="headerlink" href="#firmware-hex-file" title="Permalink to this headline">¶</a></h1>
+<p>When MicroPython is built, the compiler produces an
+<a class="reference external" href="https://en.wikipedia.org/wiki/Intel_HEX">Intel Hex</a> file containing the
+MicroPython firmware.
+Additional data can then be added to this file to contain information about the
+MicroPython version, or the Python code to execute on start-up.</p>
+<p>The general memory layout used is:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">0x00000000</span></code>: Start of MicroPython firmware - up to 248 KBs</li>
+<li><code class="docutils literal notranslate"><span class="pre">0x0003e000</span></code>: Start of appended script (optional) - up to 8 Kbs</li>
+<li><code class="docutils literal notranslate"><span class="pre">0x100010c0</span></code>: UICR customer[16] register, start of MicroPython information - 28 bytes</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you append any data or modify the Intel Hex file, please ensure the
+addresses of the data stored progress in incremental order.
+If there is an address jump backwards DAPLink will fail to flash the file.</p>
+</div>
+<div class="section" id="appended-script-format">
+<h2>Appended script format<a class="headerlink" href="#appended-script-format" title="Permalink to this headline">¶</a></h2>
+<p>MicroPython checks the first 2 bytes at address <code class="docutils literal notranslate"><span class="pre">0x0003e000</span></code> for a magic
+string to indicate if there is an appended script. If the magic string is
+found, it will automatically execute the Python code stored there, unless there
+is a main.py file stored in the MicroPython filesystem.</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">0x0003e000</span></code>: 2 bytes “MP”</li>
+<li><code class="docutils literal notranslate"><span class="pre">0x0003e002</span></code>: 2 bytes, little endian integer for the length (in bytes) of the appended script (not counting this 4 byte header)</li>
+<li><code class="docutils literal notranslate"><span class="pre">0x0003e004</span></code>: Script stored as bytes, for MicroPython to decode using utf-8.</li>
+</ul>
+</div>
+<div class="section" id="uicr-format">
+<h2>UICR format<a class="headerlink" href="#uicr-format" title="Permalink to this headline">¶</a></h2>
+<p>The User Information Configuration Registers (UICR) is a region of Non-Volatile
+Memory available to store user-specific settings.
+The first 128 Bytes are reserved, but we can use the other 128 Bytes to store
+any arbitrary data.</p>
+<p>MicroPython stores the following information, in little endian, starting from
+the UICR customer[16] register:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">0x100010c0</span></code>: 4-byte integer with magic value <code class="docutils literal notranslate"><span class="pre">0x17eeb07c</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">0x100010c4</span></code>: 4-byte integer with value <code class="docutils literal notranslate"><span class="pre">0xffffffff</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">0x100010c8</span></code>: 4-byte integer with value <code class="docutils literal notranslate"><span class="pre">0x0000000a</span></code> (log base 2 of the flash page size, being 1024 bytes)</li>
+<li><code class="docutils literal notranslate"><span class="pre">0x100010ca</span></code>: 2-byte integer with value <code class="docutils literal notranslate"><span class="pre">0x0000</span></code> (start page of the firmware)</li>
+<li><code class="docutils literal notranslate"><span class="pre">0x100010cc</span></code>: 2-byte integer storing number of pages used by the firmware</li>
+<li><code class="docutils literal notranslate"><span class="pre">0x100010d0</span></code>: 4-byte integer with value <code class="docutils literal notranslate"><span class="pre">0xffffffff</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">0x100010d4</span></code>: 4-byte integer with the address in the firmware of the version string</li>
+<li><code class="docutils literal notranslate"><span class="pre">0x100010d8</span></code>: 4-byte integer with value <code class="docutils literal notranslate"><span class="pre">0x00000000</span></code></li>
+</ul>
+</div>
+<div class="section" id="steps-to-create-the-firmware-hex-file">
+<h2>Steps to create the firmware.hex file<a class="headerlink" href="#steps-to-create-the-firmware-hex-file" title="Permalink to this headline">¶</a></h2>
+<p>The yotta tool is used to build MicroPython, but before that takes place
+additional files have to be generated by the Makefile in preparation for the
+build, and additional data is added to the hex file after.</p>
+<p>Running the <code class="docutils literal notranslate"><span class="pre">make</span> <span class="pre">all</span></code> command executes the following steps:</p>
+<ul class="simple">
+<li>The <code class="docutils literal notranslate"><span class="pre">tools/makeversionhdr.py</span></code> script creates the <code class="docutils literal notranslate"><span class="pre">microbitversion.h</span></code> file with macros containing build information</li>
+<li>Yotta builds the source and creates a bare hex file with just the firmware</li>
+<li>The <code class="docutils literal notranslate"><span class="pre">tools/adduicr.py</span></code> script adds the UICR to the bare hex</li>
+<li>The final hex file is placed in <code class="docutils literal notranslate"><span class="pre">build/firmware.hex</span></code></li>
+<li>The user can optionally append a script using <code class="docutils literal notranslate"><span class="pre">tools/makecombinedhex.py</span></code> (or other tools)</li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="devfaq.html" class="btn btn-neutral float-right" title="Developer FAQ" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="repl.html" class="btn btn-neutral float-left" title="Accessing the REPL" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2015-2020, Multiple authors
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

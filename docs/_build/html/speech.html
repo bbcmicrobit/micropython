@@ -1,0 +1,647 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Speech &mdash; BBC micro:bit MicroPython 1.0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="utime" href="utime.html" />
+    <link rel="prev" title="Random Number Generation" href="random.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> BBC micro:bit MicroPython
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/hello.html">Hello, World!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/images.html">Images</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/buttons.html">Buttons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/io.html">Input/Output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/music.html">Music</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/random.html">Random</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/movement.html">Movement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/gestures.html">Gestures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/direction.html">Direction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/storage.html">Storage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/speech.html">Speech</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/network.html">Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/radio.html">Radio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/next.html">Next Steps</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="microbit_micropython_api.html">micro:bit Micropython API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="microbit.html">Microbit Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="accelerometer.html">Accelerometer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="audio.html">Audio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ble.html">Bluetooth</a></li>
+<li class="toctree-l1"><a class="reference internal" href="button.html">Buttons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="compass.html">Compass</a></li>
+<li class="toctree-l1"><a class="reference internal" href="display.html">Display</a></li>
+<li class="toctree-l1"><a class="reference internal" href="filesystem.html">Local Persistent File System</a></li>
+<li class="toctree-l1"><a class="reference internal" href="i2c.html">I²C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="image.html">Image</a></li>
+<li class="toctree-l1"><a class="reference internal" href="machine.html">Machine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="microphone.html">Microphone <strong>V2</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="micropython.html">MicroPython</a></li>
+<li class="toctree-l1"><a class="reference internal" href="music.html">Music</a></li>
+<li class="toctree-l1"><a class="reference internal" href="neopixel.html">NeoPixel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="os.html">The <code class="docutils literal notranslate"><span class="pre">os</span></code>  Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pin.html">Input/Output Pins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="radio.html">Radio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="random.html">Random Number Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="speaker.html">Speaker <strong>V2</strong></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Speech</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#functions">Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#punctuation">Punctuation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#timbre">Timbre</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#phonemes">Phonemes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#singing">Singing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#how-does-it-work">How Does it Work?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="spi.html">SPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="uart.html">UART</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utime.html">utime</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Developer Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="devguide/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devguide/flashfirmware.html">Flashing Firmware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devguide/repl.html">Accessing the REPL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devguide/hexformat.html">Firmware Hex File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devguide/devfaq.html">Developer FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devguide/contributing.html">Contributing</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">BBC micro:bit MicroPython</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Speech</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/speech.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-speech">
+<span id="speech"></span><h1>Speech<a class="headerlink" href="#module-speech" title="Permalink to this headline">¶</a></h1>
+<p>This module makes the micro:bit talk, sing and make other speech like sounds.
+By default sound output will be via the edge connector on pin 0 and the
+<a class="reference internal" href="speaker.html"><span class="doc">built-in speaker</span></a> <strong>V2</strong>. You can connect wired headphones or
+a speaker to pin 0 and GND on the edge connector to hear the sound:</p>
+<img alt="_images/speech.png" src="_images/speech.png" />
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This work is based upon the amazing reverse engineering efforts of
+Sebastian Macke based upon an old text-to-speech (TTS) program called SAM
+(Software Automated Mouth) originally released in 1982 for the
+Commodore 64. The result is a small C library that we have adopted and
+adapted for the micro:bit. You can find out more from
+<a class="reference external" href="http://simulationcorner.net/index.php?page=sam">his homepage</a>. Much of
+the information in this document was gleaned from the original user’s
+manual which can be found
+<a class="reference external" href="http://www.apple-iigs.info/newdoc/sam.pdf">here</a>.</p>
+</div>
+<p>The speech synthesiser can produce around 2.5 seconds worth of sound from up to
+255 characters of textual input.</p>
+<p>To access this module you need to:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">speech</span>
+</pre></div>
+</div>
+<p>We assume you have done this for the examples below.</p>
+<div class="section" id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="speech.translate">
+<code class="descclassname">speech.</code><code class="descname">translate</code><span class="sig-paren">(</span><em>words</em><span class="sig-paren">)</span><a class="headerlink" href="#speech.translate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given English words in the string <code class="docutils literal notranslate"><span class="pre">words</span></code>, return a string containing
+a best guess at the appropriate phonemes to pronounce. The output is
+generated from this
+<a class="reference external" href="https://github.com/s-macke/SAM/wiki/Text-to-phoneme-translation-table">text to phoneme translation table</a>.</p>
+<p>This function should be used to generate a first approximation of phonemes
+that can be further hand-edited to improve accuracy, inflection and
+emphasis.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="speech.pronounce">
+<code class="descclassname">speech.</code><code class="descname">pronounce</code><span class="sig-paren">(</span><em>phonemes</em>, <em>*</em>, <em>pitch=64</em>, <em>speed=72</em>, <em>mouth=128</em>, <em>throat=128</em><span class="sig-paren">)</span><a class="headerlink" href="#speech.pronounce" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pronounce the phonemes in the string <code class="docutils literal notranslate"><span class="pre">phonemes</span></code>. See below for details of
+how to use phonemes to finely control the output of the speech synthesiser.
+Override the optional pitch, speed, mouth and throat settings to change the
+timbre (quality) of the voice.</p>
+<p>As with the music module, you can use an optional argument to specify the
+output pin can be used to override the default of <code class="docutils literal notranslate"><span class="pre">microbit.pin0</span></code>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="speech.say">
+<code class="descclassname">speech.</code><code class="descname">say</code><span class="sig-paren">(</span><em>words</em>, <em>*</em>, <em>pitch=64</em>, <em>speed=72</em>, <em>mouth=128</em>, <em>throat=128</em><span class="sig-paren">)</span><a class="headerlink" href="#speech.say" title="Permalink to this definition">¶</a></dt>
+<dd><p>Say the English words in the string <code class="docutils literal notranslate"><span class="pre">words</span></code>. The result is semi-accurate
+for English. Override the optional pitch, speed, mouth and throat
+settings to change the timbre (quality) of the voice. This is a short-hand
+equivalent of: <code class="docutils literal notranslate"><span class="pre">speech.pronounce(speech.translate(words))</span></code></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="speech.sing">
+<code class="descclassname">speech.</code><code class="descname">sing</code><span class="sig-paren">(</span><em>phonemes</em>, <em>*</em>, <em>pitch=64</em>, <em>speed=72</em>, <em>mouth=128</em>, <em>throat=128</em><span class="sig-paren">)</span><a class="headerlink" href="#speech.sing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sing the phonemes contained in the string <code class="docutils literal notranslate"><span class="pre">phonemes</span></code>. Changing the pitch
+and duration of the note is described below. Override the optional pitch,
+speed, mouth and throat settings to change the timbre (quality) of the
+voice.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="punctuation">
+<h2>Punctuation<a class="headerlink" href="#punctuation" title="Permalink to this headline">¶</a></h2>
+<p>Punctuation is used to alter the delivery of speech. The synthesiser
+understands four punctuation marks: hyphen, comma, full-stop and question mark.</p>
+<p>The hyphen (<code class="docutils literal notranslate"><span class="pre">-</span></code>) marks clause boundaries by inserting a short pause in the
+speech.</p>
+<p>The comma (<code class="docutils literal notranslate"><span class="pre">,</span></code>) marks phrase boundaries and inserts a pause of approximately
+double that of the hyphen.</p>
+<p>The full-stop (<code class="docutils literal notranslate"><span class="pre">.</span></code>) and question mark (<code class="docutils literal notranslate"><span class="pre">?</span></code>) end sentences.</p>
+<p>The full-stop inserts a pause and causes the pitch to fall.</p>
+<p>The question mark also inserts a pause but causes the pitch to rise. This works
+well with yes/no questions such as, “are we home yet?” rather than more complex
+questions such as “why are we going home?”. In the latter case, use a
+full-stop.</p>
+</div>
+<div class="section" id="timbre">
+<h2>Timbre<a class="headerlink" href="#timbre" title="Permalink to this headline">¶</a></h2>
+<p>The timbre of a sound is the quality of the sound. It’s the difference between
+the voice of a DALEK and the voice of a human (for example). To control the
+timbre change the numeric settings of the <code class="docutils literal notranslate"><span class="pre">pitch</span></code>, <code class="docutils literal notranslate"><span class="pre">speed</span></code>, <code class="docutils literal notranslate"><span class="pre">mouth</span></code> and
+<code class="docutils literal notranslate"><span class="pre">throat</span></code> arguments.</p>
+<p>The pitch (how high or low the voice sounds) and speed (how quickly the speech
+is delivered) settings are rather obvious and generally fall into the following
+categories:</p>
+<p>Pitch:</p>
+<ul class="simple">
+<li>0-20 impractical</li>
+<li>20-30 very high</li>
+<li>30-40 high</li>
+<li>40-50 high normal</li>
+<li>50-70 normal</li>
+<li>70-80 low normal</li>
+<li>80-90 low</li>
+<li>90-255 very low</li>
+</ul>
+<p>(The default is 64)</p>
+<p>Speed:</p>
+<ul class="simple">
+<li>0-20 impractical</li>
+<li>20-40 very fast</li>
+<li>40-60 fast</li>
+<li>60-70 fast conversational</li>
+<li>70-75 normal conversational</li>
+<li>75-90 narrative</li>
+<li>90-100 slow</li>
+<li>100-225 very slow</li>
+</ul>
+<p>(The default is 72)</p>
+<p>The mouth and throat values are a little harder to explain and the following
+descriptions are based upon our aural impressions of speech produced as the
+value of each setting is changed.</p>
+<p>For mouth, the lower the number the more it sounds like the speaker is talking
+without moving their lips. In contrast, higher numbers (up to 255) make it
+sound like the speech is enunciated with exagerated mouth movement.</p>
+<p>For throat, the lower the number the more relaxed the speaker sounds. In
+contrast, the higher the number, the more tense the tone of voice becomes.</p>
+<p>The important thing is to experiment and adjust the settings until you get the
+effect you desire.</p>
+<p>To get you started here are some examples:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">speech</span><span class="o">.</span><span class="n">say</span><span class="p">(</span><span class="s2">&quot;I am a little robot&quot;</span><span class="p">,</span>  <span class="n">speed</span><span class="o">=</span><span class="mi">92</span><span class="p">,</span> <span class="n">pitch</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span> <span class="n">throat</span><span class="o">=</span><span class="mi">190</span><span class="p">,</span> <span class="n">mouth</span><span class="o">=</span><span class="mi">190</span><span class="p">)</span>
+<span class="n">speech</span><span class="o">.</span><span class="n">say</span><span class="p">(</span><span class="s2">&quot;I am an elf&quot;</span><span class="p">,</span> <span class="n">speed</span><span class="o">=</span><span class="mi">72</span><span class="p">,</span> <span class="n">pitch</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">throat</span><span class="o">=</span><span class="mi">110</span><span class="p">,</span> <span class="n">mouth</span><span class="o">=</span><span class="mi">160</span><span class="p">)</span>
+<span class="n">speech</span><span class="o">.</span><span class="n">say</span><span class="p">(</span><span class="s2">&quot;I am a news presenter&quot;</span><span class="p">,</span> <span class="n">speed</span><span class="o">=</span><span class="mi">82</span><span class="p">,</span> <span class="n">pitch</span><span class="o">=</span><span class="mi">72</span><span class="p">,</span> <span class="n">throat</span><span class="o">=</span><span class="mi">110</span><span class="p">,</span> <span class="n">mouth</span><span class="o">=</span><span class="mi">105</span><span class="p">)</span>
+<span class="n">speech</span><span class="o">.</span><span class="n">say</span><span class="p">(</span><span class="s2">&quot;I am an old lady&quot;</span><span class="p">,</span> <span class="n">speed</span><span class="o">=</span><span class="mi">82</span><span class="p">,</span> <span class="n">pitch</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">throat</span><span class="o">=</span><span class="mi">145</span><span class="p">,</span> <span class="n">mouth</span><span class="o">=</span><span class="mi">145</span><span class="p">)</span>
+<span class="n">speech</span><span class="o">.</span><span class="n">say</span><span class="p">(</span><span class="s2">&quot;I am E.T.&quot;</span><span class="p">,</span> <span class="n">speed</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">pitch</span><span class="o">=</span><span class="mi">64</span><span class="p">,</span> <span class="n">throat</span><span class="o">=</span><span class="mi">150</span><span class="p">,</span> <span class="n">mouth</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+<span class="n">speech</span><span class="o">.</span><span class="n">say</span><span class="p">(</span><span class="s2">&quot;I am a DALEK - EXTERMINATE&quot;</span><span class="p">,</span> <span class="n">speed</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span> <span class="n">pitch</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">throat</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">mouth</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="phonemes">
+<h2>Phonemes<a class="headerlink" href="#phonemes" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">say</span></code> function makes it easy to produce speech - but often it’s not
+accurate. To make sure the speech synthesiser pronounces things
+<em>exactly</em> how you’d like, you need to use phonemes: the smallest
+perceptually distinct units of sound that can be used to distinguish different
+words. Essentially, they are the building-block sounds of speech.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">pronounce</span></code> function takes a string containing a simplified and readable
+version of the <a class="reference external" href="https://en.wikipedia.org/wiki/International_Phonetic_Alphabet">International Phonetic Alphabet</a> and optional annotations to indicate
+inflection and emphasis.</p>
+<p>The advantage of using phonemes is that you don’t have to know how to spell!
+Rather, you only have to know how to say the word in order to spell it
+phonetically.</p>
+<p>The table below lists the phonemes understood by the synthesiser.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>The table contains the phoneme as characters, and an example word. The
+example words have the sound of the phoneme (in parenthesis), but not
+necessarily the same letters.</p>
+<p class="last">Often overlooked: the symbol for the “H” sound is <code class="docutils literal notranslate"><span class="pre">/H</span></code>. A glottal stop
+is a forced stoppage of sound.</p>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">SIMPLE</span> <span class="n">VOWELS</span>                          <span class="n">VOICED</span> <span class="n">CONSONANTS</span>
+<span class="n">IY</span>           <span class="n">f</span><span class="p">(</span><span class="n">ee</span><span class="p">)</span><span class="n">t</span>                    <span class="n">R</span>        <span class="p">(</span><span class="n">r</span><span class="p">)</span><span class="n">ed</span>
+<span class="n">IH</span>           <span class="n">p</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="n">n</span>                     <span class="n">L</span>        <span class="n">a</span><span class="p">(</span><span class="n">ll</span><span class="p">)</span><span class="n">ow</span>
+<span class="n">EH</span>           <span class="n">b</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="n">g</span>                     <span class="n">W</span>        <span class="n">a</span><span class="p">(</span><span class="n">w</span><span class="p">)</span><span class="n">ay</span>
+<span class="n">AE</span>           <span class="n">S</span><span class="p">(</span><span class="n">a</span><span class="p">)</span><span class="n">m</span>                     <span class="n">W</span>        <span class="p">(</span><span class="n">wh</span><span class="p">)</span><span class="n">ale</span>
+<span class="n">AA</span>           <span class="n">p</span><span class="p">(</span><span class="n">o</span><span class="p">)</span><span class="n">t</span>                     <span class="n">Y</span>        <span class="p">(</span><span class="n">y</span><span class="p">)</span><span class="n">ou</span>
+<span class="n">AH</span>           <span class="n">b</span><span class="p">(</span><span class="n">u</span><span class="p">)</span><span class="n">dget</span>                  <span class="n">M</span>        <span class="n">Sa</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+<span class="n">AO</span>           <span class="n">t</span><span class="p">(</span><span class="n">al</span><span class="p">)</span><span class="n">k</span>                    <span class="n">N</span>        <span class="n">ma</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+<span class="n">OH</span>           <span class="n">c</span><span class="p">(</span><span class="n">o</span><span class="p">)</span><span class="n">ne</span>                    <span class="n">NX</span>       <span class="n">so</span><span class="p">(</span><span class="n">ng</span><span class="p">)</span>
+<span class="n">UH</span>           <span class="n">b</span><span class="p">(</span><span class="n">oo</span><span class="p">)</span><span class="n">k</span>                    <span class="n">B</span>        <span class="p">(</span><span class="n">b</span><span class="p">)</span><span class="n">ad</span>
+<span class="n">UX</span>           <span class="n">l</span><span class="p">(</span><span class="n">oo</span><span class="p">)</span><span class="n">t</span>                    <span class="n">D</span>        <span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="n">og</span>
+<span class="n">ER</span>           <span class="n">b</span><span class="p">(</span><span class="n">ir</span><span class="p">)</span><span class="n">d</span>                    <span class="n">G</span>        <span class="n">a</span><span class="p">(</span><span class="n">g</span><span class="p">)</span><span class="n">ain</span>
+<span class="n">AX</span>           <span class="n">gall</span><span class="p">(</span><span class="n">o</span><span class="p">)</span><span class="n">n</span>                  <span class="n">J</span>        <span class="p">(</span><span class="n">j</span><span class="p">)</span><span class="n">u</span><span class="p">(</span><span class="n">dg</span><span class="p">)</span><span class="n">e</span>
+<span class="n">IX</span>           <span class="n">dig</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="n">t</span>                   <span class="n">Z</span>        <span class="p">(</span><span class="n">z</span><span class="p">)</span><span class="n">oo</span>
+                                       <span class="n">ZH</span>       <span class="n">plea</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="n">ure</span>
+<span class="n">DIPHTHONGS</span>                             <span class="n">V</span>        <span class="n">se</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="n">en</span>
+<span class="n">EY</span>           <span class="n">m</span><span class="p">(</span><span class="n">a</span><span class="p">)</span><span class="n">de</span>                    <span class="n">DH</span>       <span class="p">(</span><span class="n">th</span><span class="p">)</span><span class="n">en</span>
+<span class="n">AY</span>           <span class="n">h</span><span class="p">(</span><span class="n">igh</span><span class="p">)</span>
+<span class="n">OY</span>           <span class="n">b</span><span class="p">(</span><span class="n">oy</span><span class="p">)</span>
+<span class="n">AW</span>           <span class="n">h</span><span class="p">(</span><span class="n">ow</span><span class="p">)</span>                     <span class="n">UNVOICED</span> <span class="n">CONSONANTS</span>
+<span class="n">OW</span>           <span class="n">sl</span><span class="p">(</span><span class="n">ow</span><span class="p">)</span>                    <span class="n">S</span>         <span class="p">(</span><span class="n">S</span><span class="p">)</span><span class="n">am</span>
+<span class="n">UW</span>           <span class="n">cr</span><span class="p">(</span><span class="n">ew</span><span class="p">)</span>                    <span class="n">SH</span>        <span class="n">fi</span><span class="p">(</span><span class="n">sh</span><span class="p">)</span>
+                                       <span class="n">F</span>         <span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="n">ish</span>
+                                       <span class="n">TH</span>        <span class="p">(</span><span class="n">th</span><span class="p">)</span><span class="ow">in</span>
+<span class="n">SPECIAL</span> <span class="n">PHONEMES</span>                       <span class="n">P</span>         <span class="p">(</span><span class="n">p</span><span class="p">)</span><span class="n">oke</span>
+<span class="n">UL</span>           <span class="n">sett</span><span class="p">(</span><span class="n">le</span><span class="p">)</span> <span class="p">(</span><span class="o">=</span><span class="n">AXL</span><span class="p">)</span>           <span class="n">T</span>         <span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="n">alk</span>
+<span class="n">UM</span>           <span class="n">astron</span><span class="p">(</span><span class="n">om</span><span class="p">)</span><span class="n">y</span> <span class="p">(</span><span class="o">=</span><span class="n">AXM</span><span class="p">)</span>        <span class="n">K</span>         <span class="p">(</span><span class="n">c</span><span class="p">)</span><span class="n">ake</span>
+<span class="n">UN</span>           <span class="n">functi</span><span class="p">(</span><span class="n">on</span><span class="p">)</span> <span class="p">(</span><span class="o">=</span><span class="n">AXN</span><span class="p">)</span>         <span class="n">CH</span>        <span class="n">spee</span><span class="p">(</span><span class="n">ch</span><span class="p">)</span>
+<span class="n">Q</span>            <span class="n">kitt</span><span class="o">-</span><span class="n">en</span> <span class="p">(</span><span class="n">glottal</span> <span class="n">stop</span><span class="p">)</span>    <span class="o">/</span><span class="n">H</span>        <span class="n">a</span><span class="p">(</span><span class="n">h</span><span class="p">)</span><span class="n">ead</span>
+</pre></div>
+</div>
+<p>The following non-standard symbols are also available to the user:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">YX</span>           <span class="n">diphthong</span> <span class="n">ending</span> <span class="p">(</span><span class="n">weaker</span> <span class="n">version</span> <span class="n">of</span> <span class="n">Y</span><span class="p">)</span>
+<span class="n">WX</span>           <span class="n">diphthong</span> <span class="n">ending</span> <span class="p">(</span><span class="n">weaker</span> <span class="n">version</span> <span class="n">of</span> <span class="n">W</span><span class="p">)</span>
+<span class="n">RX</span>           <span class="n">R</span> <span class="n">after</span> <span class="n">a</span> <span class="n">vowel</span> <span class="p">(</span><span class="n">smooth</span> <span class="n">version</span> <span class="n">of</span> <span class="n">R</span><span class="p">)</span>
+<span class="n">LX</span>           <span class="n">L</span> <span class="n">after</span> <span class="n">a</span> <span class="n">vowel</span> <span class="p">(</span><span class="n">smooth</span> <span class="n">version</span> <span class="n">of</span> <span class="n">L</span><span class="p">)</span>
+<span class="o">/</span><span class="n">X</span>           <span class="n">H</span> <span class="n">before</span> <span class="n">a</span> <span class="n">non</span><span class="o">-</span><span class="n">front</span> <span class="n">vowel</span> <span class="ow">or</span> <span class="n">consonant</span> <span class="o">-</span> <span class="k">as</span> <span class="ow">in</span> <span class="p">(</span><span class="n">wh</span><span class="p">)</span><span class="n">o</span>
+<span class="n">DX</span>           <span class="n">T</span> <span class="k">as</span> <span class="ow">in</span> <span class="n">pi</span><span class="p">(</span><span class="n">t</span><span class="p">)</span><span class="n">y</span> <span class="p">(</span><span class="n">weaker</span> <span class="n">version</span> <span class="n">of</span> <span class="n">T</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Here are some seldom used phoneme combinations (and suggested alternatives):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">PHONEME</span>        <span class="n">YOU</span> <span class="n">PROBABLY</span> <span class="n">WANT</span><span class="p">:</span>     <span class="n">UNLESS</span> <span class="n">IT</span> <span class="n">SPLITS</span> <span class="n">SYLLABLES</span> <span class="n">LIKE</span><span class="p">:</span>
+<span class="n">COMBINATION</span>
+<span class="n">GS</span>             <span class="n">GZ</span> <span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span> <span class="n">ba</span><span class="p">(</span><span class="n">gs</span><span class="p">)</span>         <span class="n">bu</span><span class="p">(</span><span class="n">gs</span><span class="p">)</span><span class="n">pray</span>
+<span class="n">BS</span>             <span class="n">BZ</span> <span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span> <span class="n">slo</span><span class="p">(</span><span class="n">bz</span><span class="p">)</span>        <span class="n">o</span><span class="p">(</span><span class="n">bsc</span><span class="p">)</span><span class="n">ene</span>
+<span class="n">DS</span>             <span class="n">DZ</span> <span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span> <span class="n">su</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>         <span class="n">Hu</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span><span class="n">son</span>
+<span class="n">PZ</span>             <span class="n">PS</span> <span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span> <span class="n">sla</span><span class="p">(</span><span class="n">ps</span><span class="p">)</span>        <span class="o">-----</span>
+<span class="n">TZ</span>             <span class="n">TS</span> <span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span> <span class="n">cur</span><span class="p">(</span><span class="n">ts</span><span class="p">)</span><span class="n">y</span>       <span class="o">-----</span>
+<span class="n">KZ</span>             <span class="n">KS</span> <span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span> <span class="n">fi</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>          <span class="o">-----</span>
+<span class="n">NG</span>             <span class="n">NXG</span> <span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span> <span class="n">singing</span>       <span class="n">i</span><span class="p">(</span><span class="n">ng</span><span class="p">)</span><span class="n">rate</span>
+<span class="n">NK</span>             <span class="n">NXK</span> <span class="n">e</span><span class="o">.</span><span class="n">g</span><span class="o">.</span> <span class="n">bank</span>          <span class="n">Su</span><span class="p">(</span><span class="n">nk</span><span class="p">)</span><span class="n">ist</span>
+</pre></div>
+</div>
+<p>If you use anything other than the phonemes described above, a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>
+exception will be raised. Pass in the phonemes as a string like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">speech</span><span class="o">.</span><span class="n">pronounce</span><span class="p">(</span><span class="s2">&quot;/HEHLOW&quot;</span><span class="p">)</span>  <span class="c1"># &quot;Hello&quot;</span>
+</pre></div>
+</div>
+<p>The phonemes are classified into two broad groups: vowels and consonants.</p>
+<p>Vowels are further subdivided into simple vowels and diphthongs. Simple vowels
+don’t change their sound as you say them whereas diphthongs start with one
+sound and end with another. For example, when you say the word “oil” the “oi”
+vowel starts with an “oh” sound but changes to an “ee” sound.</p>
+<p>Consonants are also subdivided into two groups: voiced and unvoiced. Voiced
+consonants require the speaker to use their vocal chords to produce the sound.
+For example, consonants like “L”, “N” and “Z” are voiced. Unvoiced consonants
+are produced by rushing air, such as “P”, “T” and “SH”.</p>
+<p>Once you get used to it, the phoneme system is easy. To begin with some
+spellings may seem tricky (for example, “adventure” has a “CH” in it) but the
+rule is to write what you say, not what you spell. Experimentation is the best
+way to resolve problematic words.</p>
+<p>It’s also important that speech sounds natural and understandable. To help
+with improving the quality of spoken output it’s often good to use the built-in
+stress system to add inflection or emphasis.</p>
+<p>There are eight stress markers indicated by the numbers <code class="docutils literal notranslate"><span class="pre">1</span></code> - <code class="docutils literal notranslate"><span class="pre">8</span></code>. Simply
+insert the required number after the vowel to be stressed. For example, the
+lack of expression of “/HEHLOW” is much improved (and friendlier) when
+spelled out “/HEH3LOW”.</p>
+<p>It’s also possible to change the meaning of words through the way they are
+stressed. Consider the phrase “Why should I walk to the store?”. It could be
+pronounced in several different ways:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># You need a reason to do it.</span>
+<span class="n">speech</span><span class="o">.</span><span class="n">pronounce</span><span class="p">(</span><span class="s2">&quot;WAY2 SHUH7D AY WAO5K TUX DHAH STOH5R.&quot;</span><span class="p">)</span>
+<span class="c1"># You are reluctant to go.</span>
+<span class="n">speech</span><span class="o">.</span><span class="n">pronounce</span><span class="p">(</span><span class="s2">&quot;WAY7 SHUH2D AY WAO7K TUX DHAH STOH5R.&quot;</span><span class="p">)</span>
+<span class="c1"># You want someone else to do it.</span>
+<span class="n">speech</span><span class="o">.</span><span class="n">pronounce</span><span class="p">(</span><span class="s2">&quot;WAY5 SHUH7D AY2 WAO7K TUX DHAH STOHR.&quot;</span><span class="p">)</span>
+<span class="c1"># You&#39;d rather drive.</span>
+<span class="n">speech</span><span class="o">.</span><span class="n">pronounce</span><span class="p">(</span><span class="s2">&quot;WAY5 SHUHD AY7 WAO2K TUX7 DHAH STOHR.&quot;</span><span class="p">)</span>
+<span class="c1"># You want to walk somewhere else.</span>
+<span class="n">speech</span><span class="o">.</span><span class="n">pronounce</span><span class="p">(</span><span class="s2">&quot;WAY5 SHUHD AY WAO5K TUX DHAH STOH2OH7R.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Put simply, different stresses in the speech create a more expressive tone of
+voice.</p>
+<p>They work by raising or lowering pitch and elongating the associated vowel
+sound depending on the number you give:</p>
+<ol class="arabic simple">
+<li>very emotional stress</li>
+<li>very emphatic stress</li>
+<li>rather strong stress</li>
+<li>ordinary stress</li>
+<li>tight stress</li>
+<li>neutral (no pitch change) stress</li>
+<li>pitch-dropping stress</li>
+<li>extreme pitch-dropping stress</li>
+</ol>
+<p>The smaller the number, the more extreme the emphasis will be. However, such
+stress markers will help pronounce difficult words correctly. For example, if
+a syllable is not enunciated sufficiently, put in a neutral stress marker.</p>
+<p>It’s also possible to elongate words with stress markers:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">speech</span><span class="o">.</span><span class="n">pronounce</span><span class="p">(</span><span class="s2">&quot;/HEH5EH4EH3EH2EH2EH3EH4EH5EHLP.”)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="singing">
+<h2>Singing<a class="headerlink" href="#singing" title="Permalink to this headline">¶</a></h2>
+<p>It’s possible to make MicroPython sing phonemes.</p>
+<p>This is done by annotating a pitch related number onto a phoneme. The lower the
+number, the higher the pitch. Numbers roughly translate into musical notes as
+shown in the diagram below:</p>
+<img alt="_images/speech-pitch.png" src="_images/speech-pitch.png" />
+<p>Annotations work by pre-pending a hash (<code class="docutils literal notranslate"><span class="pre">#</span></code>) sign and the pitch number in
+front of the phoneme. The pitch will remain the same until a new annotation
+is given. For example, make MicroPython sing a scale like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">solfa</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;#115DOWWWWWW&quot;</span><span class="p">,</span>   <span class="c1"># Doh</span>
+    <span class="s2">&quot;#103REYYYYYY&quot;</span><span class="p">,</span>   <span class="c1"># Re</span>
+    <span class="s2">&quot;#94MIYYYYYY&quot;</span><span class="p">,</span>    <span class="c1"># Mi</span>
+    <span class="s2">&quot;#88FAOAOAOAOR&quot;</span><span class="p">,</span>  <span class="c1"># Fa</span>
+    <span class="s2">&quot;#78SOHWWWWW&quot;</span><span class="p">,</span>    <span class="c1"># Soh</span>
+    <span class="s2">&quot;#70LAOAOAOAOR&quot;</span><span class="p">,</span>  <span class="c1"># La</span>
+    <span class="s2">&quot;#62TIYYYYYY&quot;</span><span class="p">,</span>    <span class="c1"># Ti</span>
+    <span class="s2">&quot;#58DOWWWWWW&quot;</span><span class="p">,</span>    <span class="c1"># Doh</span>
+<span class="p">]</span>
+<span class="n">song</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">solfa</span><span class="p">)</span>
+<span class="n">speech</span><span class="o">.</span><span class="n">sing</span><span class="p">(</span><span class="n">song</span><span class="p">,</span> <span class="n">speed</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In order to sing a note for a certain duration extend the
+note by repeating vowel or voiced consonant phonemes (as demonstrated in
+the example above). Beware diphthongs - to extend them you need to break them
+into their component parts. For example, “OY” can be extended with
+“OHOHIYIYIY”.</p>
+<p>Experimentation, listening carefully and adjusting is the only sure way to work
+out how many times to repeat a phoneme so the note lasts for the desired
+duration.</p>
+</div>
+<div class="section" id="how-does-it-work">
+<h2>How Does it Work?<a class="headerlink" href="#how-does-it-work" title="Permalink to this headline">¶</a></h2>
+<p>The original manual explains it well:</p>
+<blockquote>
+<div><p>First, instead of recording the actual speech waveform, we only store the
+frequency spectrums. By doing this, we save memory and pick up other
+advantages. Second, we […] store some data about timing. These are
+numbers pertaining to the duration of each phoneme under different
+circumstances, and also some data on transition times so we can know how
+to blend a phoneme into its neighbors. Third, we devise a system of rules
+to deal with all this data and, much to our amazement, our computer is
+babbling in no time.</p>
+<p class="attribution">&mdash;S.A.M. owner’s manual.</p>
+</div></blockquote>
+<p>The output is piped through the functions provided by the <code class="docutils literal notranslate"><span class="pre">audio</span></code> module and,
+hey presto, we have a talking micro:bit.</p>
+</div>
+<div class="section" id="example">
+<h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    speech.py</span>
+<span class="sd">    ~~~~~~~~</span>
+
+<span class="sd">    Simple speech example to make the micro:bit say, pronounce and sing</span>
+<span class="sd">    something. This example requires a speaker/buzzer/headphones connected</span>
+<span class="sd">    to P0 and GND,or the latest micro:bit device with built-in speaker.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">speech</span>
+<span class="kn">from</span> <span class="nn">microbit</span> <span class="kn">import</span> <span class="n">sleep</span>
+
+<span class="c1"># The say method attempts to convert English into phonemes.</span>
+<span class="n">speech</span><span class="o">.</span><span class="n">say</span><span class="p">(</span><span class="s2">&quot;I can sing!&quot;</span><span class="p">)</span>
+<span class="n">sleep</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+<span class="n">speech</span><span class="o">.</span><span class="n">say</span><span class="p">(</span><span class="s2">&quot;Listen to me!&quot;</span><span class="p">)</span>
+<span class="n">sleep</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+
+<span class="c1"># Clearing the throat requires the use of phonemes. Changing</span>
+<span class="c1"># the pitch and speed also helps create the right effect.</span>
+<span class="n">speech</span><span class="o">.</span><span class="n">pronounce</span><span class="p">(</span><span class="s2">&quot;AEAE/HAEMM&quot;</span><span class="p">,</span> <span class="n">pitch</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">speed</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>  <span class="c1"># Ahem</span>
+<span class="n">sleep</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+
+<span class="c1"># Singing requires a phoneme with an annotated pitch for each syllable.</span>
+<span class="n">solfa</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;#115DOWWWWWW&quot;</span><span class="p">,</span>   <span class="c1"># Doh</span>
+    <span class="s2">&quot;#103REYYYYYY&quot;</span><span class="p">,</span>   <span class="c1"># Re</span>
+    <span class="s2">&quot;#94MIYYYYYY&quot;</span><span class="p">,</span>    <span class="c1"># Mi</span>
+    <span class="s2">&quot;#88FAOAOAOAOR&quot;</span><span class="p">,</span>  <span class="c1"># Fa</span>
+    <span class="s2">&quot;#78SOHWWWWW&quot;</span><span class="p">,</span>    <span class="c1"># Soh</span>
+    <span class="s2">&quot;#70LAOAOAOAOR&quot;</span><span class="p">,</span>  <span class="c1"># La</span>
+    <span class="s2">&quot;#62TIYYYYYY&quot;</span><span class="p">,</span>    <span class="c1"># Ti</span>
+    <span class="s2">&quot;#58DOWWWWWW&quot;</span><span class="p">,</span>    <span class="c1"># Doh</span>
+<span class="p">]</span>
+
+<span class="c1"># Sing the scale ascending in pitch.</span>
+<span class="n">song</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">solfa</span><span class="p">)</span>
+<span class="n">speech</span><span class="o">.</span><span class="n">sing</span><span class="p">(</span><span class="n">song</span><span class="p">,</span> <span class="n">speed</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="c1"># Reverse the list of syllables.</span>
+<span class="n">solfa</span><span class="o">.</span><span class="n">reverse</span><span class="p">()</span>
+<span class="n">song</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">solfa</span><span class="p">)</span>
+<span class="c1"># Sing the scale descending in pitch.</span>
+<span class="n">speech</span><span class="o">.</span><span class="n">sing</span><span class="p">(</span><span class="n">song</span><span class="p">,</span> <span class="n">speed</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="utime.html" class="btn btn-neutral float-right" title="utime" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="random.html" class="btn btn-neutral float-left" title="Random Number Generation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2015-2020, Multiple authors
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

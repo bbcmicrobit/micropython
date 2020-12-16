@@ -1,0 +1,358 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>MicroPython &mdash; BBC micro:bit MicroPython 1.0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Music" href="music.html" />
+    <link rel="prev" title="Machine" href="machine.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> BBC micro:bit MicroPython
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/hello.html">Hello, World!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/images.html">Images</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/buttons.html">Buttons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/io.html">Input/Output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/music.html">Music</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/random.html">Random</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/movement.html">Movement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/gestures.html">Gestures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/direction.html">Direction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/storage.html">Storage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/speech.html">Speech</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/network.html">Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/radio.html">Radio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/next.html">Next Steps</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="microbit_micropython_api.html">micro:bit Micropython API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="microbit.html">Microbit Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="accelerometer.html">Accelerometer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="audio.html">Audio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ble.html">Bluetooth</a></li>
+<li class="toctree-l1"><a class="reference internal" href="button.html">Buttons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="compass.html">Compass</a></li>
+<li class="toctree-l1"><a class="reference internal" href="display.html">Display</a></li>
+<li class="toctree-l1"><a class="reference internal" href="filesystem.html">Local Persistent File System</a></li>
+<li class="toctree-l1"><a class="reference internal" href="i2c.html">I²C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="image.html">Image</a></li>
+<li class="toctree-l1"><a class="reference internal" href="machine.html">Machine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="microphone.html">Microphone <strong>V2</strong></a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">MicroPython</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#functions">Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="music.html">Music</a></li>
+<li class="toctree-l1"><a class="reference internal" href="neopixel.html">NeoPixel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="os.html">The <code class="docutils literal notranslate"><span class="pre">os</span></code>  Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pin.html">Input/Output Pins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="radio.html">Radio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="random.html">Random Number Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="speech.html">Speech</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spi.html">SPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="uart.html">UART</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utime.html">utime</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Developer Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="devguide/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devguide/flashfirmware.html">Flashing Firmware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devguide/repl.html">Accessing the REPL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devguide/hexformat.html">Firmware Hex File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devguide/devfaq.html">Developer FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devguide/contributing.html">Contributing</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">BBC micro:bit MicroPython</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>MicroPython</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/micropython.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-micropython">
+<span id="micropython"></span><h1>MicroPython<a class="headerlink" href="#module-micropython" title="Permalink to this headline">¶</a></h1>
+<p>Access and control MicroPython internals.</p>
+<div class="section" id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="micropython.micropython.const">
+<code class="descclassname">micropython.</code><code class="descname">const</code><span class="sig-paren">(</span><em>expr</em><span class="sig-paren">)</span><a class="headerlink" href="#micropython.micropython.const" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to declare that the expression is a constant so that the compiler can
+optimise it. The use of this function should be as follows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">micropython</span> <span class="kn">import</span> <span class="n">const</span>
+<span class="n">CONST_X</span> <span class="o">=</span> <span class="n">const</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
+<span class="n">CONST_Y</span> <span class="o">=</span> <span class="n">const</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">CONST_X</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Constants declared this way are still accessible as global variables from
+outside the module they are declared in. On the other hand, if a constant
+begins with an underscore then it is hidden, it is not available as a
+global variable, and does not take up any memory during execution.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="micropython.micropython.opt_level">
+<code class="descclassname">micropython.</code><code class="descname">opt_level</code><span class="sig-paren">(</span><span class="optional">[</span><em>level</em><span class="optional">]</span><span class="sig-paren">)</span><a class="headerlink" href="#micropython.micropython.opt_level" title="Permalink to this definition">¶</a></dt>
+<dd><p>If level is given then this function sets the optimisation level for
+subsequent compilation of scripts, and returns None. Otherwise it returns
+the current optimisation level.</p>
+<p>The optimisation level controls the following compilation features:</p>
+<ul class="simple">
+<li>Assertions: at level 0 assertion statements are enabled and compiled
+into the bytecode; at levels 1 and higher assertions are not compiled.</li>
+<li>Built-in <code class="docutils literal notranslate"><span class="pre">__debug__</span></code> variable: at level 0 this variable expands to
+True; at levels 1 and higher it expands to False.</li>
+<li>Source-code line numbers: at levels 0, 1 and 2 source-code line number
+are stored along with the bytecode so that exceptions can report the
+line number they occurred at; at levels 3 and higher line numbers are
+not stored.</li>
+</ul>
+<p>The default optimisation level is usually level 0.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="micropython.micropython.mem_info">
+<code class="descclassname">micropython.</code><code class="descname">mem_info</code><span class="sig-paren">(</span><span class="optional">[</span><em>verbose</em><span class="optional">]</span><span class="sig-paren">)</span><a class="headerlink" href="#micropython.micropython.mem_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print information about currently used memory. If the verbose argument is
+given then extra information is printed.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="micropython.micropython.qstr_info">
+<code class="descclassname">micropython.</code><code class="descname">qstr_info</code><span class="sig-paren">(</span><span class="optional">[</span><em>verbose</em><span class="optional">]</span><span class="sig-paren">)</span><a class="headerlink" href="#micropython.micropython.qstr_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print information about currently interned strings. If the verbose argument
+is given then extra information is printed.</p>
+<p>This includes the number of interned strings and the amount of RAM they
+use. In verbose mode it prints out the names of all RAM-interned strings.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="micropython.micropython.stack_use">
+<code class="descclassname">micropython.</code><code class="descname">stack_use</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#micropython.micropython.stack_use" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an integer representing the current amount of stack that is being
+used. The absolute value of this is not particularly useful, rather it
+should be used to compute differences in stack usage at different points.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="micropython.micropython.heap_lock">
+<code class="descclassname">micropython.</code><code class="descname">heap_lock</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#micropython.micropython.heap_lock" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="micropython.micropython.heap_unlock">
+<code class="descclassname">micropython.</code><code class="descname">heap_unlock</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#micropython.micropython.heap_unlock" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lock or unlock the heap. When locked no memory allocation can occur and a
+<code class="docutils literal notranslate"><span class="pre">MemoryError</span></code> will be raised if any heap allocation is attempted.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="micropython.micropython.kbd_intr">
+<code class="descclassname">micropython.</code><code class="descname">kbd_intr</code><span class="sig-paren">(</span><em>chr</em><span class="sig-paren">)</span><a class="headerlink" href="#micropython.micropython.kbd_intr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the character that will raise a KeyboardInterrupt exception. By default
+this is set to 3 during script execution, corresponding to Ctrl-C. Passing
+-1 to this function will disable capture of Ctrl-C, and passing 3 will
+restore it.</p>
+<p>This function can be used to prevent the capturing of Ctrl-C on the
+incoming stream of characters that is usually used for the REPL, in case
+that stream is used for other purposes</p>
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="music.html" class="btn btn-neutral float-right" title="Music" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="machine.html" class="btn btn-neutral float-left" title="Machine" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2015-2020, Multiple authors
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

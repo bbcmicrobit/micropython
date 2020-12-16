@@ -1,0 +1,478 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Audio &mdash; BBC micro:bit MicroPython 1.0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Accelerometer" href="accelerometer.html" />
+    <link rel="prev" title="Image" href="image.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> BBC micro:bit MicroPython
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/hello.html">Hello, World!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/images.html">Images</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/buttons.html">Buttons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/io.html">Input/Output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/music.html">Music</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/random.html">Random</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/movement.html">Movement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/gestures.html">Gestures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/direction.html">Direction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/storage.html">Storage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/speech.html">Speech</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/network.html">Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/radio.html">Radio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/next.html">Next Steps</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="microbit_micropython_api.html">micro:bit Micropython API</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="microbit.html">Microbit Module</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="microbit.html#functions">Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="microbit.html#attributes">Attributes</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="microbit.html#classes">Classes</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="image.html">Image</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Sound</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#functions">Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#classes">Classes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#using-audio">Using audio</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#technical-details">Technical Details</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#example">Example</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="reference internal" href="microbit.html#modules">Modules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="accelerometer.html">Accelerometer</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Audio V2</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#functions">Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#classes">Classes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#using-audio">Using audio</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#technical-details">Technical Details</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="compass.html">Compass</a></li>
+<li class="toctree-l3"><a class="reference internal" href="display.html">Display</a></li>
+<li class="toctree-l3"><a class="reference internal" href="i2c.html">I²C</a></li>
+<li class="toctree-l3"><a class="reference internal" href="microphone.html">Microphone <strong>V2</strong></a></li>
+<li class="toctree-l3"><a class="reference internal" href="speaker.html">Speaker <strong>V2</strong></a></li>
+<li class="toctree-l3"><a class="reference internal" href="spi.html">SPI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="uart.html">UART</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="accelerometer.html">Accelerometer</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Audio</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#functions">Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#classes">Classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#using-audio">Using audio</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#built-in-sounds-v2">Built-in sounds <strong>V2</strong></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#technical-details">Technical Details</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="ble.html">Bluetooth</a></li>
+<li class="toctree-l1"><a class="reference internal" href="button.html">Buttons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="compass.html">Compass</a></li>
+<li class="toctree-l1"><a class="reference internal" href="display.html">Display</a></li>
+<li class="toctree-l1"><a class="reference internal" href="filesystem.html">Local Persistent File System</a></li>
+<li class="toctree-l1"><a class="reference internal" href="i2c.html">I²C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="image.html">Image</a></li>
+<li class="toctree-l1"><a class="reference internal" href="machine.html">Machine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="microphone.html">Microphone <strong>V2</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="micropython.html">MicroPython</a></li>
+<li class="toctree-l1"><a class="reference internal" href="music.html">Music</a></li>
+<li class="toctree-l1"><a class="reference internal" href="neopixel.html">NeoPixel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="os.html">The <code class="docutils literal notranslate"><span class="pre">os</span></code>  Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pin.html">Input/Output Pins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="radio.html">Radio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="random.html">Random Number Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="speaker.html">Speaker <strong>V2</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="speech.html">Speech</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spi.html">SPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="uart.html">UART</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utime.html">utime</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Developer Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="devguide/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devguide/flashfirmware.html">Flashing Firmware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devguide/repl.html">Accessing the REPL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devguide/hexformat.html">Firmware Hex File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devguide/devfaq.html">Developer FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devguide/contributing.html">Contributing</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">BBC micro:bit MicroPython</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="microbit.html">Microbit Module</a> &raquo;</li>
+        
+      <li>Audio</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/audio.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-audio">
+<span id="audio"></span><h1>Audio<a class="headerlink" href="#module-audio" title="Permalink to this headline">¶</a></h1>
+<p>This module allows you to play your own sounds. If you are using a micro:bit
+<strong>V2</strong>, <code class="docutils literal notranslate"><span class="pre">audio</span></code> is also part of the <code class="docutils literal notranslate"><span class="pre">microbit</span></code> module.</p>
+<p>By default sound output will be via the edge connector on pin 0 and the
+<a class="reference internal" href="speaker.html"><span class="doc">built-in speaker</span></a> <strong>V2</strong>. You can connect wired headphones or
+a speaker to pin 0 and GND on the edge connector to hear the sounds.</p>
+<div class="section" id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="audio.play">
+<code class="descclassname">audio.</code><code class="descname">play</code><span class="sig-paren">(</span><em>source</em>, <em>wait=True</em>, <em>pin=pin0</em>, <em>return_pin=None</em><span class="sig-paren">)</span><a class="headerlink" href="#audio.play" title="Permalink to this definition">¶</a></dt>
+<dd><p>Play the source to completion.</p>
+<ul class="simple">
+<li><strong>source</strong>: <code class="docutils literal notranslate"><span class="pre">Sound</span></code> - The <code class="docutils literal notranslate"><span class="pre">microbit</span></code> module contains a list of
+built-in sounds that your can pass to <code class="docutils literal notranslate"><span class="pre">audio.play()</span></code>.</li>
+<li><strong>source</strong>: <code class="docutils literal notranslate"><span class="pre">AudioFrame</span></code> - The source agrument can also be an iterable
+of <code class="docutils literal notranslate"><span class="pre">AudioFrame</span></code> elements as described below.</li>
+<li><strong>wait</strong>: If <code class="docutils literal notranslate"><span class="pre">wait</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code>, this function will block until the
+source is exhausted.</li>
+<li><strong>pin</strong>: As with the music module, you can use the optional <code class="docutils literal notranslate"><span class="pre">pin</span></code>
+argument to specify the output pin can be used to override the
+default of <code class="docutils literal notranslate"><span class="pre">microbit.pin0</span></code>.</li>
+<li><strong>return_pin</strong>: specifies a differential edge connector pin to connect
+to an external speaker instead of ground. This is ignored for the <strong>V2</strong>
+revision.</li>
+</ul>
+</dd></dl>
+
+<dl class="function">
+<dt id="audio.is_playing">
+<code class="descclassname">audio.</code><code class="descname">is_playing</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#audio.is_playing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return <code class="docutils literal notranslate"><span class="pre">True</span></code> if audio is playing, otherwise return <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="audio.stop">
+<code class="descclassname">audio.</code><code class="descname">stop</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#audio.stop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stops all audio playback.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="audio.AudioFrame">
+<em class="property">class </em><code class="descclassname">audio.</code><code class="descname">AudioFrame</code><a class="headerlink" href="#audio.AudioFrame" title="Permalink to this definition">¶</a></dt>
+<dd><p>An <code class="docutils literal notranslate"><span class="pre">AudioFrame</span></code> object is a list of 32 samples each of which is a signed byte
+(whole number between -128 and 127).</p>
+<p>It takes just over 4 ms to play a single frame.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="using-audio">
+<h2>Using audio<a class="headerlink" href="#using-audio" title="Permalink to this headline">¶</a></h2>
+<p>You will need a sound source, as input to the <code class="docutils literal notranslate"><span class="pre">play</span></code> function. You can use
+the built-in sounds <strong>V2</strong> from the <code class="docutils literal notranslate"><span class="pre">microbit</span></code> module, <code class="docutils literal notranslate"><span class="pre">microbit.Sound</span></code>, or
+generate your own, like in <code class="docutils literal notranslate"><span class="pre">examples/waveforms.py</span></code>.</p>
+<div class="section" id="built-in-sounds-v2">
+<h3>Built-in sounds <strong>V2</strong><a class="headerlink" href="#built-in-sounds-v2" title="Permalink to this headline">¶</a></h3>
+<p>The built-in sounds can be called using <code class="docutils literal notranslate"><span class="pre">audio.play(Sound.NAME)</span></code>.</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">Sound.GIGGLE</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Sound.HAPPY</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Sound.HELLO</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Sound.MYSTERIOUS</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Sound.SAD</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Sound.SLIDE</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Sound.SOARING</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Sound.SPRING</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Sound.TWINKLE</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Sound.YAWN</span></code></li>
+</ul>
+</div>
+</div>
+<div class="section" id="technical-details">
+<h2>Technical Details<a class="headerlink" href="#technical-details" title="Permalink to this headline">¶</a></h2>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You don’t need to understand this section to use the <code class="docutils literal notranslate"><span class="pre">audio</span></code> module.
+It is just here in case you wanted to know how it works.</p>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">audio</span></code> module consumes <code class="docutils literal notranslate"><span class="pre">AudioFrame</span></code> samples at 7812.5 Hz, and uses
+linear interpolation to output a PWM signal at 32.5 kHz, which gives tolerable
+sound quality.</p>
+<p>The function <code class="docutils literal notranslate"><span class="pre">play</span></code> fully copies all data from each <code class="docutils literal notranslate"><span class="pre">AudioFrame</span></code> before it
+calls <code class="docutils literal notranslate"><span class="pre">next()</span></code> for the next frame, so a sound source can use the same
+<code class="docutils literal notranslate"><span class="pre">AudioFrame</span></code> repeatedly.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">audio</span></code> module has an internal 64 sample buffer from which it reads
+samples. When reading reaches the start or the mid-point of the buffer, it
+triggers a callback to fetch the next <code class="docutils literal notranslate"><span class="pre">AudioFrame</span></code> which is then copied into
+the buffer. This means that a sound source has under 4ms to compute the next
+<code class="docutils literal notranslate"><span class="pre">AudioFrame</span></code>, and for reliable operation needs to take less 2ms (which is
+32000 cycles, so should be plenty).</p>
+</div>
+<div class="section" id="example">
+<h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<div class="code python highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">microbit</span> <span class="kn">import</span> <span class="n">display</span><span class="p">,</span> <span class="n">sleep</span><span class="p">,</span> <span class="n">button_a</span>
+<span class="kn">import</span> <span class="nn">audio</span>
+<span class="kn">import</span> <span class="nn">math</span>
+
+<span class="k">def</span> <span class="nf">repeated_frame</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">count</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">count</span><span class="p">):</span>
+        <span class="k">yield</span> <span class="n">frame</span>
+
+<span class="c1"># Press button A to skip to next wave.</span>
+<span class="k">def</span> <span class="nf">show_wave</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mi">1500</span><span class="p">):</span>
+    <span class="n">display</span><span class="o">.</span><span class="n">scroll</span><span class="p">(</span><span class="n">name</span> <span class="o">+</span> <span class="s2">&quot; wave&quot;</span><span class="p">,</span> <span class="n">wait</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="n">delay</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">audio</span><span class="o">.</span><span class="n">play</span><span class="p">(</span><span class="n">repeated_frame</span><span class="p">(</span><span class="n">frame</span><span class="p">,</span> <span class="n">duration</span><span class="p">),</span><span class="n">wait</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">75</span><span class="p">):</span>
+        <span class="n">sleep</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">button_a</span><span class="o">.</span><span class="n">is_pressed</span><span class="p">():</span>
+            <span class="n">display</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+            <span class="n">audio</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+            <span class="k">break</span>
+
+<span class="n">frame</span> <span class="o">=</span> <span class="n">audio</span><span class="o">.</span><span class="n">AudioFrame</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">frame</span><span class="p">)):</span>
+    <span class="n">frame</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">i</span><span class="o">/</span><span class="mi">16</span><span class="p">)</span><span class="o">*</span><span class="mi">124</span><span class="o">+</span><span class="mf">128.5</span><span class="p">)</span>
+<span class="n">show_wave</span><span class="p">(</span><span class="s2">&quot;Sine&quot;</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span>
+
+<span class="n">triangle</span> <span class="o">=</span> <span class="n">audio</span><span class="o">.</span><span class="n">AudioFrame</span><span class="p">()</span>
+
+<span class="n">QUARTER</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">triangle</span><span class="p">)</span><span class="o">//</span><span class="mi">4</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">QUARTER</span><span class="p">):</span>
+    <span class="n">triangle</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span><span class="o">*</span><span class="mi">15</span>
+    <span class="n">triangle</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">QUARTER</span><span class="p">]</span> <span class="o">=</span> <span class="mi">248</span><span class="o">-</span><span class="n">i</span><span class="o">*</span><span class="mi">15</span>
+    <span class="n">triangle</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">QUARTER</span><span class="o">*</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="mi">128</span><span class="o">-</span><span class="n">i</span><span class="o">*</span><span class="mi">15</span>
+    <span class="n">triangle</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">QUARTER</span><span class="o">*</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span><span class="o">*</span><span class="mi">15</span><span class="o">+</span><span class="mi">8</span>
+<span class="n">show_wave</span><span class="p">(</span><span class="s2">&quot;Triangle&quot;</span><span class="p">,</span> <span class="n">triangle</span><span class="p">)</span>
+
+<span class="n">square</span> <span class="o">=</span> <span class="n">audio</span><span class="o">.</span><span class="n">AudioFrame</span><span class="p">()</span>
+
+<span class="n">HALF</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">square</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">HALF</span><span class="p">):</span>
+    <span class="n">square</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">8</span>
+    <span class="n">square</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">HALF</span><span class="p">]</span> <span class="o">=</span> <span class="mi">248</span>
+<span class="n">show_wave</span><span class="p">(</span><span class="s2">&quot;Square&quot;</span><span class="p">,</span> <span class="n">square</span><span class="p">)</span>
+<span class="n">sleep</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">frame</span><span class="p">)):</span>
+    <span class="n">frame</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">252</span><span class="o">-</span><span class="n">i</span><span class="o">*</span><span class="mi">8</span>
+<span class="n">show_wave</span><span class="p">(</span><span class="s2">&quot;Sawtooth&quot;</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span>
+
+<span class="k">del</span> <span class="n">frame</span>
+
+<span class="c1">#Generate a waveform that goes from triangle to square wave, reasonably smoothly.</span>
+<span class="n">frames</span> <span class="o">=</span> <span class="p">[</span> <span class="kc">None</span> <span class="p">]</span> <span class="o">*</span> <span class="mi">32</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">32</span><span class="p">):</span>
+    <span class="n">frames</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">frame</span> <span class="o">=</span> <span class="n">audio</span><span class="o">.</span><span class="n">AudioFrame</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">triangle</span><span class="p">)):</span>
+        <span class="n">frame</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">triangle</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="mi">32</span><span class="o">-</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span> <span class="n">square</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">*</span><span class="n">i</span><span class="p">)</span><span class="o">&gt;&gt;</span><span class="mi">5</span>
+
+<span class="k">def</span> <span class="nf">repeated_frames</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">count</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">frame</span> <span class="ow">in</span> <span class="n">frames</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">count</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="n">frame</span>
+
+
+<span class="n">display</span><span class="o">.</span><span class="n">scroll</span><span class="p">(</span><span class="s2">&quot;Ascending wave&quot;</span><span class="p">,</span> <span class="n">wait</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">audio</span><span class="o">.</span><span class="n">play</span><span class="p">(</span><span class="n">repeated_frames</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="mi">60</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="accelerometer.html" class="btn btn-neutral float-right" title="Accelerometer" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="image.html" class="btn btn-neutral float-left" title="Image" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2015-2020, Multiple authors
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,531 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Image &mdash; BBC micro:bit MicroPython 1.0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Audio" href="audio.html" />
+    <link rel="prev" title="Input/Output Pins" href="pin.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> BBC micro:bit MicroPython
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/hello.html">Hello, World!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/images.html">Images</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/buttons.html">Buttons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/io.html">Input/Output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/music.html">Music</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/random.html">Random</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/movement.html">Movement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/gestures.html">Gestures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/direction.html">Direction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/storage.html">Storage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/speech.html">Speech</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/network.html">Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/radio.html">Radio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/next.html">Next Steps</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="microbit_micropython_api.html">micro:bit Micropython API</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="microbit.html">Microbit Module</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="microbit.html#functions">Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="microbit.html#attributes">Attributes</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="microbit.html#classes">Classes</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Image</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#classes">Classes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#attributes">Attributes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#operations">Operations</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="audio.html">Sound</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="microbit.html#modules">Modules</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="accelerometer.html">Accelerometer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="audio.html">Audio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ble.html">Bluetooth</a></li>
+<li class="toctree-l1"><a class="reference internal" href="button.html">Buttons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="compass.html">Compass</a></li>
+<li class="toctree-l1"><a class="reference internal" href="display.html">Display</a></li>
+<li class="toctree-l1"><a class="reference internal" href="filesystem.html">Local Persistent File System</a></li>
+<li class="toctree-l1"><a class="reference internal" href="i2c.html">I²C</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Image</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#classes">Classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#attributes">Attributes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#operations">Operations</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="machine.html">Machine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="microphone.html">Microphone <strong>V2</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="micropython.html">MicroPython</a></li>
+<li class="toctree-l1"><a class="reference internal" href="music.html">Music</a></li>
+<li class="toctree-l1"><a class="reference internal" href="neopixel.html">NeoPixel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="os.html">The <code class="docutils literal notranslate"><span class="pre">os</span></code>  Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pin.html">Input/Output Pins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="radio.html">Radio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="random.html">Random Number Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="speech.html">Speech</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spi.html">SPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="uart.html">UART</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utime.html">utime</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Developer Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="devguide/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devguide/flashfirmware.html">Flashing Firmware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devguide/repl.html">Accessing the REPL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devguide/hexformat.html">Firmware Hex File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devguide/devfaq.html">Developer FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devguide/contributing.html">Contributing</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">BBC micro:bit MicroPython</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="microbit.html">Microbit Module</a> &raquo;</li>
+        
+      <li>Image</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/image.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-microbit">
+<span id="image"></span><h1>Image<a class="headerlink" href="#module-microbit" title="Permalink to this headline">¶</a></h1>
+<p>The <code class="docutils literal notranslate"><span class="pre">Image</span></code> class is used to create images that can be displayed easily on
+the device’s LED matrix. Given an image object it’s possible to display it via
+the <code class="docutils literal notranslate"><span class="pre">display</span></code> API:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">display</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="n">Image</span><span class="o">.</span><span class="n">HAPPY</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="_images/image-smile.png" src="_images/image-smile.png" />
+<p>There are four ways in which you can construct an image:</p>
+<ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">Image()</span></code> - Create a blank 5x5 image</li>
+<li><code class="docutils literal notranslate"><span class="pre">Image(string)</span></code> - Create an image by parsing the string, a single character
+returns that glyph</li>
+<li><code class="docutils literal notranslate"><span class="pre">Image(width,</span> <span class="pre">height)</span></code> - Create a blank image of given size</li>
+<li><code class="docutils literal notranslate"><span class="pre">Image(width,</span> <span class="pre">height,</span> <span class="pre">buffer)</span></code> - Create an image from the given buffer</li>
+</ul>
+<div class="section" id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="microbit.Image">
+<em class="property">class </em><code class="descclassname">microbit.</code><code class="descname">Image</code><span class="sig-paren">(</span><em>string</em><span class="sig-paren">)</span><a class="headerlink" href="#microbit.Image" title="Permalink to this definition">¶</a></dt>
+<dt>
+<em class="property">class </em><code class="descclassname">microbit.</code><code class="descname">Image</code><span class="sig-paren">(</span><em>width=None</em>, <em>height=None</em>, <em>buffer=None</em><span class="sig-paren">)</span></dt>
+<dd><p>If <code class="docutils literal notranslate"><span class="pre">string</span></code> is used, it has to consist of digits 0-9 arranged into
+lines, describing the image, for example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="p">(</span><span class="s2">&quot;90009:&quot;</span>
+              <span class="s2">&quot;09090:&quot;</span>
+              <span class="s2">&quot;00900:&quot;</span>
+              <span class="s2">&quot;09090:&quot;</span>
+              <span class="s2">&quot;90009&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>will create a 5×5 image of an X. The end of a line is indicated by a colon.
+It’s also possible to use a newline (n) to indicate the end of a line
+like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">image</span> <span class="o">=</span> <span class="n">Image</span><span class="p">(</span><span class="s2">&quot;90009</span><span class="se">\n</span><span class="s2">&quot;</span>
+              <span class="s2">&quot;09090</span><span class="se">\n</span><span class="s2">&quot;</span>
+              <span class="s2">&quot;00900</span><span class="se">\n</span><span class="s2">&quot;</span>
+              <span class="s2">&quot;09090</span><span class="se">\n</span><span class="s2">&quot;</span>
+              <span class="s2">&quot;90009&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The other form creates an empty image with <code class="docutils literal notranslate"><span class="pre">width</span></code> columns and
+<code class="docutils literal notranslate"><span class="pre">height</span></code> rows. Optionally <code class="docutils literal notranslate"><span class="pre">buffer</span></code> can be an array of
+<code class="docutils literal notranslate"><span class="pre">width``×``height</span></code> integers in range 0-9 to initialize the image:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Image</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="sa">b</span><span class="s1">&#39;</span><span class="se">\x08\x08\x08\x08</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>or:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Image</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="nb">bytearray</span><span class="p">([</span><span class="mi">9</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">9</span><span class="p">]))</span>
+</pre></div>
+</div>
+<p>Will create a 2 x 2 pixel image at full brightness.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Keyword arguments cannot be passed to <code class="docutils literal notranslate"><span class="pre">buffer</span></code>.</p>
+</div>
+<dl class="method">
+<dt id="microbit.Image.width">
+<code class="descname">width</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#microbit.Image.width" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the number of columns in the image.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="microbit.Image.height">
+<code class="descname">height</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#microbit.Image.height" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the numbers of rows in the image.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="microbit.Image.set_pixel">
+<code class="descname">set_pixel</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#microbit.Image.set_pixel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the brightness of the pixel at column <code class="docutils literal notranslate"><span class="pre">x</span></code> and row <code class="docutils literal notranslate"><span class="pre">y</span></code> to the
+<code class="docutils literal notranslate"><span class="pre">value</span></code>, which has to be between 0 (dark) and 9 (bright).</p>
+<p>This method will raise an exception when called on any of the built-in
+read-only images, like <code class="docutils literal notranslate"><span class="pre">Image.HEART</span></code>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="microbit.Image.get_pixel">
+<code class="descname">get_pixel</code><span class="sig-paren">(</span><em>x</em>, <em>y</em><span class="sig-paren">)</span><a class="headerlink" href="#microbit.Image.get_pixel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the brightness of pixel at column <code class="docutils literal notranslate"><span class="pre">x</span></code> and row <code class="docutils literal notranslate"><span class="pre">y</span></code> as an
+integer between 0 and 9.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="microbit.Image.shift_left">
+<code class="descname">shift_left</code><span class="sig-paren">(</span><em>n</em><span class="sig-paren">)</span><a class="headerlink" href="#microbit.Image.shift_left" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new image created by shifting the picture left by <code class="docutils literal notranslate"><span class="pre">n</span></code>
+columns.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="microbit.Image.shift_right">
+<code class="descname">shift_right</code><span class="sig-paren">(</span><em>n</em><span class="sig-paren">)</span><a class="headerlink" href="#microbit.Image.shift_right" title="Permalink to this definition">¶</a></dt>
+<dd><p>Same as <code class="docutils literal notranslate"><span class="pre">image.shift_left(-n)</span></code>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="microbit.Image.shift_up">
+<code class="descname">shift_up</code><span class="sig-paren">(</span><em>n</em><span class="sig-paren">)</span><a class="headerlink" href="#microbit.Image.shift_up" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new image created by shifting the picture up by <code class="docutils literal notranslate"><span class="pre">n</span></code> rows.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="microbit.Image.shift_down">
+<code class="descname">shift_down</code><span class="sig-paren">(</span><em>n</em><span class="sig-paren">)</span><a class="headerlink" href="#microbit.Image.shift_down" title="Permalink to this definition">¶</a></dt>
+<dd><p>Same as <code class="docutils literal notranslate"><span class="pre">image.shift_up(-n)</span></code>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="microbit.Image.crop">
+<code class="descname">crop</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>w</em>, <em>h</em><span class="sig-paren">)</span><a class="headerlink" href="#microbit.Image.crop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new image by cropping the picture to a width of <code class="docutils literal notranslate"><span class="pre">w</span></code> and a
+height of <code class="docutils literal notranslate"><span class="pre">h</span></code>, starting with the pixel at column <code class="docutils literal notranslate"><span class="pre">x</span></code> and row <code class="docutils literal notranslate"><span class="pre">y</span></code>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="microbit.Image.copy">
+<code class="descname">copy</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#microbit.Image.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return an exact copy of the image.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="microbit.Image.invert">
+<code class="descname">invert</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#microbit.Image.invert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a new image by inverting the brightness of the pixels in the
+source image.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="microbit.Image.fill">
+<code class="descname">fill</code><span class="sig-paren">(</span><em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#microbit.Image.fill" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the brightness of all the pixels in the image to the
+<code class="docutils literal notranslate"><span class="pre">value</span></code>, which has to be between 0 (dark) and 9 (bright).</p>
+<p>This method will raise an exception when called on any of the built-in
+read-only images, like <code class="docutils literal notranslate"><span class="pre">Image.HEART</span></code>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="microbit.Image.blit">
+<code class="descname">blit</code><span class="sig-paren">(</span><em>src</em>, <em>x</em>, <em>y</em>, <em>w</em>, <em>h</em>, <em>xdest=0</em>, <em>ydest=0</em><span class="sig-paren">)</span><a class="headerlink" href="#microbit.Image.blit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Copy the rectangle defined by <code class="docutils literal notranslate"><span class="pre">x</span></code>, <code class="docutils literal notranslate"><span class="pre">y</span></code>, <code class="docutils literal notranslate"><span class="pre">w</span></code>, <code class="docutils literal notranslate"><span class="pre">h</span></code> from the image <code class="docutils literal notranslate"><span class="pre">src</span></code> into
+this image at <code class="docutils literal notranslate"><span class="pre">xdest</span></code>, <code class="docutils literal notranslate"><span class="pre">ydest</span></code>.
+Areas in the source rectangle, but outside the source image are treated as having a value of 0.</p>
+<p><code class="docutils literal notranslate"><span class="pre">shift_left()</span></code>, <code class="docutils literal notranslate"><span class="pre">shift_right()</span></code>, <code class="docutils literal notranslate"><span class="pre">shift_up()</span></code>, <code class="docutils literal notranslate"><span class="pre">shift_down()</span></code> and <code class="docutils literal notranslate"><span class="pre">crop()</span></code>
+can are all implemented by using <code class="docutils literal notranslate"><span class="pre">blit()</span></code>.
+For example, img.crop(x, y, w, h) can be implemented as:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">crop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">):</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">Image</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span>
+    <span class="n">res</span><span class="o">.</span><span class="n">blit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">res</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">Image</span></code> class also has the following built-in instances of itself
+included as its attributes (the attribute names indicate what the image
+represents):</p>
+<blockquote>
+<div><ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">Image.HEART</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.HEART_SMALL</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.HAPPY</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.SMILE</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.SAD</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.CONFUSED</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.ANGRY</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.ASLEEP</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.SURPRISED</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.SILLY</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.FABULOUS</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.MEH</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.YES</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.NO</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.CLOCK12</span></code>, <code class="docutils literal notranslate"><span class="pre">Image.CLOCK11</span></code>, <code class="docutils literal notranslate"><span class="pre">Image.CLOCK10</span></code>, <code class="docutils literal notranslate"><span class="pre">Image.CLOCK9</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Image.CLOCK8</span></code>, <code class="docutils literal notranslate"><span class="pre">Image.CLOCK7</span></code>, <code class="docutils literal notranslate"><span class="pre">Image.CLOCK6</span></code>, <code class="docutils literal notranslate"><span class="pre">Image.CLOCK5</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Image.CLOCK4</span></code>, <code class="docutils literal notranslate"><span class="pre">Image.CLOCK3</span></code>, <code class="docutils literal notranslate"><span class="pre">Image.CLOCK2</span></code>, <code class="docutils literal notranslate"><span class="pre">Image.CLOCK1</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.ARROW_N</span></code>, <code class="docutils literal notranslate"><span class="pre">Image.ARROW_NE</span></code>, <code class="docutils literal notranslate"><span class="pre">Image.ARROW_E</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Image.ARROW_SE</span></code>, <code class="docutils literal notranslate"><span class="pre">Image.ARROW_S</span></code>, <code class="docutils literal notranslate"><span class="pre">Image.ARROW_SW</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Image.ARROW_W</span></code>, <code class="docutils literal notranslate"><span class="pre">Image.ARROW_NW</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.TRIANGLE</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.TRIANGLE_LEFT</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.CHESSBOARD</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.DIAMOND</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.DIAMOND_SMALL</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.SQUARE</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.SQUARE_SMALL</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.RABBIT</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.COW</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.MUSIC_CROTCHET</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.MUSIC_QUAVER</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.MUSIC_QUAVERS</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.PITCHFORK</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.XMAS</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.PACMAN</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.TARGET</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.TSHIRT</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.ROLLERSKATE</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.DUCK</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.HOUSE</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.TORTOISE</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.BUTTERFLY</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.STICKFIGURE</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.GHOST</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.SWORD</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.GIRAFFE</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.SKULL</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.UMBRELLA</span></code></li>
+<li><code class="docutils literal notranslate"><span class="pre">Image.SNAKE</span></code></li>
+</ul>
+</div></blockquote>
+<p>Finally, related collections of images have been grouped together:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>* ``Image.ALL_CLOCKS``
+* ``Image.ALL_ARROWS``
+</pre></div>
+</div>
+</div>
+<div class="section" id="operations">
+<h2>Operations<a class="headerlink" href="#operations" title="Permalink to this headline">¶</a></h2>
+<div class="code highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">repr</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Get a compact string representation of the image.</p>
+<div class="code highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">str</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Get a readable string representation of the image.</p>
+<div class="code highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">image1</span> <span class="o">+</span> <span class="n">image2</span>
+</pre></div>
+</div>
+<p>Create a new image by adding the brightness values from the two images for
+each pixel.</p>
+<div class="code highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">image</span> <span class="o">*</span> <span class="n">n</span>
+</pre></div>
+</div>
+<p>Create a new image by multiplying the brightness of each pixel by <code class="docutils literal notranslate"><span class="pre">n</span></code>.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="audio.html" class="btn btn-neutral float-right" title="Audio" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="pin.html" class="btn btn-neutral float-left" title="Input/Output Pins" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2015-2020, Multiple authors
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

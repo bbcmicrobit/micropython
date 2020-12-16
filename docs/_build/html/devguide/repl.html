@@ -1,0 +1,352 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Accessing the REPL &mdash; BBC micro:bit MicroPython 1.0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Firmware Hex File" href="hexformat.html" />
+    <link rel="prev" title="Flashing Firmware" href="flashfirmware.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> BBC micro:bit MicroPython
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/hello.html">Hello, World!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/images.html">Images</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/buttons.html">Buttons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/io.html">Input/Output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/music.html">Music</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/random.html">Random</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/movement.html">Movement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/gestures.html">Gestures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/direction.html">Direction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/storage.html">Storage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/speech.html">Speech</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/network.html">Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/radio.html">Radio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials/next.html">Next Steps</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../microbit_micropython_api.html">micro:bit Micropython API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../microbit.html">Microbit Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../accelerometer.html">Accelerometer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../audio.html">Audio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ble.html">Bluetooth</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../button.html">Buttons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../compass.html">Compass</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../display.html">Display</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../filesystem.html">Local Persistent File System</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../i2c.html">I²C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../image.html">Image</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../machine.html">Machine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../microphone.html">Microphone <strong>V2</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../micropython.html">MicroPython</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../music.html">Music</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../neopixel.html">NeoPixel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../os.html">The <code class="docutils literal notranslate"><span class="pre">os</span></code>  Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pin.html">Input/Output Pins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../radio.html">Radio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../random.html">Random Number Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../speech.html">Speech</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../spi.html">SPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../uart.html">UART</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utime.html">utime</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Developer Guide</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="flashfirmware.html">Flashing Firmware</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Accessing the REPL</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#using-a-serial-communication-program">Using a serial communication program</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#determining-the-port">Determining the port</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#communicating-with-the-micro-bit">Communicating with the micro:bit</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="hexformat.html">Firmware Hex File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devfaq.html">Developer FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">BBC micro:bit MicroPython</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Accessing the REPL</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/devguide/repl.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="accessing-the-repl">
+<span id="dev-repl"></span><h1>Accessing the REPL<a class="headerlink" href="#accessing-the-repl" title="Permalink to this headline">¶</a></h1>
+<p>REPL (Read-Evaluate-Print-Loop) allows the micro:bit to read and evaluate code
+in real-time as you write it.</p>
+<p>Accessing the REPL on the micro:bit will require you to:</p>
+<ul class="simple">
+<li>Determine the communication port identifier for the micro:bit</li>
+<li>Use a program to establish communication with the device</li>
+</ul>
+<p>For versions of Windows before 10 you might need to install the Mbed serial
+driver, the instructions for which are found here:</p>
+<p><a class="reference external" href="https://os.mbed.com/docs/latest/tutorials/windows-serial-driver.html">https://os.mbed.com/docs/latest/tutorials/windows-serial-driver.html</a></p>
+<div class="section" id="using-a-serial-communication-program">
+<h2>Using a serial communication program<a class="headerlink" href="#using-a-serial-communication-program" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference external" href="https://codewith.mu/en/tutorials/1.0/repl">Mu Editor</a> has built-in
+support for REPL and even includes a real-time data plotter. Some other common
+options are <cite>picocom</cite> and <cite>screen</cite>. You will need to install a program and
+read the appropriate documentation to understand the basics of connecting to a
+device.</p>
+</div>
+<div class="section" id="determining-the-port">
+<h2>Determining the port<a class="headerlink" href="#determining-the-port" title="Permalink to this headline">¶</a></h2>
+<p>The micro:bit will have a port identifier (tty, usb) that can be used by the
+computer for communicating. Before connecting to the micro:bit we must
+determine the port identifier.</p>
+<p><strong>Windows</strong></p>
+<p>When you have installed the aforementioned drivers the micro:bit will appear in
+device-manager as a COM port.</p>
+<p><strong>Mac OS</strong></p>
+<p>Open Terminal and type <code class="docutils literal notranslate"><span class="pre">ls</span> <span class="pre">/dev/cu.*</span></code> to see a list of connected serial
+devices; one of them will look like <code class="docutils literal notranslate"><span class="pre">/dev/cu.usbmodem1422</span></code> (the exact number
+will depend on your computer).</p>
+<p><strong>Linux</strong></p>
+<p>In terminal, type <code class="docutils literal notranslate"><span class="pre">dmesg</span> <span class="pre">|</span> <span class="pre">tail</span></code> which will show which <code class="docutils literal notranslate"><span class="pre">/dev</span></code> node the
+micro:bit was assigned (e.g. <code class="docutils literal notranslate"><span class="pre">/dev/ttyUSB0</span></code>).</p>
+</div>
+<div class="section" id="communicating-with-the-micro-bit">
+<h2>Communicating with the micro:bit<a class="headerlink" href="#communicating-with-the-micro-bit" title="Permalink to this headline">¶</a></h2>
+<p>Once you have found the port identifier you can use a serial terminal program
+to communicate with the micro:bit.</p>
+<p><strong>Windows</strong></p>
+<p>You may wish to use Tera Term, PuTTY, or another program.</p>
+<dl class="docutils">
+<dt>In Tera Term:</dt>
+<dd><ul class="first last simple">
+<li>Plug in the micro:bit and open Tera Term</li>
+<li>Select Serial as the port</li>
+<li>Go to Setup -&gt; Serial port. Ensure the Port is the correct COM port.</li>
+<li>Choose a baud rate of <code class="docutils literal notranslate"><span class="pre">115200</span></code>, data 8 bits, parity none, stop 1 bit.</li>
+</ul>
+</dd>
+<dt>In PuTTY:</dt>
+<dd><ul class="first last simple">
+<li>Plug in the micro:bit and open PuTTY</li>
+<li>Switch the Connection Type to Serial</li>
+<li>Ensure the Port is the correct COM port</li>
+<li>Change the baud rate to <code class="docutils literal notranslate"><span class="pre">115200</span></code></li>
+<li>Select ‘Serial’ on the menu on the left, then click ‘Open’</li>
+</ul>
+</dd>
+</dl>
+<p><strong>Mac OS</strong></p>
+<p>Open Terminal and type <code class="docutils literal notranslate"><span class="pre">screen</span> <span class="pre">/dev/cu.usbmodem1422</span> <span class="pre">115200</span></code>, replacing
+<code class="docutils literal notranslate"><span class="pre">/dev/cu.usbmodem1422</span></code> with the port you found earlier. This will open the
+micro:bit’s serial output and show all messages received from the device.</p>
+<p>To exit, press Ctrl-A then Ctrl-\ and answer Yes to the question. There are
+many ways back to a command prompt including Ctrl-A then Ctrl-D, which will
+detach screen, but the serial port with still be locked, preventing other
+applications from accessing it. You can then restart screen by typing
+<code class="docutils literal notranslate"><span class="pre">screen</span> <span class="pre">-r</span></code>.</p>
+<p><strong>Linux</strong></p>
+<p>Using the <code class="docutils literal notranslate"><span class="pre">screen</span></code> program, type <code class="docutils literal notranslate"><span class="pre">screen</span> <span class="pre">/dev/ttyUSB0</span> <span class="pre">115200</span></code>, replacing
+<code class="docutils literal notranslate"><span class="pre">/dev/ttyUSB0</span></code> with the port you found earlier.</p>
+<p>To exit, press Ctrl-A then \ and answer Yes to the question. There are many
+ways back to a command prompt including Ctrl-A then Ctrl-D, which will detach
+screen. All serial output from the micro:bit will still be received by
+<code class="docutils literal notranslate"><span class="pre">screen</span></code>, the serial port will be locked, preventing other applications from
+accessing it. You can restart screen by typing <code class="docutils literal notranslate"><span class="pre">screen</span> <span class="pre">-r</span></code>.</p>
+<p>Using <code class="docutils literal notranslate"><span class="pre">picocom</span></code>, type <code class="docutils literal notranslate"><span class="pre">picocom</span> <span class="pre">/dev/ttyACM0</span> <span class="pre">-b</span> <span class="pre">115200</span></code>, again replacing
+<code class="docutils literal notranslate"><span class="pre">/dev/ttyACM0</span></code> with the port you found earlier.</p>
+<p>To exit, press Ctrl-A then Ctrl-Q.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="hexformat.html" class="btn btn-neutral float-right" title="Firmware Hex File" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="flashfirmware.html" class="btn btn-neutral float-left" title="Flashing Firmware" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2015-2020, Multiple authors
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

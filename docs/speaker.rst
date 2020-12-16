@@ -32,3 +32,25 @@ Functions
 .. py:function:: is_on()
 
     Returns ``True`` if the speaker is on, otherwise returns ``False``.
+
+Example
+=======
+
+An example that runs through some of the functions of the speaker API. ::
+
+    from microbit import *
+    import audio
+
+    # Check that the speaker is on
+    print(speaker.is_on())
+    # Play a sound
+    audio.play(Sound.HELLO)
+    sleep(2000)
+    # Disable the speaker
+    speaker.disable()
+    # Check that the speaker is off
+    print(speaker.is_on())
+    # Play a sound. This will not be heard on the speaker, but will be heard
+    # on Pin 0 if you have headphones or a speaker connected.
+    audio.play(Sound.HELLO)
+

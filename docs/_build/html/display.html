@@ -1,0 +1,398 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Display &mdash; BBC micro:bit MicroPython 1.0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="I²C" href="i2c.html" />
+    <link rel="prev" title="Compass" href="compass.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> BBC micro:bit MicroPython
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/hello.html">Hello, World!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/images.html">Images</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/buttons.html">Buttons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/io.html">Input/Output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/music.html">Music</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/random.html">Random</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/movement.html">Movement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/gestures.html">Gestures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/direction.html">Direction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/storage.html">Storage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/speech.html">Speech</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/network.html">Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/radio.html">Radio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/next.html">Next Steps</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="microbit_micropython_api.html">micro:bit Micropython API</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="microbit.html">Microbit Module</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="microbit.html#functions">Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="microbit.html#attributes">Attributes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="microbit.html#classes">Classes</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="microbit.html#modules">Modules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="accelerometer.html">Accelerometer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="audio.html">Audio V2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="compass.html">Compass</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Display</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#functions">Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="i2c.html">I²C</a></li>
+<li class="toctree-l3"><a class="reference internal" href="microphone.html">Microphone <strong>V2</strong></a></li>
+<li class="toctree-l3"><a class="reference internal" href="spi.html">SPI</a></li>
+<li class="toctree-l3"><a class="reference internal" href="uart.html">UART</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="accelerometer.html">Accelerometer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="audio.html">Audio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ble.html">Bluetooth</a></li>
+<li class="toctree-l1"><a class="reference internal" href="button.html">Buttons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="compass.html">Compass</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Display</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#functions">Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#example">Example</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="filesystem.html">Local Persistent File System</a></li>
+<li class="toctree-l1"><a class="reference internal" href="i2c.html">I²C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="image.html">Image</a></li>
+<li class="toctree-l1"><a class="reference internal" href="machine.html">Machine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="microphone.html">Microphone <strong>V2</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="micropython.html">MicroPython</a></li>
+<li class="toctree-l1"><a class="reference internal" href="music.html">Music</a></li>
+<li class="toctree-l1"><a class="reference internal" href="neopixel.html">NeoPixel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="os.html">The <code class="docutils literal notranslate"><span class="pre">os</span></code>  Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pin.html">Input/Output Pins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="radio.html">Radio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="random.html">Random Number Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="speech.html">Speech</a></li>
+<li class="toctree-l1"><a class="reference internal" href="spi.html">SPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="uart.html">UART</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utime.html">utime</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Developer Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="devguide/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devguide/flashfirmware.html">Flashing Firmware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devguide/repl.html">Accessing the REPL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devguide/hexformat.html">Firmware Hex File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devguide/devfaq.html">Developer FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="devguide/contributing.html">Contributing</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">BBC micro:bit MicroPython</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="microbit.html">Microbit Module</a> &raquo;</li>
+        
+      <li>Display</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/display.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-microbit.display">
+<span id="display"></span><h1>Display<a class="headerlink" href="#module-microbit.display" title="Permalink to this headline">¶</a></h1>
+<p>This module controls the 5×5 LED display on the front of your board. It can
+be used to display images, animations and even text.</p>
+<img alt="_images/scroll-hello.gif" src="_images/scroll-hello.gif" />
+<div class="section" id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="microbit.display.get_pixel">
+<code class="descclassname">microbit.display.</code><code class="descname">get_pixel</code><span class="sig-paren">(</span><em>x</em>, <em>y</em><span class="sig-paren">)</span><a class="headerlink" href="#microbit.display.get_pixel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the brightness of the LED at column <code class="docutils literal notranslate"><span class="pre">x</span></code> and row <code class="docutils literal notranslate"><span class="pre">y</span></code> as an
+integer between 0 (off) and 9 (bright).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="microbit.display.set_pixel">
+<code class="descclassname">microbit.display.</code><code class="descname">set_pixel</code><span class="sig-paren">(</span><em>x</em>, <em>y</em>, <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#microbit.display.set_pixel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the brightness of the LED at column <code class="docutils literal notranslate"><span class="pre">x</span></code> and row <code class="docutils literal notranslate"><span class="pre">y</span></code> to <code class="docutils literal notranslate"><span class="pre">value</span></code>,
+which has to be an integer between 0 and 9.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="microbit.display.clear">
+<code class="descclassname">microbit.display.</code><code class="descname">clear</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#microbit.display.clear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the brightness of all LEDs to 0 (off).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="microbit.display.show">
+<code class="descclassname">microbit.display.</code><code class="descname">show</code><span class="sig-paren">(</span><em>image</em><span class="sig-paren">)</span><a class="headerlink" href="#microbit.display.show" title="Permalink to this definition">¶</a></dt>
+<dd><p>Display the <code class="docutils literal notranslate"><span class="pre">image</span></code>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt>
+<code class="descclassname">microbit.display.</code><code class="descname">show</code><span class="sig-paren">(</span><em>value</em>, <em>delay=400</em>, <em>*</em>, <em>wait=True</em>, <em>loop=False</em>, <em>clear=False</em><span class="sig-paren">)</span></dt>
+<dd><p>If <code class="docutils literal notranslate"><span class="pre">value</span></code> is a string, float or integer, display letters/digits in sequence.
+Otherwise, if <code class="docutils literal notranslate"><span class="pre">value</span></code> is an iterable sequence of images, display these images in sequence.
+Each letter, digit or image is shown with <code class="docutils literal notranslate"><span class="pre">delay</span></code> milliseconds between them.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">wait</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code>, this function will block until the animation is
+finished, otherwise the animation will happen in the background.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">loop</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code>, the animation will repeat forever.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">clear</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code>, the display will be cleared after the iterable has finished.</p>
+<p>Note that the <code class="docutils literal notranslate"><span class="pre">wait</span></code>, <code class="docutils literal notranslate"><span class="pre">loop</span></code> and <code class="docutils literal notranslate"><span class="pre">clear</span></code> arguments must be specified
+using their keyword.</p>
+</dd></dl>
+
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If using a generator as the <code class="docutils literal notranslate"><span class="pre">iterable</span></code>, then take care not to allocate any memory
+in the generator as allocating memory in an interrupt is prohibited and will raise a
+<code class="docutils literal notranslate"><span class="pre">MemoryError</span></code>.</p>
+</div>
+<dl class="function">
+<dt id="microbit.display.scroll">
+<code class="descclassname">microbit.display.</code><code class="descname">scroll</code><span class="sig-paren">(</span><em>value</em>, <em>delay=150</em>, <em>*</em>, <em>wait=True</em>, <em>loop=False</em>, <em>monospace=False</em><span class="sig-paren">)</span><a class="headerlink" href="#microbit.display.scroll" title="Permalink to this definition">¶</a></dt>
+<dd><p>Scrolls <code class="docutils literal notranslate"><span class="pre">value</span></code> horizontally on the display. If <code class="docutils literal notranslate"><span class="pre">value</span></code> is an integer or float it is
+first converted to a string using <code class="docutils literal notranslate"><span class="pre">str()</span></code>. The <code class="docutils literal notranslate"><span class="pre">delay</span></code> parameter controls how fast
+the text is scrolling.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">wait</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code>, this function will block until the animation is
+finished, otherwise the animation will happen in the background.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">loop</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code>, the animation will repeat forever.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">monospace</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code>, the characters will all take up 5 pixel-columns
+in width, otherwise there will be exactly 1 blank pixel-column between each
+character as they scroll.</p>
+<p>Note that the <code class="docutils literal notranslate"><span class="pre">wait</span></code>, <code class="docutils literal notranslate"><span class="pre">loop</span></code> and <code class="docutils literal notranslate"><span class="pre">monospace</span></code> arguments must be specified
+using their keyword.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="microbit.display.on">
+<code class="descclassname">microbit.display.</code><code class="descname">on</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#microbit.display.on" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use on() to turn on the display.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="microbit.display.off">
+<code class="descclassname">microbit.display.</code><code class="descname">off</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#microbit.display.off" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use off() to turn off the display (thus allowing you to re-use the GPIO
+pins associated with the display for other purposes).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="microbit.display.is_on">
+<code class="descclassname">microbit.display.</code><code class="descname">is_on</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#microbit.display.is_on" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns <code class="docutils literal notranslate"><span class="pre">True</span></code> if the display is on, otherwise returns <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="microbit.display.read_light_level">
+<code class="descclassname">microbit.display.</code><code class="descname">read_light_level</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#microbit.display.read_light_level" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use the display’s LEDs in reverse-bias mode to sense the amount of light
+falling on the display.  Returns an integer between 0 and 255 representing
+the light level, with larger meaning more light.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="example">
+<h2>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<p>To continuously scroll a string across the display, and do it in the background,
+you can use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">microbit</span>
+
+<span class="n">microbit</span><span class="o">.</span><span class="n">display</span><span class="o">.</span><span class="n">scroll</span><span class="p">(</span><span class="s1">&#39;Hello!&#39;</span><span class="p">,</span> <span class="n">wait</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">loop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="i2c.html" class="btn btn-neutral float-right" title="I²C" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="compass.html" class="btn btn-neutral float-left" title="Compass" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2015-2020, Multiple authors
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

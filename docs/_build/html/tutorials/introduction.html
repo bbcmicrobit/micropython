@@ -1,0 +1,412 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html4" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Introduction &mdash; BBC micro:bit MicroPython 1.0.1 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../_static/jquery.js"></script>
+        <script type="text/javascript" src="../_static/underscore.js"></script>
+        <script type="text/javascript" src="../_static/doctools.js"></script>
+        <script type="text/javascript" src="../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Hello, World!" href="hello.html" />
+    <link rel="prev" title="BBC micro:bit MicroPython documentation" href="../index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> BBC micro:bit MicroPython
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0.1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="hello.html">Hello, World!</a></li>
+<li class="toctree-l2"><a class="reference internal" href="images.html">Images</a></li>
+<li class="toctree-l2"><a class="reference internal" href="buttons.html">Buttons</a></li>
+<li class="toctree-l2"><a class="reference internal" href="io.html">Input/Output</a></li>
+<li class="toctree-l2"><a class="reference internal" href="music.html">Music</a></li>
+<li class="toctree-l2"><a class="reference internal" href="random.html">Random</a></li>
+<li class="toctree-l2"><a class="reference internal" href="movement.html">Movement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gestures.html">Gestures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="direction.html">Direction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="storage.html">Storage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="speech.html">Speech</a></li>
+<li class="toctree-l2"><a class="reference internal" href="network.html">Network</a></li>
+<li class="toctree-l2"><a class="reference internal" href="radio.html">Radio</a></li>
+<li class="toctree-l2"><a class="reference internal" href="next.html">Next Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="hello.html">Hello, World!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="images.html">Images</a></li>
+<li class="toctree-l1"><a class="reference internal" href="buttons.html">Buttons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="io.html">Input/Output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="music.html">Music</a></li>
+<li class="toctree-l1"><a class="reference internal" href="random.html">Random</a></li>
+<li class="toctree-l1"><a class="reference internal" href="movement.html">Movement</a></li>
+<li class="toctree-l1"><a class="reference internal" href="gestures.html">Gestures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="direction.html">Direction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="storage.html">Storage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="speech.html">Speech</a></li>
+<li class="toctree-l1"><a class="reference internal" href="network.html">Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="radio.html">Radio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="next.html">Next Steps</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../microbit_micropython_api.html">micro:bit Micropython API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../microbit.html">Microbit Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../accelerometer.html">Accelerometer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../audio.html">Audio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ble.html">Bluetooth</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../button.html">Buttons</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../compass.html">Compass</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../display.html">Display</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../filesystem.html">Local Persistent File System</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../i2c.html">I²C</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../image.html">Image</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../machine.html">Machine</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../microphone.html">Microphone <strong>V2</strong></a></li>
+<li class="toctree-l1"><a class="reference internal" href="../micropython.html">MicroPython</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../music.html">Music</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../neopixel.html">NeoPixel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../os.html">The <code class="docutils literal notranslate"><span class="pre">os</span></code>  Module</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pin.html">Input/Output Pins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../radio.html">Radio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../random.html">Random Number Generation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../speech.html">Speech</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../spi.html">SPI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../uart.html">UART</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utime.html">utime</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Developer Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../devguide/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devguide/flashfirmware.html">Flashing Firmware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devguide/repl.html">Accessing the REPL</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devguide/hexformat.html">Firmware Hex File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devguide/devfaq.html">Developer FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../devguide/contributing.html">Contributing</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">BBC micro:bit MicroPython</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Introduction</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/tutorials/introduction.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="introduction">
+<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<p>We suggest you download and use the <a class="reference external" href="http://codewith.mu/">mu editor</a> when
+working through these tutorials. Instructions for downloading and installing
+Mu are on its website. You may need to install a driver, depending on your
+platform (instruction are on the website).</p>
+<p>Mu works with Windows, OSX and Linux.</p>
+<p>Once Mu is installed connect your micro:bit to your computer via a USB lead.</p>
+<p>Write your script in the editor window and click the “Flash” button to transfer
+it to the micro:bit. If it doesn’t work, make sure your micro:bit appears as
+a USB storage device in your file system explorer.</p>
+<div class="toctree-wrapper compound">
+<p class="caption"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="hello.html">Hello, World!</a></li>
+<li class="toctree-l1"><a class="reference internal" href="images.html">Images</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="images.html#diy-images">DIY Images</a></li>
+<li class="toctree-l2"><a class="reference internal" href="images.html#animation">Animation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="buttons.html">Buttons</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="buttons.html#event-loops">Event Loops</a></li>
+<li class="toctree-l2"><a class="reference internal" href="buttons.html#handling-an-event">Handling an Event</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="io.html">Input/Output</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="io.html#ticklish-python">Ticklish Python</a></li>
+<li class="toctree-l2"><a class="reference internal" href="io.html#bleeps-and-bloops">Bleeps and Bloops</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="music.html">Music</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="music.html#wolfgang-amadeus-microbit">Wolfgang Amadeus Microbit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="music.html#sound-effects">Sound Effects</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="random.html">Random</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="random.html#random-numbers">Random Numbers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="random.html#seeds-of-chaos">Seeds of Chaos</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="movement.html">Movement</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="movement.html#musical-mayhem">Musical Mayhem</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="gestures.html">Gestures</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gestures.html#magic-8">Magic-8</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="direction.html">Direction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="direction.html#compass">Compass</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="storage.html">Storage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="storage.html#open-sesame">Open Sesame</a></li>
+<li class="toctree-l2"><a class="reference internal" href="storage.html#os-sos">OS SOS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="storage.html#file-transfer">File Transfer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="storage.html#mainly-main-py">Mainly main.py</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="speech.html">Speech</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="speech.html#dalek-poetry">DALEK Poetry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="speech.html#say-something">Say Something</a></li>
+<li class="toctree-l2"><a class="reference internal" href="speech.html#poetry-on-demand">Poetry on Demand</a></li>
+<li class="toctree-l2"><a class="reference internal" href="speech.html#phonemes">Phonemes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="speech.html#sing-a-song-of-micro-bit">Sing A Song of Micro:bit</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="network.html">Network</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="network.html#connection">Connection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="network.html#signal">Signal</a></li>
+<li class="toctree-l2"><a class="reference internal" href="network.html#protocol">Protocol</a></li>
+<li class="toctree-l2"><a class="reference internal" href="network.html#message">Message</a></li>
+<li class="toctree-l2"><a class="reference internal" href="network.html#application">Application</a></li>
+<li class="toctree-l2"><a class="reference internal" href="network.html#the-end-result">The End Result</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="radio.html">Radio</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="radio.html#layers-upon-layers">Layers upon Layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="radio.html#bytes">Bytes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="radio.html#addressing">Addressing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="radio.html#fireflies">Fireflies</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="next.html">Next Steps</a></li>
+</ul>
+</div>
+<p>Python is one of the <a class="reference external" href="http://www.tiobe.com/index.php/content/paperinfo/tpci/index.html">world’s most popular</a> programming languages. Every day, without
+realising, you probably use software written using Python. All sorts of
+companies and organisations use Python for a diverse range of applications.
+Google, NASA, Bank of America, Disney, CERN, YouTube, Mozilla, The Guardian -
+the list goes on and covers all sectors of the economy, science and the arts.</p>
+<p>For example, do you remember the announcement of the <a class="reference external" href="http://www.bbc.co.uk/news/science-environment-35552207">discovery of gravitational waves</a>? The instruments used to make the measurements were controlled <a class="reference external" href="https://www.reddit.com/r/IAmA/comments/45g8qu/we_are_the_ligo_scientific_collaboration_and_we/czxnlux">with Python</a>.</p>
+<p>Put simply, if you teach or learn Python, you are developing a highly valuable
+skill that applies to all areas of human endeavour.</p>
+<p>One such area is the BBC’s amazing micro:bit device. It runs a version of
+Python called MicroPython that’s designed to run on small computers like the BBC
+micro:bit. It’s a full implementation of Python 3 so when you move onto other
+things (such as programming Python on a Raspberry Pi) you’ll use exactly the
+same language.</p>
+<p>MicroPython does not include all the standard code libraries that come with
+“regular” Python. However, we have created a special <code class="docutils literal notranslate"><span class="pre">microbit</span></code> module in
+MicroPython that lets you control the device.</p>
+<p>Python and MicroPython are free software. Not only does this mean you don’t pay
+anything to use Python, but you are also free to contribute back to the Python
+community. This may be in the form of code, documentation, bug reports, running
+a community group or writing tutorials (like this one). In fact, all the Python
+related resources for the BBC micro:bit have been created by an international
+team of volunteers working in their free time.</p>
+<p>These lessons introduce MicroPython and the BBC
+micro:bit in easy-to-follow steps. Feel free to adopt and adapt them for
+classroom based lessons, or perhaps just follow them on your own at home.</p>
+<p>You’ll have most success if you explore, experiment and play. You can’t break
+a BBC micro:bit by writing incorrect code. Just dive in!</p>
+<p>A word of warning: <em>you will fail many times</em>, and that is fine. <strong>Failure is
+how good software developers learn</strong>. Those of us who work as software
+developers have a lot of fun tracking down bugs and avoiding the repetition of
+mistakes.</p>
+<p>If in doubt, remember the Zen of MicroPython:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Code,
+Hack it,
+Less is more,
+Keep it simple,
+Small is beautiful,
+
+Be brave! Break things! Learn and have fun!
+Express yourself with MicroPython.
+
+Happy hacking! :-)
+</pre></div>
+</div>
+<p>Best of luck!</p>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="hello.html" class="btn btn-neutral float-right" title="Hello, World!" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../index.html" class="btn btn-neutral float-left" title="BBC micro:bit MicroPython documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2015-2020, Multiple authors
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
