@@ -11,10 +11,10 @@ need to import it separately with::
 
 .. note::
 
-    From our tests, the micro:bit NeoPixel module can drive up to around 256
+    From our tests, the Microbit NeoPixel module can drive up to around 256
     NeoPixels. Anything above that and you may experience weird bugs and
     issues. The micro:bit can only supply 90mA **V1** or 190mA **V2**  to
-    external devices, larger numbers of NeoPixels require an external power
+    external devices,larger numbers of NeoPixels require an external power
     supply with common ground.
 
     NeoPixels are designed to work at 5V, but luckily they still function using
@@ -54,9 +54,10 @@ Classes
     NeoPixel(pin, n, bpp)
 
     Initialise a new strip of ``n`` number of neopixel LEDs controlled via pin
-    ``pin``. For **V2** micro:bit boards that support RGBW neopixels, a third
-    value can be passed to ``NeoPixel`` to indicate the number of bytes per
-    pixel (bpp) is 4 rather than the default of 3.
+    ``pin``. The **V2** micro:bit can also support RGBW neopixels, so a third
+    argument can be passed to ``NeoPixel`` to indicate the number of bytes per
+    pixel (bpp). For RGBW, this is is ``4`` rather than the default of 3 for
+    RGB and GRB.
     
     Each pixel is addressed by a position (starting from 0). Neopixels
     are given RGB (red, green, blue) / RGBW (red, green, blue, white) **V2**
