@@ -47,7 +47,7 @@ An example that runs through some of the functions of the speaker API. ::
     audio.play(Sound.HELLO)
     sleep(2000)
     # Disable the speaker
-    speaker.disable()
+    speaker.off()
     # Check that the speaker is off
     print(speaker.is_on())
     # Play a sound. This will not be heard on the speaker, but will be heard
