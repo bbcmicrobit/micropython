@@ -26,9 +26,9 @@ Functions
     * **wait**: If ``wait`` is ``True``, this function will block until the
       source is exhausted.
 
-    * **pin**: As with the music module, you can use the optional ``pin``
-      argument to specify the output pin can be used to override the
-      default of ``microbit.pin0``.
+    * **pin**: An optional argument to specify the output pin can be used to
+    override the default of ``pin0``. If we do not want any sound to play
+    we can use ``pin=None``.
 
     * **return_pin**: specifies a differential edge connector pin to connect
       to an external speaker instead of ground. This is ignored for the **V2**
