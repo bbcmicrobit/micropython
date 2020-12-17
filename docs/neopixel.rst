@@ -58,7 +58,7 @@ Classes
     Initialise a new strip of ``n`` number of neopixel LEDs controlled via pin
     ``pin``. The **V2** micro:bit can also support RGBW neopixels, so a third
     argument can be passed to ``NeoPixel`` to indicate the number of bytes per
-    pixel (bpp). For RGBW, this is is ``4`` rather than the default of 3 for
+    pixel (bpp). For RGBW, this is is ``4`` rather than the default of ``3`` for
     RGB and GRB.
     
     Each pixel is addressed by a position (starting from 0). Neopixels
