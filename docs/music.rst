@@ -115,7 +115,7 @@ Functions
     blocking call is interrupted or, in the case of a background call, a new
     frequency is set or ``stop`` is called (see below).
 
-.. py:function:: stop(pin=pin1)
+.. py:function:: stop(pin=pin0)
     
     Stops all music playback on the built-in speaker and an optional pin, eg.
     ``music.stop(pin1)``. If no pin is given, eg. ``music.stop()`` all playback
