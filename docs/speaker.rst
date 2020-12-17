@@ -26,7 +26,7 @@ Functions
 
 .. py:function:: on()
 
-    Use on() to turn off the display (thus allowing you to re-use the GPIO
+    Use ``on()`` to turn off the speaker (thus allowing you to re-use the GPIO
     pins associated with the display for other purposes).
 
 .. py:function:: is_on()
@@ -53,4 +53,3 @@ An example that runs through some of the functions of the speaker API. ::
     # Play a sound. This will not be heard on the speaker, but will be heard
     # on Pin 0 if you have headphones or a speaker connected.
     audio.play(Sound.HELLO)
-
