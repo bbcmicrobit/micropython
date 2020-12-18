@@ -13,9 +13,9 @@ module, you need to import it separately with::
 
     From our tests, the Microbit NeoPixel module can drive up to around 256
     NeoPixels. Anything above that and you may experience weird bugs and
-    issues. As the micro:bit can only supply 90mA to external devices,
-    larger numbers of NeoPixels require an external power supply with common
-    ground.
+    issues. The micro:bit can only supply 90mA **V1** or 190mA **V2**  to
+    external devices,larger numbers of NeoPixels require an external power
+    supply with common ground.
 
     NeoPixels are designed to work at 5V, but luckily they still function using
     the 3V supply of the BBC micro:bit. Please note that the micro:bit edge
@@ -71,9 +71,19 @@ Classes
 
 
     .. py:method:: show()
+                   write()
 
         Show the pixels. Must be called for any updates to become visible.
+        For micro:bit **V2**, an additional ``write()`` method is
+        available and is equivalent to ``show()``
 
+    .. py:method:: fill(colour)
+
+        **V2** Colour all pixels a given RGB/RGBW value. The `colour` argument
+        should be a tuple of the same length as the mumber of bytes per pixel
+        (bpp). For example ``fill((0,0,255))``. Use in conjunction with
+        ``show()`` to update the Neopixels.
+    
 Operations
 ==========
 
