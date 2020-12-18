@@ -75,13 +75,14 @@ Classes
                    write()
 
         Show the pixels. Must be called for any updates to become visible.
-        For micro:bit **V2**, the additional ``write()`` method is
-        available as part of the RGBW implementation and is equivalent
-        to ``show()``
+        For micro:bit **V2**, an additional ``write()`` method is
+        available and is equivalent to ``show()``
 
-    .. py:method:: fill((r,g,b))
+    .. py:method:: fill(colour)
 
-        **V2** Colour all pixels a given RGB/RGBW value. Use in conjunction with
+        **V2** Colour all pixels a given RGB/RGBW value. The `colour` argument
+        should be a tuple of the same length as the mumber of bytes per pixel
+        (bpp). For example ``fill((0,0,255))``. Use in conjunction with
         ``show()`` to update the Neopixels.
     
 Operations
