@@ -58,6 +58,7 @@ Functions
     play out of the pins can use ``pin=None``.
 
 .. py:function:: say(words, \*, pitch=64, speed=72, mouth=128, throat=128)
+                 say(words, \*, pitch=64, speed=72, mouth=128, throat=128, pin=pin0)
 
     Say the English words in the string ``words``. The result is semi-accurate
     for English. Override the optional pitch, speed, mouth and throat
