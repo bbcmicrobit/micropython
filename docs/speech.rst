@@ -66,6 +66,7 @@ Functions
     equivalent of: ``speech.pronounce(speech.translate(words))``
 
 .. py:function:: sing(phonemes, \*, pitch=64, speed=72, mouth=128, throat=128)
+                 sing(phonemes, \*, pitch=64, speed=72, mouth=128, throat=128, pin=pin0)
 
     Sing the phonemes contained in the string ``phonemes``. Changing the pitch
     and duration of the note is described below. Override the optional pitch,
