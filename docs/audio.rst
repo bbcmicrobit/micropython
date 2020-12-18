@@ -6,8 +6,8 @@ Audio
 This module allows you play sounds with the micro:bit.
 
 By default sound output will be via the edge connector on pin 0 and the
-built-in speaker **V2**. You can connect a wired headphones or a speaker to
-pin 0 and GND on the edge connector to hear the sounds.
+:doc:`built-in speaker <speaker>` **V2**. You can connect wired headphones or
+a speaker to pin 0 and GND on the edge connector to hear the sounds.
 
 The ``audio`` module can be imported as ``import audio`` or accessed via
 the ``microbit`` module as ``microbit.audio``.
@@ -16,7 +16,6 @@ Functions
 =========
 
 .. py:function:: play(source, wait=True, pin=pin0, return_pin=None)
-                 play(source, wait=True, pin=(pin_speaker, pin0), return_pin=None)
 
     Play the source to completion.
 
@@ -27,12 +26,9 @@ Functions
       of ``AudioFrame`` elements as described below.
     :param wait: If ``wait`` is ``True``, this function will block until the
         source is exhausted.
-    :param pin: As with the music module, you can use the optional ``pin``
-      argument to specify the output pin can be used to override the
-      default of ``microbit.pin0``. If you have the latest micro:bit **V2**,
-      you can use ``microbit.pin_speaker``. The pin argument can also take a
-      tuple of two pins, for example ``pin=(pin_speaker, pin0)`` which would
-      output sound on the built-in speaker and pin 0.
+    :param pin: An optional argument to specify the output pin can be used to
+      override the default of ``pin0``. If we do not want any sound to play
+      we can use ``pin=None``.
     :param return_pin: specifies a differential edge connector pin to connect
       to an external speaker instead of ground. This is ignored for the **V2**
       revision.

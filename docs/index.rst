@@ -92,6 +92,7 @@ Projects related to MicroPython on the BBC micro:bit include:
    pin.rst
    radio.rst
    random.rst
+   speaker.rst
    speech.rst
    spi.rst
    uart.rst
