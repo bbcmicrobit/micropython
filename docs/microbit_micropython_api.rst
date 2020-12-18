@@ -154,13 +154,7 @@ pin_logo::
 
 pin_speaker:
     
-As above ``MicroBitPin`` class, but does not include ``pin.is_touched()`` and
-includes::
-
-    # disable the built-in speaker
-    pin_speaker.disable()
-    # enable the built-in speaker
-    pin_speaker.enable()
+As above ``MicroBitPin`` class, but does not include ``pin.is_touched()``.
 
 Images
 ------
@@ -349,6 +343,20 @@ accessed via the ``microbit`` module and played with the :doc:`audio <audio>` mo
 ``Sound.SPRING``
 ``Sound.TWINKLE``
 ``Sound.YAWN``
+
+Speaker **V2**
+--------------
+
+The speaker is enabled by default and can be accessed using the ``speaker`` object. It
+can be turned off or on::
+
+    # disable the built-in speaker
+    speaker.off()
+    # enable the built-in speaker
+    speaker.on()
+    # returns True or False to indicate if the speaker is on or off
+    speaker.is_on()
+
 
 UART
 ----
