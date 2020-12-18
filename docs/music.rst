@@ -122,7 +122,8 @@ Functions
 
 .. py:function:: stop(pin=pin0)
     
-    Stops all music playback on the built-in speaker and sound output pin, eg.
+    Stops all music playback on the built-in speaker and any pin outputting
+    sound. An optional argument can be provided to specify a pin, eg.
     ``music.stop(pin1)``.
 
 .. py:function:: reset()
