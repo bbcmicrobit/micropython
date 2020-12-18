@@ -105,5 +105,6 @@ Modules
     display.rst
     i2c.rst
     microphone.rst
+    speaker.rst
     spi.rst
     uart.rst
