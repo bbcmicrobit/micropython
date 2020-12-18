@@ -111,8 +111,8 @@ Functions
     Note that you can only play one pitch on one pin at any one time.
 
     An optional argument to specify the output pin can be used to override the
-    default of ``microbit.pin0``. If we do not want any sound to play we can
-    use ``pin=None``.
+    default of ``microbit.pin0``. If we do not want any sound to play out of
+    the pins we can use ``pin=None``.
 
     If ``wait`` is set to ``True``, this function is blocking.
 
