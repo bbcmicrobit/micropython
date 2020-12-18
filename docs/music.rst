@@ -94,7 +94,8 @@ Functions
     their defaults before the music (whatever it may be) is played.
 
     An optional argument to specify the output pin can be used to override the
-    default of ``microbit.pin0``.
+    default of ``microbit.pin0``. If we do not want any sound to play we can
+    use ``pin=None``.
 
     If ``wait`` is set to ``True``, this function is blocking.
 
@@ -109,17 +110,20 @@ Functions
 
     Note that you can only play one pitch on one pin at any one time.
 
+    An optional argument to specify the output pin can be used to override the
+    default of ``microbit.pin0``. If we do not want any sound to play we can
+    use ``pin=None``.
+
     If ``wait`` is set to ``True``, this function is blocking.
 
-    If ``duration`` is negative the pitch is played continuously until either the
-    blocking call is interrupted or, in the case of a background call, a new
-    frequency is set or ``stop`` is called (see below).
+    If ``duration`` is negative the pitch is played continuously until either
+    the blocking call is interrupted or, in the case of a background call, a
+    new frequency is set or ``stop`` is called (see below).
 
 .. py:function:: stop(pin=pin0)
     
-    Stops all music playback on the built-in speaker and an optional pin, eg.
-    ``music.stop(pin1)``. If no pin is given, eg. ``music.stop()`` all playback
-    pins are assumed.
+    Stops all music playback on the built-in speaker and sound output pin, eg.
+    ``music.stop(pin1)``.
 
 .. py:function:: reset()
 
