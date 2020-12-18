@@ -72,9 +72,18 @@ Classes
 
 
     .. py:method:: show()
+                   write()
 
         Show the pixels. Must be called for any updates to become visible.
+        For micro:bit **V2**, the additional ``write()`` method is
+        available as part of the RGBW implementation and is equivalent
+        to ``show()``
 
+    .. py:method:: fill((r,g,b))
+
+        **V2** Colour all pixels a given RGB/RGBW value. Use in conjunction with
+        ``show()`` to update the Neopixels.
+    
 Operations
 ==========
 
