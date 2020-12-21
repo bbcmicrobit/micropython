@@ -22,17 +22,13 @@ Functions
 
 .. py:function:: off()
 
-    Use off() to turn off the speaker. This does not disable sound output, so
-    you will still hear sound on Pin 0 if you have headphones or a speaker
-    connected to that pin.
+    Use ``off()`` to turn off the speaker. This does not disable sound output
+    to an edge connector pin.
 
 .. py:function:: on()
 
     Use ``on()`` to turn on the speaker.
 
-.. py:function:: is_on()
-
-    Returns ``True`` if the speaker is on, otherwise returns ``False``.
 
 Example
 =======
@@ -40,7 +36,6 @@ Example
 An example that runs through some of the functions of the speaker API. ::
 
     from microbit import *
-    import audio
 
     # Check that the speaker is on
     print(speaker.is_on())
