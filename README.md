@@ -60,9 +60,9 @@ Upon reset you will have a REPL on the USB CDC serial port, with baudrate
 
 Then try:
 
-    >>> import microbit
-    >>> microbit.display.scroll('hello!')
-    >>> microbit.button_a.is_pressed()
+    >>> from microbit import *
+    >>> display.scroll('hello!')
+    >>> button_a.is_pressed()
     >>> dir(microbit)
 
 Tab completion works and is very useful!
