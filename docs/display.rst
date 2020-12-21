@@ -1,7 +1,7 @@
 Display
 *******
 
-.. py:module:: microbit.display
+.. py:module:: display
 
 This module controls the 5×5 LED display on the front of your board. It can
 be used to display images, animations and even text.
@@ -97,6 +97,6 @@ Example
 To continuously scroll a string across the display, and do it in the background,
 you can use::
 
-    import microbit
+    from microbit import display
 
-    microbit.display.scroll('Hello!', wait=False, loop=True)
+    display.scroll('Hello!', wait=False, loop=True)
