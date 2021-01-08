@@ -73,9 +73,6 @@ they are internally connected to. The pins are available as attributes on the
 |  20 | Digital | I2C SDA  | I2C SDA         |
 +-----+---------+----------+-----------------+
 
-The above table summarizes the pins available, their types (see below) and what
-they are internally connected to.
-
 The latest micro:bit device **V2** has two additional pins that you can access
 in MicroPython, but that are not available via the edge connector:
 
@@ -207,7 +204,7 @@ its own to that.
             The default touch mode for the pins on the edge connector is 
             `resistive`. The default for the logo pin **V2** is `capacitive`.
 
-        **Resitive touch**
+        **Resistive touch**
         This test is done by measuring how much resistance there is between the
         pin and ground.  A low resistance gives a reading of ``True``.  To get
         a reliable reading using a finger you may need to touch the ground pin
@@ -218,6 +215,15 @@ its own to that.
         using a finger as a conductor. `Capacitive touch
         <https://www.allaboutcircuits.com/technical-articles/introduction-to-capacitive-touch-sensing>`_
         does not require you to make a ground connection as part of a circuit.
+
+    .. py:method:: set_touch_mode(value)
+
+        .. note::
+            The default touch mode for the pins on the edge connector is 
+            `resistive`. The default for the logo pin **V2** is `capacitive`.
+
+        Set the touch mode for the given pin. Value can be either ``CAPACITIVE``
+        or ``RESISTIVE``. For example, ``pin0.set_touch_mode(pin0.CAPACITIVE)``.
  
 The pull mode for a pin is automatically configured when the pin changes to an
 input mode. Input modes are when you call ``read_analog`` / ``read_digital`` /

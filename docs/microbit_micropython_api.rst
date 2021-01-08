@@ -149,6 +149,9 @@ Each of these pins are instances of the ``MicroBitPin`` class, which offers the 
     # Only available for touch pins 0, 1, and 2. Returns boolean if the pin
     # is touched
     pin.is_touched()
+    # Only available for touch pins 0, 1, 2 and on micro:bit V2 also the logo.
+    # Sets the touch mode. Value can be either RESISTIVE or CAPACITIVE
+    pin.set_touch_mode(value)
 
 Except in the case of the pins marked **V2**, which offers the following API:
 
@@ -156,6 +159,8 @@ pin_logo::
 
     # returns boolean for logo touch pin
     pin_logo.is_touched()
+    # Sets the touch mode. Value can be either RESISTIVE or CAPACITIVE
+    pin.set_touch_mode(value)
 
 pin_speaker, as the above ``MicroBitPin`` class, but does not include
 ``pin.is_touched()``.
