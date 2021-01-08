@@ -112,7 +112,8 @@ Provide digital and analog input and output functionality, for the pins in the
 connector, the **V2** logo and the **V2** speaker. Some pins are connected
 internally to the I/O that drives the LED matrix and the buttons.
 
-Each pin is provided as an object directly in the ``microbit`` module.  This keeps the API relatively flat, making it very easy to use:
+Each pin is provided as an object directly in the ``microbit`` module.  This
+keeps the API relatively flat, making it very easy to use:
 
     * pin0
     * pin1
@@ -144,6 +145,9 @@ Each of these pins are instances of the ``MicroBitPin`` class, which offers the 
     # Only available for touch pins 0, 1, and 2. Returns boolean if the pin
     # is touched
     pin.is_touched()
+    # Only available for touch pins 0, 1, 2 and on micro:bit V2 also the logo.
+    # Sets the touch mode. Value can be either RESISTIVE or CAPACITIVE
+    pin.set_touch_mode(value)
 
 Except in the case of the pins marked **V2**, which offers the following API::
     
@@ -151,6 +155,8 @@ pin_logo::
 
     # returns boolean for logo touch pin
     pin_logo.is_touched()
+    # Sets the touch mode. Value can be either RESISTIVE or CAPACITIVE
+    pin.set_touch_mode(value)
 
 pin_speaker:
     
