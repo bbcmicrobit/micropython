@@ -53,6 +53,51 @@ the UICR customer[16] register:
 - ``0x100010d4``: 4-byte integer with the address in the firmware of the version string
 - ``0x100010d8``: 4-byte integer with value ``0x00000000``
 
+Layout table (micro:bit V2)
+---------------------------
+
+A flash layout table is appended to the the hex file when building Micropython for a micro:bit V2.
+
+The layout table is a sequence of 16-byte entries.  The last entry contains the
+header (including magic numbers) and is aligned to the end of a page such that
+the final byte of the layout table is the final byte of the page it resides in.
+This is so it can be quickly and easily searched for.
+
+The layout table has the following format.  All integer values are unsigned and
+store little endian.
+
+::
+
+    0x00  0x01  0x02  0x03  0x04  0x05  0x06  0x07  0x08  0x09  0x0a  0x0b  0x0c  0x0d  0x0e
+    
+    ID    HT    REG_PAGE    REG_LEN                 HASH_DATA
+    (additional regions)
+    ...
+    MAGIC1                  VERSION     TABLE_LEN   NUM_REG     PSIZE_LOG2  MAGIC2
+    
+    The values are:
+    
+    ID         - 1 byte  - region id for this entry, defined by the region
+    HT         - 1 byte  - hash type of the region hash data
+    REG_PAGE   - 2 bytes - starting page number of the region
+    REG_LEN    - 4 bytes - length in bytes of the region
+    HASH_DATA  - 8 bytes - data for the hash of this region
+                           HT=0: hash data is empty
+                           HT=1: hash data contains 8 bytes of verbatim data
+                           HT=2: hash data contains a 4-byte pointer to a string
+    
+    MAGIC1     - 4 bytes - 0x597F30FE
+    VERSION    - 2 bytes - table version (currently 1)
+    TABLE_LEN  - 2 bytes - length in bytes of the table excluding this header row
+    NUM_REG    - 2 bytes - number of regions
+    PSIZE_LOG2 - 2 bytes - native page size of the flash, log-2
+    MAGIC2     - 4 bytes - 0xC1B1D79D
+
+
+This layout table is used to communicate the version of Micropython and the current memory layout to 
+a Bluetooth client and enable `partial flashing <https://github.com/microbit-sam/codal-microbit-v2/blob/initial-docs-pf-and-memory-map/docs/bluetooth/MicroBitPartialFlashing.md>`_ (only updating the Python script, and keeping the existing version
+of Micropython in flash).
+
 Steps to create the firmware.hex file
 -------------------------------------
 
