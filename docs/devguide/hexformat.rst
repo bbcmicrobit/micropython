@@ -21,18 +21,6 @@ The general memory layout used is:
     addresses of the data stored progress in incremental order.
     If there is an address jump backwards DAPLink will fail to flash the file.
 
-Appended script format
-----------------------
-
-MicroPython checks the first 2 bytes at address ``0x0003e000`` for a magic
-string to indicate if there is an appended script. If the magic string is
-found, it will automatically execute the Python code stored there, unless there
-is a main.py file stored in the MicroPython filesystem.
-
-- ``0x0003e000``: 2 bytes "MP"
-- ``0x0003e002``: 2 bytes, little endian integer for the length (in bytes) of the appended script (not counting this 4 byte header)
-- ``0x0003e004``: Script stored as bytes, for MicroPython to decode using utf-8.
-
 UICR format
 -----------
 
@@ -112,3 +100,18 @@ Running the ``make all`` command executes the following steps:
 - The ``tools/adduicr.py`` script adds the UICR to the bare hex
 - The final hex file is placed in ``build/firmware.hex``
 - The user can optionally append a script using ``tools/makecombinedhex.py`` (or other tools)
+
+Appended script format (Deprecated)
+-----------------------------------
+
+*This method of appending the script to the end of Micropython is no longer used. Python files are now stored in the :doc:`filesystem <../filesystem>` and main.py is the program entry point.*
+
+MicroPython checks the first 2 bytes at address ``0x0003e000`` for a magic
+string to indicate if there is an appended script. If the magic string is
+found, it will automatically execute the Python code stored there, unless there
+is a main.py file stored in the MicroPython filesystem.
+
+- ``0x0003e000``: 2 bytes "MP"
+- ``0x0003e002``: 2 bytes, little endian integer for the length (in bytes) of the appended script (not counting this 4 byte header)
+- ``0x0003e004``: Script stored as bytes, for MicroPython to decode using utf-8.
+
