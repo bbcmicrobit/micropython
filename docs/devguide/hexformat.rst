@@ -134,9 +134,9 @@ After setting up, go to the src/ directory and build::
 
     $ make
 
-That will build both libmicropython.a (from source in src/codal_port/) and the 
-CODAL app (from source in src/codal_app/). The resulting firmware will be 
-MICROBIT.hex in the src/ directory which can be copied to the micro:bit.
+That will build both ``libmicropython.a`` (from source in ``src/codal_port/``) and the 
+CODAL app (from source in ``src/codal_app/``). The resulting firmware will be 
+``MICROBIT.hex`` in the ``src/`` directory which can be copied to the micro:bit.
 
 Including a user script
 -----------------------
@@ -156,9 +156,9 @@ file to ensure compatibility with both hardware variants.
 Appended script format (Deprecated)
 -----------------------------------
 
-*This method of appending the script to the end of MicroPython was originally 
+This method of appending the script to the end of MicroPython was originally 
 used for micro:bit V1, but is no longer used. Python files are now stored in the
-`filesystem <filesystem>`_ and main.py is the program entry point.*
+`filesystem <filesystem>`_ and main.py is the program entry point.
 
 MicroPython checks the first 2 bytes at address ``0x0003e000`` for a magic
 string to indicate if there is an appended script. If the magic string is
