@@ -145,7 +145,7 @@ This section applies to both micro:bit V1 and V2.
 
 User scripts are stored in the MicroPython filesystem and if a ``main.py`` script 
 exists it is run when MicroPython starts. Additional Python scripts can also be 
-included and executed from the main.py file, or the REPL.
+included and executed from the ``main.py`` file, or the REPL.
 
 The `Python Editor <https://python.microbit.org>`_ uses `microbit-fs <https://github.com/microbit-foundation/microbit-fs>`_ 
 to create the filesystem and include it in the HEX file. The Python Editor must 
@@ -158,12 +158,12 @@ Appended script format (Deprecated)
 
 This method of appending the script to the end of MicroPython was originally 
 used for micro:bit V1, but is no longer used. Python files are now stored in the
-`filesystem <filesystem>`_ and main.py is the program entry point.
+`filesystem <../filesystem>`_ and ``main.py`` is the program entry point.
 
 MicroPython checks the first 2 bytes at address ``0x0003e000`` for a magic
 string to indicate if there is an appended script. If the magic string is
 found, it will automatically execute the Python code stored there, unless there
-is a main.py file stored in the MicroPython filesystem.
+is a ``main.py`` file stored in the MicroPython filesystem.
 
 - ``0x0003e000``: 2 bytes "MP"
 - ``0x0003e002``: 2 bytes, little endian integer for the length (in bytes) of 
