@@ -1,3 +1,5 @@
+.. _filesystem:
+
 Local Persistent File System
 ****************************
 

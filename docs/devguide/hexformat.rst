@@ -158,7 +158,7 @@ Appended script format (Deprecated)
 
 *This method of appending the script to the end of MicroPython was originally 
 used for micro:bit V1, but is no longer used. Python files are now stored in the
-:doc:`filesystem <../filesystem>` and main.py is the program entry point.*
+:doc:`filesystem <filesystem>` and main.py is the program entry point.*
 
 MicroPython checks the first 2 bytes at address ``0x0003e000`` for a magic
 string to indicate if there is an appended script. If the magic string is
