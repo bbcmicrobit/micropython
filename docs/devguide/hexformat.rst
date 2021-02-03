@@ -117,7 +117,7 @@ micro:bit V2
 This applies to MicroPython for the micro:bit V2, the source of which can be 
 found here: `microbit-foundation/micropython-microbit-v2 <https://github.com/microbit-foundation/micropython-microbit-v2>`_.
 
-This is a port of MicroPython to the micro:bit which uses the CODAL as the 
+This is a port of MicroPython to the micro:bit which uses CODAL as the 
 underlying target platform.
 
 After cloning this repository update the submodules::
@@ -169,4 +169,3 @@ is a ``main.py`` file stored in the MicroPython filesystem.
 - ``0x0003e002``: 2 bytes, little endian integer for the length (in bytes) of 
   the appended script (not counting this 4 byte header)
 - ``0x0003e004``: Script stored as bytes, for MicroPython to decode using utf-8.
-
