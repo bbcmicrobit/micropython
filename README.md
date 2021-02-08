@@ -27,10 +27,11 @@ Once all packages are installed, use yotta and the provided Makefile to build.
 You might need need an Arm Mbed account to complete some of the yotta commands,
 if so, you could be prompted to create one as a part of the process.
 
-- Use target bbc-microbit-classic-gcc-nosd:
+- Use target [bbc-microbit-classic-gcc-nosd](https://github.com/lancaster-university/yotta-target-bbc-microbit-classic-gcc-nosd)
+from GitHub (the yotta registry is deprecated as of 2021):
 
   ```
-  yt target bbc-microbit-classic-gcc-nosd
+  yt target bbc-microbit-classic-gcc-nosd@https://github.com/lancaster-university/yotta-target-bbc-microbit-classic-gcc-nosd
   ```
 
 - Run yotta update to fetch remote assets:
