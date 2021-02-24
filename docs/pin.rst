@@ -20,6 +20,7 @@ depending upon the digital reading on pin 0::
         else:
             display.show(Image.SAD)
 
+
 Pin Functions
 =============
 
