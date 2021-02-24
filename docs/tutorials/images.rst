@@ -18,6 +18,8 @@ display is a part of the ``Image`` object and called ``HAPPY``. We tell
 ``show`` to use it by putting it between the parenthesis (``(`` and ``)``).
 
 .. image:: happy.png
+    :width: 300px
+    :align: center
 
 Here's a list of the built-in images:
 

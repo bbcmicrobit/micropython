@@ -8,7 +8,6 @@ for short).
 .. image:: blue-microbit.png
     :width: 300px
     :align: center
-    :height: 270px
     :alt: micro:bit with pins labelled
 
 Some of the pins are bigger than others so it's possible to attach crocodile
@@ -26,7 +25,7 @@ For example, to use the pin labelled 0 (zero), you can use the object called
 ``pin0`` in your script. The logo pin **V2** uses ``pin_logo``.
 
 These objects have various *methods* associated with them depending upon what
-the specific `pin is capable of <Pin Functions>`_ eg. read, write or touch.
+the specific pin is capable of eg. read, write or touch.
 
 Ticklish Python
 +++++++++++++++
@@ -47,7 +46,15 @@ touch (or tickle) the 0 (zero) pin. You should see the display change from
 grumpy to happy!
 
 When you use the latest micro:bit **V2** you can also change the default
-behaviour of the pin, so that you don't have to touch GND at all.
+behaviour of the pin, so that you don't have to touch GND at all.::
+
+    from microbit import *
+    pin0.set_touch_mode(pin0.CAPACITIVE)
+        while True:
+            if pin0.is_touched():
+                display.show(Image.HAPPY)
+            else:
+                display.show(Image.SAD)
 
 The default for the edge connector pins is `resistive` and the logo pin
 **V2** is `capacitive`.
@@ -64,7 +71,6 @@ to use it for output.
 .. image:: piezo_buzzer.jpg
     :width: 250px
     :align: center
-    :height: 200px
     :alt: piezo buzzer
 
 These small devices play a high-pitched bleep when connected to a circuit. To
