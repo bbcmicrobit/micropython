@@ -50,11 +50,11 @@ behaviour of the pin, so that you don't have to touch GND at all.::
 
     from microbit import *
     pin0.set_touch_mode(pin0.CAPACITIVE)
-        while True:
-            if pin0.is_touched():
-                display.show(Image.HAPPY)
-            else:
-                display.show(Image.SAD)
+    while True:
+        if pin0.is_touched():
+            display.show(Image.HAPPY)
+        else:
+            display.show(Image.SAD)
 
 The default for the edge connector pins is `resistive` and the logo pin
 **V2** is `capacitive`.
