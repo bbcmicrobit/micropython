@@ -3,7 +3,7 @@ Music
 
 MicroPython on the BBC micro:bit comes with a powerful music and sound module.
 It's very easy to generate bleeps and bloops from the device by attaching a
-speaker or set of wired headphones.
+speaker or set of wired headphones, or by using the built-in speaker **V2**.
 
 If you are attaching a speaker, a passive piezo buzzer, or headphones, you can
 use crocodile clips to attach pin 0 and GND to the positive and negative inputs.
