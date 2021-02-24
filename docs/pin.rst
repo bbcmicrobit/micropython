@@ -19,7 +19,6 @@ depending upon the digital reading on pin 0::
             display.show(Image.HAPPY)
         else:
             display.show(Image.SAD)
- 
 
 Pin Functions
 =============
