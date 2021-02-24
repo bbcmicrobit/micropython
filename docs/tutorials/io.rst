@@ -1,31 +1,37 @@
-Input/Output
-------------
+Input/Output Pins
+-----------------
 
 There are strips of metal along the bottom edge of the BBC micro:bit that make
 it look as if the device has teeth. These are the input/output pins (or I/O pins
 for short).
 
 .. image:: blue-microbit.png
+    :width: 300px
+    :align: center
+    :alt: micro:bit with pins labelled
 
 Some of the pins are bigger than others so it's possible to attach crocodile
 clips to them. These are the ones labelled 0, 1, 2, 3V and GND (computers
 always start counting from zero). If you attach an edge connector board to the
 device it's possible to plug in wires connected to the other (smaller) pins.
 
-Each pin on the BBC micro:bit is represented by an *object* called ``pinN``
-where ``N`` is the pin number. So, for example, to do things with the pin
-labelled with a 0 (zero), use the object called ``pin0``.
+On the latest micro:bit **V2** the micro:bit logo can also be used as a touch
+input.
 
-Simple!
+In MicroPython, each pin on the BBC micro:bit is represented by an *object*
+called ``pinN``, where ``N`` is the number pf the pin. 
+
+For example, to use the pin labelled 0 (zero), you can use the object called
+``pin0`` in your script. The logo pin **V2** uses ``pin_logo``.
 
 These objects have various *methods* associated with them depending upon what
-the specific pin is capable of.
+the specific pin is capable of eg. read, write or touch.
 
 Ticklish Python
 +++++++++++++++
 
 The simplest example of input via the pins is a check to see if they are
-touched. So, you can tickle your device to make it laugh like this::
+touched. So, you can tickle your micro:bit to make it laugh like this::
 
     from microbit import *
 
@@ -35,9 +41,23 @@ touched. So, you can tickle your device to make it laugh like this::
         else:
             display.show(Image.SAD)
 
-With one hand, hold your device by the GND pin. Then, with your other hand,
+With one hand, hold your micro:bit by the GND pin. Then, with your other hand,
 touch (or tickle) the 0 (zero) pin. You should see the display change from
 grumpy to happy!
+
+When you use the latest micro:bit **V2** you can also change the default
+behaviour of the pin, so that you don't have to touch GND at all.::
+
+    from microbit import *
+    pin0.set_touch_mode(pin0.CAPACITIVE)
+    while True:
+        if pin0.is_touched():
+            display.show(Image.HAPPY)
+        else:
+            display.show(Image.SAD)
+
+The default for the edge connector pins is `resistive` and the logo pin
+**V2** is `capacitive`.
 
 This is a form of very basic input measurement. However, the fun really starts
 when you plug in circuits and other devices via the pins.
@@ -45,16 +65,22 @@ when you plug in circuits and other devices via the pins.
 Bleeps and Bloops
 +++++++++++++++++
 
-The simplest thing we can attach to the device is a Piezo buzzer. We're going
+The simplest thing we can attach to the micro:bit is a Piezo buzzer. We're going
 to use it for output.
 
 .. image:: piezo_buzzer.jpg
+    :width: 250px
+    :align: center
+    :alt: piezo buzzer
 
 These small devices play a high-pitched bleep when connected to a circuit. To
 attach one to your BBC micro:bit you should attach crocodile clips to pin 0 and
-GND (as shown below).
+GND.
 
 .. image:: pin0-gnd.png
+    :width: 250px
+    :align: center
+    :alt: piezo connected to pin0 and GND
 
 The wire from pin 0 should be attached to the positive connector on the buzzer
 and the wire from GND to the negative connector.
