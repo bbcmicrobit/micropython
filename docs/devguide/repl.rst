@@ -14,7 +14,7 @@ in real-time as you write it.
 
 Using the micro:bit Python Editor
 ---------------------------------
-The browser-based Python editor has buil-in REPL support, that can be accessed
+The browser-based Python editor has built-in REPL support, that can be accessed
 using `WebUSB <https://developers.google.com/web/updates/2016/03/access-usb-devices-on-the-web>`_.
 To use WebUSB, you will need a Google Chrome based browser and a micro:bit with
 `firmware <https://microbit.org/get-started/user-guide/firmware/>`_ at version
