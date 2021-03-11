@@ -14,7 +14,7 @@ Dependencies
 ------------
 - `yotta <http://docs.yottabuild.org//>`_
 
-When installing `yotta <http://docs.yottabuild.org//>`_, make sure you have
+When installing `yotta <http://docs.yottabuild.org>`_, make sure you have
 these components ticked to install.
 
 - python
