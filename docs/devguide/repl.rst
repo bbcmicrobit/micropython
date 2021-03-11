@@ -7,15 +7,13 @@ Accessing the REPL
 REPL (Read-Evaluate-Print-Loop) allows the micro:bit to read and evaluate code 
 in real-time as you write it.
 
-.. note::
-
-    For Windows 7 you might need to install the 
-    `MBED serial driver <https://os.mbed.com/docs/mbed-os/v6.8/program-setup/windows-serial-driver.html>`_.
-
 Using the micro:bit Python Editor
 ---------------------------------
 The browser-based Python editor has built-in REPL support, that can be accessed
 using `WebUSB <https://developers.google.com/web/updates/2016/03/access-usb-devices-on-the-web>`_.
+You can read more about how WebUSB is used in the editors in this article on
+`direct flashing from the browser in the micro:bit apps and editors <https://support.microbit.org/support/solutions/articles/19000084059>`_.
+
 To use WebUSB, you will need a Google Chrome based browser and a micro:bit with
 `firmware <https://microbit.org/get-started/user-guide/firmware/>`_ at version
 **0249** or above.
