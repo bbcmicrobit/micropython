@@ -87,9 +87,7 @@ Dependencies
 Clone the repository::
 
     $ git clone https://github.com/microbit-foundation/micropython-microbit-v2
-
-Update the submodules::
-
+    $ cd micropython-microbit-v2
     $ git submodule update --init
 
 Then build the MicroPython cross-compiler::
