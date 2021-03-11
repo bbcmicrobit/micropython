@@ -120,23 +120,12 @@ found here: `microbit-foundation/micropython-microbit-v2 <https://github.com/mic
 This is a port of MicroPython to the micro:bit which uses CODAL as the 
 underlying target platform.
 
-After cloning this repository update the submodules::
+Running the ``make`` command executes the following steps:
 
-    $ git submodule update --init
-
-Then build the MicroPython cross-compiler::
-
-    $ make -C lib/micropython/mpy-cross
-
-After setting up, go to the src/ directory and build::
-
-    $ cd src
-
-    $ make
-
-That will build both ``libmicropython.a`` (from source in ``src/codal_port/``) and the 
-CODAL app (from source in ``src/codal_app/``). The resulting firmware will be 
-``MICROBIT.hex`` in the ``src/`` directory which can be copied to the micro:bit.
+- Build both ``libmicropython.a`` (from source in ``src/codal_port/``) and the 
+  CODAL app (from source in ``src/codal_app/``).
+- Creates the microbit-micropython firmware as ``MICROBIT.hex`` in the ``src/``
+  directory, which can be copied to the micro:bit.
 
 Including a user script
 -----------------------
