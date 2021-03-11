@@ -1,7 +1,7 @@
 .. _hexformat:
 
 =================
-Firmware Hex File
+MicroPython Hex File
 =================
 
 When MicroPython is built, the compiler produces an
