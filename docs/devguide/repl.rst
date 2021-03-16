@@ -7,11 +7,23 @@ Accessing the REPL
 REPL (Read-Evaluate-Print-Loop) allows the micro:bit to read and evaluate code 
 in real-time as you write it.
 
-Accessing the REPL on the micro:bit will require you to:
+Using the micro:bit Python Editor
+---------------------------------
+The browser-based Python editor has built-in REPL support, that can be accessed
+using `WebUSB <https://developers.google.com/web/updates/2016/03/access-usb-devices-on-the-web>`_.
+You can read more about how WebUSB is used in the editors in this article on
+`direct flashing from the browser in the micro:bit apps and editors <https://support.microbit.org/support/solutions/articles/19000084059>`_.
 
-* Determine the communication port identifier for the micro:bit
-* Use a program to establish communication with the device
+To use WebUSB, you will need a Google Chrome based browser and a micro:bit with
+`firmware <https://microbit.org/get-started/user-guide/firmware/>`_ at version
+**0249** or above.
 
+To use the REPL:
+
+1. Flash a Python program to the micro:bit, if you have not done so already.
+2. Select Open Serial to open the REPL window.
+3. Click the blue bar to ``Send CTRL-C for REPL`` or press ``CTRL`` + ``C`` on
+   your keyboard to enter the REPL.
 
 Using a serial communication program
 ------------------------------------
@@ -25,6 +37,11 @@ device.
 
 Determining the port
 --------------------
+
+Accessing the REPL on the micro:bit will require you to:
+
+* Determine the communication port identifier for the micro:bit
+* Use a program to establish communication with the device
 
 The micro:bit will have a port identifier (tty, usb) that can be used by the 
 computer for communicating. Before connecting to the micro:bit we must 
