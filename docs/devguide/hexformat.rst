@@ -122,6 +122,8 @@ underlying target platform.
 
 Running the ``make`` command executes the following steps:
 
+- Create build output directory, run cmake, and make sure codal libraries
+  exist (via cmake).
 - Build both ``libmicropython.a`` (from source in ``src/codal_port/``) and the 
   CODAL app (from source in ``src/codal_app/``).
 - Creates the microbit-micropython firmware as ``MICROBIT.hex`` in the ``src/``

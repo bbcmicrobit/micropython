@@ -1,8 +1,8 @@
 .. _flashfirmware:
 
-========================
-Build and flash firmware
-========================
+===========================
+Build and flash MicroPython
+===========================
 
 micro:bit V1
 ============
@@ -27,9 +27,9 @@ preparation for the build, and additional data is added to the hex file after.
 
 Clone the repository and change directory to it::
 
-  $ git clone <https://github.com/bbcmicrobit/micropython
+  $ git clone https://github.com/bbcmicrobit/micropython
 
-  $ cd bbcmicrobit/micropython
+  $ cd micropython
 
 Configure yotta to use the micro:bit target::
 
@@ -96,6 +96,7 @@ Clone the repository and change directory to it::
     $ cd micropython-microbit-v2
 
 Update the submodules::
+
     $ git submodule update --init
 
 Then build the MicroPython cross-compiler::
@@ -108,6 +109,5 @@ After setting up, go to the src/ directory and build::
 
     $ make
 
-That will build both ``libmicropython.a`` (from source in ``src/codal_port/``) and the 
-CODAL app (from source in ``src/codal_app/``). The resulting firmware will be 
-``MICROBIT.hex`` in the ``src/`` directory which can be copied to the micro:bit.
+The resulting firmware will be ``MICROBIT.hex`` in the ``src/`` 
+directory whichcan be copied to the micro:bit.
