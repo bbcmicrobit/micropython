@@ -110,4 +110,4 @@ After setting up, go to the src/ directory and build::
     $ make
 
 The resulting firmware will be ``MICROBIT.hex`` in the ``src/`` 
-directory whichcan be copied to the micro:bit.
+directory which can be copied to the micro:bit.
