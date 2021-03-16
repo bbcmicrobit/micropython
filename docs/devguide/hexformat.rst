@@ -126,7 +126,8 @@ Running the ``make`` command executes the following steps:
   exist (via cmake).
 - Build both ``libmicropython.a`` (from source in ``src/codal_port/``) and the 
   CODAL app (from source in ``src/codal_app/``).
-- Creates the microbit-micropython firmware as ``MICROBIT.hex`` in the ``src/``
+- Run ``addlayouttable.py`` to add the layout table to the .hex file
+- Create the microbit-micropython firmware as ``MICROBIT.hex`` in the ``src/``
   directory, which can be copied to the micro:bit.
 
 Including a user script
