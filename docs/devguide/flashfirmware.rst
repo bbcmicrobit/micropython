@@ -43,14 +43,8 @@ Start the build using the makefile::
 
   make all
 
-The result is a microbit-micropython hex file
-(i.e. ``firmware.hex``) found in the
-build/bbc-microbit-classic-gcc-nosd/source from the root of the repository.
-
-The Makefile does some extra preprocessing of the source, which is needed
-only if you add new interned strings to qstrdefsport.h. The Makefile also puts
-the resulting firmware at build/firmware.hex, and includes some convenience
-targets.
+The resulting ``firmware.hex`` can be found in the ``build/`` 
+directory which can then be copied to the micro:bit.
 
 Preparing firmware and a Python program
 =======================================
