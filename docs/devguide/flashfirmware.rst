@@ -4,6 +4,12 @@
 Build and Flash MicroPython
 ===========================
 
+micro:bit V1
+============
+
+This applies to MicroPython for the micro:bit V1, the source of which can be 
+found here: `bbcmicrobit/micropython <https://github.com/bbcmicrobit/micropython>`_.
+
 Dependencies
 ------------
 
@@ -68,8 +74,54 @@ is added to the script.::
 
 It also accepts data on standard input.
 
+
+micro:bit V2
+============
+
+This applies to MicroPython for the micro:bit V2, the source of which can be
+found here: `microbit-foundation/micropython-microbit-v2 <https://github.com/microbit-foundation/micropython-microbit-v2>`_.
+
+The repository also contains a history of
+`MicroPython firmware builds <https://github.com/microbit-foundation/micropython-microbit-v2/actions>`_.
+
+Dependencies
+------------
+
+- `Arm GCC <https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads>`_
+- `GCC <http://gcc.gnu.org/install/>`_
+- `CMake <https://cmake.org/>`_
+- `git <https://git-scm.com/>`_
+- `Ninja <https://ninja-build.org/>`_
+- `Python <https://www.python.org/downloads/>`_
+
+Build MicroPython
+-----------------
+
+Clone the repository and change directory to it::
+
+    $ git clone https://github.com/microbit-foundation/micropython-microbit-v2
+    $ cd micropython-microbit-v2
+
+Update the submodules::
+
+    $ git submodule update --init
+
+Then build the MicroPython cross-compiler::
+
+    $ make -C lib/micropython/mpy-cross
+
+After setting up, go to the src/ directory and build::
+
+    $ cd src
+
+    $ make
+
+The resulting firmware will be ``MICROBIT.hex`` in the ``src/``
+directory which can be copied to the micro:bit.
+
+
 Flashing the micro:bit
-----------------------
+======================
 
 The micro:bit mounts itself as a USB mass storage device named ``MICROBIT``.
 When it detects that a .hex file has been copied to the USB drive, it will
