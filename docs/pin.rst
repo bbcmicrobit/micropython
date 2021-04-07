@@ -79,7 +79,9 @@ in MicroPython, but that are not available via the edge connector:
 * ``pin_logo`` - A touch sensitive logo pin on the front of the micro:bit,
   which by default is set to capacitive touch mode.
 
-* ``pin_speaker`` - A pin to address the micro:bit speaker.
+* ``pin_speaker`` - A pin to address the micro:bit speaker. This API is
+  intended only for use in Pulse-Width Modulation pin operations eg.
+  ``pin_speaker.write_analog(128)``.
 
 
 Pulse-Width Modulation
