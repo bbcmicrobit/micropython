@@ -322,8 +322,8 @@ STATIC void image_blit(microbit_image_obj_t *src, greyscale_t *dest, mp_int_t x,
 }
 
 greyscale_t *image_shift(microbit_image_obj_t *self, mp_int_t x, mp_int_t y) {
-    greyscale_t *result = greyscale_new(self->width(), self->width());
-    image_blit(self, result, x, y, self->width(), self->width(), 0, 0);
+    greyscale_t *result = greyscale_new(self->width(), self->height());
+    image_blit(self, result, x, y, self->width(), self->height(), 0, 0);
     return result;
 }
 
