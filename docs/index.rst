@@ -72,6 +72,7 @@ Projects related to MicroPython on the BBC micro:bit include:
    ble.rst
    button.rst
    compass.rst
+   log.rst
    display.rst
    filesystem.rst
    i2c.rst
