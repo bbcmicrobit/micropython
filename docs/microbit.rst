@@ -39,6 +39,19 @@ Functions
     Return the number of milliseconds since the board was switched on or
     restarted.
 
+.. py:function:: run_every(n)
+
+    Scheduler to run a piece of code at a set interval.
+
+    This function can be used in two ways:
+    * As a decorator, without the positional argument. For example,
+      ``run_every(h=1, min=20, s=30, ms=50)``
+
+    * As a function passing the callback as a positional argument.
+      For example, run_every(foo, h=1, min=20, s=30, ms=50)
+
+    This will schedule a function to be called at a given interval.
+    Arguments with different time units are additive.
 
 .. py:function:: temperature()
 
@@ -76,6 +89,7 @@ Modules
     compass.rst
     display.rst
     i2c.rst
+    log.rst
     microphone.rst
     speaker.rst
     spi.rst
