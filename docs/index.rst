@@ -25,20 +25,21 @@ you enjoy developing for the BBC micro:bit using MicroPython.
     **V2**.
 
 If you're a new programmer, teacher or unsure where to start, begin with the
-tutorials.
-
-.. image:: comic.png
+:ref:`Tutorials <Tutorials>` and use the `micro:bit Python Editor <https://python.microbit.org>`_
+to program the micro:bit. 
 
 .. note::
 
-    This project is under active development. Please help other
-    developers by adding tips, how-tos, and Q&A to this document.
-    Thanks!
+   MicroPython will not work in the MakeCode editor, as this
+   uses a `different version of Python. <https://support.microbit.org/support/solutions/articles/19000111744-makecode-python-and-micropython>`_
+
+.. image:: comic.png
 
 Projects related to MicroPython on the BBC micro:bit include:
 
 * `micro:bit Python Editor <https://python.microbit.org>`_ A simple
-  browser-based code editor, designed to help teachers and learners get the
+  browser-based code editor, developed by the Micro:bit Educational
+  Foundation  and designed to help teachers and learners get the
   most out of text-based programming on the micro:bit.
 
 * `Mu <https://codewith.mu>`_ A simple offline code editor for kids, teachers
