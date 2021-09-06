@@ -13,7 +13,7 @@ FORCE:
 
 $(HEX_FINAL): yotta $(VER_ADDR_FILE)
 	tools/adduicr.py $(HEX_SRC) 0x$$(cat $(VER_ADDR_FILE)) -o $(HEX_FINAL)
-	@size $(HEX_SRC:.hex=)
+	@arm-none-eabi-size $(HEX_SRC:.hex=)
 
 yotta: $(MBIT_VER_FILE)
 	@yotta build
