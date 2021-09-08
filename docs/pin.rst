@@ -152,10 +152,10 @@ its own to that.
 
         Returns the pin mode. When a pin is used for a specific function, like
         writing a digital value, or reading an analog value, the pin mode
-        changes. Pins can have one of the following modes: ``MODE_UNUSED``,
-        ``MODE_WRITE_ANALOG``, ``MODE_READ_DIGITAL``, ``MODE_WRITE_DIGITAL``,
-        ``MODE_DISPLAY``, ``MODE_BUTTON``, ``MODE_MUSIC``, ``MODE_AUDIO_PLAY``,
-        ``MODE_TOUCH``, ``MODE_I2C``, ``MODE_SPI``.
+        changes. Pins can have one of the following modes: ``"unused"``,
+        ``"analog"``, ``"read_digital"``, ``"write_digital"``,
+        ``"display"``, ``"button"``, ``"music"``, ``"audio"``,
+        ``"touch"``, ``"i2c"``, ``"spi"``.
 
     .. py:method:: write_analog(value)
 
