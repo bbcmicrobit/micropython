@@ -44,6 +44,12 @@ Functions
     By default the accelerometer is configured with a range of +/- 2g, and so
     X, Y, and Z will be within the range of +/-2000mg.
 
+.. py:function:: get_strength()
+
+    Get the acceleration measurement of all axes combined, as a positive
+    integer.  This is the Pythagorean sum of the X, Y and Z axes, with the
+    measurement given in milli-g.
+
 .. py:function:: current_gesture()
 
     Return the name of the current gesture.
