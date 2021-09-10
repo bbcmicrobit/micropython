@@ -106,6 +106,14 @@ mp_obj_t microbit_accelerometer_get_values(mp_obj_t self_in) {
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_accelerometer_get_values_obj, microbit_accelerometer_get_values);
 
+mp_obj_t microbit_accelerometer_get_strength(mp_obj_t self_in) {
+    (void)self_in;
+    Sample3D sample = ubit_accelerometer->getSample();
+    int strength = sqrtf(sample.x * sample.x + sample.y * sample.y + sample.z * sample.z);
+    return mp_obj_new_int(strength);
+}
+MP_DEFINE_CONST_FUN_OBJ_1(microbit_accelerometer_get_strength_obj, microbit_accelerometer_get_strength);
+
 STATIC const qstr gesture_name_map[] = {
     [MICROBIT_ACCELEROMETER_EVT_NONE] = MP_QSTR_NULL,
     [MICROBIT_ACCELEROMETER_EVT_TILT_UP] = MP_QSTR_up,
@@ -178,6 +186,7 @@ STATIC const mp_map_elem_t microbit_accelerometer_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_get_y), (mp_obj_t)&microbit_accelerometer_get_y_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_get_z), (mp_obj_t)&microbit_accelerometer_get_z_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_get_values), (mp_obj_t)&microbit_accelerometer_get_values_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_get_strength), (mp_obj_t)&microbit_accelerometer_get_strength_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_current_gesture), (mp_obj_t)&microbit_accelerometer_current_gesture_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_is_gesture), (mp_obj_t)&microbit_accelerometer_is_gesture_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_was_gesture), (mp_obj_t)&microbit_accelerometer_was_gesture_obj },
