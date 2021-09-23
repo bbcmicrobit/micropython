@@ -81,7 +81,7 @@ Classes
     .. py:method:: fill(colour)
 
         **V2** Colour all pixels a given RGB/RGBW value. The `colour` argument
-        should be a tuple of the same length as the mumber of bytes per pixel
+        should be a tuple of the same length as the number of bytes per pixel
         (bpp). For example ``fill((0,0,255))``. Use in conjunction with
         ``show()`` to update the Neopixels.
     
