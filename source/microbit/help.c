@@ -80,10 +80,6 @@ STATIC const mp_doc_t help_table_instances[] = {
     {&microbit_accelerometer_get_x_obj, "Return micro:bit's tilt (X acceleration) in milli-g's.\n"},
     {&microbit_accelerometer_get_y_obj, "Return micro:bit's tilt (Y acceleration) in milli-g's.\n"},
     {&microbit_accelerometer_get_z_obj, "Return micro:bit's up-down motion (Z acceleration) in milli-g's.\nZ is a positive number when moving up. Moving down, Z is a negative number.\n"},
-    {&microbit_accelerometer_get_rate_obj, "Return the sampling rate (hz) of the micro:bit's accelerometer.\n"},
-    {&microbit_accelerometer_set_rate_obj, "Use set_rate(hz) to set the sampling rate for the accelerometer.\n"},
-    {&microbit_accelerometer_get_range_obj, "Return sensitivity range of the micro:bit's accelerometer in g's.\n"},
-    {&microbit_accelerometer_set_range_obj, "Use set_range(g) to set the sensitivity range of the micro:bit's accelerometer in g's.\n"},
     // Pushbutton
     {&microbit_button_a_obj, "micro:bit's 'A' button. When button is pressed down, is_pressed() is True.\n"},
     {&microbit_button_b_obj, "micro:bit's 'B' button. When button is pressed down, is_pressed() is True.\n"},
