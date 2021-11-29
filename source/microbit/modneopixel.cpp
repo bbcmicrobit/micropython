@@ -41,7 +41,7 @@ extern "C" {
 #define COL_IDX_BLUE (2)
 
 // This is implemented in assembler to get the right timing
-extern void sendNeopixelBuffer(uint32_t pin, uint8_t* data_address, uint16_t num_leds);
+extern void sendNeopixelBuffer(uint32_t pin, uint8_t* data_address, uint16_t num_bytes);
 
 extern const mp_obj_type_t neopixel_type;
 
@@ -137,7 +137,7 @@ STATIC mp_obj_t neopixel_show_(mp_obj_t self_in) {
     // Be aware that this runs with interrupts off.
     uint32_t pin_mask = (1UL << self->pin_num);
     NRF_GPIO->OUTCLR = pin_mask;
-    sendNeopixelBuffer(pin_mask, &self->data[0], self->num_pixels);
+    sendNeopixelBuffer(pin_mask, &self->data[0], self->num_pixels * COL_NUM_COMPONENTS);
 
     return mp_const_none;
 }

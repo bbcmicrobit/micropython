@@ -27,7 +27,7 @@
 
 .global sendNeopixelBuffer
 
- /* declared as extern void sendBuffer(uint32_t pin, uint8_t* data_address, uint16_t num_leds) */
+ /* declared as extern void sendBuffer(uint32_t pin, uint8_t* data_address, uint16_t num_bytes) */
 
 sendNeopixelBuffer:
     push {r0, r1, r2, r3, r4, r5, r6}
@@ -36,20 +36,18 @@ sendNeopixelBuffer:
     We are expecting from the callee:
     r0 = pinmask to waggle in the GPIO register
     r1 = address of the data we are supposed to be sending
-    r2 = number of LEDs
+    r2 = number of bytes to send
 
     Setup the initial values
      r1 = Pin mask in the GPIO register
      r2 = GPIO clear register
      r3 = GPIO SET
      r4 = Address pointer for the data - we cast this as a byte earlier because it really is.
-     r5 = Length of the data (number of LEDS * 3 bytes per LED) - If trying to add RGB+W this sum might need to be done conditionally
+     r5 = Length of the data
      r6 = Parallel to serial conversion mask
     */
     mov r4, r1
-    mov r6, #3
-    mul r6, r2, r6
-    mov r5, r6
+    mov r5, r2
 
     /*load the pin set and clr addresses by a cunning combo of shifts and adds*/
     movs r3, #160
@@ -68,8 +66,7 @@ sendNeopixelBuffer:
     If it is a '0' we turn off the pin asap and then move to the code that advances to the next bit/byte. If a '1' we leave the pin on and do the same thing.
     If the mask (r6) is still valid then we are still moving out the current byte, so repeat.
     If it is '0' then we have done this byte and need to load the next byte from the pointer in r4.
-    r5 contains the count of bytes - calculated above from num LEDs * 3 bytes per LED.
-    --If this code needs to do RGB+W LEDS then that will need to be addressed.
+    r5 contains the count of bytes.
     Once we run r5 down to '0' we exit the data shifting and return.
     */
 
