@@ -37,6 +37,23 @@
 #define LowPriority_IRQn SWI4_IRQn
 #define LowPriority_IRQHandler SWI4_IRQHandler
 
+// Ticker is configured to TIMER_BITMODE_BITMODE_24Bit.
+#define TICKER_MASK 0xffffff
+
+// Schedule the next CC value, taking care of the case where an IRQ could have been
+// missed, so CC[x]+dt is already behind the timer counter value.  In such a case
+// schedule it as COUNTER[x]+dt.
+#define TICKER_SCHEDULE_NEXT_CC(reg_id, dt) \
+    do { \
+        uint32_t next_cc = ticker->CC[reg_id] + dt; \
+        ticker->TASKS_CAPTURE[reg_id] = 1; \
+        uint32_t cc = ticker->CC[reg_id]; \
+        if (((next_cc - cc) & TICKER_MASK) > (TICKER_MASK >> 1)) { \
+            next_cc = cc + dt; \
+        } \
+        ticker->CC[reg_id] = next_cc; \
+    } while (0)
+
 // The number of milliseconds that have passed since the ticker was initialised
 volatile uint32_t ticker_ticks_ms;
 
@@ -90,19 +107,23 @@ void FastTicker_IRQHandler(void) {
     ticker_callback_ptr *call = callbacks;
     if (ticker->EVENTS_COMPARE[0]) {
         ticker->EVENTS_COMPARE[0] = 0;
-        ticker->CC[0] += call[0]()*MICROSECONDS_PER_TICK;
+        uint32_t dt = call[0]() * MICROSECONDS_PER_TICK;
+        TICKER_SCHEDULE_NEXT_CC(0, dt);
     }
     if (ticker->EVENTS_COMPARE[1]) {
         ticker->EVENTS_COMPARE[1] = 0;
-        ticker->CC[1] += call[1]()*MICROSECONDS_PER_TICK;
+        uint32_t dt = call[1]() * MICROSECONDS_PER_TICK;
+        TICKER_SCHEDULE_NEXT_CC(1, dt);
     }
     if (ticker->EVENTS_COMPARE[2]) {
         ticker->EVENTS_COMPARE[2] = 0;
-        ticker->CC[2] += call[2]()*MICROSECONDS_PER_TICK;
+        uint32_t dt = call[2]() * MICROSECONDS_PER_TICK;
+        TICKER_SCHEDULE_NEXT_CC(2, dt);
     }
     if (ticker->EVENTS_COMPARE[3]) {
         ticker->EVENTS_COMPARE[3] = 0;
-        ticker->CC[3] += MICROSECONDS_PER_MACRO_TICK;
+        uint32_t dt = MICROSECONDS_PER_MACRO_TICK;
+        TICKER_SCHEDULE_NEXT_CC(3, dt);
         ticker_ticks_ms += MILLISECONDS_PER_MACRO_TICK;
         NVIC_SetPendingIRQ(SlowTicker_IRQn);
     }
