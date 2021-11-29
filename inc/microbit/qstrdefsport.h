@@ -398,6 +398,7 @@ Q(write_readinto)
 
 Q(neopixel)
 Q(NeoPixel)
+Q(bpp)
 Q(clear)
 Q(show)
 

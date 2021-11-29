@@ -35,10 +35,11 @@ extern "C" {
 #include "microbit/modmicrobit.h"
 
 // This is the pixel colour ordering
-#define COL_NUM_COMPONENTS (3)
 #define COL_IDX_RED (1)
 #define COL_IDX_GREEN (0)
 #define COL_IDX_BLUE (2)
+#define COL_IDX_WHITE (3)
+#define COL_IDX_MAP (COL_IDX_WHITE << 12 | COL_IDX_BLUE << 8 | COL_IDX_GREEN << 4 | COL_IDX_RED)
 
 // This is implemented in assembler to get the right timing
 extern void sendNeopixelBuffer(uint32_t pin, uint8_t* data_address, uint16_t num_bytes);
@@ -49,30 +50,45 @@ typedef struct _neopixel_obj_t {
     mp_obj_base_t base;
     uint16_t pin_num;
     uint16_t num_pixels;
+    uint8_t bytes_per_pixel;
     uint8_t data[];
 } neopixel_obj_t;
 
 STATIC mp_obj_t neopixel_show_(mp_obj_t self_in);
 
 static inline void neopixel_clear_data(neopixel_obj_t *self) {
-    memset(&self->data[0], 0, COL_NUM_COMPONENTS * self->num_pixels);
+    memset(&self->data[0], 0, self->bytes_per_pixel * self->num_pixels);
 }
 
 STATIC mp_obj_t neopixel_make_new(const mp_obj_type_t *type_in, mp_uint_t n_args, mp_uint_t n_kw, const mp_obj_t *args) {
     (void)type_in;
-    mp_arg_check_num(n_args, n_kw, 2, 2, false);
 
-    PinName pin = (PinName)microbit_obj_get_pin_name(args[0]);
-    mp_int_t num_pixels = mp_obj_get_int(args[1]);
+    enum { ARG_pin, ARG_n, ARG_bpp };
+    static const mp_arg_t allowed_args[] = {
+        { MP_QSTR_, MP_ARG_REQUIRED | MP_ARG_OBJ, {.u_rom_obj = MP_ROM_PTR(&mp_const_none_obj)} },
+        { MP_QSTR_, MP_ARG_REQUIRED | MP_ARG_INT, {.u_int = 0} },
+        { MP_QSTR_bpp, MP_ARG_INT, {.u_int = 3} },
+    };
+    mp_arg_val_t vals[MP_ARRAY_SIZE(allowed_args)];
+    mp_arg_parse_all_kw_array(n_args, n_kw, args, MP_ARRAY_SIZE(allowed_args), allowed_args, vals);
+
+    PinName pin = (PinName)microbit_obj_get_pin_name(vals[ARG_pin].u_obj);
+    mp_int_t num_pixels = vals[ARG_n].u_int;
+    mp_int_t bytes_per_pixel = vals[ARG_bpp].u_int;
 
     if (num_pixels <= 0) {
         mp_raise_ValueError("invalid number of pixels");
     }
 
-    neopixel_obj_t *self = m_new_obj_var(neopixel_obj_t, uint8_t, COL_NUM_COMPONENTS * num_pixels);
+    if (!(bytes_per_pixel == 3 || bytes_per_pixel == 4)) {
+        mp_raise_ValueError("invalid bpp");
+    }
+
+    neopixel_obj_t *self = m_new_obj_var(neopixel_obj_t, uint8_t, bytes_per_pixel * num_pixels);
     self->base.type = &neopixel_type;
     self->pin_num = pin;
     self->num_pixels = num_pixels;
+    self->bytes_per_pixel = bytes_per_pixel;
     neopixel_clear_data(self);
 
     // Configure pin as output and set it low
@@ -93,31 +109,30 @@ STATIC mp_obj_t neopixel_unary_op(mp_uint_t op, mp_obj_t self_in) {
 STATIC mp_obj_t neopixel_subscr(mp_obj_t self_in, mp_obj_t index_in, mp_obj_t value) {
     neopixel_obj_t *self = (neopixel_obj_t*)self_in;
     mp_uint_t index = mp_get_index(self->base.type, self->num_pixels, index_in, false);
-    index *= COL_NUM_COMPONENTS;
+    index *= self->bytes_per_pixel;
     if (value == MP_OBJ_NULL) {
         // delete item
         return MP_OBJ_NULL; // op not supported
     } else if (value == MP_OBJ_SENTINEL) {
         // load
-        mp_obj_t rgb[COL_NUM_COMPONENTS] = {
+        mp_obj_t rgb[] = {
             MP_OBJ_NEW_SMALL_INT(self->data[index + COL_IDX_RED]),
             MP_OBJ_NEW_SMALL_INT(self->data[index + COL_IDX_GREEN]),
             MP_OBJ_NEW_SMALL_INT(self->data[index + COL_IDX_BLUE]),
+            MP_OBJ_NEW_SMALL_INT(self->data[index + COL_IDX_WHITE]), // unused if bpp==3
         };
-        return mp_obj_new_tuple(COL_NUM_COMPONENTS, rgb);
+        return mp_obj_new_tuple(self->bytes_per_pixel, rgb);
     } else {
         // store
         mp_obj_t *rgb;
-        mp_obj_get_array_fixed_n(value, COL_NUM_COMPONENTS, &rgb);
-        mp_int_t r = mp_obj_get_int(rgb[0]);
-        mp_int_t g = mp_obj_get_int(rgb[1]);
-        mp_int_t b = mp_obj_get_int(rgb[2]);
-        if (r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255) {
-            mp_raise_ValueError("invalid colour");
+        mp_obj_get_array_fixed_n(value, self->bytes_per_pixel, &rgb);
+        for (uint8_t i = 0; i < self->bytes_per_pixel; ++i) {
+            mp_int_t c = mp_obj_get_int(rgb[i]);
+            if (c < 0 || c > 255) {
+                mp_raise_ValueError("invalid colour");
+            }
+            self->data[index + ((COL_IDX_MAP >> (4 * i)) & 0xf)] = c;
         }
-        self->data[index + COL_IDX_RED] = r;
-        self->data[index + COL_IDX_GREEN] = g;
-        self->data[index + COL_IDX_BLUE] = b;
         return mp_const_none;
     }
 }
@@ -137,7 +152,7 @@ STATIC mp_obj_t neopixel_show_(mp_obj_t self_in) {
     // Be aware that this runs with interrupts off.
     uint32_t pin_mask = (1UL << self->pin_num);
     NRF_GPIO->OUTCLR = pin_mask;
-    sendNeopixelBuffer(pin_mask, &self->data[0], self->num_pixels * COL_NUM_COMPONENTS);
+    sendNeopixelBuffer(pin_mask, &self->data[0], self->bytes_per_pixel * self->num_pixels);
 
     return mp_const_none;
 }
