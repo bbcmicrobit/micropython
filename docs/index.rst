@@ -29,7 +29,7 @@ to program the micro:bit.
 
 .. note::
 
-   MicroPython will not work in the MakeCode editor, as this
+   The MicroPython API will not work in the MakeCode editor, as this
    uses a `different version of Python. <https://support.microbit.org/support/solutions/articles/19000111744-makecode-python-and-micropython>`_
 
 .. image:: comic.png

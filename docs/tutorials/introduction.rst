@@ -2,8 +2,8 @@ Introduction
 ------------
 .. _Tutorials:
 
-We suggest you use the `micro:bit Python Editor <https://python.microbit.org>`_ when
-working through these tutorials.
+We suggest you use the `micro:bit Python Editor <https://python.microbit.org>`_
+or `Mu <https://codewith.mu/>`_ when working through these tutorials.
 
 Connect your micro:bit to your computer via a USB lead.
 
