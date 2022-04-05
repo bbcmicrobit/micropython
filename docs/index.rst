@@ -16,13 +16,6 @@ This documentation includes lessons for teachers
 and API documentation for developers (check out the index on the left). We hope
 you enjoy developing for the BBC micro:bit using MicroPython.
 
-.. note::
-
-    The BBC micro:bit MicroPython documentation contains information for all 
-    versions of the micro:bit board. Where functionality is applicable only
-    to the latest device, you will see a note or comment marking this as 
-    **V2**.
-
 If you're a new programmer, teacher or unsure where to start, begin with the
 :ref:`Tutorials <Tutorials>` and use the `micro:bit Python Editor <https://python.microbit.org>`_
 to program the micro:bit. 
@@ -36,15 +29,15 @@ to program the micro:bit.
 
 Projects related to MicroPython on the BBC micro:bit include:
 
-* `micro:bit Python Editor <https://python.microbit.org>`_ A simple
+* `micro:bit Python Editor <https://python.microbit.org>`_ - A simple
   browser-based code editor, developed by the Micro:bit Educational
   Foundation  and designed to help teachers and learners get the
   most out of text-based programming on the micro:bit.
 
-* `Mu <https://codewith.mu>`_ A simple offline code editor for kids, teachers
+* `Mu <https://codewith.mu>`_ - A simple offline code editor for kids, teachers
   and beginner programmers.
 
-* `uFlash <https://uflash.readthedocs.io/en/latest/>`_ A command line tool
+* `uFlash <https://uflash.readthedocs.io/en/latest/>`_ - A command line tool
   for flashing raw Python scripts onto a BBC micro:bit.
 
 .. toctree::

@@ -11,7 +11,7 @@ Write your script in the editor window and click the "Download" or "Flash" butto
 transfer it to the micro:bit.
 
 If you have any problems with MicroPython or the editor, you can get support from the
-Micro:bit Educational Foundation team via `support.microbit.org <https://support.microbit.org>`_
+Micro:bit Educational Foundation team via `support.microbit.org <https://support.microbit.org>`_.
 
 .. toctree::
     :maxdepth: 2
