@@ -16,20 +16,29 @@ This documentation includes lessons for teachers
 and API documentation for developers (check out the index on the left). We hope
 you enjoy developing for the BBC micro:bit using MicroPython.
 
-If you're a new programmer, teacher or unsure where to start, begin with the tutorials.
-
-.. image:: comic.png
+If you're a new programmer, teacher or unsure where to start, begin with the
+:ref:`Tutorials <Tutorials>` and use the `micro:bit Python Editor <https://python.microbit.org>`_
+to program the micro:bit. 
 
 .. note::
 
-    This project is under active development. Please help other
-    developers by adding tips, how-tos, and Q&A to this document.
-    Thanks!
+   The MicroPython API will not work in the MakeCode editor, as this
+   uses a `different version of Python. <https://support.microbit.org/support/solutions/articles/19000111744-makecode-python-and-micropython>`_
+
+.. image:: comic.png
 
 Projects related to MicroPython on the BBC micro:bit include:
 
-* `Mu <https://github.com/ntoll/mu>`_ - a simple code editor for kids, teachers and beginner programmers. Probably the easiest way for people to program MicroPython on the BBC micro:bit.
-* `uFlash <https://uflash.readthedocs.io/en/latest/>`_ - a command line tool for flashing raw Python scripts onto a BBC micro:bit.
+* `micro:bit Python Editor <https://python.microbit.org>`_ - A simple
+  browser-based code editor, developed by the Micro:bit Educational
+  Foundation  and designed to help teachers and learners get the
+  most out of text-based programming on the micro:bit.
+
+* `Mu <https://codewith.mu>`_ - A simple offline code editor for kids, teachers
+  and beginner programmers.
+
+* `uFlash <https://uflash.readthedocs.io/en/latest/>`_ - A command line tool
+  for flashing raw Python scripts onto a BBC micro:bit.
 
 .. toctree::
     :maxdepth: 2

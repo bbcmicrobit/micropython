@@ -1,18 +1,17 @@
 Introduction
 ------------
+.. _Tutorials:
 
-We suggest you download and use the `mu editor <http://codewith.mu/>`_ when
-working through these tutorials. Instructions for downloading and installing
-Mu are on its website. You may need to install a driver, depending on your
-platform (instruction are on the website).
+We suggest you use the `micro:bit Python Editor <https://python.microbit.org>`_
+or `Mu <https://codewith.mu/>`_ when working through these tutorials.
 
-Mu works with Windows, OSX and Linux.
+Connect your micro:bit to your computer via a USB lead.
 
-Once Mu is installed connect your micro:bit to your computer via a USB lead.
+Write your script in the editor window and click the "Download" or "Flash" button to
+transfer it to the micro:bit.
 
-Write your script in the editor window and click the "Flash" button to transfer
-it to the micro:bit. If it doesn't work, make sure your micro:bit appears as
-a USB storage device in your file system explorer.
+If you have any problems with MicroPython or the editor, you can get support from the
+Micro:bit Educational Foundation team via `support.microbit.org <https://support.microbit.org>`_.
 
 .. toctree::
     :maxdepth: 2
