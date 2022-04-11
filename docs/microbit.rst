@@ -24,6 +24,12 @@ Functions
     Restart the board.
 
 
+.. py:function:: running_time()
+
+    Return the number of milliseconds since the board was switched on or
+    restarted.
+
+
 .. py:function:: sleep(n)
 
     Wait for ``n`` milliseconds. One second is 1000 milliseconds, so::
@@ -32,12 +38,6 @@ Functions
 
     will pause the execution for one second.  ``n`` can be an integer or
     a floating point number.
-
-
-.. py:function:: running_time()
-
-    Return the number of milliseconds since the board was switched on or
-    restarted.
 
 
 .. py:function:: temperature()
@@ -70,9 +70,9 @@ Modules
 .. toctree::
     :maxdepth: 1
 
-    display.rst
-    uart.rst
-    spi.rst
-    i2c.rst
     accelerometer.rst
     compass.rst
+    display.rst
+    i2c.rst
+    spi.rst
+    uart.rst
