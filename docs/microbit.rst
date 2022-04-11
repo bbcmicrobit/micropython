@@ -13,10 +13,12 @@ Functions
 
 .. py:function:: panic(n)
 
-    Enter a panic mode. Requires restart. Pass in an arbitrary integer <= 255
-    to indicate a status::
+    Enter a panic mode that stops all execution, scrolls an error code in
+    the micro:bit display and requires restart::
 
         microbit.panic(255)
+
+    :param n: An arbitrary integer between 0 and 255 to indicate an error code.
 
 
 .. py:function:: reset()
@@ -26,23 +28,23 @@ Functions
 
 .. py:function:: running_time()
 
-    Return the number of milliseconds since the board was switched on or
-    restarted.
+    :returns: The number of milliseconds since the board was switched on or
+        restarted.
 
 
 .. py:function:: sleep(n)
 
-    Wait for ``n`` milliseconds. One second is 1000 milliseconds, so::
+    Wait for ``n`` milliseconds. One second is 1000 milliseconds, so
+    ``microbit.sleep(1000)`` will pause the execution for one second.
 
-        microbit.sleep(1000)
-
-    will pause the execution for one second.  ``n`` can be an integer or
-    a floating point number.
+    :param n: An integer or floating point number indicating the number of
+        milliseconds to wait.
 
 
 .. py:function:: temperature()
 
-    Return the temperature of the micro:bit in degrees Celcius.
+    :returns: An integer with the temperature of the micro:bit in degrees
+        Celcius.
 
 
 Attributes
