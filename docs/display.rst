@@ -32,10 +32,10 @@ Functions
     Display the ``image``.
 
 
-.. py:function:: show(value, delay=400, \*, wait=True, loop=False, clear=False)
+.. py:function:: show(image, delay=400, \*, wait=True, loop=False, clear=False)
 
-    If ``value`` is a string, float or integer, display letters/digits in sequence.
-    Otherwise, if ``value`` is an iterable sequence of images, display these images in sequence.
+    If ``image`` is a string, float or integer, display letters/digits in sequence.
+    Otherwise, if ``image`` is an iterable sequence of images, display these images in sequence.
     Each letter, digit or image is shown with ``delay`` milliseconds between them.
 
     If ``wait`` is ``True``, this function will block until the animation is
@@ -54,9 +54,9 @@ Functions
     in the generator as allocating memory in an interrupt is prohibited and will raise a
     ``MemoryError``.
 
-.. py:function:: scroll(value, delay=150, \*, wait=True, loop=False, monospace=False)
+.. py:function:: scroll(text, delay=150, \*, wait=True, loop=False, monospace=False)
 
-    Scrolls ``value`` horizontally on the display. If ``value`` is an integer or float it is
+    Scrolls ``text`` horizontally on the display. If ``text`` is an integer or float it is
     first converted to a string using ``str()``. The ``delay`` parameter controls how fast
     the text is scrolling.
 
