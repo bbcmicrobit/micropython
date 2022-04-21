@@ -55,7 +55,7 @@ Classes
     NeoPixel(pin, n, bpp=3)
 
     Initialise a new strip of ``n`` number of neopixel LEDs controlled via pin
-    ``pin``. To support RGBW neopixels, so a third argument can be passed to
+    ``pin``. To support RGBW neopixels, a third argument can be passed to
     ``NeoPixel`` to indicate the number of bytes per pixel (``bpp``).
     For RGBW, this is is ``4`` rather than the default of ``3`` for
     RGB and GRB.
