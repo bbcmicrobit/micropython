@@ -4,8 +4,8 @@ NeoPixel
 .. py:module:: neopixel
 
 The ``neopixel`` module lets you use NeoPixel (WS2812) individually addressable
-RGB LED strips with the micro:bit. Note to use the ``neopixel`` module, you
-need to import it separately with::
+RGB and RGBW LED strips with the micro:bit. Note to use the ``neopixel``
+module, you need to import it separately with::
 
     import neopixel
 
@@ -27,6 +27,8 @@ contains everything to plug them into a micro:bit and create funky displays,
 art and games such as the demo shown below.
 
 .. image:: neopixel.gif
+   :alt: Neopixel flexible tile
+Image attribution: `adafruit flexible Neopixel matrix <https://www.adafruit.com/product/2547>`_
 
 To connect a strip of neopixels you'll need to attach the micro:bit as shown
 below (assuming you want to drive the pixels from pin 0 - you can connect
@@ -50,12 +52,18 @@ Classes
 =======
 
 .. py:class::
-    NeoPixel(pin, n)
+    NeoPixel(pin, n, bpp=3)
 
     Initialise a new strip of ``n`` number of neopixel LEDs controlled via pin
-    ``pin``. Each pixel is addressed by a position (starting from 0). Neopixels
-    are given RGB (red, green, blue) values between 0-255 as a tuple. For
-    example, ``(255,255,255)`` is white.
+    ``pin``. To support RGBW neopixels, a third argument can be passed to
+    ``NeoPixel`` to indicate the number of bytes per pixel (``bpp``).
+    For RGBW, this is is ``4`` rather than the default of ``3`` for
+    RGB and GRB.
+
+    Each pixel is addressed by a position (starting from 0). Neopixels
+    are given RGB (red, green, blue) / RGBW (red, green, blue, white)
+    values between 0-255 as a tuple. For example, in RGB, ``(255,255,255)`` is
+    white. In RGBW, ``(255,255,255,0)`` or ``(0,0,0,255)`` is white.
 
     .. py:method:: clear()
 
@@ -87,10 +95,10 @@ Using Neopixels
 ===============
 
 Interact with Neopixels as if they were a list of tuples. Each tuple represents
-the RGB (red, green and blue) mix of colours for a specific pixel. The RGB
-values can range between 0 to 255.
+the RGB (red, green and blue) / RGBW (red, green,blue and white) mix of colours
+for a specific pixel. The RGBW values can range between 0 to 255.
 
-For example, initialise a strip of 8 neopixels on a strip connected to pin0
+For example, initialise a strip of 8 RGB neopixels on a strip connected to pin0
 like this::
 
     import neopixel
