@@ -1,3 +1,10 @@
+"""
+    speech.py
+    ~~~~~~~~
+    Simple speech example to make the micro:bit say, pronounce and sing
+    something. This example requires a speaker/buzzer/headphones connected
+    to P0 and GND,or the latest micro:bit device with built-in speaker.
+"""
 import speech
 from microbit import sleep
 

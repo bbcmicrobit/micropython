@@ -2,18 +2,23 @@ Music
 -----
 
 MicroPython on the BBC micro:bit comes with a powerful music and sound module.
-It's very easy to generate bleeps and bloops from the device *if you attach a
-speaker or passive piezo buzzer*. Use crocodile clips to attach pin 0 and GND
-to the positive and negative inputs on the speaker/buzzer - it doesn't matter
-which way round they are connected to a speaker, but a piezo buzzer may be
-polarized (check for a "+" marking the positive terminal).
+It's very easy to generate bleeps and bloops from the device by attaching a
+speaker or set of wired headphones.
+
+If you are attaching a speaker, a passive piezo buzzer, or headphones, you can
+use crocodile clips to attach pin 0 and GND to the positive and negative inputs.
+It doesn't matter which way round they are connected to a speaker, but a piezo
+buzzer may be polarized (check for a "+" marking the positive terminal).
 
 .. image:: pin0-gnd.png
+    :width: 250px
+    :align: center
+    :alt: piezo connected to pin0 and GND
 
 .. note::
 
-    Do not attempt this with an active Piezo buzzer - such buzzers are only able to
-    play a single tone.
+    Do not attempt this with an active Piezo buzzer - such buzzers are only
+    able to play a single tone.
 
 Let's play some music::
 

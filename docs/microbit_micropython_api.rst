@@ -49,8 +49,8 @@ These are both objects and have the following methods::
     # returns the running total of button presses, and resets this counter to zero
     button.get_presses()
 
-The LED display
----------------
+Display
+-------
 
 The LED display is exposed via the `display` object::
 
@@ -212,8 +212,8 @@ Images API::
     Image.ALL_CLOCKS
     Image.ALL_ARROWS
 
-The accelerometer
------------------
+Accelerometer
+-------------
 
 The accelerometer is accessed via the ``accelerometer`` object::
 
@@ -238,8 +238,8 @@ The accelerometer is accessed via the ``accelerometer`` object::
 The recognised gestures are: ``up``, ``down``, ``left``, ``right``, ``face up``, ``face down``, ``freefall``, ``3g``, ``6g``, ``8g``, ``shake``.
 
 
-The compass
------------
+Compass
+-------
 
 The compass is accessed via the `compass` object::
 
