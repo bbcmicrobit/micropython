@@ -1,31 +1,33 @@
-Input/Output
-------------
+Input/Output Pins
+-----------------
 
 There are strips of metal along the bottom edge of the BBC micro:bit that make
 it look as if the device has teeth. These are the input/output pins (or I/O pins
 for short).
 
 .. image:: blue-microbit.png
+    :width: 300px
+    :align: center
 
 Some of the pins are bigger than others so it's possible to attach crocodile
 clips to them. These are the ones labelled 0, 1, 2, 3V and GND (computers
 always start counting from zero). If you attach an edge connector board to the
 device it's possible to plug in wires connected to the other (smaller) pins.
 
-Each pin on the BBC micro:bit is represented by an *object* called ``pinN``
-where ``N`` is the pin number. So, for example, to do things with the pin
-labelled with a 0 (zero), use the object called ``pin0``.
+In MicroPython, each pin on the BBC micro:bit is represented by an *object*
+called ``pinN``, where ``N`` is the number pf the pin.
 
-Simple!
+For example, to use the pin labelled 0 (zero), you can use the object called
+``pin0`` in your script.
 
 These objects have various *methods* associated with them depending upon what
-the specific pin is capable of.
+the specific pin is capable of eg. read, write or touch.
 
 Ticklish Python
 +++++++++++++++
 
 The simplest example of input via the pins is a check to see if they are
-touched. So, you can tickle your device to make it laugh like this::
+touched. So, you can tickle your micro:bit to make it laugh like this::
 
     from microbit import *
 
@@ -35,7 +37,7 @@ touched. So, you can tickle your device to make it laugh like this::
         else:
             display.show(Image.SAD)
 
-With one hand, hold your device by the GND pin. Then, with your other hand,
+With one hand, hold your micro:bit by the GND pin. Then, with your other hand,
 touch (or tickle) the 0 (zero) pin. You should see the display change from
 grumpy to happy!
 
@@ -45,8 +47,8 @@ when you plug in circuits and other devices via the pins.
 Bleeps and Bloops
 +++++++++++++++++
 
-The simplest thing we can attach to the device is a Piezo buzzer. There are two 
-types of piezo buzzers. The simplest type to use are called active buzzers. 
+The simplest thing we can attach to the micro:bit is a Piezo buzzer. There are
+two types of piezo buzzers. The simplest type to use are called active buzzers.
 Active buzzers contain an oscillator that produces a tone at a predetermined
 pitch when a current is passed through them.  Passive buzzers require an 
 oscillating current to be passed through them to produce a tone at the frequency
@@ -55,11 +57,17 @@ one tone, while passive buzzers are slightly more complicated to use but can
 produce a variety of tones.
 
 .. image:: piezo_buzzer.jpg
+    :width: 250px
+    :align: center
+    :alt: piezo buzzer
 
 We're going to use an active piezo buzzer for output. To attach one to your BBC 
 micro:bit you should attach crocodile clips to pin 0 and GND (as shown below).
 
 .. image:: pin0-gnd.png
+    :width: 250px
+    :align: center
+    :alt: piezo connected to pin0 and GND
 
 The wire from pin 0 should be attached to the positive connector on the buzzer
 and the wire from GND to the negative connector.
