@@ -1,17 +1,6 @@
 Speech
 ******
 
-.. warning::
-
-    WARNING! This is still work in progress; we reserve the right to change this API as development continues.
-
-    The quality of the speech is not great, merely "good enough". Given the
-    constraints of the device you may encounter memory errors and / or
-    unexpected extra sounds during playback. It's early days and we're
-    improving the code for the speech synthesiser all the time. Bug reports
-    and pull requests are most welcome.
-
-
 .. py:module:: speech
 
 This module makes microbit talk, sing and make other speech like sounds
