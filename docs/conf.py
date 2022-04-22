@@ -53,7 +53,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'BBC micro:bit MicroPython'
-copyright = u'2015-2016, Multiple authors'
+copyright = u'2015-2022, Multiple authors'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
