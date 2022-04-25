@@ -58,6 +58,16 @@ Functions
 
     :returns: The ``value`` converted to the ``to`` range.
 
+.. py:function:: set_volume(volume)
+
+    (**V2 only**) Configure the output volume of the micro:bit speaker and
+    pins::
+
+        microbit.set_volume(127)
+
+    :param volume: An integer between 0 and 255 to set the volume.
+
+
 .. py:function:: sleep(n)
 
     Wait for ``n`` milliseconds. One second is 1000 milliseconds, so
