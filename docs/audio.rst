@@ -46,7 +46,7 @@ Classes
         Overwrite the data in this ``AudioFrame`` with the data from another
         ``AudioFrame`` instance.
 
-        :param other: ``AudioFrame`` instance to copy the data from.
+        :param other: ``AudioFrame`` instance from which to copy the data.
 
 
 Using audio
