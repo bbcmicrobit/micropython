@@ -37,8 +37,11 @@ jobs:
           yotta target bbc-microbit-classic-gcc-nosd@https://github.com/lancaster-university/yotta-target-bbc-microbit-classic-gcc-nosd
           yotta up
       - run: make all
+      - name: Process date for artifact filename
+        id: date
+        run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
       - name: Upload hex file
         uses: actions/upload-artifact@v1
         with:
-          name: microbitv1-micropython-${{ github.sha }}.hex
+          name: microbitv1-micropython-${{ steps.date.outputs.date }}-${{ github.sha }}.hex
           path: build/firmware.hex
