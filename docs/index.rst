@@ -90,6 +90,7 @@ Projects related to MicroPython on the BBC micro:bit include:
    neopixel.rst
    os.rst
    pin.rst
+   power.rst
    radio.rst
    random.rst
    speaker.rst
