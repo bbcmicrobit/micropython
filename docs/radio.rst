@@ -28,17 +28,19 @@ We assume you have done this for the examples below.
 Constants
 =========
 
-.. py:attribute:: RATE_250KBIT
-
-    Constant used to indicate a throughput of 256 Kbit a second.
-
 .. py:attribute:: RATE_1MBIT
 
-    Constant used to indicate a throughput of 1 MBit a second.
+    Constant used to indicate a throughput of 1 Mbit a second.
 
 .. py:attribute:: RATE_2MBIT
 
-    Constant used to indicate a throughput of 2 MBit a second.
+    Constant used to indicate a throughput of 2 Mbit a second.
+
+.. py:attribute:: RATE_250KBIT
+
+    **Deprecated**.
+    This rate is possible with micro:bit V1, but it is not guaranteed to work
+    on V2, so it has been deprecated for compatibility reasons.
 
 
 Functions
@@ -90,8 +92,7 @@ Functions
 
     The ``data_rate`` (default=radio.RATE_1MBIT) indicates the speed at which
     data throughput takes place. Can be one of the following contants defined
-    in the ``radio`` module : ``RATE_250KBIT``, ``RATE_1MBIT`` or
-    ``RATE_2MBIT``.
+    in the ``radio`` module : ``RATE_1MBIT`` or ``RATE_2MBIT``.
 
     If ``config`` is not called then the defaults described above are assumed.
 
