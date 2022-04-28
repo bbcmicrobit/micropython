@@ -74,7 +74,7 @@ into a `Universal HEX <https://tech.microbit.org/software/hex-format/#universal-
 file to ensure compatibility with both hardware variants.
 
 Appended script format (Deprecated)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+===================================
 
 This method of appending the script to the end of MicroPython
 is no longer used. Python files are now stored in the

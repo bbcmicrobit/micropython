@@ -25,8 +25,9 @@ Pin Functions
 
 .. image:: pinout.png
 
-Those pins are available as attributes on the ``microbit``
-module:``microbit.pin0`` - ``microbit.pin20``.
+This table summarises the pins available, their types and what
+they are internally connected to. The pins are available as attributes on the
+``microbit`` module: ``microbit.pin0`` - ``microbit.pin20``.
 
 +-----+---------+----------+
 | Pin | Type    | Function |
@@ -70,9 +71,6 @@ module:``microbit.pin0`` - ``microbit.pin20``.
 +-----+---------+----------+
 |  20 | Digital | I2C SDA  |
 +-----+---------+----------+
-
-The above table summarizes the pins available, their types (see below) and what
-they are internally connected to.
 
 
 Pulse-Width Modulation

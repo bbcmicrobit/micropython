@@ -77,7 +77,7 @@ Functions
 
     Gets the current tempo as a tuple of integers: ``(ticks, bpm)``.
 
-.. py:function:: play(music, pin=microbit.pin0, wait=True, loop=False)
+.. py:function:: play(music, pin=pin0, wait=True, loop=False)
 
     Plays ``music`` containing the musical DSL defined above.
 
@@ -99,7 +99,7 @@ Functions
     If ``loop`` is set to ``True``, the tune repeats until ``stop`` is called
     (see below) or the blocking call is interrupted.
 
-.. py:function:: pitch(frequency, duration=-1, pin=microbit.pin0, wait=True)
+.. py:function:: pitch(frequency, duration=-1, pin=pin0, wait=True)
 
     Plays a pitch at the integer frequency given for the specified number of
     milliseconds. For example, if the frequency is set to 440 and the length to
@@ -113,7 +113,7 @@ Functions
     blocking call is interrupted or, in the case of a background call, a new
     frequency is set or ``stop`` is called (see below).
 
-.. py:function:: stop(pin=microbit.pin0)
+.. py:function:: stop(pin=pin0)
     
     Stops all music playback on a given pin, eg. ``music.stop(pin1)``. 
     If no pin is given, eg. ``music.stop()`` pin0 is assumed.

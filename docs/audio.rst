@@ -63,7 +63,8 @@ Technical Details
     You don't need to understand this section to use the ``audio`` module.
     It is just here in case you wanted to know how it works.
 
-The ``audio`` module consumes ``AudioFrame`` samples at 7812.5 Hz, and uses
+The ``audio`` module can consumes an iterable (sequence, like list or tuple, or
+generator) of ``AudioFrame`` instances, each 32 samples at 7812.5 Hz, and uses
 linear interpolation to output a PWM signal at 32.5 kHz, which gives tolerable
 sound quality.
 
@@ -84,4 +85,3 @@ Example
 
 .. include:: ../examples/waveforms.py
     :code: python
-
