@@ -202,6 +202,7 @@ Images API::
 ``Image.SKULL``
 ``Image.UMBRELLA``
 ``Image.SNAKE``
+``Image.SCISSORS``
 
 Clock:
 
