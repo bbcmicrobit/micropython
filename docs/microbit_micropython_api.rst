@@ -73,9 +73,12 @@ The LED display is exposed via the `display` object::
 Pins
 ----
 
-Provide digital and analog input and output functionality, for the pins in the connector. Some pins are connected internally to the I/O that drives the LED matrix and the buttons.
+Provide digital and analog input and output functionality, for the pins in the
+connector. Some pins are connected
+internally to the I/O that drives the LED matrix and the buttons.
 
-Each pin is provided as an object directly in the ``microbit`` module.  This keeps the API relatively flat, making it very easy to use:
+Each pin is provided as an object directly in the ``microbit`` module.  This
+keeps the API relatively flat, making it very easy to use:
 
     * pin0
     * pin1
@@ -102,7 +105,8 @@ Each of these pins are instances of the ``MicroBitPin`` class, which offers the 
     # sets the period of the PWM output of the pin in microseconds
     # (see https://en.wikipedia.org/wiki/Pulse-width_modulation)
     pin.set_analog_period_microseconds(int)
-    # returns boolean
+    # Only available for touch pins 0, 1, and 2. Returns boolean if the pin
+    # is touched
     pin.is_touched()
 
 Images
