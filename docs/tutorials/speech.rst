@@ -140,7 +140,7 @@ sounds more natural).
 
 The ``pronounce`` function is used for phoneme output like this::
 
-    speech.pronounce("/HEH5EH4EH3EH2EH2EH3EH4EH5EHLP.”)
+    speech.pronounce("/HEH5EH4EH3EH2EH2EH3EH4EH5EHLP.")
 
 How could you improve on The Doctor's code to make it use phonemes?
 
