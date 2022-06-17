@@ -4,13 +4,15 @@
 Accessing the REPL
 ==================
 
-REPL (Read-Evaluate-Print-Loop) allows the micro:bit to read and evaluate code 
+REPL (Read-Evaluate-Print-Loop) allows the micro:bit to read and evaluate code
 in real-time as you write it.
+
 
 Using the micro:bit Python Editor
 ---------------------------------
+
 The browser-based Python editor has built-in REPL support, that can be accessed
-using `WebUSB <https://developers.google.com/web/updates/2016/03/access-usb-devices-on-the-web>`_.
+using `WebUSB <https://web.dev/usb/>`_.
 You can read more about how WebUSB is used in the editors in this article on
 `direct flashing from the browser in the micro:bit apps and editors <https://support.microbit.org/support/solutions/articles/19000084059>`_.
 
@@ -25,14 +27,16 @@ To use the REPL:
 3. Click the blue bar to ``Send CTRL-C for REPL`` or press ``CTRL`` + ``C`` on
    your keyboard to enter the REPL.
 
+
 Using a serial communication program
 ------------------------------------
 
-The `Mu Editor <https://codewith.mu/en/tutorials/1.0/repl>`_ has built-in 
-support for REPL and even includes a real-time data plotter. Some other common 
-options are `picocom` and `screen`. You will need to install a program and 
-read the appropriate documentation to understand the basics of connecting to a 
-device.
+The `Mu Editor <https://codewith.mu/en/tutorials/1.1/repl>`_ has built-in
+support for REPL and even includes a real-time data plotter.
+
+Some other common options are `picocom` and `screen`. You will need to install
+a program and read the appropriate documentation to understand the basics of
+connecting to a device.
 
 
 Determining the port
@@ -43,34 +47,38 @@ Accessing the REPL on the micro:bit will require you to:
 * Determine the communication port identifier for the micro:bit
 * Use a program to establish communication with the device
 
-The micro:bit will have a port identifier (tty, usb) that can be used by the 
-computer for communicating. Before connecting to the micro:bit we must 
+The micro:bit will have a port identifier (tty, usb) that can be used by the
+computer for communicating. Before connecting to the micro:bit we must
 determine the port identifier.
 
-**Windows**
+Windows
+~~~~~~~
 
 When you have installed the aforementioned drivers the micro:bit will appear in
 device-manager as a COM port.
 
-**Mac OS**
+macOS
+~~~~~
 
-Open Terminal and type ``ls /dev/cu.*`` to see a list of connected serial 
-devices; one of them will look like ``/dev/cu.usbmodem1422`` (the exact number 
+Open Terminal and type ``ls /dev/cu.*`` to see a list of connected serial
+devices; one of them will look like ``/dev/cu.usbmodem1422`` (the exact number
 will depend on your computer).
 
-**Linux**
+Linux
+~~~~~
 
-In terminal, type ``dmesg | tail`` which will show which ``/dev`` node the 
+In terminal, type ``dmesg | tail`` which will show which ``/dev`` node the
 micro:bit was assigned (e.g. ``/dev/ttyUSB0``).
 
 
 Communicating with the micro:bit
 --------------------------------
 
-Once you have found the port identifier you can use a serial terminal program 
+Once you have found the port identifier you can use a serial terminal program
 to communicate with the micro:bit.
 
-**Windows**
+Windows
+~~~~~~~
 
 You may wish to use Tera Term, PuTTY, or another program.
 
@@ -88,7 +96,8 @@ In PuTTY:
 	* Select 'Serial' on the menu on the left, then click 'Open'
 
 
-**Mac OS**
+macOS
+~~~~~
 
 Open Terminal and type ``screen /dev/cu.usbmodem1422 115200``, replacing
 ``/dev/cu.usbmodem1422`` with the port you found earlier. This will open the
@@ -100,13 +109,22 @@ detach screen, but the serial port with still be locked, preventing other
 applications from accessing it. You can then restart screen by typing
 ``screen -r``.
 
+Linux
+~~~~~
 
-**Linux**
+To connect to Debian based distributions, like Ubuntu, you might need
+to add yourself to the ``dialout`` group, which grants write access to the
+serial device ``/dev/ttyACM0``::
+
+  sudo usermod -a -G dialout ${USER}
+
+You may need to relogin in order for the changes to groups to take effect.
 
 Using the ``screen`` program, type ``screen /dev/ttyUSB0 115200``, replacing
 ``/dev/ttyUSB0`` with the port you found earlier.
 
-To exit, press Ctrl-A then \\ and answer Yes to the question. There are many
+To exit, press ``Ctrl-A`` then ``\`` and answer ``Yes`` to the question.
+There are many
 ways back to a command prompt including Ctrl-A then Ctrl-D, which will detach
 screen. All serial output from the micro:bit will still be received by
 ``screen``, the serial port will be locked, preventing other applications from
