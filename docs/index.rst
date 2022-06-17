@@ -8,9 +8,10 @@ BBC micro:bit MicroPython documentation
 
 Welcome!
 
-The BBC micro:bit is a small computing device for children. One of the
-languages it understands is the popular Python programming language. The
-version of Python that runs on the BBC micro:bit is called MicroPython.
+The `BBC micro:bit <https://microbit.org>`_ is a small computing device for
+children. One of the languages it understands is the popular Python programming
+language. The version of Python that runs on the BBC micro:bit is called
+MicroPython.
 
 This documentation includes lessons for teachers
 and API documentation for developers (check out the index on the left). We hope
