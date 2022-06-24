@@ -51,7 +51,7 @@ Functions
 
 
 Connecting
-----------
+==========
 
 You should connect the device's ``SCL`` pin to micro:bit pin 19, and the
 device's ``SDA`` pin to micro:bit pin 20. You also must connect the device's

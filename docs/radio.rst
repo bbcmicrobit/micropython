@@ -164,7 +164,7 @@ Functions
 
 
 Examples
---------
+========
 
 .. include:: ../examples/radio.py
     :code: python

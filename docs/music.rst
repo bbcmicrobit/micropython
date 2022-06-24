@@ -128,7 +128,7 @@ Functions
         * ``octave = 4``
 
 Built in Melodies
------------------
+=================
 
 For the purposes of education and entertainment, the module contains several
 example tunes that are expressed as Python lists. They can be used like this::
@@ -165,7 +165,7 @@ They are:
     * ``POWER_DOWN`` - a sad fanfare to indicate an achievement lost.
 
 Example
--------
+=======
 
 .. include:: ../examples/music.py
     :code: python
