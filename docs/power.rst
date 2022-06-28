@@ -81,7 +81,7 @@ Functions
     will start running from the beginning.
 
 
-.. py:function:: deep_sleep()
+.. py:function:: deep_sleep(ms=None, pins=None, buttons=None, run_every=False)
 
     Set the micro:bit into a low power mode where it can wake up and continue
     operation.
@@ -89,25 +89,19 @@ Functions
     The programme state is preserved and when it wakes up it will resume
     operation where it left off.
 
-    The wake up sources are configured with the ``wake_source()`` function.
+    Deep Sleep mode will consume more battery power than Off mode.
+
+    The wake up sources are configured via arguments.
 
     If no wake up sources have been configured it will sleep until the reset
     button is pressed (which resets the Target MCU) or, in battery power,
     when the USB cable is inserted.
 
-    Deep Sleep mode will consume more battery power than Off mode.
-
-.. py:function:: wake_source(pins=None, buttons=None, ms=None, run_every=False)
-
-    Configure the "Deep Sleep" wake-up sources.
-
-    These wake-up source will not work for the Off mode.
-
-    :param pins: A single instance or a tuple of pins, e.g.
-        ``wake_source(pins=(pin0, pin2))``.
-    :param buttons: A single instance or a tuple of buttons, e.g.
-        ``wake_source(buttons=button_a)``.
     :param ms: A time in milliseconds to wait before it wakes up.
+    :param pins: A single instance or a tuple of pins, e.g.
+        ``deep_sleep(pins=(pin0, pin2))``.
+    :param buttons: A single instance or a tuple of buttons, e.g.
+        ``deep_sleep(buttons=button_a)``.
     :param run_every: Set to ``True`` to wake up with each
         ``microbit.run_every`` scheduled run.
 
@@ -138,15 +132,13 @@ Example programme showing the power management API::
             display.show(Image.SURPRISED)
         elif button_b.is_pressed():
             display.scroll("Sleep")
-            # First let's configure the wake up sources for deep sleep
-            power.wake_source(
+            # Go into Deep Sleep with multiple wake up sources
+            power.deep_sleep(
                 pins=(pin0, pin1),
                 buttons=button_a,
                 ms=5*60*1000,      # In 5 minutes it wakes up anyway
                 run_every=False,   # Blocks run_every from waking up the board
             )
-            # Now let's go to sleep
-            power.deep_sleep()
             # When the micro:bit wakes up will it continue running from here
             display.show(Image.ASLEEP)
             sleep(1000)
@@ -164,11 +156,9 @@ Example using data logging::
     def log_temperature():
         log.add(temp=temperature())
 
-    # Configure the wake up sources to wake up with run_every & button A
-    power.wake_source(buttons=button_a, run_every=True)
-
     while True:
         if button_a.is_pressed():
             # Display the temperature when button A is pressed
             display.scroll(temperature())
-        power.deep_sleep()
+        # To go sleep and wake up with run_every or button A
+        power.deep_sleep(buttons=button_a, run_every=True)
