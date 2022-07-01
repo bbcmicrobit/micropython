@@ -114,7 +114,7 @@ Sound Effects **V2**
 ====================
 
 .. py:class::
-    SoundEffect(preset=None, freq_start=400, freq_end=200, duration=500, vol_start=100, vol_end=255, wave=WAVE_SQUARE, fx=None, interpolation=INTER_LINEAR)
+    SoundEffect(preset=None, freq_start=500, freq_end=2500, duration=500, vol_start=255, vol_end=0, wave=WAVE_SQUARE, fx=None, interpolation=INTER_LOG)
 
     An ``SoundEffect`` instance represents a sound effect, composed by a set of
     parameters configured via the constructor or attributes.
