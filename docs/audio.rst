@@ -20,7 +20,7 @@ There are three different kinds of audio sources that can be played using the
 2. `Sound Effects <#sound-effects-v2>`_ (**V2**), a way to create custom sounds
    by configuring its parameters::
 
-    my_effect = audio.Effect(freq_start=400, freq_end=2500, duration=500)
+    my_effect = audio.SoundEffect(freq_start=400, freq_end=2500, duration=500)
     audio.play(my_effect)
 
 3. `Audio Frames <##audioframe>`_, an iterable (like a list or a generator)
@@ -45,8 +45,8 @@ Functions
         - ``Sound``: The ``microbit`` module contains a list of
           built-in sounds, e.g. ``audio.play(Sound.TWINKLE)``. A full list can
           be found in the `Built in sounds <#built-in-sounds-v2>`_ section.
-        - ``Effect``: A sound effect, or an iterable of sound effects, created
-          via the :py:meth:`audio.Effect` class
+        - ``SoundEffect``: A sound effect, or an iterable of sound effects,
+          created via the :py:meth:`audio.SoundEffect` class
         - ``AudioFrame``: An iterable of ``AudioFrame`` instances as described
           in the `AudioFrame Technical Details <#id2>`_ section
 
@@ -114,17 +114,17 @@ Sound Effects **V2**
 ====================
 
 .. py:class::
-    Effect(preset=None, freq_start=400, freq_end=200, duration=500, vol_start=100, vol_end=255, wave=WAVE_SQUARE, fx=None, interpolation=INTER_LINEAR)
+    SoundEffect(preset=None, freq_start=400, freq_end=200, duration=500, vol_start=100, vol_end=255, wave=WAVE_SQUARE, fx=None, interpolation=INTER_LINEAR)
 
-    An ``Effect`` instance represents a sound effect, composed by a set of
+    An ``SoundEffect`` instance represents a sound effect, composed by a set of
     parameters configured via the constructor or attributes.
 
     All the parameters are optional, with default values as shown above, and
     they can all be modified via attributes of the same name. For example, we
-    can first create an effect ``my_effect = Effect(duration=1000)``, and then
-    change its attributes ``my_effect.duration = 500``.
+    can first create an effect ``my_effect = SoundEffect(duration=1000)``,
+    and then change its attributes ``my_effect.duration = 500``.
 
-    :param preset: An existing Effect instance to use as a base, its values
+    :param preset: An existing SoundEffect instance to use as a base, its values
         are cloned in the new instance, and any additional arguments provided
         overwrite the base values.
     :param freq_start: Start Frequency in Hertz (Hz), eg: ``400``
@@ -180,29 +180,29 @@ Sound Effects **V2**
         in frequency. One of the following values: ``INTER_LINEAR``,
         ``INTER_CURVE``, ``INTER_LOG``.
 
-The arguments used to create any Sound Effect, including the built in effects,
-can be inspected by looking at each of the Effect instance attributes, or by
-converting the instance into a string (which can be done via ``str()``
+The arguments used to create any Sound Effect, including the built in ones,
+can be inspected by looking at each of the SoundEffect instance attributes,
+or by converting the instance into a string (which can be done via ``str()``
 function, or by using a function that does the conversion automatically like
 ``print()``).
 
 For example, with the :doc:`REPL </devguide/repl>` you can inspect the built
 in Effects::
 
-    >>> audio.Effect.CROAK
-    Effect(freq_start=..., freq_end=..., duration=..., vol_start=..., vol_end=..., wave=..., fx=..., interpolation=...)
+    >>> audio.SoundEffect.CROAK
+    SoundEffect(freq_start=..., freq_end=..., duration=..., vol_start=..., vol_end=..., wave=..., fx=..., interpolation=...)
 
 The built in Effects are immutable, so they cannot be changed. Trying to modify
-a built in Effect will throw an exception::
+a built in SoundEffect will throw an exception::
 
-    >>> audio.Effect.CLICK.duration = 1000
+    >>> audio.SoundEffect.CLICK.duration = 1000
     Traceback (most recent call last):
         File "<stdin>", line 1, in <module>
     TypeError: effect cannot be modified
 
 But a new one can be created like this::
 
-    >>> click_clone = Effect(audio.Effect.CLICK)
+    >>> click_clone = SoundEffect(audio.SoundEffect.CLICK)
     >>> click_clone.duration = 1000
     >>>
 
@@ -210,14 +210,15 @@ Built in Sound Effects
 ----------------------
 
 Some pre-created Sound Effects are already available as examples. These can
-be played directly ``audio.play(audio.Effect.SQUEAK)``, or used as a base to
-create new effects ``audio.Effect(audio.Effect.SQUEAK, duration=2000)``.
+be played directly ``audio.play(audio.SoundEffect.SQUEAK)``,
+or used as a base to create new effects
+``audio.SoundEffect(audio.SoundEffect.SQUEAK, duration=2000)``.
 
-* ``audio.Effect.SQUEAK``
-* ``audio.Effect.WARBLE``
-* ``audio.Effect.CHIRP``
-* ``audio.Effect.CROAK``
-* ``audio.Effect.CLICK``
+* ``audio.SoundEffect.SQUEAK``
+* ``audio.SoundEffect.WARBLE``
+* ``audio.SoundEffect.CHIRP``
+* ``audio.SoundEffect.CROAK``
+* ``audio.SoundEffect.CLICK``
 
 Sound Effects Example
 ---------------------
@@ -227,10 +228,10 @@ Sound Effects Example
     from microbit import *
 
     # Play a built in Sound Effect
-    audio.play(audio.Effect.CHIRP)
+    audio.play(audio.SoundEffect.CHIRP)
 
     # Create a Sound Effect and immediately play it
-    audio.play(Effect(
+    audio.play(audio.SoundEffect(
         freq_start=400,
         freq_end=2000,
         duration=500,
@@ -242,7 +243,7 @@ Sound Effects Example
     ))
 
     # Play a Sound Effect instance, modify an attribute, and play it again
-    my_effect = Effect(
+    my_effect = audio.SoundEffect(
         preset=audio.CHIRP
         freq_start=400,
         freq_end=2000,
@@ -253,8 +254,8 @@ Sound Effects Example
 
     # You can also create a new effect based on an existing one, and modify
     # any of its characteristics via arguments
-    audio.play(audio.Effect.WARBLE)
-    my_modified_effect = Effect(audio.Effect.WARBLE, duration=1000)
+    audio.play(audio.SoundEffect.WARBLE)
+    my_modified_effect = SoundEffect(audio.SoundEffect.WARBLE, duration=1000)
     audio.play(my_modified_effect)
 
     # Use sensor data to modify and play the existing Sound Effect instance
@@ -265,12 +266,12 @@ Sound Effects Example
 
         if button_a.is_pressed():
             # On button A play an effect and once it's done show an image
-            audio.play(audio.Effect.CHIRP)
+            audio.play(audio.SoundEffect.CHIRP)
             display.show(Image.DUCK)
             sleep(500)
         elif button_b.is_pressed():
             # On button B play an effect while showing an image
-            audio.play(audio.Effect.CLICK, wait=False)
+            audio.play(audio.SoundEffect.CLICK, wait=False)
             display.show(Image.SQUARE)
             sleep(500)
 
