@@ -209,6 +209,8 @@ But a new one can be created like this::
 Built in Sound Effects
 ----------------------
 
+⚠️ WARNING: These have not been created/implemented yet
+
 Some pre-created Sound Effects are already available as examples. These can
 be played directly ``audio.play(audio.SoundEffect.SQUEAK)``,
 or used as a base to create new effects
@@ -237,9 +239,9 @@ Sound Effects Example
         duration=500,
         vol_start=100,
         vol_end=255,
-        wave=audio.WAVE_TRIANGLE,
-        fx=audio.FX_VIBRATO,
-        interpolation=audio.LOG
+        wave=audio.SoundEffect.WAVE_TRIANGLE,
+        fx=audio.SoundEffect.FX_VIBRATO,
+        interpolation=audio.SoundEffect.INTER_LOG
     ))
 
     # Play a Sound Effect instance, modify an attribute, and play it again
@@ -315,7 +317,7 @@ samples. When reading reaches the start or the mid-point of the buffer, it
 triggers a callback to fetch the next ``AudioFrame`` which is then copied into
 the buffer. This means that a sound source has under 4ms to compute the next
 ``AudioFrame``, and for reliable operation needs to take less 2ms (which is
-32k cycles in micro:bit V1 or 128k in V2, so should be plenty).
+32000 cycles in micro:bit V1 or 128000 in V2, so should be plenty).
 
 
 AudioFrame Example
