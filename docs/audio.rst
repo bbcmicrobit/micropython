@@ -23,7 +23,7 @@ There are three different kinds of audio sources that can be played using the
     my_effect = audio.SoundEffect(freq_start=400, freq_end=2500, duration=500)
     audio.play(my_effect)
 
-3. `Audio Frames <##audioframe>`_, an iterable (like a list or a generator)
+3. `Audio Frames <#audioframe>`_, an iterable (like a list or a generator)
    of Audio Frames, which are lists of 32 samples with values from 0 to 255::
 
     square_wave = audio.AudioFrame()
@@ -114,7 +114,7 @@ Sound Effects **V2**
 ====================
 
 .. py:class::
-    SoundEffect(preset=None, freq_start=500, freq_end=2500, duration=500, vol_start=255, vol_end=0, wave=WAVE_SQUARE, fx=None, interpolation=INTER_LOG)
+    SoundEffect(freq_start=500, freq_end=2500, duration=500, vol_start=255, vol_end=0, wave=WAVE_SQUARE, fx=None, interpolation=INTER_LOG)
 
     An ``SoundEffect`` instance represents a sound effect, composed by a set of
     parameters configured via the constructor or attributes.
@@ -124,9 +124,6 @@ Sound Effects **V2**
     can first create an effect ``my_effect = SoundEffect(duration=1000)``,
     and then change its attributes ``my_effect.duration = 500``.
 
-    :param preset: An existing SoundEffect instance to use as a base, its values
-        are cloned in the new instance, and any additional arguments provided
-        overwrite the base values.
     :param freq_start: Start Frequency in Hertz (Hz), eg: ``400``
     :param freq_end: End Frequency in Hertz (Hz), eg: ``2000``
     :param duration: Duration of the sound (ms), eg: ``500``
@@ -141,6 +138,10 @@ Sound Effects **V2**
         frequencies, different wave shapes have different rates of change
         in frequency. One of the following values: ``INTER_LINEAR``,
         ``INTER_CURVE``, ``INTER_LOG``.
+
+    .. py:function:: copy()
+
+        :returns: A copy of the SoundEffect.
 
     .. py:attribute:: freq_start
 
@@ -189,7 +190,7 @@ function, or by using a function that does the conversion automatically like
 For example, with the :doc:`REPL </devguide/repl>` you can inspect the built
 in Effects::
 
-    >>> audio.SoundEffect.CROAK
+    >>> print(audio.SoundEffect.CROAK)
     SoundEffect(freq_start=..., freq_end=..., duration=..., vol_start=..., vol_end=..., wave=..., fx=..., interpolation=...)
 
 The built in Effects are immutable, so they cannot be changed. Trying to modify
@@ -198,11 +199,11 @@ a built in SoundEffect will throw an exception::
     >>> audio.SoundEffect.CLICK.duration = 1000
     Traceback (most recent call last):
         File "<stdin>", line 1, in <module>
-    TypeError: effect cannot be modified
+    TypeError: SoundEffect cannot be modified
 
-But a new one can be created like this::
+But a new one can be created using the ``copy()`` method::
 
-    >>> click_clone = SoundEffect(audio.SoundEffect.CLICK)
+    >>> click_clone = audio.SoundEffect.CLICK.copy()
     >>> click_clone.duration = 1000
     >>>
 
@@ -213,8 +214,7 @@ Built in Sound Effects
 
 Some pre-created Sound Effects are already available as examples. These can
 be played directly ``audio.play(audio.SoundEffect.SQUEAK)``,
-or used as a base to create new effects
-``audio.SoundEffect(audio.SoundEffect.SQUEAK, duration=2000)``.
+or they can be cloned as a base to create new effects.
 
 * ``audio.SoundEffect.SQUEAK``
 * ``audio.SoundEffect.WARBLE``
@@ -257,7 +257,8 @@ Sound Effects Example
     # You can also create a new effect based on an existing one, and modify
     # any of its characteristics via arguments
     audio.play(audio.SoundEffect.WARBLE)
-    my_modified_effect = SoundEffect(audio.SoundEffect.WARBLE, duration=1000)
+    my_modified_effect = audio.SoundEffect.WARBLE.copy()
+    my_modified_effect.duration=1000
     audio.play(my_modified_effect)
 
     # Use sensor data to modify and play the existing Sound Effect instance
