@@ -114,7 +114,7 @@ Sound Effects **V2**
 ====================
 
 .. py:class::
-    SoundEffect(freq_start=500, freq_end=2500, duration=500, vol_start=255, vol_end=0, wave=WAVE_SQUARE, fx=None, interpolation=INTER_LOG)
+    SoundEffect(freq_start=500, freq_end=2500, duration=500, vol_start=255, vol_end=0, wave=WAVE_SQUARE, fx=None, shape=SHAPE_LOG)
 
     An ``SoundEffect`` instance represents a sound effect, composed by a set of
     parameters configured via the constructor or attributes.
@@ -134,10 +134,10 @@ Sound Effects **V2**
         ``WAVE_NOISE`` (randomly generated noise).
     :param fx: Effect to add on the sound, one of the following values:
         ``FX_TREMOLO``, ``FX_VIBRATO``, ``FX_WARBLE``, or ``None``.
-    :param interpolation: The type of curve between the start and end
+    :param shape: The type of the interpolation curve between the start and end
         frequencies, different wave shapes have different rates of change
-        in frequency. One of the following values: ``INTER_LINEAR``,
-        ``INTER_CURVE``, ``INTER_LOG``.
+        in frequency. One of the following values: ``SHAPE_LINEAR``,
+        ``SHAPE_CURVE``, ``SHAPE_LOG``.
 
     .. py:function:: copy()
 
@@ -174,12 +174,12 @@ Sound Effects **V2**
         Effect to add on the sound, one of the following values:
         ``FX_TREMOLO``, ``FX_VIBRATO``, ``FX_WARBLE``, or ``None``.
 
-    .. py:attribute:: interpolation
+    .. py:attribute:: shape
 
-        The type of curve between the start and end
+        The type of interpolation curve between the start and end
         frequencies, different wave shapes have different rates of change
-        in frequency. One of the following values: ``INTER_LINEAR``,
-        ``INTER_CURVE``, ``INTER_LOG``.
+        in frequency. One of the following values: ``SHAPE_LINEAR``,
+        ``SHAPE_CURVE``, ``SHAPE_LOG``.
 
 The arguments used to create any Sound Effect, including the built in ones,
 can be inspected by looking at each of the SoundEffect instance attributes,
@@ -191,7 +191,7 @@ For example, with the :doc:`REPL </devguide/repl>` you can inspect the built
 in Effects::
 
     >>> print(audio.SoundEffect.CROAK)
-    SoundEffect(freq_start=..., freq_end=..., duration=..., vol_start=..., vol_end=..., wave=..., fx=..., interpolation=...)
+    SoundEffect(freq_start=..., freq_end=..., duration=..., vol_start=..., vol_end=..., wave=..., fx=..., shape=...)
 
 The built in Effects are immutable, so they cannot be changed. Trying to modify
 a built in SoundEffect will throw an exception::
@@ -241,7 +241,7 @@ Sound Effects Example
         vol_end=255,
         wave=audio.SoundEffect.WAVE_TRIANGLE,
         fx=audio.SoundEffect.FX_VIBRATO,
-        interpolation=audio.SoundEffect.INTER_LOG
+        shape=audio.SoundEffect.SHAPE_LOG
     ))
 
     # Play a Sound Effect instance, modify an attribute, and play it again
