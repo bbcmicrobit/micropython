@@ -31,6 +31,25 @@ Functions
     :returns: The number of milliseconds since the board was switched on or
         restarted.
 
+.. py:function:: scale(value, from_, to)
+
+    Converts a value from a range to another range.
+
+    For example, to convert 30 degrees from Celsius to Fahrenheit::
+
+        temp_fahrenheit = scale(30, from_=(0, 100), to=(32, 212))
+
+    This can be useful to convert values between inputs and outputs,
+    for example an accelerometer x value to a speaker volume.
+
+    Negative scaling is also supported, for example
+    ``scale(25, from_=(0, 100), to=(0, -200))`` will return ``-50``.
+
+    :param value: A number to convert.
+    :param from_: A tuple to define the range to convert from.
+    :param to: A tuple to define the range to convert to.
+
+    :returns: The ``value`` converted to the ``to`` range.
 
 .. py:function:: sleep(n)
 

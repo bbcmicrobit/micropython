@@ -16,6 +16,10 @@ There are a few functions available directly::
     sleep(ms)
     # returns the number of milliseconds since the micro:bit was last switched on.
     running_time()
+    # returns the temperature in Celcius
+    temperature()
+    # converts a number from one scale of values to another
+    scale(value_to_convert, from_=(min_value, max_value), to=(min_value, max_value))
     # makes the micro:bit enter panic mode (this usually happens when the DAL runs
     # out of memory, and causes a sad face to be drawn on the display). The error
     # code can be any arbitrary integer value.
