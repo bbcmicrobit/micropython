@@ -308,6 +308,15 @@ static mp_obj_t radio_receive(uint8_t *header, mp_buffer_info_t *bufinfo, uint32
 /*****************************************************************************/
 // MicroPython bindings and module
 
+STATIC mp_obj_t mod_radio_reset(void);
+
+STATIC mp_obj_t mod_radio___init__(void) {
+    mod_radio_reset();
+    radio_enable();
+    return mp_const_none;
+}
+MP_DEFINE_CONST_FUN_OBJ_0(mod_radio___init___obj, mod_radio___init__);
+
 STATIC mp_obj_t mod_radio_reset(void) {
     radio_state.max_payload = RADIO_DEFAULT_MAX_PAYLOAD;
     radio_state.queue_len = RADIO_DEFAULT_QUEUE_LEN;
@@ -511,7 +520,7 @@ MP_DEFINE_CONST_FUN_OBJ_0(mod_radio_receive_full_obj, mod_radio_receive_full);
 
 STATIC const mp_map_elem_t radio_module_globals_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR___name__), MP_OBJ_NEW_QSTR(MP_QSTR_radio) },
-    { MP_OBJ_NEW_QSTR(MP_QSTR___init__), (mp_obj_t)&mod_radio_reset_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR___init__), (mp_obj_t)&mod_radio___init___obj },
 
     { MP_OBJ_NEW_QSTR(MP_QSTR_reset), (mp_obj_t)&mod_radio_reset_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_config), (mp_obj_t)&mod_radio_config_obj },
