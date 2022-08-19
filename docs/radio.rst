@@ -48,8 +48,13 @@ Functions
 
 .. py:function:: on()
 
-    Turns the radio on. This needs to be explicitly called since the radio
-    draws power and takes up memory that you may otherwise need.
+    Turns the radio on.
+
+    Since MicroPython-on-micro:bit v1.1
+    the radio is turned on by default when the radio module is imported.
+    In earlier releases, to reduce power consumption until needed, this
+    function had to be explicitly called.
+    For those cases ``radio.off()`` can be called after import.
 
 .. py:function:: off()
 

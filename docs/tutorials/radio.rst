@@ -107,10 +107,6 @@ We're going to use the radio module to create something akin to a swarm of
 fireflies signalling to each other.
 
 First ``import radio`` to make the functions available to your Python program.
-Then call the ``radio.on()`` function to turn the radio on. Since
-the radio draws power and takes up memory we've made it so *you* decide
-when it is enabled (there is, of course a ``radio.off()`` function).
-
 At this point the radio module is configured to sensible defaults that make
 it compatible with other platforms that may target the BBC micro:bit. It is
 possible to control many of the features discussed above (such as channel and
