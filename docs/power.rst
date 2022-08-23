@@ -81,7 +81,7 @@ Functions
     will start running from the beginning.
 
 
-.. py:function:: deep_sleep(ms=None, pins=None, buttons=None, run_every=False)
+.. py:function:: deep_sleep(ms=None, wake_on=None, run_every=False)
 
     Set the micro:bit into a low power mode where it can wake up and continue
     operation.
@@ -98,10 +98,9 @@ Functions
     when the USB cable is inserted.
 
     :param ms: A time in milliseconds to wait before it wakes up.
-    :param pins: A single instance or a tuple of pins, e.g.
-        ``deep_sleep(pins=(pin0, pin2))``.
-    :param buttons: A single instance or a tuple of buttons, e.g.
-        ``deep_sleep(buttons=button_a)``.
+    :param wake_on: A single instance or a tuple of pins and/or buttons to
+        wake up the board, e.g. ``deep_sleep(wake_on=button_a)`` or
+        ``deep_sleep(wake_on=(pin0, pin2, button_b))``.
     :param run_every: Set to ``True`` to wake up with each
         ``microbit.run_every`` scheduled run.
 
@@ -134,8 +133,7 @@ Example programme showing the power management API::
             display.scroll("Sleep")
             # Go into Deep Sleep with multiple wake up sources
             power.deep_sleep(
-                pins=(pin0, pin1),
-                buttons=button_a,
+                wake_on=(pin0, pin1, button_a),
                 ms=5*60*1000,      # In 5 minutes it wakes up anyway
                 run_every=False,   # Blocks run_every from waking up the board
             )
@@ -161,4 +159,4 @@ Example using data logging::
             # Display the temperature when button A is pressed
             display.scroll(temperature())
         # To go sleep and wake up with run_every or button A
-        power.deep_sleep(buttons=button_a, run_every=True)
+        power.deep_sleep(wake_on=button_a, run_every=True)
