@@ -30,7 +30,7 @@
 extern "C" {
 
 #include "py/nlr.h"
-#include "py/obj.h"
+#include "py/runtime.h"
 #include "py/mphal.h"
 #include "microbit/modmicrobit.h"
 
@@ -81,6 +81,36 @@ STATIC mp_obj_t microbit_temperature(void) {
 }
 MP_DEFINE_CONST_FUN_OBJ_0(microbit_temperature_obj, microbit_temperature);
 
+STATIC mp_obj_t microbit_scale(size_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
+    enum { ARG_value, ARG_from_, ARG_to };
+    static const mp_arg_t allowed_args[] = {
+        { MP_QSTR_value, MP_ARG_REQUIRED | MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
+        { MP_QSTR_from_, MP_ARG_REQUIRED | MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
+        { MP_QSTR_to, MP_ARG_REQUIRED | MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
+    };
+
+    mp_arg_val_t args[MP_ARRAY_SIZE(allowed_args)];
+    mp_arg_parse_all(n_args, pos_args, kw_args, MP_ARRAY_SIZE(allowed_args), allowed_args, args);
+
+    // Extract from/to min/max arrays.
+    mp_obj_t *from_items, *to_items;
+    mp_obj_get_array_fixed_n(args[ARG_from_].u_obj, 2, &from_items);
+    mp_obj_get_array_fixed_n(args[ARG_to].u_obj, 2, &to_items);
+
+    // Extract all float values.
+    mp_float_t from_value = mp_obj_get_float(args[ARG_value].u_obj);
+    mp_float_t from_min = mp_obj_get_float(from_items[0]);
+    mp_float_t from_max = mp_obj_get_float(from_items[1]);
+    mp_float_t to_min = mp_obj_get_float(to_items[0]);
+    mp_float_t to_max = mp_obj_get_float(to_items[1]);
+
+    // Compute scaled value.
+    mp_float_t to_value = (from_value - from_min) / (from_max - from_min) * (to_max - to_min) + to_min;
+
+    return mp_obj_new_float(to_value);
+}
+STATIC MP_DEFINE_CONST_FUN_OBJ_KW(microbit_scale_obj, 0, microbit_scale);
+
 STATIC const mp_map_elem_t microbit_module_globals_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR___name__), MP_OBJ_NEW_QSTR(MP_QSTR_microbit) },
 
@@ -102,6 +132,8 @@ STATIC const mp_map_elem_t microbit_module_globals_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_running_time), (mp_obj_t)&microbit_running_time_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_panic), (mp_obj_t)&microbit_panic_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_temperature), (mp_obj_t)&microbit_temperature_obj },
+
+    { MP_OBJ_NEW_QSTR(MP_QSTR_scale), (mp_obj_t)&microbit_scale_obj },
 
     { MP_OBJ_NEW_QSTR(MP_QSTR_pin0), (mp_obj_t)&microbit_p0_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_pin1), (mp_obj_t)&microbit_p1_obj },
