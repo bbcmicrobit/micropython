@@ -76,10 +76,6 @@ typedef struct _file_descriptor_obj {
 /** Must be such that sizeof(file_header) < DATA_PER_CHUNK */
 #define MAX_FILENAME_LENGTH 120
 
-//Minimum number of free chunks to justify sweeping.
-//If this is too low it may cause excessive wear
-#define MIN_CHUNKS_FOR_SWEEP 8
-
 typedef struct _file_header {
     uint8_t end_offset;
     uint8_t name_len;

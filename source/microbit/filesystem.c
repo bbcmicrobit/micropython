@@ -202,9 +202,9 @@ uint8_t microbit_find_file(const char *name, int name_len) {
  * Search the chunks:
  * 1  If an UNUSED chunk is found, then return that.
  * 2. If an entire page of FREED chunks is found, then erase the page and return the first chunk
- * 3. If the number of FREED chunks is >= MIN_FREE_CHUNKS_FOR_SWEEP, then
+ * 3. If the number of FREED chunks is > 0, then
  * 3a. Sweep the filesystem and restart.
- * 3b. Fail and return FILE_NOT_FOUND
+ * 3b. Otherwise, fail and return FILE_NOT_FOUND.
  */
 static uint8_t find_chunk_and_erase(void) {
     // Start search at a random chunk to spread the wear more evenly.
@@ -245,7 +245,7 @@ static uint8_t find_chunk_and_erase(void) {
         if (index == chunks_in_file_system+1) index = 1;
     } while (index != start_index);
     DEBUG(("FILE DEBUG: %lu free chunks\r\n", freed_chunks));
-    if (freed_chunks < MIN_CHUNKS_FOR_SWEEP) {
+    if (freed_chunks == 0) {
         return FILE_NOT_FOUND;
     }
     // No freed pages, so sweep file system.
