@@ -164,7 +164,7 @@ void mp_hal_stdout_tx_strn_cooked(const char *str, mp_uint_t len);
 // We need to provide a declaration/definition of alloca()
 #include <alloca.h>
 
-#define MICROBIT_RELEASE "1.0.1"
+#define MICROBIT_RELEASE "1.1.0-beta.1"
 #define MICROBIT_BOARD_NAME "micro:bit"
 #define MICROPY_HW_BOARD_NAME MICROBIT_BOARD_NAME " v" MICROBIT_RELEASE
 #define MICROPY_HW_MCU_NAME "nRF51822"
