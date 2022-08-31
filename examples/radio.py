@@ -7,9 +7,6 @@ from microbit import display, Image, button_a, sleep
 # Create the "flash" animation frames. Can you work out how it's done?
 flash = [Image().invert()*(i/9) for i in range(9, -1, -1)]
 
-# The radio won't work unless it's switched on.
-radio.on()
-
 # Event loop.
 while True:
     # Button A sends a "flash" message.
