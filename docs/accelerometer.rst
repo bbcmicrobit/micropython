@@ -84,7 +84,7 @@ Functions
     :param value: New range for the accelerometer, an integer in ``g``.
 
 Examples
---------
+========
 
 A fortune telling magic 8-ball. Ask a question then shake the device for an
 answer.
