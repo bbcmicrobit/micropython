@@ -184,17 +184,17 @@ Sound Effects **V2**
         in frequency. One of the following values: ``SHAPE_LINEAR``,
         ``SHAPE_CURVE``, ``SHAPE_LOG``.
 
-The arguments used to create any Sound Effect,
+The arguments used to create any Sound Effect, including the built in ones,
 can be inspected by looking at each of the SoundEffect instance attributes,
 or by converting the instance into a string (which can be done via ``str()``
 function, or by using a function that does the conversion automatically like
 ``print()``).
 
-For example, with the :doc:`REPL </devguide/repl>` you can inspect the
-default SoundEffects::
+For example, with the :doc:`REPL </devguide/repl>` you can inspect any of
+the predefined SoundEffects::
 
-    >>> print(audio.SoundEffect())
-    SoundEffect(freq_start=500, freq_end=2500, duration=500, vol_start=255, vol_end=0, waveform=WAVE_SQUARE, fx=FX_NONE, shape=SHAPE_LOG)
+    >>> print(audio.SoundEffect.HONK)
+    SoundEffect(freq_start=?, freq_end=?, duration=?, vol_start=?, vol_end=?, waveform=?, fx=?, shape=?)
 
 This format is "human readable", which means it is easy for us to read,
 and it looks very similar to the code needed to create that SoundEffect,
@@ -208,6 +208,33 @@ string of Python code that can be stored or transferred
     >>> print(sound_code)
     SoundEffect(500, 2500, 500, 255, 0, 3, 0, 18)
     >>> eval("audio.play({})".format(sound_code))
+
+Built in Sound Effects
+----------------------
+
+⚠️ WARNING: These have not been created/implemented yet
+
+Some pre-created Sound Effects are already available as examples. These can
+be played directly ``audio.play(audio.SoundEffect.HONK)``,
+or they can be cloned as a base to create new effects.
+
+* ``audio.SoundEffect.SQUEAK``
+* ``audio.SoundEffect.CHIRP``
+* ``audio.SoundEffect.CROAK``
+
+The built in SounEffects are immutable, so they cannot be changed.
+Trying to modify a built in SoundEffect will throw an exception::
+
+    >>> audio.SoundEffect.CHIRP.duration = 1000
+    Traceback (most recent call last):
+        File "<stdin>", line 1, in <module>
+    TypeError: SoundEffect cannot be modified
+
+But a new one can be created using the ``copy()`` method::
+
+    >>> click_clone = audio.SoundEffect.CHIRP.copy()
+    >>> click_clone.duration = 1000
+    >>>
 
 Sound Effects Example
 ---------------------
