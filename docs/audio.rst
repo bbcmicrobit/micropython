@@ -114,7 +114,7 @@ Sound Effects **V2**
 ====================
 
 .. py:class::
-    SoundEffect(freq_start=500, freq_end=2500, duration=500, vol_start=255, vol_end=0, wave=WAVE_SQUARE, fx=None, shape=SHAPE_LOG)
+    SoundEffect(freq_start=500, freq_end=2500, duration=500, vol_start=255, vol_end=0, wave=WAVE_SQUARE, fx=FX_NONE, shape=SHAPE_LOG)
 
     An ``SoundEffect`` instance represents a sound effect, composed by a set of
     parameters configured via the constructor or attributes.
@@ -124,20 +124,21 @@ Sound Effects **V2**
     can first create an effect ``my_effect = SoundEffect(duration=1000)``,
     and then change its attributes ``my_effect.duration = 500``.
 
-    :param freq_start: Start Frequency in Hertz (Hz), eg: ``400``
-    :param freq_end: End Frequency in Hertz (Hz), eg: ``2000``
-    :param duration: Duration of the sound (ms), eg: ``500``
-    :param vol_start: Start volume value, range 0-255, eg: ``120``
-    :param vol_end: End volume value, range 0-255, eg: ``255``
+    :param freq_start: Start frequency in Hertz (Hz), default: ``500``
+    :param freq_end: End frequency in Hertz (Hz), default: ``2500``
+    :param duration: Duration of the sound (ms), default: ``500``
+    :param vol_start: Start volume value, range 0-255, default: ``255``
+    :param vol_end: End volume value, range 0-255, default: ``0``
     :param wave: Type of wave shape, one of these values: ``WAVE_SINE``,
         ``WAVE_SAWTOOTH``, ``WAVE_TRIANGLE``, ``WAVE_SQUARE``,
-        ``WAVE_NOISE`` (randomly generated noise).
+        ``WAVE_NOISE`` (randomly generated noise). Default: ``WAVE_SQUARE``
     :param fx: Effect to add on the sound, one of the following values:
-        ``FX_TREMOLO``, ``FX_VIBRATO``, ``FX_WARBLE``, or ``None``.
+        ``FX_TREMOLO``, ``FX_VIBRATO``, ``FX_WARBLE``, or ``FX_NONE``.
+        Default: ``FX_NONE``
     :param shape: The type of the interpolation curve between the start and end
         frequencies, different wave shapes have different rates of change
         in frequency. One of the following values: ``SHAPE_LINEAR``,
-        ``SHAPE_CURVE``, ``SHAPE_LOG``.
+        ``SHAPE_CURVE``, ``SHAPE_LOG``. Default: ``SHAPE_LOG``
 
     .. py:function:: copy()
 
@@ -145,23 +146,24 @@ Sound Effects **V2**
 
     .. py:attribute:: freq_start
 
-        Start Frequency in Hertz (Hz)
+        Start frequency in Hertz (Hz), a number between ``0`` and ``9999``.
 
     .. py:attribute:: freq_end
 
-        End Frequency in Hertz (Hz)
+        End frequency in Hertz (Hz), a number between ``0`` and ``9999```.
 
     .. py:attribute:: duration
 
-        Duration of the sound (ms), eg: ``500``
+        Duration of the sound in milliseconds, a number between ``0`` and
+        ``9999``.
 
     .. py:attribute:: vol_start
 
-        Start volume value, range 0-255, eg: ``120``
+        Start volume value, a number between ``0`` and ``255``.
 
     .. py:attribute:: vol_end
 
-        End volume value, range 0-255, eg: ``255``
+        End volume value, a number between ``0`` and ``255``.
 
     .. py:attribute:: wave
 
@@ -181,103 +183,36 @@ Sound Effects **V2**
         in frequency. One of the following values: ``SHAPE_LINEAR``,
         ``SHAPE_CURVE``, ``SHAPE_LOG``.
 
-The arguments used to create any Sound Effect, including the built in ones,
+The arguments used to create any Sound Effect,
 can be inspected by looking at each of the SoundEffect instance attributes,
 or by converting the instance into a string (which can be done via ``str()``
 function, or by using a function that does the conversion automatically like
 ``print()``).
 
-For example, with the :doc:`REPL </devguide/repl>` you can inspect the built
-in Effects::
+For example, with the :doc:`REPL </devguide/repl>` you can inspect the
+default SoundEffects::
 
-    >>> print(audio.SoundEffect.CROAK)
-    SoundEffect(freq_start=..., freq_end=..., duration=..., vol_start=..., vol_end=..., wave=..., fx=..., shape=...)
+    >>> print(audio.SoundEffect())
+    SoundEffect(freq_start=500, freq_end=2500, duration=500, vol_start=255, vol_end=0, wave=WAVE_SQUARE, fx=FX_NONE, shape=SHAPE_LOG)
 
-The built in Effects are immutable, so they cannot be changed. Trying to modify
-a built in SoundEffect will throw an exception::
+This format is "human readable", which means it is easy for us to read,
+and it looks very similar to the code needed to create that SoundEffect,
+but it's not quite right. The ``repr()`` function can be used to create a
+string of Python code that can be stored or transferred
+(you could transmit sounds via micro:bit radio!) and be executed with the
+``eval()`` function::
 
-    >>> audio.SoundEffect.CLICK.duration = 1000
-    Traceback (most recent call last):
-        File "<stdin>", line 1, in <module>
-    TypeError: SoundEffect cannot be modified
-
-But a new one can be created using the ``copy()`` method::
-
-    >>> click_clone = audio.SoundEffect.CLICK.copy()
-    >>> click_clone.duration = 1000
-    >>>
-
-Built in Sound Effects
-----------------------
-
-⚠️ WARNING: These have not been created/implemented yet
-
-Some pre-created Sound Effects are already available as examples. These can
-be played directly ``audio.play(audio.SoundEffect.SQUEAK)``,
-or they can be cloned as a base to create new effects.
-
-* ``audio.SoundEffect.SQUEAK``
-* ``audio.SoundEffect.WARBLE``
-* ``audio.SoundEffect.CHIRP``
-* ``audio.SoundEffect.CROAK``
-* ``audio.SoundEffect.CLICK``
+    >>> from audio import SoundEffect
+    >>> sound_code = repr(SoundEffect())
+    >>> print(sound_code)
+    SoundEffect(500, 2500, 500, 255, 0, 3, 0, 18)
+    >>> eval("audio.play({})".format(sound_code))
 
 Sound Effects Example
 ---------------------
 
-::
-
-    from microbit import *
-
-    # Play a built in Sound Effect
-    audio.play(audio.SoundEffect.CHIRP)
-
-    # Create a Sound Effect and immediately play it
-    audio.play(audio.SoundEffect(
-        freq_start=400,
-        freq_end=2000,
-        duration=500,
-        vol_start=100,
-        vol_end=255,
-        wave=audio.SoundEffect.WAVE_TRIANGLE,
-        fx=audio.SoundEffect.FX_VIBRATO,
-        shape=audio.SoundEffect.SHAPE_LOG
-    ))
-
-    # Play a Sound Effect instance, modify an attribute, and play it again
-    my_effect = audio.SoundEffect(
-        preset=audio.CHIRP
-        freq_start=400,
-        freq_end=2000,
-    )
-    audio.play(my_effect)
-    my_effect.duration = 1000
-    audio.play(my_effect)
-
-    # You can also create a new effect based on an existing one, and modify
-    # any of its characteristics via arguments
-    audio.play(audio.SoundEffect.WARBLE)
-    my_modified_effect = audio.SoundEffect.WARBLE.copy()
-    my_modified_effect.duration=1000
-    audio.play(my_modified_effect)
-
-    # Use sensor data to modify and play the existing Sound Effect instance
-    while True:
-        my_effect.freq_start=accelerometer.get_x()
-        my_effect.freq_end=accelerometer.get_y()
-        audio.play(my_effect)
-
-        if button_a.is_pressed():
-            # On button A play an effect and once it's done show an image
-            audio.play(audio.SoundEffect.CHIRP)
-            display.show(Image.DUCK)
-            sleep(500)
-        elif button_b.is_pressed():
-            # On button B play an effect while showing an image
-            audio.play(audio.SoundEffect.CLICK, wait=False)
-            display.show(Image.SQUARE)
-            sleep(500)
-
+.. include:: ../examples/soundeffects.py
+    :code: python
 
 AudioFrame
 ==========
