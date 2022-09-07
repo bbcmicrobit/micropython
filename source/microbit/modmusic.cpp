@@ -40,7 +40,7 @@ extern "C" {
 #define DEFAULT_DURATION 4 // Crotchet
 #define ARTICULATION_MS  10 // articulation between notes in milliseconds
 
-#define MUSIC_OUTPUT_DEFAULT_PIN (&microbit_p0_obj)
+#define MUSIC_OUTPUT_DEFAULT_PIN (MP_OBJ_FROM_PTR(&microbit_p0_obj))
 #define MUSIC_OUTPUT_AMPLITUDE_OFF (0)
 #define MUSIC_OUTPUT_AMPLITUDE_ON (128)
 
@@ -80,6 +80,17 @@ static inline int music_output_period_us(uint32_t period) {
     return pwm_set_period_us(period);
 }
 
+STATIC void microbit_pin_audio_select(mp_obj_t select) {
+    const microbit_pin_obj_t *pin = microbit_obj_get_pin(select);
+    microbit_obj_pin_acquire(pin, microbit_pin_mode_music);
+    music_data->async_pin = pin;
+}
+
+STATIC void microbit_pin_audio_free(void) {
+    microbit_obj_pin_free(music_data->async_pin);
+    music_data->async_pin = NULL;
+}
+
 void microbit_music_tick(void) {
     if (music_data == NULL) {
         // music module not yet imported
@@ -108,8 +119,7 @@ void microbit_music_tick(void) {
                 music_data->async_notes_index = 0;
             } else {
                 music_data->async_state = ASYNC_MUSIC_STATE_IDLE;
-                microbit_obj_pin_free(music_data->async_pin);
-                music_data->async_pin = NULL;
+                microbit_pin_audio_free();
                 return;
             }
         }
@@ -279,18 +289,16 @@ STATIC mp_obj_t microbit_music_get_tempo(void) {
 MP_DEFINE_CONST_FUN_OBJ_0(microbit_music_get_tempo_obj, microbit_music_get_tempo);
 
 STATIC mp_obj_t microbit_music_stop(mp_uint_t n_args, const mp_obj_t *args) {
-    const microbit_pin_obj_t *pin;
+    mp_obj_t pin;
     if (n_args == 0) {
         pin = MUSIC_OUTPUT_DEFAULT_PIN;
     } else {
-        pin = microbit_obj_get_pin(args[0]);
+        pin = args[0];
     }
     // Raise exception if the pin we are trying to stop is not in a compatible mode.
-    microbit_obj_pin_acquire(pin, microbit_pin_mode_music);
-    music_data->async_pin = pin;
+    microbit_pin_audio_select(pin);
     music_output_amplitude(MUSIC_OUTPUT_AMPLITUDE_OFF);
-    microbit_obj_pin_free(pin);
-    music_data->async_pin = NULL;
+    microbit_pin_audio_free();
     music_data->async_state = ASYNC_MUSIC_STATE_IDLE;
 
     return mp_const_none;
@@ -300,7 +308,7 @@ MP_DEFINE_CONST_FUN_OBJ_VAR_BETWEEN(microbit_music_stop_obj, 0, 1, microbit_musi
 STATIC mp_obj_t microbit_music_play(mp_uint_t n_args, const mp_obj_t *pos_args, mp_map_t *kw_args) {
     static const mp_arg_t allowed_args[] = {
         { MP_QSTR_music, MP_ARG_REQUIRED | MP_ARG_OBJ, {.u_obj = MP_OBJ_NULL} },
-        { MP_QSTR_pin,   MP_ARG_OBJ, {.u_obj = (mp_obj_t)MUSIC_OUTPUT_DEFAULT_PIN} },
+        { MP_QSTR_pin,   MP_ARG_OBJ, {.u_obj = MUSIC_OUTPUT_DEFAULT_PIN} },
         { MP_QSTR_wait,  MP_ARG_BOOL, {.u_bool = true} },
         { MP_QSTR_loop,  MP_ARG_BOOL, {.u_bool = false} },
     };
@@ -324,15 +332,15 @@ STATIC mp_obj_t microbit_music_play(mp_uint_t n_args, const mp_obj_t *pos_args, 
     }
 
     // Release the previous pin
-    microbit_obj_pin_free(music_data->async_pin);
-    music_data->async_pin = NULL;
+    microbit_pin_audio_free();
+
+    // Stop any ongoing background music
+    music_data->async_state = ASYNC_MUSIC_STATE_IDLE;
 
     // get the pin to play on
-    const microbit_pin_obj_t *pin = microbit_obj_get_pin(args[1].u_obj);
-    microbit_obj_pin_acquire(pin, microbit_pin_mode_music);
+    microbit_pin_audio_select(args[1].u_obj);
 
     // start the tune running in the background
-    music_data->async_state = ASYNC_MUSIC_STATE_IDLE;
     music_data->async_wait_ticks = ticker_ticks_ms;
     music_data->async_loop = args[3].u_bool;
     music_data->async_notes_len = len;
@@ -345,7 +353,6 @@ STATIC mp_obj_t microbit_music_play(mp_uint_t n_args, const mp_obj_t *pos_args, 
     } else {
         music_data->async_note = items;
     }
-    music_data->async_pin = pin;
     music_data->async_state = ASYNC_MUSIC_STATE_NEXT_NOTE;
 
     if (args[2].u_bool) {
@@ -361,7 +368,7 @@ STATIC mp_obj_t microbit_music_pitch(mp_uint_t n_args, const mp_obj_t *pos_args,
     static const mp_arg_t allowed_args[] = {
         { MP_QSTR_frequency, MP_ARG_REQUIRED | MP_ARG_INT, {.u_int = 0} },
         { MP_QSTR_duration, MP_ARG_INT, {.u_int = -1} },
-        { MP_QSTR_pin,    MP_ARG_OBJ, {.u_obj = (mp_obj_t)MUSIC_OUTPUT_DEFAULT_PIN} },
+        { MP_QSTR_pin,    MP_ARG_OBJ, {.u_obj = MUSIC_OUTPUT_DEFAULT_PIN} },
         { MP_QSTR_wait,   MP_ARG_BOOL, {.u_bool = true} },
     };
 
@@ -372,31 +379,31 @@ STATIC mp_obj_t microbit_music_pitch(mp_uint_t n_args, const mp_obj_t *pos_args,
     // get the parameters
     mp_uint_t frequency = args[0].u_int;
     mp_int_t duration = args[1].u_int;
-    const microbit_pin_obj_t *pin = microbit_obj_get_pin(args[2].u_obj);
+
+    // Stop any ongoing background music
+    music_data->async_state = ASYNC_MUSIC_STATE_IDLE;
 
     // Update pin modes
-    microbit_obj_pin_free(music_data->async_pin);
-    music_data->async_pin = NULL;
-    microbit_obj_pin_acquire(pin, microbit_pin_mode_music);
+    microbit_pin_audio_free();
+    microbit_pin_audio_select(args[2].u_obj);
+
     bool wait = args[3].u_bool;
-    music_data->async_pin = pin;
     music_output_amplitude(MUSIC_OUTPUT_AMPLITUDE_ON);
-    music_data->async_pin = NULL;
     if (frequency == 0) {
-        pwm_release(pin->name);
+        pwm_release(music_data->async_pin->name);
+        music_data->async_pin = NULL;
     } else if (music_output_period_us(1000000/frequency)) {
-        pwm_release(pin->name);
+        pwm_release(music_data->async_pin->name);
+        music_data->async_pin = NULL;
         mp_raise_ValueError("invalid pitch");
     }
     if (duration >= 0) {
         // use async machinery to stop the pitch after the duration
-        music_data->async_state = ASYNC_MUSIC_STATE_IDLE;
         music_data->async_wait_ticks = ticker_ticks_ms + duration;
         music_data->async_loop = false;
         music_data->async_notes_len = 0;
         music_data->async_notes_index = 0;
         music_data->async_note = NULL;
-        music_data->async_pin = pin;
         music_data->async_state = ASYNC_MUSIC_STATE_ARTICULATE;
 
         if (wait) {
@@ -405,6 +412,7 @@ STATIC mp_obj_t microbit_music_pitch(mp_uint_t n_args, const mp_obj_t *pos_args,
         }
     } else {
         // don't block here, since there's no reason to leave a pitch forever in a blocking C function
+        music_data->async_pin = NULL;
     }
 
     return mp_const_none;
