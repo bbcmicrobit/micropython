@@ -73,7 +73,9 @@ enum {
 STATIC uint32_t start_note(const char *note_str, size_t note_len);
 
 static inline void music_output_amplitude(uint32_t amplitude) {
-    pwm_set_duty_cycle(music_data->async_pin->name, amplitude);
+    if (music_data->async_pin != NULL) {
+        pwm_set_duty_cycle(music_data->async_pin->name, amplitude);
+    }
 }
 
 static inline int music_output_period_us(uint32_t period) {
@@ -81,9 +83,13 @@ static inline int music_output_period_us(uint32_t period) {
 }
 
 STATIC void microbit_pin_audio_select(mp_obj_t select) {
-    const microbit_pin_obj_t *pin = microbit_obj_get_pin(select);
-    microbit_obj_pin_acquire(pin, microbit_pin_mode_music);
-    music_data->async_pin = pin;
+    if (select == mp_const_none) {
+        music_data->async_pin = NULL;
+    } else {
+        const microbit_pin_obj_t *pin = microbit_obj_get_pin(select);
+        microbit_obj_pin_acquire(pin, microbit_pin_mode_music);
+        music_data->async_pin = pin;
+    }
 }
 
 STATIC void microbit_pin_audio_free(void) {
@@ -389,13 +395,14 @@ STATIC mp_obj_t microbit_music_pitch(mp_uint_t n_args, const mp_obj_t *pos_args,
 
     bool wait = args[3].u_bool;
     music_output_amplitude(MUSIC_OUTPUT_AMPLITUDE_ON);
-    if (frequency == 0) {
-        pwm_release(music_data->async_pin->name);
-        music_data->async_pin = NULL;
-    } else if (music_output_period_us(1000000/frequency)) {
-        pwm_release(music_data->async_pin->name);
-        music_data->async_pin = NULL;
-        mp_raise_ValueError("invalid pitch");
+    if (frequency == 0 || music_output_period_us(1000000 / frequency)) {
+        if (music_data->async_pin != NULL) {
+            pwm_release(music_data->async_pin->name);
+            music_data->async_pin = NULL;
+        }
+        if (frequency != 0) {
+            mp_raise_ValueError("invalid pitch");
+        }
     }
     if (duration >= 0) {
         // use async machinery to stop the pitch after the duration
