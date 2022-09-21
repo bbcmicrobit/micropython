@@ -114,7 +114,7 @@ Sound Effects **V2**
 ====================
 
 .. py:class::
-    SoundEffect(freq_start=500, freq_end=2500, duration=500, vol_start=255, vol_end=0, wave=WAVE_SQUARE, fx=FX_NONE, shape=SHAPE_LOG)
+    SoundEffect(freq_start=500, freq_end=2500, duration=500, vol_start=255, vol_end=0, waveform=WAVEFORM_SQUARE, fx=FX_NONE, shape=SHAPE_LOG)
 
     An ``SoundEffect`` instance represents a sound effect, composed by a set of
     parameters configured via the constructor or attributes.
@@ -129,9 +129,10 @@ Sound Effects **V2**
     :param duration: Duration of the sound (ms), default: ``500``
     :param vol_start: Start volume value, range 0-255, default: ``255``
     :param vol_end: End volume value, range 0-255, default: ``0``
-    :param wave: Type of wave shape, one of these values: ``WAVE_SINE``,
-        ``WAVE_SAWTOOTH``, ``WAVE_TRIANGLE``, ``WAVE_SQUARE``,
-        ``WAVE_NOISE`` (randomly generated noise). Default: ``WAVE_SQUARE``
+    :param waveform: Type of waveform shape, one of these values:
+        ``WAVEFORM_SINE``, ``WAVEFORM_SAWTOOTH``, ``WAVEFORM_TRIANGLE``,
+        ``WAVEFORM_SQUARE``, ``WAVEFORM_NOISE`` (randomly generated noise).
+        Default: ``WAVEFORM_SQUARE``
     :param fx: Effect to add on the sound, one of the following values:
         ``FX_TREMOLO``, ``FX_VIBRATO``, ``FX_WARBLE``, or ``FX_NONE``.
         Default: ``FX_NONE``
@@ -165,11 +166,11 @@ Sound Effects **V2**
 
         End volume value, a number between ``0`` and ``255``.
 
-    .. py:attribute:: wave
+    .. py:attribute:: waveform
 
-        Type of wave shape, one of these values: ``WAVE_SINE``,
-        ``WAVE_SAWTOOTH``, ``WAVE_TRIANGLE``, ``WAVE_SQUARE``,
-        ``WAVE_NOISE`` (randomly generated noise).
+        Type of waveform shape, one of these values: ``WAVEFORM_SINE``,
+        ``WAVEFORM_SAWTOOTH``, ``WAVEFORM_TRIANGLE``, ``WAVEFORM_SQUARE``,
+        ``WAVEFORM_NOISE`` (randomly generated noise).
 
     .. py:attribute:: fx
 
@@ -193,7 +194,7 @@ For example, with the :doc:`REPL </devguide/repl>` you can inspect the
 default SoundEffects::
 
     >>> print(audio.SoundEffect())
-    SoundEffect(freq_start=500, freq_end=2500, duration=500, vol_start=255, vol_end=0, wave=WAVE_SQUARE, fx=FX_NONE, shape=SHAPE_LOG)
+    SoundEffect(freq_start=500, freq_end=2500, duration=500, vol_start=255, vol_end=0, waveform=WAVE_SQUARE, fx=FX_NONE, shape=SHAPE_LOG)
 
 This format is "human readable", which means it is easy for us to read,
 and it looks very similar to the code needed to create that SoundEffect,
