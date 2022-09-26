@@ -29,6 +29,7 @@
 
 extern "C" {
 
+#include <math.h>
 #include "py/nlr.h"
 #include "py/runtime.h"
 #include "py/mphal.h"
@@ -107,7 +108,12 @@ STATIC mp_obj_t microbit_scale(size_t n_args, const mp_obj_t *pos_args, mp_map_t
     // Compute scaled value.
     mp_float_t to_value = (from_value - from_min) / (from_max - from_min) * (to_max - to_min) + to_min;
 
-    return mp_obj_new_float(to_value);
+    // Return float or int based on type of "to" tuple.
+    if (mp_obj_is_float(to_items[0]) || mp_obj_is_float(to_items[1])) {
+        return mp_obj_new_float(to_value);
+    } else {
+        return mp_obj_new_int(MICROPY_FLOAT_C_FUN(nearbyint)(to_value));
+    }
 }
 STATIC MP_DEFINE_CONST_FUN_OBJ_KW(microbit_scale_obj, 0, microbit_scale);
 
