@@ -47,7 +47,7 @@ Functions
     floating point number.
     If they are both integers (i.e ``10``), it will return an integer::
 
-        returns_int = scale(accelerometer.get_x(), from_=(0, 2000), to=(0, 255))
+        returns_int = scale(accelerometer.get_x(), from_=(-2000, 2000), to=(0, 255))
 
     Negative scaling is also supported, for example
     ``scale(25, from_=(0, 100), to=(0, -200))`` will return ``-50``.
