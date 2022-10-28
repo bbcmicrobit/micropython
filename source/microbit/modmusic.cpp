@@ -135,20 +135,17 @@ void microbit_music_tick(void) {
         } else {
             note = ((mp_obj_t*)music_data->async_note)[music_data->async_notes_index];
         }
-        if (note == mp_const_none) {
-            // a rest (is this even used anymore?)
-            music_output_amplitude(MUSIC_OUTPUT_AMPLITUDE_OFF);
-            music_data->async_wait_ticks = 60000 / music_data->bpm;
-            music_data->async_state = ASYNC_MUSIC_STATE_NEXT_NOTE;
-        } else {
-            // a note
-            mp_uint_t note_len;
-            const char *note_str = mp_obj_str_get_data(note, &note_len);
-            uint32_t delay_on = start_note(note_str, note_len);
-            music_data->async_wait_ticks = ticker_ticks_ms + delay_on;
-            music_data->async_notes_index += 1;
-            music_data->async_state = ASYNC_MUSIC_STATE_ARTICULATE;
+        if (!MP_OBJ_IS_STR_OR_BYTES(note)) {
+            mp_printf(&mp_plat_print, "TypeError: expecting a str for note\n");
+            music_data->async_state = ASYNC_MUSIC_STATE_IDLE;
+            return;
         }
+        mp_uint_t note_len;
+        const char *note_str = mp_obj_str_get_data(note, &note_len);
+        uint32_t delay_on = start_note(note_str, note_len);
+        music_data->async_wait_ticks = ticker_ticks_ms + delay_on;
+        music_data->async_notes_index += 1;
+        music_data->async_state = ASYNC_MUSIC_STATE_ARTICULATE;
     }
 }
 
