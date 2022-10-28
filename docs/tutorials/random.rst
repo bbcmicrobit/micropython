@@ -53,7 +53,8 @@ random integers up to, but not including, the value of the argument ``N``
 Sometimes you need numbers with a decimal point in them. These are called
 *floating point* numbers and it's possible to generate such a number with the
 ``random.random`` method. This only returns values between ``0.0`` and ``1.0``
-inclusive. If you need larger random floating point numbers add the results
+(it includes ``0.0`` but excludes ``1.0``).
+If you need larger random floating point numbers add the results
 of ``random.randrange`` and ``random.random`` like this::
 
     from microbit import *
