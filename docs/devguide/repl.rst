@@ -34,6 +34,10 @@ Using a serial communication program
 The `Mu Editor <https://codewith.mu/en/tutorials/1.1/repl>`_ has built-in
 support for REPL and even includes a real-time data plotter.
 
+`microREPL <https://github.com/ntoll/microrepl>`_ is an easy to use python
+serial terminal that detects and connects to the micro:bit automatically.
+To exit microREPL press ``CTRL`` + ``]`` on your keyboard.
+
 Some other common options are `picocom` and `screen`. You will need to install
 a program and read the appropriate documentation to understand the basics of
 connecting to a device.
