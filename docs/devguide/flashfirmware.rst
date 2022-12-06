@@ -14,7 +14,7 @@ Dependencies
 ------------
 
 - `CMake <https://cmake.org/>`_
-- `Arm GCC <https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads>`_
+- `Arm GCC <https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads>`_
 - `git <https://git-scm.com/>`_
 - `ninja <https://ninja-build.org/>`_
 - `python <https://www.python.org/downloads/>`_
@@ -87,7 +87,7 @@ The repository also contains a history of
 Dependencies
 ------------
 
-- `Arm GCC <https://developer.arm.com/tools-and-software/open-source-software/developer-tools/gnu-toolchain/gnu-rm/downloads>`_
+- `Arm GCC <https://developer.arm.com/downloads/-/arm-gnu-toolchain-downloads>`_
 - `GCC <http://gcc.gnu.org/install/>`_
 - `CMake <https://cmake.org/>`_
 - `git <https://git-scm.com/>`_
