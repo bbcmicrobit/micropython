@@ -96,6 +96,8 @@ static void init_limits(void) {
     }
     first_page_index = (microbit_end_of_rom() - start)/persistent_page_size();
     chunks_in_file_system = (end-start)>>LOG_CHUNK_SIZE;
+    printf("size %d\n", persistent_page_size());
+    printf("chunks_in_file_system %d\n", chunks_in_file_system);
 }
 
 static void randomise_start_index(void) {
