@@ -36,6 +36,8 @@ jobs:
         run: |
           yotta target bbc-microbit-classic-gcc-nosd@https://github.com/lancaster-university/yotta-target-bbc-microbit-classic-gcc-nosd
           yotta up
+      - run: make qstrs
+      - run: git diff
       - run: make all
       - name: Process date for artifact filename
         id: date
