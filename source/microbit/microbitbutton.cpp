@@ -59,28 +59,20 @@ static inline debounce_state_t *get_debounce_state(const microbit_pin_obj_t *pin
 
 mp_obj_t microbit_button_is_pressed(mp_obj_t self_in) {
     microbit_button_obj_t *self = (microbit_button_obj_t*)self_in;
-    debounce_state_t *debounce = get_debounce_state(self->pin);
     /* Button is pressed if pin is low */
-    return mp_obj_new_bool(!debounce->debounced_high);
+    return mp_obj_new_bool(!microbit_pin_debounce_is_high(self->pin));
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_button_is_pressed_obj, microbit_button_is_pressed);
 
 mp_obj_t microbit_button_get_presses(mp_obj_t self_in) {
     microbit_button_obj_t *self = (microbit_button_obj_t*)self_in;
-    debounce_state_t *debounce = get_debounce_state(self->pin);
-    mp_obj_t n_presses = mp_obj_new_int(debounce->pressed >> 1);
-    debounce->pressed &= 1;
-    return n_presses;
+    return mp_obj_new_int(microbit_pin_debounce_get_presses(self->pin));
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_button_get_presses_obj, microbit_button_get_presses);
 
 mp_obj_t microbit_button_was_pressed(mp_obj_t self_in) {
     microbit_button_obj_t *self = (microbit_button_obj_t*)self_in;
-    debounce_state_t *debounce = get_debounce_state(self->pin);
-    mp_int_t presses = debounce->pressed;
-    mp_obj_t result = mp_obj_new_bool(presses & 1);
-    debounce->pressed = presses & -2;
-    return result;
+    return mp_obj_new_bool(microbit_pin_debounce_was_pressed(self->pin));
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_button_was_pressed_obj, microbit_button_was_pressed);
 
@@ -184,9 +176,24 @@ void microbit_button_tick(void) {
         update(&microbit_p2_obj);
 }
 
-bool microbit_pin_high_debounced(microbit_pin_obj_t *pin) {
+bool microbit_pin_debounce_is_high(const microbit_pin_obj_t *pin) {
     debounce_state_t *debounce = get_debounce_state(pin);
     return debounce->debounced_high;
+}
+
+bool microbit_pin_debounce_was_pressed(const microbit_pin_obj_t *pin) {
+    debounce_state_t *debounce = get_debounce_state(pin);
+    uint16_t presses = debounce->pressed;
+    bool result = presses & 1;
+    debounce->pressed = presses & -2;
+    return result;
+}
+
+unsigned int microbit_pin_debounce_get_presses(const microbit_pin_obj_t *pin) {
+    debounce_state_t *debounce = get_debounce_state(pin);
+    unsigned int n_presses = debounce->pressed >> 1;
+    debounce->pressed &= 1;
+    return n_presses;
 }
 
 }

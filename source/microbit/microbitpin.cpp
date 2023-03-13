@@ -54,6 +54,13 @@ const microbit_pin_obj_t microbit_p16_obj = {{&microbit_dig_pin_type}, 16, MICRO
 const microbit_pin_obj_t microbit_p19_obj = {{&microbit_dig_pin_type}, 19, MICROBIT_PIN_P19, MODE_I2C};
 const microbit_pin_obj_t microbit_p20_obj = {{&microbit_dig_pin_type}, 20, MICROBIT_PIN_P20, MODE_I2C};
 
+static void microbit_pin_configure_touch_mode(microbit_pin_obj_t *self) {
+    const microbit_pinmode_t *mode = microbit_pin_get_mode(self);
+    if (mode != microbit_pin_mode_touch && mode != microbit_pin_mode_button) {
+        microbit_obj_pin_acquire(self, microbit_pin_mode_touch);
+        nrf_gpio_cfg_input(self->name, NRF_GPIO_PIN_NOPULL);
+    }
+}
 
 static mp_obj_t microbit_pin_get_mode_func(mp_obj_t self_in) {
     microbit_pin_obj_t *self = (microbit_pin_obj_t*)self_in;
@@ -179,15 +186,25 @@ MP_DEFINE_CONST_FUN_OBJ_1(microbit_pin_get_analog_period_microseconds_obj, micro
 
 mp_obj_t microbit_pin_is_touched(mp_obj_t self_in) {
     microbit_pin_obj_t *self = (microbit_pin_obj_t*)self_in;
-    const microbit_pinmode_t *mode = microbit_pin_get_mode(self);
-    if (mode != microbit_pin_mode_touch && mode != microbit_pin_mode_button) {
-        microbit_obj_pin_acquire(self, microbit_pin_mode_touch);
-        nrf_gpio_cfg_input(self->name, NRF_GPIO_PIN_NOPULL);
-    }
+    microbit_pin_configure_touch_mode(self);
     /* Pin is touched if it is low after debouncing */
-    return mp_obj_new_bool(!microbit_pin_high_debounced(self));
+    return mp_obj_new_bool(!microbit_pin_debounce_is_high(self));
 }
 MP_DEFINE_CONST_FUN_OBJ_1(microbit_pin_is_touched_obj, microbit_pin_is_touched);
+
+mp_obj_t microbit_pin_was_touched(mp_obj_t self_in) {
+    microbit_pin_obj_t *self = (microbit_pin_obj_t*)self_in;
+    microbit_pin_configure_touch_mode(self);
+    return mp_obj_new_bool(microbit_pin_debounce_was_pressed(self));
+}
+MP_DEFINE_CONST_FUN_OBJ_1(microbit_pin_was_touched_obj, microbit_pin_was_touched);
+
+mp_obj_t microbit_pin_get_touches(mp_obj_t self_in) {
+    microbit_pin_obj_t *self = (microbit_pin_obj_t*)self_in;
+    microbit_pin_configure_touch_mode(self);
+    return mp_obj_new_int(microbit_pin_debounce_get_presses(self));
+}
+MP_DEFINE_CONST_FUN_OBJ_1(microbit_pin_get_touches_obj, microbit_pin_get_touches);
 
 #define PULL_CONSTANTS \
     { MP_OBJ_NEW_QSTR(MP_QSTR_PULL_UP), MP_OBJ_NEW_SMALL_INT(NRF_GPIO_PIN_PULLUP) }, \
@@ -230,6 +247,8 @@ STATIC const mp_map_elem_t microbit_touch_pin_locals_dict_table[] = {
     { MP_OBJ_NEW_QSTR(MP_QSTR_set_analog_period_microseconds), (mp_obj_t)&microbit_pin_set_analog_period_microseconds_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_get_analog_period_microseconds), (mp_obj_t)&microbit_pin_get_analog_period_microseconds_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_is_touched), (mp_obj_t)&microbit_pin_is_touched_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_was_touched), (mp_obj_t)&microbit_pin_was_touched_obj },
+    { MP_OBJ_NEW_QSTR(MP_QSTR_get_touches), (mp_obj_t)&microbit_pin_get_touches_obj },
     PULL_CONSTANTS,
     { MP_OBJ_NEW_QSTR(MP_QSTR_get_pull),(mp_obj_t)&microbit_pin_get_pull_obj },
     { MP_OBJ_NEW_QSTR(MP_QSTR_set_pull),(mp_obj_t)&microbit_pin_set_pull_obj },

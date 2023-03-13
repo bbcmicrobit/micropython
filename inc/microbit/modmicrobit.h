@@ -115,7 +115,9 @@ const microbit_pinmode_t *microbit_pin_get_mode(const microbit_pin_obj_t *pin);
 bool microbit_obj_pin_can_be_acquired(const microbit_pin_obj_t *pin);
 void pinmode_error(const microbit_pin_obj_t *pin);
 
-bool microbit_pin_high_debounced(microbit_pin_obj_t *pin);
+bool microbit_pin_debounce_is_high(const microbit_pin_obj_t *pin);
+bool microbit_pin_debounce_was_pressed(const microbit_pin_obj_t *pin);
+unsigned int microbit_pin_debounce_get_presses(const microbit_pin_obj_t *pin);
 
 /****************************************************************/
 // microbit.Image class
