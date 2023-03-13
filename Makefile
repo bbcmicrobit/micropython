@@ -15,6 +15,10 @@ $(HEX_FINAL): yotta $(VER_ADDR_FILE)
 	tools/adduicr.py $(HEX_SRC) 0x$$(cat $(VER_ADDR_FILE)) -o $(HEX_FINAL)
 	@arm-none-eabi-size $(HEX_SRC:.hex=)
 
+.PHONY: qstrs
+qstrs: $(MBIT_VER_FILE)
+	./tools/makeqstrhdr.sh
+
 yotta: $(MBIT_VER_FILE)
 	@yotta build
 
