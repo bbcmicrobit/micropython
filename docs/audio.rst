@@ -12,18 +12,25 @@ a speaker to pin 0 and GND on the edge connector to hear the sounds.
 The ``audio`` module can be imported as ``import audio`` or accessed via
 the ``microbit`` module as ``microbit.audio``.
 
-There are three different kinds of audio sources that can be played using the
+There are four different kinds of audio sources that can be played using the
 :py:meth:`audio.play` function:
 
 1. `Built in sounds <#built-in-sounds-v2>`_ (**V2**),
    e.g. ``audio.play(Sound.HAPPY)``
+
 2. `Sound Effects <#sound-effects-v2>`_ (**V2**), a way to create custom sounds
    by configuring its parameters::
 
     my_effect = audio.SoundEffect(freq_start=400, freq_end=2500, duration=500)
     audio.play(my_effect)
 
-3. `Audio Frames <#audioframe>`_, an iterable (like a list or a generator)
+3. `AudioBuffer <#audiobuffer>`_ (**V2**), a generic buffer for audio that can
+   be used to record sound from the micro:bit V2 built-in microphone::
+
+    my_audio_buffer = microphone.record()
+    audio.play(my_audio_buffer)
+
+4. `Audio Frames <#audioframe>`_, an iterable (like a list or a generator)
    of Audio Frames, which are lists of 32 samples with values from 0 to 255::
 
     square_wave = audio.AudioFrame()
@@ -40,13 +47,16 @@ Functions
 
     Play the audio source to completion.
 
-    :param source: There are three types of data that can be used as a source:
+    :param source: There are four types of data that can be used as a source:
 
         - ``Sound``: The ``microbit`` module contains a list of
           built-in sounds, e.g. ``audio.play(Sound.TWINKLE)``. A full list can
           be found in the `Built in sounds <#built-in-sounds-v2>`_ section.
         - ``SoundEffect``: A sound effect, or an iterable of sound effects,
           created via the :py:meth:`audio.SoundEffect` class
+        - ``AudioBuffer``: An audio buffer, or an iterable of audio buffers,
+          created via the :py:meth:`audio.AudioBuffer` class or
+          :doc:`microphone.record() <microphone>` function
         - ``AudioFrame``: An iterable of ``AudioFrame`` instances as described
           in the `AudioFrame Technical Details <#id2>`_ section
 
@@ -214,6 +224,61 @@ Sound Effects Example
 
 .. include:: ../examples/soundeffects.py
     :code: python
+
+
+Audio Buffer **V2**
+===================
+
+.. py:class::
+    AudioBuffer(duration=3000, rate=11000)
+
+    Create a buffer to contain audio data and its sampling rate.
+
+    The sampling rate is configured via constructor or instance attribute,
+    and is used by the ``microphone.record_into()`` and
+    ``audio.play()`` functions to configure the recording and playback rates.
+
+    For audio recording, reducing the number of samples recorded per second
+    will reduce the size of the data buffer, but also reduce the sound quality.
+    And increasing the sampling rate increases the buffer size and sound
+    quality.
+
+    For audio playback, reducing the sampling rate compared with the recording
+    rate, will slow down the audio. And increasing the playback rate
+    will speed it up.
+
+    The size of the buffer will be determined by the samples per second
+    and the ``duration`` configured when creating a new instance.
+
+    :param duration: Indicates in milliseconds, how much sound data the buffer
+        can contained at the configured ``data_rate``.
+    :param rate: Sampling rate of for the data in the buffer. This value is
+        used for recording and playback, and can be edited as an attribute.
+
+    .. py:function:: copy()
+
+        :returns: A copy of the Audio Buffer.
+
+    .. py:attribute:: rate
+
+        The sampling rate for the data inside the buffer.
+        TODO: Indicate range of valid values here.
+
+Audio Buffer Example
+--------------------
+
+::
+
+    my_buffer = audio.AudioBuffer(duration=5000)
+    microphone.record_into(my_buffer)
+    audio.play(my_buffer)
+
+    # A smaller buffer can be generated with the same duration by using
+    # a lower sampling rate
+    smaller_buffer = audio.AudioBuffer(duration=5000, rate=5500)
+    microphone.record_into(my_buffer)
+    audio.play(my_buffer)
+
 
 AudioFrame
 ==========
