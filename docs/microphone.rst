@@ -4,9 +4,9 @@ Microphone **V2**
 .. py:module:: microbit.microphone
 
 This object lets you access the built-in microphone available on the
-micro:bit **V2**. It can be used to respond to sound. The microphone input
-is located on the front of the board alongside a microphone activity LED,
-which is lit when the microphone is in use.
+micro:bit **V2**. It can be used to record and respond to sound.
+The microphone input is located on the front of the board alongside a
+microphone activity LED, which is lit when the microphone is in use.
 
 .. image:: microphone.png
     :width: 300px
@@ -27,6 +27,25 @@ accessible via variables in ``microbit.SoundEvent``:
 
 - ``microbit.SoundEvent.LOUD``: Represents the transition of sound events,
   from ``quiet`` to ``loud`` like clapping or shouting.
+
+Recording
+=========
+
+TODO:
+* Describe the feature.
+* Indicate how the sampling rate relates to recording quality.
+* Indicate how changing the sampling rate on the fly affects playback speed.
+* What happens if the user changes the sampling rate while recording?
+
+::
+
+    from microbit import *
+
+    while True:
+        if button_a.is_pressed():
+            my_recording = microphone.record(duration=5000)
+            audio.play(my_recording)
+        sleep(200)
 
 Functions
 =========
@@ -91,11 +110,60 @@ Functions
 
     :return: A representation of the sound pressure level in the range 0 to 255.
 
+.. py:function:: record(duration=3000, rate=11000, wait=True)
 
-Example
-=======
+    Record sound for the amount of time indicated by ``duration`` at the
+    sampling rate indicated by ``rate``.
 
-An example that runs through some of the functions of the microphone API::
+    The amount of memory consumed is directly related to the length of the
+    recording and the sampling rate. The higher these values, the more memory
+    it will use.
+
+    A lower sampling rate will reduce memory consumption and sound quality.
+
+    If there isn't enough memory available a ``MemoryError`` will be raised.
+
+    :param duration: How much time to record in milliseconds.
+    :param rate: Number of samples to capture per second.
+    :param wait: When set to ``True`` it blocks until the recording is
+        done, if it is set to ``False`` it will run in the background.
+    :returns: An ``AudioBuffer``, configured at the provided ``duration``
+        and ``rate``, with the sound data.
+
+.. py:function:: record_into(buffer, rate=11000, wait=True)
+
+    Record sound into an existing ``AudioBuffer``.
+
+    :param buffer: An ``AudioBuffer`` to record the microphone sound.
+    :param rate: Number of samples to capture per second.
+    :param wait: When set to ``True`` it blocks until the recording is
+        done, if it is set to ``False`` it will run in the background.
+
+.. py:function:: is_recording()
+
+    :returns: ``True`` if the microphone is currently recording sound, or
+      ``False`` otherwise.
+
+.. py:function:: stop_recording()
+
+    Stops an a recording running in the background.
+
+.. py:function:: set_sensitivity(gain)
+
+    Configure the microphone sensitivity to one of these three levels:
+    ``microphone.SENSITIVITY_LOW``, ``microphone.SENSITIVITY_MEDIUM``,
+    ``microphone.SENSITIVITY_HIGH``.
+
+    These constants correspond to a number, and any values between these
+    constants are valid arguments
+
+    :param gain: Microphone gain.
+
+Examples
+========
+
+An example that runs through some of the functions of the microphone
+Sound Events API::
 
     # Basic test for microphone.  This test should update the display when
     # Button A is pressed and a loud or quiet sound *is* heard, printing the
@@ -143,3 +211,41 @@ An example that runs through some of the functions of the microphone API::
                     display.clear()
                 print(sound)
                 sleep(500)
+
+
+An example of recording and playback with a display animation::
+
+    from microbit import *
+
+    talk_open = Image(
+        "09090:"
+        "00000:"
+        "09990:"
+        "90009:"
+        "09990"
+    )
+    talk_closed = Image(
+        "09090:"
+        "00000:"
+        "00000:"
+        "99999:"
+        "00000"
+    )
+
+    my_recording = audio.AudioBuffer(duration=5000, rate=5500)
+
+    while True:
+        if button_a.is_pressed():
+            microphone.record_into(my_recording, rate=5500, wait=False)
+            display.show([talk_open, talk_closed], loop=True, wait=False, delay=150)
+            while button_a.is_pressed():
+                sleep(50)
+            display.show(mouth_open, loop=False) # workaround issue #150
+            display.clear()
+        if button_b.is_pressed():
+            audio.play(my_recording, wait=False)
+            while audio.is_playing():
+                x = accelerometer.get_x()
+                my_recording.rate = scale(x, (-1000, 1000), (2250, 11000))
+                sleep(50)
+        sleep(100)
