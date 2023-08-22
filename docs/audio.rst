@@ -12,7 +12,7 @@ a speaker to pin 0 and GND on the edge connector to hear the sounds.
 The ``audio`` module can be imported as ``import audio`` or accessed via
 the ``microbit`` module as ``microbit.audio``.
 
-There are four different kinds of audio sources that can be played using the
+There are three different kinds of audio sources that can be played using the
 :py:meth:`audio.play` function:
 
 1. `Built in sounds <#built-in-sounds-v2>`_ (**V2**),
@@ -24,14 +24,9 @@ There are four different kinds of audio sources that can be played using the
     my_effect = audio.SoundEffect(freq_start=400, freq_end=2500, duration=500)
     audio.play(my_effect)
 
-3. `AudioBuffer <#audiobuffer>`_ (**V2**), a generic buffer for audio that can
-   be used to record sound from the micro:bit V2 built-in microphone::
-
-    my_audio_buffer = microphone.record()
-    audio.play(my_audio_buffer)
-
-4. `Audio Frames <#audioframe>`_, an iterable (like a list or a generator)
-   of Audio Frames, which are lists of 32 samples with values from 0 to 255::
+3. `Audio Frames <#audioframe>`_, an instance or an iterable (like a list or
+   generator) of Audio Frames, which are lists of samples with values
+   from 0 to 255::
 
     square_wave = audio.AudioFrame()
     for i in range(16):
@@ -47,18 +42,16 @@ Functions
 
     Play the audio source to completion.
 
-    :param source: There are four types of data that can be used as a source:
+    :param source: There are three types of data that can be used as a source:
 
         - ``Sound``: The ``microbit`` module contains a list of
           built-in sounds, e.g. ``audio.play(Sound.TWINKLE)``. A full list can
           be found in the `Built in sounds <#built-in-sounds-v2>`_ section.
         - ``SoundEffect``: A sound effect, or an iterable of sound effects,
           created via the :py:meth:`audio.SoundEffect` class
-        - ``AudioBuffer``: An audio buffer, or an iterable of audio buffers,
-          created via the :py:meth:`audio.AudioBuffer` class or
-          :doc:`microphone.record() <microphone>` function
-        - ``AudioFrame``: An iterable of ``AudioFrame`` instances as described
-          in the `AudioFrame Technical Details <#id2>`_ section
+        - ``AudioFrame``: An instance or an iterable of ``AudioFrame``
+          instances as described in the
+          `AudioFrame Technical Details <#technical-details>`_ section
 
     :param wait: If ``wait`` is ``True``, this function will block until the
         source is exhausted.
@@ -78,6 +71,13 @@ Functions
 .. py:function:: stop()
 
     Stops all audio playback.
+
+.. py:function:: set_rate(sample_rate)
+
+    Changes the sampling rate of ``AudioFrame`` playback.
+    The default playback rate is 7812 samples per second.
+    Decreasing the playback sampling rate results in slowed down sound, and
+    increasing it speeds it up.
 
 
 Built-in sounds **V2**
@@ -226,70 +226,16 @@ Sound Effects Example
     :code: python
 
 
-Audio Buffer **V2**
-===================
-
-.. py:class::
-    AudioBuffer(duration=3000, rate=11000)
-
-    Create a buffer to contain audio data and its sampling rate.
-
-    The sampling rate is configured via constructor or instance attribute,
-    and is used by the ``microphone.record_into()`` and
-    ``audio.play()`` functions to configure the recording and playback rates.
-
-    For audio recording, reducing the number of samples recorded per second
-    will reduce the size of the data buffer, but also reduce the sound quality.
-    And increasing the sampling rate increases the buffer size and sound
-    quality.
-
-    For audio playback, reducing the sampling rate compared with the recording
-    rate, will slow down the audio. And increasing the playback rate
-    will speed it up.
-
-    The size of the buffer will be determined by the samples per second
-    and the ``duration`` configured when creating a new instance.
-
-    :param duration: Indicates in milliseconds, how much sound data the buffer
-        can contained at the configured ``data_rate``.
-    :param rate: Sampling rate of for the data in the buffer. This value is
-        used for recording and playback, and can be edited as an attribute.
-
-    .. py:function:: copy()
-
-        :returns: A copy of the Audio Buffer.
-
-    .. py:attribute:: rate
-
-        The sampling rate for the data inside the buffer.
-        TODO: Indicate range of valid values here.
-
-Audio Buffer Example
---------------------
-
-::
-
-    my_buffer = audio.AudioBuffer(duration=5000)
-    microphone.record_into(my_buffer)
-    audio.play(my_buffer)
-
-    # A smaller buffer can be generated with the same duration by using
-    # a lower sampling rate
-    smaller_buffer = audio.AudioBuffer(duration=5000, rate=5500)
-    microphone.record_into(my_buffer)
-    audio.play(my_buffer)
-
-
 AudioFrame
 ==========
 
 .. py:class::
-    AudioFrame
+    AudioFrame(size=32)
 
-    An ``AudioFrame`` object is a list of 32 samples each of which is an unsigned byte
-    (whole number between 0 and 255).
+    An ``AudioFrame`` object is a list of samples each of which is an unsigned
+    byte (whole number between 0 and 255).
 
-    It takes just over 4 ms to play a single frame.
+    :param size: How many samples to contain in this instance.
 
     .. py:function:: copyfrom(other)
 
@@ -305,13 +251,19 @@ Technical Details
     You don't need to understand this section to use the ``audio`` module.
     It is just here in case you wanted to know how it works.
 
-The ``audio`` module can consumes an iterable (sequence, like list or tuple, or
-generator) of ``AudioFrame`` instances, each 32 samples at 7812.5 Hz, and uses
-linear interpolation to output a PWM signal at 32.5 kHz, which gives tolerable
-sound quality.
+The ``audio.play()`` function can consume an instance or iterable
+(sequence, like list or tuple, or generator) of ``AudioFrame`` instances.
+Its default playback rate is 7812 Hz, and uses linear interpolation to output
+a PWM signal at 32.5 kHz.
 
-The function ``play`` fully copies all data from each ``AudioFrame`` before it
-calls ``next()`` for the next frame, so a sound source can use the same
+Each ``AudioFrame`` instance is 32 samples by default, but it can be
+configured to a different size via constructor.
+
+So, for example, playing 32 samples at 7812 Hz takes just over 4 milliseconds
+(1/7812.5 * 32 = 0.004096 = 4096 microseconds).
+
+The function ``play()`` fully copies all data from each ``AudioFrame`` before
+it calls ``next()`` for the next frame, so a sound source can use the same
 ``AudioFrame`` repeatedly.
 
 The ``audio`` module has an internal 64 sample buffer from which it reads
@@ -324,6 +276,9 @@ the buffer. This means that a sound source has under 4ms to compute the next
 
 AudioFrame Example
 ------------------
+
+Creating and populating ``AudioFrame`` iterables and generators with
+different sound waveforms:
 
 .. include:: ../examples/waveforms.py
     :code: python
