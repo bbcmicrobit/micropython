@@ -87,6 +87,8 @@ Sound events describe changes in the sound heard by the microphone::
     # Value to represent the transition of sound events, from `loud` to `quiet`
     # like speaking or background music.
     SoundEvent.QUIET = SoundEvent('quiet')
+    # Value to represent a loud event similar to a clap.
+    SoundEvent.CLAP = SoundEvent('clap')
 
 Microphone **V2**
 -----------------
@@ -95,9 +97,9 @@ The Microphone is accessed via the `microphone` object::
 
     # Returns the name of the last recorded sound event.
     current_event()
-    # A sound event,  such as `SoundEvent.LOUD` or `SoundEvent.QUIET`. 
-    # Returns`true` if sound was heard at least once since the last
-    # call, otherwise `false`.
+    # A sound event, such as `SoundEvent.LOUD`, `SoundEvent.QUIET`, or
+    # `SoundEvent.CLAP`. Returns`true` if sound was heard at least once since
+    # the last call, otherwise `false`.
     was_event(event)
     # Returns a tuple of the event history. The most recent is listed last.
     # Also clears the sound event history before returning.
