@@ -26,7 +26,9 @@ accessible via variables in ``microbit.SoundEvent``:
   from ``loud`` to ``quiet`` like speaking or background music.
 
 - ``microbit.SoundEvent.LOUD``: Represents the transition of sound events,
-  from ``quiet`` to ``loud`` like clapping or shouting.
+  from ``quiet`` to ``loud`` like shouting.
+
+- ``microbit.SoundEvent.CLAP``: Detects a loud event similar to a clap.
 
 Functions
 =========
@@ -35,7 +37,8 @@ Functions
 
     Get the last recorded sound event.
 
-    :return: The event, ``SoundEvent('loud')`` or ``SoundEvent('quiet')``.
+    :return: The event, ``SoundEvent('loud')``, ``SoundEvent('quiet')`` or 
+        ``SoundEvent('clap')``.
 
 .. py:function:: was_event(event)
 
@@ -43,8 +46,8 @@ Functions
 
     This call clears the sound history before returning.
 
-    :param event: The event to check for,  such as ``SoundEvent.LOUD`` or
-        ``SoundEvent.QUIET``.
+    :param event: The event to check for,  such as ``SoundEvent.LOUD``,
+        ``SoundEvent.QUIET`` or ``SoundEvent.CLAP``.
     :return: ``True`` if sound was heard at least once since the last call,
         otherwise ``False``.
 
@@ -54,8 +57,8 @@ Functions
 
     This call does not clear the sound event history.
 
-    :param event: The event to check for,  such as ``SoundEvent.LOUD`` or
-        ``SoundEvent.QUIET``
+    :param event: The event to check for,  such as ``SoundEvent.LOUD``,
+        ``SoundEvent.QUIET`` or ``SoundEvent.CLAP``.
     :return: ``True`` if sound was the most recent heard, ``False`` otherwise.
 
 .. py:function:: get_events()
@@ -68,7 +71,7 @@ Functions
 
 .. py:function:: set_threshold(event, value)
 
-    Set the threshold for a sound event.
+    Set the threshold for the ``LOUD`` or ``QUIET`` sound events.
 
     The ``SoundEvent.LOUD`` event will be triggered when the sound level
     crosses this threshold upwards (from "quiet" to "loud"),
@@ -80,8 +83,7 @@ Functions
     threshold. If the ``SoundEvent.QUIET`` value is set higher than
     ``SoundEvent.LOUD``, then the "loud" threshold will be set one unit above.
 
-    :param event: A sound event, such as ``SoundEvent.LOUD`` or
-        ``SoundEvent.QUIET``.
+    :param event: A ``SoundEvent.LOUD`` or ``SoundEvent.QUIET`` event.
     :param value: The threshold level in the range 0-255. Values outside this
         range will be clamped.
 
@@ -111,7 +113,10 @@ An example that runs through some of the functions of the microphone API::
 
     while True:
         if button_a.is_pressed():
-            if microphone.current_event() == SoundEvent.LOUD:
+            if microphone.current_event() == SoundEvent.CLAP:
+                display.show(Image.DIAMOND)
+                uart.write('isClap\n')
+            elif microphone.current_event() == SoundEvent.LOUD:
                 display.show(Image.SQUARE)
                 uart.write('isLoud\n')
             elif microphone.current_event() == SoundEvent.QUIET:
@@ -120,7 +125,10 @@ An example that runs through some of the functions of the microphone API::
             sleep(500)
         display.clear()
         if button_b.is_pressed():
-            if microphone.was_event(SoundEvent.LOUD):
+            if microphone.was_event(SoundEvent.CLAP):
+                display.show(Image.DIAMOND)
+                uart.write('wasClap\n')
+            elif microphone.was_event(SoundEvent.LOUD):
                 display.show(Image.SQUARE)
                 uart.write('wasLoud\n')
             elif microphone.was_event(SoundEvent.QUIET):
@@ -135,7 +143,9 @@ An example that runs through some of the functions of the microphone API::
             soundLevel = microphone.sound_level()
             print(soundLevel)
             for sound in sounds:
-                if sound == SoundEvent.LOUD:
+                if sound == SoundEvent.CLAP:
+                    display.show(Image.DIAMOND)
+                elif sound == SoundEvent.LOUD:
                     display.show(Image.SQUARE)
                 elif sound == SoundEvent.QUIET:
                     display.show(Image.SQUARE_SMALL)
