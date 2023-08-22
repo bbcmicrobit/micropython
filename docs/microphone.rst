@@ -31,20 +31,51 @@ accessible via variables in ``microbit.SoundEvent``:
 Recording
 =========
 
-TODO:
-* Describe the feature.
-* Indicate how the sampling rate relates to recording quality.
-* Indicate how changing the sampling rate on the fly affects playback speed.
-* What happens if the user changes the sampling rate while recording?
+The microphone can record audio into an :doc:`AudioFrame <audio>`, which can
+then be played with the ``audio.play()`` function.
 
-::
+Audio sampling is the process of converting sound into a digital format.
+To do this, the microphone takes samples of the sound waves at regular
+intervals. How many samples are recorded per second is known as the
+"sampling rate", so recording at a higher sampling rate increases the sound
+quality, but as more samples are saved, it also takes more memory.
+
+The microphone sampling rate can be configured during sound recording via
+the ``rate`` argument in the ``record()`` and ``record_into()`` functions.
+
+At the other side, the audio playback sampling rate indicates how many samples
+are played per second. So if audio is played back with a higher sampling rate
+than the rate used during recording, then the audio will sound speeded up.
+If the playback sampling rate is twice the recording rate, the sound will take
+half the time to be played to completion. Similarly, if the playback rate
+is halved, it will play half as many samples per second, and so it will
+take twice as long to play the same amount of samples.
+
+How do you think a voice recording will sound if the playback rate is
+increased or decreased? Let's try it out!::
 
     from microbit import *
 
+    RECORDING_SAMPLING_RATE = 11000
+
     while True:
-        if button_a.is_pressed():
-            my_recording = microphone.record(duration=5000)
+        if pin_logo.is_touched():
+            # Record and play back at the same rate
+            my_recording = microphone.record(duration=3000, rate=RECORDING_SAMPLING_RATE)
             audio.play(my_recording)
+
+        if button_a.is_pressed():
+            # Play back at half the sampling rate
+            my_recording = microphone.record(duration=3000, rate=RECORDING_SAMPLING_RATE)
+            audio.set_rate(RECORDING_SAMPLING_RATE / 2)
+            audio.play(my_recording)
+
+        if button_b.is_pressed():
+            # Play back at twice the sampling rate
+            my_recording = microphone.record(duration=3000, rate=RECORDING_SAMPLING_RATE)
+            audio.set_rate(RECORDING_SAMPLING_RATE * 2)
+            audio.play(my_recording)
+
         sleep(200)
 
 Functions
@@ -110,7 +141,7 @@ Functions
 
     :return: A representation of the sound pressure level in the range 0 to 255.
 
-.. py:function:: record(duration=3000, rate=11000, wait=True)
+.. py:function:: record(duration=3000, rate=7812, wait=True)
 
     Record sound for the amount of time indicated by ``duration`` at the
     sampling rate indicated by ``rate``.
@@ -119,7 +150,8 @@ Functions
     recording and the sampling rate. The higher these values, the more memory
     it will use.
 
-    A lower sampling rate will reduce memory consumption and sound quality.
+    A lower sampling rate will reduce both memory consumption and sound
+    quality.
 
     If there isn't enough memory available a ``MemoryError`` will be raised.
 
@@ -127,14 +159,14 @@ Functions
     :param rate: Number of samples to capture per second.
     :param wait: When set to ``True`` it blocks until the recording is
         done, if it is set to ``False`` it will run in the background.
-    :returns: An ``AudioBuffer``, configured at the provided ``duration``
-        and ``rate``, with the sound data.
+    :returns: An ``AudioFrame`` with the sound samples.
 
-.. py:function:: record_into(buffer, rate=11000, wait=True)
+.. py:function:: record_into(buffer, rate=7812, wait=True)
 
-    Record sound into an existing ``AudioBuffer``.
+    Record sound into an existing ``AudioFrame`` until it is filled,
+    or the ``stop_recording()`` function is called.
 
-    :param buffer: An ``AudioBuffer`` to record the microphone sound.
+    :param buffer: An ``AudioFrame`` to record sound.
     :param rate: Number of samples to capture per second.
     :param wait: When set to ``True`` it blocks until the recording is
         done, if it is set to ``False`` it will run in the background.
@@ -155,7 +187,7 @@ Functions
     ``microphone.SENSITIVITY_HIGH``.
 
     These constants correspond to a number, and any values between these
-    constants are valid arguments
+    constants are valid arguments.
 
     :param gain: Microphone gain.
 
@@ -217,14 +249,14 @@ An example of recording and playback with a display animation::
 
     from microbit import *
 
-    talk_open = Image(
+    mouth_open = Image(
         "09090:"
         "00000:"
         "09990:"
         "90009:"
         "09990"
     )
-    talk_closed = Image(
+    mouth_closed = Image(
         "09090:"
         "00000:"
         "00000:"
@@ -232,20 +264,24 @@ An example of recording and playback with a display animation::
         "00000"
     )
 
-    my_recording = audio.AudioBuffer(duration=5000, rate=5500)
+    RECORDING_RATE = 5500
+    RECORDING_SECONDS = 5
+    RECORDING_SIZE = RECORDING_RATE * RECORDING_SECONDS
+
+    my_recording = audio.AudioBuffer(size=RECORDING_SIZE)
 
     while True:
         if button_a.is_pressed():
-            microphone.record_into(my_recording, rate=5500, wait=False)
-            display.show([talk_open, talk_closed], loop=True, wait=False, delay=150)
-            while button_a.is_pressed():
+            microphone.record_into(my_recording, rate=RECORDING_RATE, wait=False)
+            display.show([mouth_open, mouth_closed], loop=True, wait=False, delay=150)
+            while button_a.is_pressed() and microphone.is_recording():
                 sleep(50)
-            display.show(mouth_open, loop=False) # workaround issue #150
+            microphone.stop_recording()
             display.clear()
         if button_b.is_pressed():
             audio.play(my_recording, wait=False)
             while audio.is_playing():
                 x = accelerometer.get_x()
-                my_recording.rate = scale(x, (-1000, 1000), (2250, 11000))
+                audio.set_rate(scale(x, (-1000, 1000), (2250, 11000)))
                 sleep(50)
         sleep(100)
