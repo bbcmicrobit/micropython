@@ -93,7 +93,6 @@ Projects related to MicroPython on the BBC micro:bit include:
    :maxdepth: 2
    :caption: Developer Guide
 
-   devguide/installation
    devguide/flashfirmware
    devguide/repl
    devguide/hexformat
