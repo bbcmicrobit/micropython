@@ -72,13 +72,6 @@ Functions
 
     Stops all audio playback.
 
-.. py:function:: set_rate(sample_rate)
-
-    Changes the sampling rate of ``AudioFrame`` playback.
-    The default playback rate is 7812 samples per second.
-    Decreasing the playback sampling rate results in slowed down sound, and
-    increasing it speeds it up.
-
 
 Built-in sounds **V2**
 ======================
@@ -230,12 +223,38 @@ AudioFrame
 ==========
 
 .. py:class::
-    AudioFrame(size=32)
+    AudioFrame(duration=-1, rate=7812)
 
-    An ``AudioFrame`` object is a list of samples each of which is an unsigned
+    An ``AudioFrame`` object is a list of samples, each of which is an unsigned
     byte (whole number between 0 and 255).
 
-    :param size: How many samples to contain in this instance.
+    The number of samples in an AudioFrame will depend on the
+    ``rate`` (number of samples per second) and ``duration`` parameters.
+    The total number of samples will always be a round up multiple of 32.
+
+    On micro:bit V1 the constructor does not take any arguments,
+    and an AudioFrame instance is always 32 bytes.
+
+    :param duration: (**V2**) Indicates how many milliseconds of audio this
+        instance can store.
+    :param rate: (**V2**) The sampling rate at which data will be stored
+        via the microphone, or played via the ``audio.play()`` function.
+
+    .. py:function:: set_rate(sample_rate)
+
+        (**V2 only**) Configure the sampling rate associated with the data
+        in the ``AudioFrame`` instance.
+
+        For recording from the microphone, increasing the sampling rate
+        increases the sound quality, but reduces the length of audio it
+        can store.
+        During playback, increasing the sampling rate speeds up the sound
+        and decreasing it slows it down.
+
+    .. py:function:: get_rate()
+
+        (**V2 only**) Return the configured sampling rate for this
+        ``AudioFrame`` instance.
 
     .. py:function:: copyfrom(other)
 
@@ -252,12 +271,13 @@ Technical Details
     It is just here in case you wanted to know how it works.
 
 The ``audio.play()`` function can consume an instance or iterable
-(sequence, like list or tuple, or generator) of ``AudioFrame`` instances.
-Its default playback rate is 7812 Hz, and uses linear interpolation to output
+(sequence, like list or tuple, or generator) of ``AudioFrame`` instances,
+The ``AudioFrame`` default playback rate is 7812 Hz, and the output is a
 a PWM signal at 32.5 kHz.
 
 Each ``AudioFrame`` instance is 32 samples by default, but it can be
-configured to a different size via constructor.
+configured to a different size via constructor and the
+``AudioFrame.set_rate()`` method.
 
 So, for example, playing 32 samples at 7812 Hz takes just over 4 milliseconds
 (1/7812.5 * 32 = 0.004096 = 4096 microseconds).

@@ -36,12 +36,12 @@ then be played with the ``audio.play()`` function.
 
 Audio sampling is the process of converting sound into a digital format.
 To do this, the microphone takes samples of the sound waves at regular
-intervals. How many samples are recorded per second is known as the
+intervals. The number of samples recorded per second is known as the
 "sampling rate", so recording at a higher sampling rate increases the sound
-quality, but as more samples are saved, it also takes more memory.
+quality, but as more samples are saved, it also consumes more memory.
 
 The microphone sampling rate can be configured during sound recording via
-the ``rate`` argument in the ``record()`` and ``record_into()`` functions.
+the ``AudioFrame.rate()`` method functions.
 
 At the other side, the audio playback sampling rate indicates how many samples
 are played per second. So if audio is played back with a higher sampling rate
@@ -56,24 +56,22 @@ increased or decreased? Let's try it out!::
 
     from microbit import *
 
-    RECORDING_SAMPLING_RATE = 11000
-
     while True:
         if pin_logo.is_touched():
             # Record and play back at the same rate
-            my_recording = microphone.record(duration=3000, rate=RECORDING_SAMPLING_RATE)
+            my_recording = microphone.record(duration=3000)
             audio.play(my_recording)
 
         if button_a.is_pressed():
             # Play back at half the sampling rate
-            my_recording = microphone.record(duration=3000, rate=RECORDING_SAMPLING_RATE)
-            audio.set_rate(RECORDING_SAMPLING_RATE / 2)
+            my_recording = microphone.record(duration=3000)
+            my_recording.set_rate(my_recording.get_rate() // 2)
             audio.play(my_recording)
 
         if button_b.is_pressed():
             # Play back at twice the sampling rate
-            my_recording = microphone.record(duration=3000, rate=RECORDING_SAMPLING_RATE)
-            audio.set_rate(RECORDING_SAMPLING_RATE * 2)
+            my_recording = microphone.record(duration=3000)
+            my_recording.set_rate(my_recording.get_rate() * 2)
             audio.play(my_recording)
 
         sleep(200)
@@ -141,10 +139,10 @@ Functions
 
     :return: A representation of the sound pressure level in the range 0 to 255.
 
-.. py:function:: record(duration=3000, rate=7812, wait=True)
+.. py:function:: record(duration=3000, rate=7812)
 
-    Record sound for the amount of time indicated by ``duration`` at the
-    sampling rate indicated by ``rate``.
+    Record sound into an ``AudioFrame`` for the amount of time indicated by
+    ``duration`` at the sampling rate indicated by ``rate``.
 
     The amount of memory consumed is directly related to the length of the
     recording and the sampling rate. The higher these values, the more memory
@@ -155,10 +153,8 @@ Functions
 
     If there isn't enough memory available a ``MemoryError`` will be raised.
 
-    :param duration: How much time to record in milliseconds.
+    :param duration: How long to record in milliseconds.
     :param rate: Number of samples to capture per second.
-    :param wait: When set to ``True`` it blocks until the recording is
-        done, if it is set to ``False`` it will run in the background.
     :returns: An ``AudioFrame`` with the sound samples.
 
 .. py:function:: record_into(buffer, rate=7812, wait=True)
@@ -264,11 +260,10 @@ An example of recording and playback with a display animation::
         "00000"
     )
 
-    RECORDING_RATE = 5500
-    RECORDING_SECONDS = 5
-    RECORDING_SIZE = RECORDING_RATE * RECORDING_SECONDS
+    RECORDING_RATE = 3906
+    RECORDING_MS = 5000
 
-    my_recording = audio.AudioBuffer(size=RECORDING_SIZE)
+    my_recording = audio.AudioBuffer(duration=RECORDING_MS, rate=RECORDING_RATE)
 
     while True:
         if button_a.is_pressed():
