@@ -28,6 +28,7 @@ art and games such as the demo shown below.
 
 .. image:: neopixel.gif
    :alt: Neopixel flexible tile
+
 Image attribution: `adafruit flexible Neopixel matrix <https://www.adafruit.com/product/2547>`_
 
 To connect a strip of neopixels you'll need to attach the micro:bit as shown
