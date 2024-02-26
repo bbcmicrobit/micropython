@@ -3,8 +3,10 @@ Speech
 
 .. py:module:: speech
 
-This module makes microbit talk, sing and make other speech like sounds
-provided that you connect a speaker to your board as shown below:
+This module makes the micro:bit talk, sing and make other speech like sounds.
+By default sound output will be via the edge connector on pin 0 and the
+:doc:`built-in speaker <speaker>` **V2**. You can connect wired headphones or
+a speaker to pin 0 and GND on the edge connector to hear the sound:
 
 .. image:: speech.png
 
@@ -44,13 +46,19 @@ Functions
     emphasis.
 
 .. py:function:: pronounce(phonemes, \*, pitch=64, speed=72, mouth=128, throat=128)
+                 pronounce(phonemes, \*, pitch=64, speed=72, mouth=128, throat=128, pin=pin0)
 
     Pronounce the phonemes in the string ``phonemes``. See below for details of
     how to use phonemes to finely control the output of the speech synthesiser.
     Override the optional pitch, speed, mouth and throat settings to change the
     timbre (quality) of the voice.
 
+    For micro:bit **V2** an optional argument to specify the output pin can be
+    used to override the default of ``pin0``. If we do not want any sound to
+    play out of the pins can use ``pin=None``.
+
 .. py:function:: say(words, \*, pitch=64, speed=72, mouth=128, throat=128)
+                 say(words, \*, pitch=64, speed=72, mouth=128, throat=128, pin=pin0)
 
     Say the English words in the string ``words``. The result is semi-accurate
     for English. Override the optional pitch, speed, mouth and throat
@@ -58,6 +66,7 @@ Functions
     equivalent of: ``speech.pronounce(speech.translate(words))``
 
 .. py:function:: sing(phonemes, \*, pitch=64, speed=72, mouth=128, throat=128)
+                 sing(phonemes, \*, pitch=64, speed=72, mouth=128, throat=128, pin=pin0)
 
     Sing the phonemes contained in the string ``phonemes``. Changing the pitch
     and duration of the note is described below. Override the optional pitch,

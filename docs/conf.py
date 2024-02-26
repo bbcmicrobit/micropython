@@ -64,7 +64,9 @@ copyright = u'2015-2024, Multiple authors'
 yotta_module = json.load(open('../module.json'))
 
 # The short X.Y version.
-version = yotta_module['version']
+# Overwrite here to v2
+#version = yotta_module['version']
+version = "2"
 # The full version, including alpha/beta/rc tags.
 release = version
 
