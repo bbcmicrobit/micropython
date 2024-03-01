@@ -17,14 +17,16 @@ There are three different kinds of audio sources that can be played using the
 
 1. `Built in sounds <#built-in-sounds-v2>`_ (**V2**),
    e.g. ``audio.play(Sound.HAPPY)``
+
 2. `Sound Effects <#sound-effects-v2>`_ (**V2**), a way to create custom sounds
    by configuring its parameters::
 
     my_effect = audio.SoundEffect(freq_start=400, freq_end=2500, duration=500)
     audio.play(my_effect)
 
-3. `Audio Frames <#audioframe>`_, an iterable (like a list or a generator)
-   of Audio Frames, which are lists of 32 samples with values from 0 to 255::
+3. `Audio Frames <#audioframe>`_, an instance or an iterable (like a list or
+   generator) of Audio Frames, which are lists of samples with values
+   from 0 to 255::
 
     square_wave = audio.AudioFrame()
     for i in range(16):
@@ -47,8 +49,9 @@ Functions
           be found in the `Built in sounds <#built-in-sounds-v2>`_ section.
         - ``SoundEffect``: A sound effect, or an iterable of sound effects,
           created via the :py:meth:`audio.SoundEffect` class
-        - ``AudioFrame``: An iterable of ``AudioFrame`` instances as described
-          in the `AudioFrame Technical Details <#id2>`_ section
+        - ``AudioFrame``: An instance or an iterable of ``AudioFrame``
+          instances as described in the
+          `AudioFrame Technical Details <#technical-details>`_ section
 
     :param wait: If ``wait`` is ``True``, this function will block until the
         source is exhausted.
@@ -215,16 +218,43 @@ Sound Effects Example
 .. include:: ../examples/soundeffects.py
     :code: python
 
+
 AudioFrame
 ==========
 
 .. py:class::
-    AudioFrame
+    AudioFrame(duration=-1, rate=7812)
 
-    An ``AudioFrame`` object is a list of 32 samples each of which is an unsigned byte
-    (whole number between 0 and 255).
+    An ``AudioFrame`` object is a list of samples, each of which is an unsigned
+    byte (whole number between 0 and 255).
 
-    It takes just over 4 ms to play a single frame.
+    The number of samples in an AudioFrame will depend on the
+    ``rate`` (number of samples per second) and ``duration`` parameters.
+    The total number of samples will always be a round up multiple of 32.
+
+    On micro:bit V1 the constructor does not take any arguments,
+    and an AudioFrame instance is always 32 bytes.
+
+    :param duration: (**V2**) Indicates how many milliseconds of audio this
+        instance can store.
+    :param rate: (**V2**) The sampling rate at which data will be stored
+        via the microphone, or played via the ``audio.play()`` function.
+
+    .. py:function:: set_rate(sample_rate)
+
+        (**V2 only**) Configure the sampling rate associated with the data
+        in the ``AudioFrame`` instance.
+
+        For recording from the microphone, increasing the sampling rate
+        increases the sound quality, but reduces the length of audio it
+        can store.
+        During playback, increasing the sampling rate speeds up the sound
+        and decreasing it slows it down.
+
+    .. py:function:: get_rate()
+
+        (**V2 only**) Return the configured sampling rate for this
+        ``AudioFrame`` instance.
 
     .. py:function:: copyfrom(other)
 
@@ -240,13 +270,20 @@ Technical Details
     You don't need to understand this section to use the ``audio`` module.
     It is just here in case you wanted to know how it works.
 
-The ``audio`` module can consumes an iterable (sequence, like list or tuple, or
-generator) of ``AudioFrame`` instances, each 32 samples at 7812.5 Hz, and uses
-linear interpolation to output a PWM signal at 32.5 kHz, which gives tolerable
-sound quality.
+The ``audio.play()`` function can consume an instance or iterable
+(sequence, like list or tuple, or generator) of ``AudioFrame`` instances,
+The ``AudioFrame`` default playback rate is 7812 Hz, and the output is a
+a PWM signal at 32.5 kHz.
 
-The function ``play`` fully copies all data from each ``AudioFrame`` before it
-calls ``next()`` for the next frame, so a sound source can use the same
+Each ``AudioFrame`` instance is 32 samples by default, but it can be
+configured to a different size via constructor and the
+``AudioFrame.set_rate()`` method.
+
+So, for example, playing 32 samples at 7812 Hz takes just over 4 milliseconds
+(1/7812.5 * 32 = 0.004096 = 4096 microseconds).
+
+The function ``play()`` fully copies all data from each ``AudioFrame`` before
+it calls ``next()`` for the next frame, so a sound source can use the same
 ``AudioFrame`` repeatedly.
 
 The ``audio`` module has an internal 64 sample buffer from which it reads
@@ -259,6 +296,9 @@ the buffer. This means that a sound source has under 4ms to compute the next
 
 AudioFrame Example
 ------------------
+
+Creating and populating ``AudioFrame`` iterables and generators with
+different sound waveforms:
 
 .. include:: ../examples/waveforms.py
     :code: python
