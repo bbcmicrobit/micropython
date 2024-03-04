@@ -218,6 +218,11 @@ its own to that.
         <https://www.allaboutcircuits.com/technical-articles/introduction-to-capacitive-touch-sensing>`_
         does not require you to make a ground connection as part of a circuit.
 
+    .. py:method:: was_touched()
+
+        Returns ``True`` or ``False`` to indicate if the pin was touched
+        since the device started or since the last time this method was called.
+
     .. py:method:: set_touch_mode(value)
 
         .. note::
