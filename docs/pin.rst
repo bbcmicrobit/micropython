@@ -207,6 +207,11 @@ its own to that.
         Returns ``True`` or ``False`` to indicate if the pin was touched
         since the device started or since the last time this method was called.
 
+    .. py:method:: get_touches()
+
+        Returns the number of times the pin was touched
+        since the device started or since the last time this method was called.
+
     .. py:method:: set_touch_mode(value)
 
         .. note::
