@@ -60,7 +60,7 @@ Functions
 
     * **event**: a sound event, such as ``SoundEvent.LOUD`` or
       ``SoundEvent.QUIET``.
-    
+
     * **value**: The threshold level in the range 0-255. For example,
       ``set_threshold(SoundEvent.LOUD, 250)`` will only trigger if the sound is
       very loud (>= 250).
@@ -70,6 +70,9 @@ Functions
     * **return**: a representation of the sound pressure level in the range 0 to
       255.
 
+.. py:function:: sound_level_db()
+
+    * **return**: a representation of the sound pressure level in decibels (dB).
 
 Example
 =======
