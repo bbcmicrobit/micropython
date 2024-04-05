@@ -33,7 +33,7 @@ Functions
 
 .. py:function:: current_event()
 
-    Get the last recorded sound event
+    Get the last recorded sound event.
 
     :return: The event, ``SoundEvent('loud')`` or ``SoundEvent('quiet')``.
 
@@ -44,7 +44,7 @@ Functions
     This call clears the sound history before returning.
 
     :param event: The event to check for,  such as ``SoundEvent.LOUD`` or
-        ``SoundEvent.QUIET``
+        ``SoundEvent.QUIET``.
     :return: ``True`` if sound was heard at least once since the last call,
         otherwise ``False``.
 
@@ -70,12 +70,20 @@ Functions
 
     Set the threshold for a sound event.
 
-    A high threshold means the event will only trigger if the sound is
-    very loud (>= 250 in the example).
+    The ``SoundEvent.LOUD`` event will be triggered when the sound level
+    crosses this threshold upwards (from "quiet" to "loud"),
+    and ``SoundEvent.QUIET`` event is triggered when crossing the threshold
+    downwards (from "loud" to "quiet").
+
+    If the ``SoundEvent.LOUD`` value set is lower than ``SoundEvent.QUIET``,
+    then "quiet" threshold will be decreased to one unit below the "loud"
+    threshold. If the ``SoundEvent.QUIET`` value is set higher than
+    ``SoundEvent.LOUD``, then the "loud" threshold will be set one unit above.
 
     :param event: A sound event, such as ``SoundEvent.LOUD`` or
         ``SoundEvent.QUIET``.
-    :param value: The threshold level in the range 0-255.
+    :param value: The threshold level in the range 0-255. Values outside this
+        range will be clamped.
 
 .. py:function:: sound_level()
 
