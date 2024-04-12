@@ -139,7 +139,7 @@ Functions
 
     :return: A representation of the sound pressure level in the range 0 to 255.
 
-.. py:function:: record(duration=3000, rate=7812)
+.. py:function:: record(duration, rate=7812)
 
     Record sound into an ``AudioFrame`` for the amount of time indicated by
     ``duration`` at the sampling rate indicated by ``rate``.
@@ -174,7 +174,7 @@ Functions
 
 .. py:function:: stop_recording()
 
-    Stops an a recording running in the background.
+    Stops a recording running in the background.
 
 .. py:function:: set_sensitivity(gain)
 

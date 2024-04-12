@@ -108,6 +108,16 @@ The Microphone is accessed via the `microphone` object::
     set_threshold(128)
     # Returns a representation of the sound pressure level in the range 0 to 255.
     sound_level()
+    # Record audio into a new `AudioFrame`
+    record(duration, rate=7812)
+    # Record audio into an existing `AudioFrame`
+    record_into(buffer, rate=7812)
+    # Returns `True` if the microphone is currently recording audio
+    is_recording()
+    # Stop any active audio recording
+    stop()
+    # Set the microphone sensitivity (also referred as gain)
+    set_sensitivity(microphone.SENSITIVITY_MEDIUM)
 
 Pins
 ----
