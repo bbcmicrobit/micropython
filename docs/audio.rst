@@ -72,6 +72,13 @@ Functions
 
     Stops all audio playback.
 
+.. py:function:: sound_level()
+
+    Get the sound pressure level produced by audio currently being played.
+
+    :return: A representation of the output sound pressure level in the
+        range 0 to 255.
+
 
 Built-in sounds **V2**
 ======================
@@ -251,10 +258,14 @@ AudioFrame
         During playback, increasing the sampling rate speeds up the sound
         and decreasing it slows it down.
 
+        :param sample_rate: The sample rate to set.
+
     .. py:function:: get_rate()
 
         (**V2 only**) Return the configured sampling rate for this
         ``AudioFrame`` instance.
+
+        :return: The configured sample rate.
 
     .. py:function:: copyfrom(other)
 
@@ -272,12 +283,13 @@ Technical Details
 
 The ``audio.play()`` function can consume an instance or iterable
 (sequence, like list or tuple, or generator) of ``AudioFrame`` instances,
-The ``AudioFrame`` default playback rate is 7812 Hz, and the output is a
-a PWM signal at 32.5 kHz.
+The ``AudioFrame`` default playback rate is 7812 Hz, and can be configured
+at any point with the ``AudioFrame.set_rate()`` method.
+The ``AudioFrame.set_rate()`` also works while the ``AudioFrame`` is being
+played, which will affect the playback speed.
 
 Each ``AudioFrame`` instance is 32 samples by default, but it can be
-configured to a different size via constructor and the
-``AudioFrame.set_rate()`` method.
+configured to a different size via constructor parameters.
 
 So, for example, playing 32 samples at 7812 Hz takes just over 4 milliseconds
 (1/7812.5 * 32 = 0.004096 = 4096 microseconds).
