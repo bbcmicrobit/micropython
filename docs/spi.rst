@@ -53,9 +53,10 @@ Functions
     The ``sclk``, ``mosi`` and ``miso`` arguments specify the pins to use for
     each type of signal.
 
-.. method:: spi.read(nbytes)
+.. method:: spi.read(nbytes, out=0)
 
-   Read at most ``nbytes``. Returns what was read.
+   Read at most ``nbytes`` while continuously writing the single byte given by
+   ``out``. Returns what was read.
 
 .. method:: spi.write(buffer)
 
