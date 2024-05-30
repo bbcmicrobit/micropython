@@ -2,9 +2,9 @@ Bluetooth
 *********
 
 While the BBC micro:bit has hardware capable of allowing the device to work as
-a Bluetooth Low Energy (BLE) device, it only has 16k of RAM. The BLE stack
+a Bluetooth Low Energy (BLE) device, v1 only has 16k of RAM (v2: 128k). The BLE stack
 alone takes up 12k RAM which means there's not enough memory for MicroPython
-to support Bluetooth.
+to support Bluetooth for v1.
 
 .. note::
     MicroPython uses the radio hardware with the :mod:`radio` module. This
