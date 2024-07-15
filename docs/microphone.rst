@@ -31,8 +31,8 @@ accessible via variables in ``microbit.SoundEvent``:
 Recording
 =========
 
-The microphone can record audio into an :doc:`AudioFrame <audio>`, which can
-then be played with the ``audio.play()`` function.
+The microphone can record audio into an :doc:`AudioRecording <audio>`,
+which can then be played with the ``audio.play()`` function.
 
 Audio sampling is the process of converting sound into a digital format.
 To do this, the microphone takes samples of the sound waves at regular
@@ -41,15 +41,17 @@ intervals. The number of samples recorded per second is known as the
 quality, but as more samples are saved, it also consumes more memory.
 
 The microphone sampling rate can be configured during sound recording via
-the ``AudioFrame.rate()`` method functions.
+the :py:meth:`AudioRecording.set_rate()<audio.AudioRecording.set_rate>` or
+:py:meth:`AudioTrack.set_rate()<audio.AudioTrack.set_rate>` methods.
 
 At the other side, the audio playback sampling rate indicates how many samples
 are played per second. So if audio is played back with a higher sampling rate
 than the rate used during recording, then the audio will sound speeded up.
 If the playback sampling rate is twice the recording rate, the sound will take
 half the time to be played to completion. Similarly, if the playback rate
-is halved, it will play half as many samples per second, and so it will
-take twice as long to play the same amount of samples.
+is halved, it will play half as many samples per second, so it will
+take twice as long to play the same amount of samples, and it will sound
+slowed down.
 
 How do you think a voice recording will sound if the playback rate is
 increased or decreased? Let's try it out!::
@@ -141,7 +143,7 @@ Functions
 
 .. py:function:: record(duration, rate=7812)
 
-    Record sound into an ``AudioFrame`` for the amount of time indicated by
+    Record sound into an ``AudioRecording`` for the amount of time indicated by
     ``duration`` at the sampling rate indicated by ``rate``.
 
     The amount of memory consumed is directly related to the length of the
@@ -155,17 +157,22 @@ Functions
 
     :param duration: How long to record in milliseconds.
     :param rate: Number of samples to capture per second.
-    :returns: An ``AudioFrame`` with the sound samples.
+    :returns: An ``AudioRecording`` with the sound samples.
 
-.. py:function:: record_into(buffer, rate=7812, wait=True)
+.. py:function:: record_into(buffer, wait=True)
 
-    Record sound into an existing ``AudioFrame`` until it is filled,
-    or the ``stop_recording()`` function is called.
+    Record sound into an existing ``AudioRecording`` or ``AudioTrack``
+    until it is filled, or the ``stop_recording()`` function is called.
 
-    :param buffer: An ``AudioFrame`` to record sound.
-    :param rate: Number of samples to capture per second.
+    This function also returns an ``AudioTrack`` created from the provided
+    input buffer, which length matches the recording duration.
+    This is useful when recording with ``wait`` set to ``False``, and the
+    recording is stopped before the input buffer is filled.
+
+    :param buffer: ``AudioRecording`` or ``AudioTrack`` to record sound into.
     :param wait: When set to ``True`` it blocks until the recording is
         done, if it is set to ``False`` it will run in the background.
+    :returns: An ``AudioTrack`` which ends where the recording ended.
 
 .. py:function:: is_recording()
 
@@ -263,18 +270,18 @@ An example of recording and playback with a display animation::
     RECORDING_RATE = 3906
     RECORDING_MS = 5000
 
-    my_recording = audio.AudioBuffer(duration=RECORDING_MS, rate=RECORDING_RATE)
+    my_recording = audio.AudioRecording(duration=RECORDING_MS, rate=RECORDING_RATE)
 
     while True:
         if button_a.is_pressed():
-            microphone.record_into(my_recording, rate=RECORDING_RATE, wait=False)
+            clipped_recording = microphone.record_into(my_recording, wait=False)
             display.show([mouth_open, mouth_closed], loop=True, wait=False, delay=150)
             while button_a.is_pressed() and microphone.is_recording():
                 sleep(50)
             microphone.stop_recording()
             display.clear()
         if button_b.is_pressed():
-            audio.play(my_recording, wait=False)
+            audio.play(clipped_recording, wait=False)
             while audio.is_playing():
                 x = accelerometer.get_x()
                 audio.set_rate(scale(x, (-1000, 1000), (2250, 11000)))
