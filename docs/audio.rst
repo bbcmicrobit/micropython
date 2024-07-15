@@ -24,7 +24,22 @@ There are three different kinds of audio sources that can be played using the
     my_effect = audio.SoundEffect(freq_start=400, freq_end=2500, duration=500)
     audio.play(my_effect)
 
-3. `Audio Frames <#audioframe>`_, an instance or an iterable (like a list or
+3. `Audio Recordings <#audiorecording-audiotrack-v2>`_, an object that can
+   be used to record audio from the microphone::
+
+    recording = audio.AudioRecording(duration=4000)
+    microphone.record_into(recording)
+    audio.play(recording)
+
+4. `Audio Tracks <#audiorecording-audiotrack-v2>`_, a way to point to a portion
+   of the data in an ``AudioRecording`` or a ``bytearray`` and/or modify it::
+
+    recording = audio.AudioRecording(duration=4000)
+    microphone.record(recording)
+    track = AudioTrack(recording)[1000:3000]
+    audio.play(track)
+
+5. `Audio Frames <#audioframe>`_, an instance or an iterable (like a list or
    generator) of Audio Frames, which are lists of samples with values
    from 0 to 255::
 
@@ -49,6 +64,10 @@ Functions
           be found in the `Built in sounds <#built-in-sounds-v2>`_ section.
         - ``SoundEffect``: A sound effect, or an iterable of sound effects,
           created via the :py:meth:`audio.SoundEffect` class
+        - ``AudioRecording``: An instance of ``AudioRecording`` as described
+          in the `AudioRecording <#audiorecording-audiotrack-v2>`_ section
+        - ``AudioTrack``: An instance of ``AudioTrack`` as described in the
+          `AudioTrack <#audiorecording-audiotrack-v2>`_ section
         - ``AudioFrame``: An instance or an iterable of ``AudioFrame``
           instances as described in the
           `AudioFrame Technical Details <#technical-details>`_ section
@@ -226,46 +245,162 @@ Sound Effects Example
     :code: python
 
 
-AudioFrame
-==========
+AudioRecording & AudioTrack **V2**
+==================================
+
+There are two classes that can contain (or point to) audio data 
+and an associated sampling rate:
+
+- ``AudioRecording`` contains its own buffer, it's initialised with a size
+  defined in time, and it's the object type that ``microphone.record()``
+  returns.
+- ``AudioTrack`` does not hold its own buffer and instead points to a buffer
+  externally created. This buffer could be an ``AudioRecording``, or a basic
+  type like a ``bytearray``. It's similar to a
+  `memoryview <https://docs.micropython.org/en/v1.9.3/pyboard/reference/speed_python.html#arrays>`_
+  and it can be used to easily chop a portion of the audio data in the
+  ``AudioRecording`` or to modify its contents.
+
+AudioRecording
+--------------
 
 .. py:class::
-    AudioFrame(duration=-1, rate=7812)
+    AudioRecording(duration, rate=7812)
 
-    An ``AudioFrame`` object is a list of samples, each of which is an unsigned
-    byte (whole number between 0 and 255).
+    The ``AudioRecording`` object contains audio data and the sampling rate
+    associated to it.
 
-    The number of samples in an AudioFrame will depend on the
-    ``rate`` (number of samples per second) and ``duration`` parameters.
-    The total number of samples will always be a round up multiple of 32.
+    The size of the internal buffer will depend on the ``rate``
+    (number of samples per second) and ``duration`` parameters.
 
-    On micro:bit V1 the constructor does not take any arguments,
-    and an AudioFrame instance is always 32 bytes.
-
-    :param duration: (**V2**) Indicates how many milliseconds of audio this
+    :param duration: Indicates how many milliseconds of audio this
         instance can store.
-    :param rate: (**V2**) The sampling rate at which data will be stored
+    :param rate: The sampling rate at which data will be stored
         via the microphone, or played via the ``audio.play()`` function.
 
     .. py:function:: set_rate(sample_rate)
 
-        (**V2 only**) Configure the sampling rate associated with the data
-        in the ``AudioFrame`` instance.
-
-        For recording from the microphone, increasing the sampling rate
-        increases the sound quality, but reduces the length of audio it
-        can store.
-        During playback, increasing the sampling rate speeds up the sound
-        and decreasing it slows it down.
+        Configure the sampling rate associated with the data in the
+        ``AudioRecording`` instance.
 
         :param sample_rate: The sample rate to set.
 
     .. py:function:: get_rate()
 
-        (**V2 only**) Return the configured sampling rate for this
-        ``AudioFrame`` instance.
+        Return the configured sampling rate for this
+        ``AudioRecording`` instance.
 
         :return: The configured sample rate.
+
+    .. py:function:: copy()
+
+        :returns: a copy of the ``AudioRecording``.
+
+    .. py:function:: track(start_ms=0, end_ms=-1)
+
+        Create an `AudioTrack <#audio.AudioTrack>`_ instance from a portion of
+        the data in this ``AudioRecording`` instance.
+
+        :param start_ms: Where to start of the track in milliseconds.
+        :param end_ms: The end of the track in milliseconds.
+            If the default value of ``-1`` is provided it will end the track
+            at the end of the AudioRecording.
+
+When an AudioRecording is used to record data from the microphone,
+increasing the sampling rate increases the sound quality,
+but it also increases the amount of memory used.
+
+During playback, increasing the sampling rate speeds up the sound
+and decreasing the sample rate slows it down.
+
+AudioTrack
+----------
+
+An ``AudioTrack`` can be created from an ``AudioRecording`` or ``bytearray``
+and individual bytes can be accessed and modified like elements in a list.
+
+This class is useful to modify the audio data in an ``AudioRecording`` or
+to create precisely sized audio data buffers for sending and receiving them
+via communication protocols like radio or serial.
+
+.. py:class::
+    AudioTrack(buffer, rate=7812)
+
+    The ``AudioTrack`` object points to the data provided by the input buffer,
+    which can be an ``AudioRecording``, or a buffer-like object like a
+    ``bytearray``.
+    It also contains its own sampling rate, so multiple ``AudioTrack``
+    instances pointing to the same buffer can have different rates and won't
+    affect the rate of the original buffer.
+
+    :param buffer: The buffer containing the audio data.
+    :param rate: The sampling rate at which data will be stored
+        via the microphone, or played via the ``audio.play()`` function.
+
+    .. py:function:: set_rate(sample_rate)
+
+        Configure the sampling rate associated with the data in the
+        ``AudioTrack`` instance.
+
+        :param sample_rate: The sample rate to set.
+
+    .. py:function:: get_rate()
+
+        Return the configured sampling rate for this
+        ``AudioTrack`` instance.
+
+        :return: The configured sample rate.
+
+    .. py:function:: copyfrom(other)
+
+        Overwrite the data in this ``AudioTrack`` with the data from another
+        ``AudioTrack``, ``AudioRecording`` or buffer-like object like
+        a ``bytes`` or ``bytearray`` instance.
+
+        :param other: Buffer-like instance from which to copy the data.
+
+Example
+-------
+
+::
+
+    from microbit import *
+
+    # An AudioRecording holds the audio data
+    recording = audio.AudioRecording(duration=4000)
+
+    # AudioTracks point to a portion of the data in the AudioRecording
+    # We can obtain the an AudioTrack from the AudioRecording.track() method
+    first_half = recording.track(end_ms=2000)
+    # Or we can create an AudioTrack from an AudioRecording and slice it
+    full_track = audio.AudioTrack(recording)
+    second_half = full_track[full_track.length() // 2:]
+
+    while True:
+        if button_a.is_pressed():
+            # We can record directly inside the AudioRecording
+            microphone.record(recording)
+        if button_b.is_pressed():
+            audio.play(recording, wait=False)
+            # The rate can be changed while playing
+            first_half.set_rate(
+                scale(accelerometer.get_x(), from_=(-1000, 1000), to=(3_000, 30_000))
+            )
+        if pin_logo.is_touched():
+            # We can also play the AudioTrack pointing to the AudioRecording
+            audio.play(first_half)
+
+
+AudioFrame
+==========
+
+.. py:class::
+    AudioFrame
+
+    An ``AudioFrame`` object is a list of 32 samples each of which is an unsigned byte
+    (whole number between 0 and 255).
+
+    It takes just over 4 ms to play a single frame.
 
     .. py:function:: copyfrom(other)
 
@@ -281,21 +416,13 @@ Technical Details
     You don't need to understand this section to use the ``audio`` module.
     It is just here in case you wanted to know how it works.
 
-The ``audio.play()`` function can consume an instance or iterable
-(sequence, like list or tuple, or generator) of ``AudioFrame`` instances,
-The ``AudioFrame`` default playback rate is 7812 Hz, and can be configured
-at any point with the ``AudioFrame.set_rate()`` method.
-The ``AudioFrame.set_rate()`` also works while the ``AudioFrame`` is being
-played, which will affect the playback speed.
-
-Each ``AudioFrame`` instance is 32 samples by default, but it can be
-configured to a different size via constructor parameters.
-
-So, for example, playing 32 samples at 7812 Hz takes just over 4 milliseconds
+The ``audio`` module can consumes an iterable (sequence, like list or tuple, or
+generator) of ``AudioFrame`` instances, each 32 samples at 7812.5 Hz,
+which take just over 4 milliseconds to play each frame
 (1/7812.5 * 32 = 0.004096 = 4096 microseconds).
 
-The function ``play()`` fully copies all data from each ``AudioFrame`` before
-it calls ``next()`` for the next frame, so a sound source can use the same
+The function ``play`` fully copies all data from each ``AudioFrame`` before it
+calls ``next()`` for the next frame, so a sound source can use the same
 ``AudioFrame`` repeatedly.
 
 The ``audio`` module has an internal 64 sample buffer from which it reads
