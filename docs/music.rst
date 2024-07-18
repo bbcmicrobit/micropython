@@ -3,13 +3,15 @@ Music
 
 .. py:module:: music
 
-This is the ``music`` module. You can use it to play simple tunes, provided
-that you connect a speaker to your board. By default the ``music`` module
-expects the speaker to be connected via pin 0:
+This is the ``music`` module and you can use it to create and play melodies.
+By default sound output will be via the edge connector on pin 0 and the
+:doc:`built-in speaker <speaker>` **V2**. You can connect wired headphones or
+a speaker to pin 0 and GND on the edge connector to hear the sound:
 
 .. image:: music-pins.png
 
-This arrangement can be overridden (as discussed below).
+You can also disable/enable the built-in speaker or output sound on another
+pin.
 
 To access this module you need to::
 
@@ -92,7 +94,8 @@ Functions
     their defaults before the music (whatever it may be) is played.
 
     An optional argument to specify the output pin can be used to override the
-    default of ``microbit.pin0``.
+    default of ``microbit.pin0``. If we do not want any sound to play we can
+    use ``pin=None``.
 
     If ``wait`` is set to ``True``, this function is blocking.
 
@@ -107,6 +110,10 @@ Functions
 
     Note that you can only play one pitch on one pin at any one time.
 
+    An optional argument to specify the output pin can be used to override the
+    default of ``microbit.pin0``. If we do not want any sound to play out of
+    the pins we can use ``pin=None``.
+
     If ``wait`` is set to ``True``, this function is blocking.
 
     If ``duration`` is negative the pitch is played continuously until either
@@ -115,8 +122,9 @@ Functions
 
 .. py:function:: stop(pin=pin0)
 
-    Stops all music playback on a given pin, eg. ``music.stop(pin1)``. 
-    If no pin is given, eg. ``music.stop()`` pin0 is assumed.
+    Stops all music playback on the built-in speaker and any pin outputting
+    sound. An optional argument can be provided to specify a pin, eg.
+    ``music.stop(pin1)``.
 
 .. py:function:: reset()
 
