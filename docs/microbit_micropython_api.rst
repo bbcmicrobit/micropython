@@ -109,9 +109,9 @@ The Microphone is accessed via the `microphone` object::
     # Returns a representation of the sound pressure level in the range 0 to 255.
     sound_level()
     # Record audio into a new `AudioRecording`
-    recording = record(duration, rate=7812)
+    recording = record(duration, rate=11_000)
     # Record audio into an existing `AudioRecording`
-    record_into(recording, rate=7812)
+    record_into(recording, wait=True)
     # Returns `True` if the microphone is currently recording audio
     is_recording()
     # Stop any active audio recording

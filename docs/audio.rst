@@ -248,30 +248,34 @@ Sound Effects Example
 AudioRecording & AudioTrack **V2**
 ==================================
 
-There are two classes that can contain (or point to) audio data 
-and an associated sampling rate:
+To record and play back audio, we need a way to store the audio data and
+the sampling rate that has been used to record it and play it back.
 
-- ``AudioRecording`` contains its own buffer, it's initialised with a size
-  defined in time, and it's the object type that ``microphone.record()``
-  returns.
-- ``AudioTrack`` does not hold its own buffer and instead points to a buffer
-  externally created. This buffer could be an ``AudioRecording``, or a basic
-  type like a ``bytearray``. It's similar to a
+Two new classes are introduced in micro:bit V2 for this purpose:
+
+- The ``AudioRecording`` class holds its own audio data and sampling rate.
+  It is initialised with a size defined in units of time, and it's the object
+  type that the ``microphone.record()`` function returns.
+- The ``AudioTrack`` class contains its sampling rate, but does not hold its
+  own data. It instead points to a buffer externally created,
+  like an ``AudioRecording``, or a basic type like a ``bytearray``.
+  It's similar to a
   `memoryview <https://docs.micropython.org/en/v1.9.3/pyboard/reference/speed_python.html#arrays>`_
-  and it can be used to easily chop a portion of the audio data in the
-  ``AudioRecording`` or to modify its contents.
+  and it can be used to easily modify the audio data or chop into portions
+  of different sizes.
 
 AudioRecording
 --------------
 
 .. py:class::
-    AudioRecording(duration, rate=7812)
+    AudioRecording(duration, rate=11_000)
 
     The ``AudioRecording`` object contains audio data and the sampling rate
     associated to it.
 
     The size of the internal buffer will depend on the ``rate``
     (number of samples per second) and ``duration`` parameters.
+    The larger these values are, the more memory that will be used.
 
     :param duration: Indicates how many milliseconds of audio this
         instance can store.
@@ -306,32 +310,36 @@ AudioRecording
             If the default value of ``-1`` is provided it will end the track
             at the end of the AudioRecording.
 
-When an AudioRecording is used to record data from the microphone,
-increasing the sampling rate increases the sound quality,
-but it also increases the amount of memory used.
+When an ``AudioRecording`` is used to record data from the microphone,
+a higher sampling rate produces better sound quality,
+but it also uses more memory.
 
 During playback, increasing the sampling rate speeds up the sound
 and decreasing the sample rate slows it down.
 
+The data inside an ``AudioRecording`` is not easy to modify, so the
+``AudioTrack`` class is provided to help access the audio data like a list.
+The method ``AudioRecording.track()`` can be used to create an ``AudioTrack``,
+and its arguments ``start_ms`` and ``end_ms`` can be used to slice portions
+of the data.
+
 AudioTrack
 ----------
 
-An ``AudioTrack`` can be created from an ``AudioRecording`` or ``bytearray``
-and individual bytes can be accessed and modified like elements in a list.
-
-This class is useful to modify the audio data in an ``AudioRecording`` or
-to create precisely sized audio data buffers for sending and receiving them
-via communication protocols like radio or serial.
-
 .. py:class::
-    AudioTrack(buffer, rate=7812)
+    AudioTrack(buffer, rate=None)
 
     The ``AudioTrack`` object points to the data provided by the input buffer,
-    which can be an ``AudioRecording``, or a buffer-like object like a
-    ``bytearray``.
-    It also contains its own sampling rate, so multiple ``AudioTrack``
-    instances pointing to the same buffer can have different rates and won't
-    affect the rate of the original buffer.
+    which can be an ``AudioRecording``, another ``AudioTrack``,
+    or a buffer-like object like a ``bytearray``.
+
+    When the input buffer has an associated rate (e.g. an ``AudioRecording``
+    or ``AudioTrack``), the rate is copied. If the buffer object does not have
+    a rate, the default value of 11_000 is used.
+
+    Changes to an ``AudioTrack`` rate won't affect the original source rate,
+    so multiple instances pointing to the same buffer can have different
+    rates and the original buffer rate would stay unmodified.
 
     :param buffer: The buffer containing the audio data.
     :param rate: The sampling rate at which data will be stored
@@ -346,18 +354,43 @@ via communication protocols like radio or serial.
 
     .. py:function:: get_rate()
 
-        Return the configured sampling rate for this
-        ``AudioTrack`` instance.
+        Return the configured sampling rate for this ``AudioTrack`` instance.
 
         :return: The configured sample rate.
 
     .. py:function:: copyfrom(other)
 
         Overwrite the data in this ``AudioTrack`` with the data from another
-        ``AudioTrack``, ``AudioRecording`` or buffer-like object like
-        a ``bytes`` or ``bytearray`` instance.
+        ``AudioTrack``, ``AudioRecording``, or buffer-like object like
+        a ``bytearray`` instance.
+
+        If the input buffer is smaller than the available space in this
+        instance, the rest of the data is left untouched.
+        If it is larger, it will stop copying once this instance is filled.
 
         :param other: Buffer-like instance from which to copy the data.
+
+An ``AudioTrack`` can be created from an ``AudioRecording``, another
+``AudioTrack``, or a ``bytearray`` and individual bytes can be accessed and
+modified like elements in a list::
+
+    my_track = AudioTrack(bytearray(100))
+    # Create a square wave
+    half_length = len(my_track) // 2
+    for i in range(half_length):
+        my_track[i] = 255
+    for i in range(half_length, len(my_track)):
+        my_track[i] = 0
+
+
+Or smaller AudioTracks can be created using slices, useful to send them
+via radio or serial::
+
+    recording = microphone.record(duration=2000)
+    track = AudioTrack(recording)
+    packet_size = 32
+    for i in range(0, len(track), packet_size):
+        radio.send_bytes(track[i:i+packet_size])
 
 Example
 -------
