@@ -72,6 +72,12 @@ Functions
     Note that the ``wait``, ``loop`` and ``monospace`` arguments must be specified
     using their keyword.
 
+.. py:function:: rotate(degrees)
+
+    Rotate the images shown on the display. The ``degrees`` parameter can be
+    any number, including a negative rotation, and it will be rounded to the
+    nearest multiple of 90 degrees.
+
 .. py:function:: on()
 
     Use on() to turn on the display.

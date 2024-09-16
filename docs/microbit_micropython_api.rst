@@ -76,6 +76,8 @@ The LED display is exposed via the `display` object::
     # scrolls a string across the display (more exciting than display.show for
     # written messages).
     display.scroll(string, delay=400)
+    # Rotates the display 0, 90, 180 or 270 degrees.
+    display.rotate(degrees)
 
 SoundEvent **V2**
 -----------------
