@@ -11,10 +11,10 @@ jobs:
     runs-on: ubuntu-20.04
     name: Build MicroPython
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       # Yotta has some issues with Python 3.7+
       - name: Install Python 3.6
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v5
         with:
           python-version: 3.6
       - name: Install GNU Arm Embedded Toolchain (arm-none-eabi-gcc)
@@ -41,9 +41,9 @@ jobs:
       - run: make all
       - name: Process date for artifact filename
         id: date
-        run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+        run: echo "BUILD_DATE=$(date +'%Y-%m-%d')" >> $GITHUB_ENV
       - name: Upload hex file
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
-          name: microbitv1-micropython-${{ steps.date.outputs.date }}-${{ github.sha }}.hex
+          name: microbitv1-micropython-${{ env.BUILD_DATE }}-${{ github.sha }}.hex
           path: build/firmware.hex
