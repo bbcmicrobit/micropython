@@ -197,14 +197,35 @@ its own to that.
 
 .. py:class:: MicroBitTouchPin
 
+    .. py:method:: touch_calibrate()
+
+        Re-calibrates the touch pin detection.
+        This is useful when a conductive object is connected to the pin to
+        be used as a touch sensor.
+
     .. py:method:: is_touched()
 
         Return ``True`` if the pin is being touched with a finger, otherwise
         return ``False``.
 
+    .. py:method:: was_touched()
+
+        Returns ``True`` or ``False`` to indicate if the pin was touched
+        since the device started or since the last time this method was called.
+
+    .. py:method:: get_touches()
+
+        Returns the number of times the pin was touched
+        since the device started or since the last time this method was called.
+
+    .. py:method:: set_touch_mode(value)
+
         .. note::
-            The default touch mode for the pins on the edge connector is 
+            The default touch mode for the pins on the edge connector is
             `resistive`. The default for the logo pin **V2** is `capacitive`.
+
+        Set the touch mode for the given pin. Value can be either ``CAPACITIVE``
+        or ``RESISTIVE``. For example, ``pin0.set_touch_mode(pin0.CAPACITIVE)``.
 
         **Resistive touch**
         This test is done by measuring how much resistance there is between the
@@ -218,15 +239,6 @@ its own to that.
         <https://www.allaboutcircuits.com/technical-articles/introduction-to-capacitive-touch-sensing>`_
         does not require you to make a ground connection as part of a circuit.
 
-    .. py:method:: set_touch_mode(value)
-
-        .. note::
-            The default touch mode for the pins on the edge connector is 
-            `resistive`. The default for the logo pin **V2** is `capacitive`.
-
-        Set the touch mode for the given pin. Value can be either ``CAPACITIVE``
-        or ``RESISTIVE``. For example, ``pin0.set_touch_mode(pin0.CAPACITIVE)``.
- 
 The pull mode for a pin is automatically configured when the pin changes to an
 input mode. Input modes are when you call ``read_analog`` / ``read_digital`` /
 ``is_touched``. The default pull mode for these is, respectively, ``NO_PULL``,
