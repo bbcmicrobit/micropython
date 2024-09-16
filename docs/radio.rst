@@ -36,12 +36,6 @@ Constants
 
     Constant used to indicate a throughput of 2 Mbit a second.
 
-.. py:attribute:: RATE_250KBIT
-
-    **Deprecated**.
-    This rate is possible with micro:bit V1, but it is not guaranteed to work
-    on V2, so it has been deprecated for compatibility reasons.
-
 
 Functions
 =========
@@ -98,6 +92,13 @@ Functions
     The ``data_rate`` (default=radio.RATE_1MBIT) indicates the speed at which
     data throughput takes place. Can be one of the following contants defined
     in the ``radio`` module : ``RATE_1MBIT`` or ``RATE_2MBIT``.
+
+    .. note::
+
+        A lower data rate of of 250kbit/sec is supported in micro:bit V1, and
+        may be possible with micro:bit V2, but it is not guaranteed to work on
+        all devices. To access this hidden feature for compatibility with V1
+        pass ``2`` to the ``data_rate`` argument.
 
     If ``config`` is not called then the defaults described above are assumed.
 

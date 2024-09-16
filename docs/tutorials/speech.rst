@@ -30,9 +30,14 @@ In any case, we're going to create a DALEK poetry recital on demand.
 Say Something
 +++++++++++++
 
-Before the device can talk you need to plug in a speaker like this:
+If you have the latest micro:bit **V2** device, you can use the built-in
+speaker as well as or instead of connecting a speaker or set of headphones
+like this:
 
-.. image:: ../speech.png
+.. image:: pin0-gnd.png
+    :width: 250px
+    :align: center
+    :alt: piezo connected to pin0 and GND
 
 The simplest way to get the device to speak is to import the ``speech`` module
 and use the ``say`` function like this::
@@ -46,10 +51,10 @@ change some of the parameters that the speech synthesiser uses to produce the
 voice. Our speech synthesiser is quite powerful in this respect because we can
 change four parameters:
 
-* ``pitch`` - how high or low the voice sounds (0 = high, 255 = Barry White)
-* ``speed`` - how quickly the device talks (0 = impossible, 255 = bedtime story)
-* ``mouth`` - how tight-lipped or overtly enunciating the voice sounds (0 = ventriloquist's dummy, 255 = Foghorn Leghorn)
-* ``throat`` - how relaxed or tense is the tone of voice (0 = falling apart, 255 = totally chilled)
+* ``pitch`` - how high or low the voice sounds (0 = high, 255 = low)
+* ``speed`` - how quickly the device talks (0 = fast, 255 = slow)
+* ``mouth`` - how tight-lipped or overtly enunciating the voice sounds (0 = closed mouth, 255 = open mouth)
+* ``throat`` - how relaxed or tense is the tone of voice (0 = tense, 255 = relaxed)
 
 Collectively, these parameters control the quality of sound - a.k.a. the
 timbre. To be honest, the best way to get the tone of voice you want is to

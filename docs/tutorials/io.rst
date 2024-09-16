@@ -8,17 +8,21 @@ for short).
 .. image:: blue-microbit.png
     :width: 300px
     :align: center
+    :alt: micro:bit with pins labelled
 
 Some of the pins are bigger than others so it's possible to attach crocodile
 clips to them. These are the ones labelled 0, 1, 2, 3V and GND (computers
 always start counting from zero). If you attach an edge connector board to the
 device it's possible to plug in wires connected to the other (smaller) pins.
 
+On the latest micro:bit **V2** the micro:bit logo can also be used as a touch
+input.
+
 In MicroPython, each pin on the BBC micro:bit is represented by an *object*
 called ``pinN``, where ``N`` is the number pf the pin.
 
 For example, to use the pin labelled 0 (zero), you can use the object called
-``pin0`` in your script.
+``pin0`` in your script. The logo pin **V2** uses ``pin_logo``.
 
 These objects have various *methods* associated with them depending upon what
 the specific pin is capable of eg. read, write or touch.
@@ -40,6 +44,20 @@ touched. So, you can tickle your micro:bit to make it laugh like this::
 With one hand, hold your micro:bit by the GND pin. Then, with your other hand,
 touch (or tickle) the 0 (zero) pin. You should see the display change from
 grumpy to happy!
+
+When you use the latest micro:bit **V2** you can also change the default
+behaviour of the pin, so that you don't have to touch GND at all.::
+
+    from microbit import *
+    pin0.set_touch_mode(pin0.CAPACITIVE)
+    while True:
+        if pin0.is_touched():
+            display.show(Image.HAPPY)
+        else:
+            display.show(Image.SAD)
+
+The default for the edge connector pins is `resistive` and the logo pin
+**V2** is `capacitive`.
 
 This is a form of very basic input measurement. However, the fun really starts
 when you plug in circuits and other devices via the pins.
