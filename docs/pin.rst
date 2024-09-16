@@ -197,6 +197,12 @@ its own to that.
 
 .. py:class:: MicroBitTouchPin
 
+    .. py:method:: touch_calibrate()
+
+        Re-calibrates the touch pin detection.
+        This is useful when a conductive object is connected to the pin to
+        be used as a touch sensor.
+
     .. py:method:: is_touched()
 
         Return ``True`` if the pin is being touched with a finger, otherwise

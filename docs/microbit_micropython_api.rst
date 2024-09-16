@@ -158,6 +158,9 @@ Each of these pins are instances of the ``MicroBitPin`` class, which offers the 
     # Only available for touch pins 0, 1, and 2. Sets the touch mode.
     # Value can be either RESISTIVE or CAPACITIVE
     pin.set_touch_mode(value)
+    # Only available for touch pins 0, 1, and 2. Re-calibrates the touch pin
+    # detection.
+    pin.touch_calibrate()
 
 Except in the case of the pins marked **V2**, which offers the following API:
 
@@ -172,6 +175,8 @@ pin_logo::
     pin_logo.get_touches()
     # Sets the touch mode. Value can be either RESISTIVE or CAPACITIVE
     pin_logo.set_touch_mode(value)
+    # Re-calibrates the touch pin detection.
+    pin.touch_calibrate()
 
 pin_speaker, as the above ``MicroBitPin`` class, but does not include
 ``pin.is_touched()``.
