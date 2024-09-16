@@ -12,7 +12,7 @@ a speaker to pin 0 and GND on the edge connector to hear the sounds.
 The ``audio`` module can be imported as ``import audio`` or accessed via
 the ``microbit`` module as ``microbit.audio``.
 
-There are three different kinds of audio sources that can be played using the
+There are five different kinds of audio sources that can be played using the
 :py:meth:`audio.play` function:
 
 1. `Built in sounds <#built-in-sounds-v2>`_ (**V2**),
@@ -268,7 +268,7 @@ AudioRecording
 --------------
 
 .. py:class::
-    AudioRecording(duration, rate=11_000)
+    AudioRecording(duration, rate=7812)
 
     The ``AudioRecording`` object contains audio data and the sampling rate
     associated to it.
@@ -305,6 +305,10 @@ AudioRecording
         Create an `AudioTrack <#audio.AudioTrack>`_ instance from a portion of
         the data in this ``AudioRecording`` instance.
 
+        Out-of-range values will be truncated to the recording limits.
+        If ``end_ms`` is lower than ``start_ms``, an empty track will be
+        created.
+
         :param start_ms: Where to start of the track in milliseconds.
         :param end_ms: The end of the track in milliseconds.
             If the default value of ``-1`` is provided it will end the track
@@ -335,7 +339,7 @@ AudioTrack
 
     When the input buffer has an associated rate (e.g. an ``AudioRecording``
     or ``AudioTrack``), the rate is copied. If the buffer object does not have
-    a rate, the default value of 11_000 is used.
+    a rate, the default value of 7812 is used.
 
     Changes to an ``AudioTrack`` rate won't affect the original source rate,
     so multiple instances pointing to the same buffer can have different

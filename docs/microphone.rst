@@ -141,7 +141,7 @@ Functions
 
     :return: A representation of the sound pressure level in the range 0 to 255.
 
-.. py:function:: record(duration, rate=11000)
+.. py:function:: record(duration, rate=7812)
 
     Record sound into an ``AudioRecording`` for the amount of time indicated by
     ``duration`` at the sampling rate indicated by ``rate``.
@@ -267,10 +267,8 @@ An example of recording and playback with a display animation::
         "00000"
     )
 
-    RECORDING_RATE = 3906
-    RECORDING_MS = 5000
-
-    my_recording = audio.AudioRecording(duration=RECORDING_MS, rate=RECORDING_RATE)
+    RECORDING_RATE = 7812   # The default sample rate
+    my_recording = audio.AudioRecording(duration=5000, rate=RECORDING_RATE)
 
     while True:
         if button_a.is_pressed():
@@ -283,7 +281,10 @@ An example of recording and playback with a display animation::
         if button_b.is_pressed():
             audio.play(clipped_recording, wait=False)
             while audio.is_playing():
-                x = accelerometer.get_x()
-                audio.set_rate(scale(x, (-1000, 1000), (2250, 11000)))
+                clipped_recording.set_rate(scale(
+                    accelerometer.get_x(),
+                    (-1000, 1000),
+                    (RECORDING_RATE // 2, RECORDING_RATE * 2)
+                ))
                 sleep(50)
         sleep(100)
