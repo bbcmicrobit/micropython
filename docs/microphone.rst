@@ -91,6 +91,10 @@ Functions
 
     :return: A representation of the sound pressure level in the range 0 to 255.
 
+.. py:function:: sound_level_db()
+
+    :return: A representation of the sound pressure level in decibels (dB)
+        in the range of 52.0 to 110.0 dB.
 
 Example
 =======

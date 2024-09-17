@@ -108,6 +108,8 @@ The Microphone is accessed via the `microphone` object::
     set_threshold(128)
     # Returns a representation of the sound pressure level in the range 0 to 255.
     sound_level()
+    # Returns a representation of the sound pressure level in decibels (dB).
+    sound_level_db()
 
 Pins
 ----
