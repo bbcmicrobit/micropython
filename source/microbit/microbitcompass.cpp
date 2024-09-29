@@ -64,9 +64,9 @@ mp_obj_t microbit_compass_calibrate(mp_obj_t self_in) {
     (void)self_in;
     ticker_stop();
     //uBit.systemTicker.attach_us(&uBit, &MicroBit::systemTick, MICROBIT_DEFAULT_TICK_PERIOD * 1000); TODO what to replace with?
-    ubit_display.enable();
+    ubit_display->enable();
     ubit_compass->calibrate();
-    ubit_display.disable();
+    ubit_display->disable();
     //uBit.systemTicker.detach(); TODO what to replace with?
     ticker_start();
     microbit_display_init();
